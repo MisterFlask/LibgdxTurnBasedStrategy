@@ -1,0 +1,31 @@
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.30"
+    }
+}
+
+
+apply plugin: "java"
+apply plugin: 'kotlin'
+ext.kotlin_version = '1.2.30'
+
+sourceCompatibility = 1.6
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.main.kotlin.srcDirs = ["src/"]
+
+eclipse.project {
+    name = appName + "-core"
+}
+dependencies{
+    compile "org.jetbrains.kotlin:kotlin-runtime:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-stdlib"
+    testCompile "org.jetbrains.kotlin:kotlin-test"
+    testCompile "org.jetbrains.kotlin:kotlin-test-junit"
+}
