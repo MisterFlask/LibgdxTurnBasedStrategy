@@ -7,17 +7,21 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.ironlordbyron.turnbasedstrategy.guice.GameModule;
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector;
+import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TileMapOperationsHandler;
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TiledMapStageFactory;
+import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.BlankMapGenerator;
+import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.GameDataProvider;
 
 public class GdxGameMain extends ApplicationAdapter  {
     Texture img;
     TiledMap tiledMap;
     OrthographicCamera camera;
     TiledMapRenderer tiledMapRenderer;
+    Stage stage;
 
     @Override
     public void create() {
@@ -27,11 +31,15 @@ public class GdxGameMain extends ApplicationAdapter  {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, w, h);
         camera.update();
-        tiledMap = new TmxMapLoader().load("tilesets/BlankGrass.tmx");
+        BlankMapGenerator tileMapGenerator = GameModuleInjector.Companion.createTiledMapGenerator();
+        tiledMap = tileMapGenerator.generateMap(BlankMapGenerator.Companion.getDefaultMapGenParams());
+        GameDataProvider gameDataProvider = GameModuleInjector.Companion.createGameStateProvider();
+        gameDataProvider.setTiledMap(tiledMap);
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         TiledMapStageFactory tiledMapStageFactory = GameModuleInjector.Companion.createTiledMapStageFactory();
-        Stage stage = tiledMapStageFactory.create(tiledMap, camera);
+        stage = tiledMapStageFactory.create(tiledMap, camera);
         Gdx.input.setInputProcessor(stage);
+        stage.getViewport().setCamera(camera);
     }
 
     @Override
@@ -42,5 +50,6 @@ public class GdxGameMain extends ApplicationAdapter  {
         camera.update();
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
+        stage.act();
     }
 }

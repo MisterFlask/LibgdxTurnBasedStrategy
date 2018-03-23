@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tileset name="strategicTileset" tilewidth="16" tileheight="16" tilecount="336" columns="16">
- <image source="../tileset.png" trans="ff00ff" width="256" height="336"/>
+ <image source="tileset.png" trans="ff00ff" width="256" height="336"/>
  <terraintypes>
   <terrain name="New Terrain" tile="82"/>
  </terraintypes>
@@ -707,31 +707,37 @@
  <tile id="160">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="161">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="162">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="163">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="164">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="165">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="166">
@@ -767,31 +773,37 @@
  <tile id="176">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="177">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="178">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="179">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="180">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="181">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="182">
@@ -827,31 +839,37 @@
  <tile id="192">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="193">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="194">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="195">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="196">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="197">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="198">
@@ -887,31 +905,37 @@
  <tile id="208">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="209">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="210">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="211">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="212">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="213">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="214">
@@ -947,31 +971,37 @@
  <tile id="224">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="225">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="226">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="227">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="228">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="229">
   <properties>
    <property name="empty" value="true"/>
+   <property name="trees" type="bool" value="true"/>
   </properties>
  </tile>
  <tile id="230">
@@ -1004,6 +1034,16 @@
    <property name="empty" value="true"/>
   </properties>
  </tile>
+ <tile id="240">
+  <properties>
+   <property name="village" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="241">
+  <properties>
+   <property name="village" type="bool" value="false"/>
+  </properties>
+ </tile>
  <tile id="242">
   <properties>
    <property name="city" type="bool" value="true"/>
@@ -1019,6 +1059,16 @@
    <property name="city" type="bool" value="true"/>
   </properties>
  </tile>
+ <tile id="256">
+  <properties>
+   <property name="village" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="257">
+  <properties>
+   <property name="village" type="bool" value="false"/>
+  </properties>
+ </tile>
  <tile id="258">
   <properties>
    <property name="city" type="bool" value="true"/>
@@ -1032,6 +1082,16 @@
  <tile id="260">
   <properties>
    <property name="city" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="272">
+  <properties>
+   <property name="village" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="273">
+  <properties>
+   <property name="village" type="bool" value="false"/>
   </properties>
  </tile>
  <tile id="274">
@@ -1079,6 +1139,26 @@
    <property name="road" type="bool" value="true"/>
   </properties>
  </tile>
+ <tile id="294">
+  <properties>
+   <property name="castle" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="295">
+  <properties>
+   <property name="castle" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="296">
+  <properties>
+   <property name="castle" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="297">
+  <properties>
+   <property name="tower" type="bool" value="false"/>
+  </properties>
+ </tile>
  <tile id="304">
   <properties>
    <property name="road" type="bool" value="true"/>
@@ -1109,6 +1189,26 @@
    <property name="road" type="bool" value="true"/>
   </properties>
  </tile>
+ <tile id="310">
+  <properties>
+   <property name="castle" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="311">
+  <properties>
+   <property name="castle" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="312">
+  <properties>
+   <property name="castle" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="313">
+  <properties>
+   <property name="tower" type="bool" value="false"/>
+  </properties>
+ </tile>
  <tile id="320">
   <properties>
    <property name="road" type="bool" value="true"/>
@@ -1137,6 +1237,26 @@
  <tile id="325">
   <properties>
    <property name="road" type="bool" value="true"/>
+  </properties>
+ </tile>
+ <tile id="326">
+  <properties>
+   <property name="castle" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="327">
+  <properties>
+   <property name="castle" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="328">
+  <properties>
+   <property name="castle" type="bool" value="false"/>
+  </properties>
+ </tile>
+ <tile id="329">
+  <properties>
+   <property name="tower" type="bool" value="false"/>
   </properties>
  </tile>
 </tileset>
