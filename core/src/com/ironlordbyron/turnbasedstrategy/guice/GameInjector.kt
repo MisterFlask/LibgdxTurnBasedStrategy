@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.guice
 
 import com.google.inject.AbstractModule
 import com.google.inject.Guice
+import com.ironlordbyron.turnbasedstrategy.view.tiledutils.CharacterActorFactory
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TileMapOperationsHandler
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TiledMapStageFactory
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.BlankMapGenerator
@@ -16,7 +17,11 @@ class GameModuleInjector {
     companion object {
         private val moduleInjector = Guice.createInjector(GameModule())
         fun createTiledMapOperationsHandler(): TileMapOperationsHandler {
-            return moduleInjector.getInstance(TileMapOperationsHandler::class.java);
+            return moduleInjector.getInstance(TileMapOperationsHandler::class.java)
+        }
+
+        fun createSpriteActorFactory() : CharacterActorFactory {
+            return moduleInjector.getInstance(CharacterActorFactory::class.java)
         }
 
         fun createGameStateProvider(): GameDataProvider {

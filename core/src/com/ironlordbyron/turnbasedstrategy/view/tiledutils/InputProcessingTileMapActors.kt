@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.google.inject.assistedinject.Assisted
+import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.BattleStarter
 import javax.inject.Inject
 import javax.inject.Provider
@@ -22,13 +23,12 @@ class TileMapActor(@Assisted val tiledMap: TiledMap,
                    @Assisted val tiledMapTileLayer: TiledMapTileLayer,
                    @Assisted val cell: TiledMapTileLayer.Cell,
                    @Assisted val location: TileLocation,
-                   val fragmentCopier: TileMapOperationsHandler) : Actor() {
-};
+                   val fragmentCopier: TileMapOperationsHandler) : Actor()
 
 
 @Singleton
-public class TileMapClickListenerFactory @Inject constructor(val fragmentCopierProvider: Provider<TileMapOperationsHandler>) {
-    public fun create(actor: TileMapActor): TileMapClickListener {
+class TileMapClickListenerFactory @Inject constructor(val fragmentCopierProvider: Provider<TileMapOperationsHandler>) {
+    fun create(actor: TileMapActor): TileMapClickListener {
         return TileMapClickListener(actor, fragmentCopierProvider.get())
     }
 }
@@ -45,7 +45,7 @@ class TileMapClickListener(@Assisted val actor: TileMapActor,
                 minX = actor.location.x,
                 minY = actor.location.y,
                 fragmentName = TileMapFragment.City)
-        return false;
+        return false
     }
 }
 
@@ -53,32 +53,32 @@ class TileMapClickListener(@Assisted val actor: TileMapActor,
  * Used internally by Guice.
  */
 @Singleton
-public class TiledMapStageFactory @Inject constructor(val actorFactory: Provider<ActorFactory>,
-                                                      val tileMapClickListenerFactoryProvider: Provider<TileMapClickListenerFactory>,
-                                                      val logicalTileTracker: LogicalTileTracker,
-                                                      val characterPuller: CharacterImageManager,
-                                                      val tileMapOperationsHandler: TileMapOperationsHandler,
-                                                      val battleStarter: BattleStarter) {
-    public fun create(tiledMap: TiledMap, orthographicCamera: OrthographicCamera): TiledMapStage {
+class TiledMapStageFactory @Inject constructor(val actorFactory: Provider<ActorFactory>,
+                                               val tileMapClickListenerFactoryProvider: Provider<TileMapClickListenerFactory>,
+                                               val logicalTileTracker: LogicalTileTracker,
+                                               val characterPuller: CharacterImageManager,
+                                               val tileMapOperationsHandler: TileMapOperationsHandler,
+                                               val battleStarter: BattleStarter) {
+    fun create(tiledMap: TiledMap, orthographicCamera: OrthographicCamera): TiledMapStage {
         return TiledMapStage(tiledMap, actorFactory.get(), tileMapClickListenerFactoryProvider.get(),
                 orthographicCamera, logicalTileTracker, characterPuller, tileMapOperationsHandler, battleStarter)
     }
 }
 
 @Singleton
-public class ActorFactory @Inject constructor(val fragmentCopierProvider: Provider<TileMapOperationsHandler>) {
-    public fun create(tiledMap: TiledMap, tiledLayer: TiledMapTileLayer, cell: TiledMapTileLayer.Cell,
+class ActorFactory @Inject constructor(val fragmentCopierProvider: Provider<TileMapOperationsHandler>) {
+    fun create(tiledMap: TiledMap, tiledLayer: TiledMapTileLayer, cell: TiledMapTileLayer.Cell,
                       tileLocation: TileLocation): TileMapActor {
         return TileMapActor(tiledMap, tiledLayer, cell, tileLocation,
-                fragmentCopierProvider.get());
+                fragmentCopierProvider.get())
     }
 }
 
-public data class LogicalTile(val tiledTile: TiledMapTile, val location: TileLocation, val actor: TileMapActor,
+data class LogicalTile(val tiledTile: TiledMapTile, val location: TileLocation, val actor: TileMapActor,
                               val cell: TiledMapTileLayer.Cell)
 
 @Singleton
-public class LogicalTileTracker{
+class LogicalTileTracker{
     val tiles = ArrayList<LogicalTile>()
 
     fun addTile(logicalTile: LogicalTile){
@@ -87,6 +87,9 @@ public class LogicalTileTracker{
 
     fun getLogicalTileFromTile(tile: TiledMapTile): LogicalTile {
         return tiles.first{it.tiledTile === tile}
+    }
+    fun getLogicalTileFromLocation(loc: TileLocation) : LogicalTile? {
+        return tiles.first{it.location == loc}
     }
 }
 @Singleton
@@ -100,24 +103,26 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
                     val battleStarter: BattleStarter) : Stage(), InputProcessor {
     init {
         val layer = tiledMap.getTileLayer(TileLayer.BASE)
-        createActorsAndLocationsForLayer(layer);
+        createActorsAndLocationsForLayer(layer)
         // TODO: Move out of init function
+        val spriteActorFactory = GameModuleInjector.createSpriteActorFactory()
+        spriteActorFactory.stage = this
         battleStarter.startBattle()
     }
 
     private fun createActorsAndLocationsForLayer(tiledLayer: TiledMapTileLayer) {
         for (x in 0..tiledLayer.width) {
             for (y in 0..tiledLayer.height) {
-                val cell = tiledLayer.getCell(x, y) ?: continue;
+                val cell = tiledLayer.getCell(x, y) ?: continue
                 println("Assigning actor to cell ID ${cell.tile.id} at $x $y}")
                 val actor = actorFactory.create(tiledMap, tiledLayer, cell, TileLocation(x, y)
-                );
+                )
                 actor.setBounds(x * tiledLayer.tileWidth, y * tiledLayer.tileHeight, tiledLayer.tileWidth,
-                        tiledLayer.tileHeight);
+                        tiledLayer.tileHeight)
                 logicalTileTracker.addTile(LogicalTile(cell.tile, TileLocation(x,y), actor, cell))
                 addActor(actor)
-                val eventListener = tileMapClickListenerFactory.create(actor);
-                actor.addListener(eventListener);
+                val eventListener = tileMapClickListenerFactory.create(actor)
+                actor.addListener(eventListener)
             }
         }
     }

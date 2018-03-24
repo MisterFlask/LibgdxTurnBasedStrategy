@@ -8,8 +8,9 @@ enum class TiledMapObject(val tiledRepresentation: String) {
 
 
 }
-enum class TiledMapLayers(val tiledName: String){
+
+enum class TiledMapLayers(val tiledName: String) {
     OBJECT_LAYER("ObjectLayer")
 }
 
-public val TILE_SIZE = 16
+val TILE_SIZE = 16

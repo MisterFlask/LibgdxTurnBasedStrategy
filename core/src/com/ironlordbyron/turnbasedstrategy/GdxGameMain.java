@@ -9,9 +9,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.ironlordbyron.turnbasedstrategy.guice.GameModule;
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector;
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TileMapOperationsHandler;
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TiledMapStageFactory;
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.BlankMapGenerator;
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.GameDataProvider;
@@ -51,5 +49,6 @@ public class GdxGameMain extends ApplicationAdapter  {
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();
         stage.act();
+        stage.draw();
     }
 }

@@ -24,7 +24,7 @@ class TileMapOperationsHandler @Inject constructor(val logicalTileTracker: Logic
                        minY: Int,
                        fragmentName: String) {
         val gameMapLayer = pullTileMapLayer(gameMapName, isFragment = false, tileLayer = TileLayer.FEATURE)
-        val fragmentLayer = pullTileMapLayer(fragmentName, isFragment = true, tileLayer = TileLayer.BASE);
+        val fragmentLayer = pullTileMapLayer(fragmentName, isFragment = true, tileLayer = TileLayer.BASE)
         copyTo(gameMapLayer,
                 fragmentLayer,
                 minX,
@@ -96,7 +96,7 @@ enum class TileLayer{
 fun TiledMap.getObjectLayerRectangles(): List<LogicalTiledObject>{
     val layer = this.layers["ObjectLayer"]
     val rectangles = layer.objects.getByType(RectangleMapObject::class.java)
-    val logicalobjects = ArrayList<LogicalTiledObject>();
+    val logicalobjects = ArrayList<LogicalTiledObject>()
     for (rec in rectangles){
         val logicalTiledObject = LogicalTiledObject(Math.round(rec.rectangle.x), Math.round(rec.rectangle.y),
                 Math.round(rec.rectangle.width), Math.round(rec.rectangle.height),

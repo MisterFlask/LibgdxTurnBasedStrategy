@@ -7,9 +7,9 @@ import java.util.*
 import javax.inject.Singleton
 
 @Singleton
-public class BlankMapGenerator @Inject constructor(val fragmentCopier: TileMapOperationsHandler) {
+class BlankMapGenerator @Inject constructor(val fragmentCopier: TileMapOperationsHandler) {
     companion object {
-        public val defaultMapGenParams = MapGenerationParams(numCities = 3,
+        val defaultMapGenParams = MapGenerationParams(numCities = 3,
                 sourceMapName = "BlankGrass.tmx",
                 cityFragmentMapName = "CityFragment.tmx")
     }
@@ -62,6 +62,4 @@ public class BlankMapGenerator @Inject constructor(val fragmentCopier: TileMapOp
 
 data class MapGenerationParams(val numCities: Int,
                                val sourceMapName: String,
-                               val cityFragmentMapName: String = TileMapFragment.City) {
-
-}
+                               val cityFragmentMapName: String = TileMapFragment.City)
