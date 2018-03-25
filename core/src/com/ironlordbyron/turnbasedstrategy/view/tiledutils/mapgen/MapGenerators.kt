@@ -15,11 +15,11 @@ class BlankMapGenerator @Inject constructor(val fragmentCopier: TileMapOperation
     }
 
     fun generateMap(params: MapGenerationParams): TiledMap {
-        val blankMap = fragmentCopier.getTileMap(params.sourceMapName, isFragment = false)
+        val blankMap = fragmentCopier.getTileMap(params.sourceMapName, MapType.SOURCE_MAP)
         val blankMapFirstLayer = blankMap.getTileLayer(TileLayer.BASE)
         val locationsUsed: HashSet<TileLocation> = hashSetOf()
         for (i in 0..params.numCities) {
-            val cityTileMap = fragmentCopier.pullTileMapLayer(params.cityFragmentMapName, isFragment = true, tileLayer = TileLayer.BASE)
+            val cityTileMap = fragmentCopier.pullTileMapLayer(params.cityFragmentMapName, MapType.FRAGMENT_MAP, tileLayer = TileLayer.BASE)
             val width = cityTileMap.width
             val height = cityTileMap.height
             val randomX = Random().nextInt(blankMapFirstLayer.width - width)

@@ -7,15 +7,15 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class GameDataProvider {
+class TileMapProvider {
     lateinit var tiledMap: TiledMap
 }
 
 
 @Singleton
-class BattleStarter @Inject constructor(val boardProvider: GameDataProvider,
-                    val characterImageManager: CharacterImageManager,
-                    val tileMapOperationsHandler: TileMapOperationsHandler){
+class BattleStarter @Inject constructor(val boardProvider: TileMapProvider,
+                                        val characterImageManager: CharacterImageManager,
+                                        val tileMapOperationsHandler: TileMapOperationsHandler){
     fun startBattle(){
         val legitTiles = tileMapOperationsHandler.getPossiblePlayerSpawnPositions(boardProvider.tiledMap)
         for (tile in legitTiles){

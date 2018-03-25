@@ -27,12 +27,11 @@ class CharacterImageManager @Inject constructor(val tileMapOperationsHandler: Ti
         return tileMapOperationsHandler.pullTextureFromTilemap(characterSpriteSheet, "6", "Player0")
     }
 
-    fun placeCharacterSprite(tiledMap: TiledMap, tileLocation: TileLocation, characterTexture: TextureRegion) {
+    fun placeCharacterSprite(tiledMap: TiledMap, tileLocation: TileLocation, characterTexture: TextureRegion) : SpriteActor {
         val logicalTile = logicalTileTracker.getLogicalTileFromLocation(tileLocation)!!
         val boundingBox = (tiledMap.layers[0] as TiledMapTileLayer).getBoundsOfTile(logicalTile.location)
-        // TODO: Fix this, bounding box calcs are wrong
         val characterActor = characterActorFactory.createSpriteActor(characterTexture, boundingBox)
-
+        return characterActor
     }
 }
 

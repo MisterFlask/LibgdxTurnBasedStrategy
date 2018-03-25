@@ -12,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector;
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TiledMapStageFactory;
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.BlankMapGenerator;
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.GameDataProvider;
+import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider;
 
 public class GdxGameMain extends ApplicationAdapter  {
     Texture img;
@@ -31,8 +31,8 @@ public class GdxGameMain extends ApplicationAdapter  {
         camera.update();
         BlankMapGenerator tileMapGenerator = GameModuleInjector.Companion.createTiledMapGenerator();
         tiledMap = tileMapGenerator.generateMap(BlankMapGenerator.Companion.getDefaultMapGenParams());
-        GameDataProvider gameDataProvider = GameModuleInjector.Companion.createGameStateProvider();
-        gameDataProvider.setTiledMap(tiledMap);
+        TileMapProvider tileMapProvider = GameModuleInjector.Companion.createGameStateProvider();
+        tileMapProvider.setTiledMap(tiledMap);
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         TiledMapStageFactory tiledMapStageFactory = GameModuleInjector.Companion.createTiledMapStageFactory();
         stage = tiledMapStageFactory.create(tiledMap, camera);

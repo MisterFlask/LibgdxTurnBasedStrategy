@@ -5,12 +5,4 @@ package com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen
  */
 enum class TiledMapObject(val tiledRepresentation: String) {
     PLAYER_SPAWN("PLAYER_SPAWN")
-
-
 }
-
-enum class TiledMapLayers(val tiledName: String) {
-    OBJECT_LAYER("ObjectLayer")
-}
-
-val TILE_SIZE = 16

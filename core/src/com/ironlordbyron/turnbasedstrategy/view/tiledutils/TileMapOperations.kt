@@ -4,7 +4,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.*
 import com.google.inject.Singleton
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TILE_SIZE
 import java.util.*
 import javax.inject.Inject
 
@@ -13,7 +12,8 @@ data class TacticalTileMap(val tileMap: TiledMap,
                            val strategyTileMap: TacticalTileMap)
 
 /**
- * Responsible for ensuring tilemaps remain singletons.
+ * Responsible for ensuring tilemaps remain singletons,
+ * and handling direct tilemap instructions.
  */
 @Singleton
 class TileMapOperationsHandler @Inject constructor(val logicalTileTracker: LogicalTileTracker) {
@@ -23,15 +23,16 @@ class TileMapOperationsHandler @Inject constructor(val logicalTileTracker: Logic
                        minX: Int,
                        minY: Int,
                        fragmentName: String) {
-        val gameMapLayer = pullTileMapLayer(gameMapName, isFragment = false, tileLayer = TileLayer.FEATURE)
-        val fragmentLayer = pullTileMapLayer(fragmentName, isFragment = true, tileLayer = TileLayer.BASE)
+        val gameMapLayer = pullTileMapLayer(gameMapName, MapType.SOURCE_MAP, tileLayer = TileLayer.FEATURE)
+        val fragmentLayer = pullTileMapLayer(fragmentName, MapType.FRAGMENT_MAP, tileLayer = TileLayer.BASE)
         copyTo(gameMapLayer,
                 fragmentLayer,
                 minX,
                 minY)
     }
 
-    fun pullTextureFromTilemap(tileMapWithTextureName: String, textureId: String, tileSetWithTexture: String) : TextureRegion{
+
+    fun pullTextureFromTilemap(tileMapWithTextureName: String, textureId: String, tileSetWithTexture: String): TextureRegion {
         val map = getTileMapFromFullyQualifiedName(tileMapWithTextureName)
 
         val tiledMapTileSets = map.tileSets
@@ -43,8 +44,8 @@ class TileMapOperationsHandler @Inject constructor(val logicalTileTracker: Logic
         return textureRegion
     }
 
-    fun getTileMapFromFullyQualifiedName(key: String): TiledMap{
-        if (!mapCache.contains(key)){
+    fun getTileMapFromFullyQualifiedName(key: String): TiledMap {
+        if (!mapCache.contains(key)) {
             val map = TmxMapLoader()
                     .load(key)
             mapCache[key] = map
@@ -52,21 +53,20 @@ class TileMapOperationsHandler @Inject constructor(val logicalTileTracker: Logic
         return mapCache[key]!!
     }
 
-    fun getPossiblePlayerSpawnPositions(map: TiledMap) : Collection<TileLocation>{
+    fun getPossiblePlayerSpawnPositions(map: TiledMap): Collection<TileLocation> {
         return map.getTilesInObject("PLAYER_SPAWN")
 
     }
 
 
-
-    fun getTileMap(name: String, isFragment: Boolean): TiledMap{
-        val precursor = if (isFragment) fragmentsPrecursor else sourceMapPrecursor
-        val key = "${precursor}/${name}"
+    fun getTileMap(name: String, mapType: MapType): TiledMap {
+        val precursor = mapType.filePrefix
+        val key = "$precursor/$name"
         return getTileMapFromFullyQualifiedName(key)
     }
 
-    fun pullTileMapLayer(name: String, isFragment: Boolean, tileLayer: TileLayer): TiledMapTileLayer {
-        return getTileMap(name, isFragment)
+    fun pullTileMapLayer(name: String, mapType: MapType, tileLayer: TileLayer): TiledMapTileLayer {
+        return getTileMap(name, mapType)
                 .getTileLayer(tileLayer)
     }
 
@@ -78,7 +78,7 @@ class TileMapOperationsHandler @Inject constructor(val logicalTileTracker: Logic
                 val fragmentX = x - minX
                 val fragmentY = y - minY
                 val fragmentCell = fragmentMapLayer.getCell(fragmentX, fragmentY)
-                if (fragmentCell != null){
+                if (fragmentCell != null) {
                     gameMapLayer.setCell(x, y, fragmentCell)
 
                 }
@@ -87,17 +87,22 @@ class TileMapOperationsHandler @Inject constructor(val logicalTileTracker: Logic
     }
 }
 
-enum class TileLayer{
-    BASE, FEATURE,
+enum class TileLayer(val layerName: String) {
+    BASE("TerrainLayer"),
+    FEATURE("TerrainFeatures"),
+    CHARACTER_IMAGES("CharacterImages"),
+    TILE_HIGHLIGHT_LAYER_RED("TileHighlightLayerRed"),
+    TILE_HIGHLIGHT_LAYER_BLUE("TileHighlightLayerBlue"),
+    TILE_HIGHLIGHT_LAYER_GREEN("TileHighlightLayerGreen")
 
-    CHARACTER_IMAGES
 }
 
-fun TiledMap.getObjectLayerRectangles(): List<LogicalTiledObject>{
+
+fun TiledMap.getObjectLayerRectangles(): List<LogicalTiledObject> {
     val layer = this.layers["ObjectLayer"]
     val rectangles = layer.objects.getByType(RectangleMapObject::class.java)
     val logicalobjects = ArrayList<LogicalTiledObject>()
-    for (rec in rectangles){
+    for (rec in rectangles) {
         val logicalTiledObject = LogicalTiledObject(Math.round(rec.rectangle.x), Math.round(rec.rectangle.y),
                 Math.round(rec.rectangle.width), Math.round(rec.rectangle.height),
                 rec.name)
@@ -106,12 +111,14 @@ fun TiledMap.getObjectLayerRectangles(): List<LogicalTiledObject>{
     return logicalobjects
 }
 
-fun TiledMap.getTilesInObject(name: String): List<TileLocation>{
+const val TILE_SIZE = 16
+
+fun TiledMap.getTilesInObject(name: String): List<TileLocation> {
     val objectLayerRectangles = this.getObjectLayerRectangles()
-    val rec = objectLayerRectangles.first{it.name == name}
+    val rec = objectLayerRectangles.first { it.name == name }
     val tiles = ArrayList<TileLocation>()
-    for (x in (rec.x / TILE_SIZE) until (rec.x + rec.width)/TILE_SIZE){
-        for (y in (rec.y/TILE_SIZE) until (rec.y + rec.height)/TILE_SIZE){
+    for (x in (rec.x / TILE_SIZE) until (rec.x + rec.width) / TILE_SIZE) {
+        for (y in (rec.y / TILE_SIZE) until (rec.y + rec.height) / TILE_SIZE) {
             tiles.add(TileLocation(x, y))
         }
     }
@@ -121,22 +128,15 @@ fun TiledMap.getTilesInObject(name: String): List<TileLocation>{
 data class LogicalTiledObject(val x: Int, val y: Int, val width: Int, val height: Int, val name: String)
 
 
-fun TiledMap.getTileLayer(layer: TileLayer) : TiledMapTileLayer{
+fun TiledMap.getTileLayer(layer: TileLayer): TiledMapTileLayer {
 
-   val num = when (layer){
-       TileLayer.BASE -> "TerrainLayer"
-       TileLayer.FEATURE -> "TerrainFeatures"
-       TileLayer.CHARACTER_IMAGES -> "CharacterImages"
-   }
-    var mapLayer = this.layers[num]
-    if (mapLayer == null){
-        return this.layers[0] as TiledMapTileLayer
-    }
+    val name = layer.layerName
+    val mapLayer = this.layers[name] ?: return this.layers[0] as TiledMapTileLayer
     return mapLayer as TiledMapTileLayer
 }
 
-private val fragmentsPrecursor = "tilesets/fragments"
-private val sourceMapPrecursor = "tilesets"
+private const val fragmentsPrecursor = "tilesets/fragments"
+private const val sourceMapPrecursor = "tilesets"
 
 object TileMapFragment {
 
@@ -145,6 +145,10 @@ object TileMapFragment {
 
 }
 
-fun TiledMapTileLayer.getTiles() : Set<TiledMapTile>{
+fun TiledMapTileLayer.getTiles(): Set<TiledMapTile> {
     return this.getTiles()
+}
+
+enum class MapType(val filePrefix: String){
+    SOURCE_MAP(sourceMapPrecursor), FRAGMENT_MAP(fragmentsPrecursor), HIGHLIGHT_MAP("tilehighlights")
 }

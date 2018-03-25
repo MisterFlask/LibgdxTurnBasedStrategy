@@ -11,8 +11,11 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.google.inject.assistedinject.Assisted
-import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
+import com.ironlordbyron.turnbasedstrategy.controller.TacticalMapController
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.BattleStarter
+import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -27,9 +30,9 @@ class TileMapActor(@Assisted val tiledMap: TiledMap,
 
 
 @Singleton
-class TileMapClickListenerFactory @Inject constructor(val fragmentCopierProvider: Provider<TileMapOperationsHandler>) {
+class TileMapClickListenerFactory @Inject constructor(val eventNotifier: EventNotifier) {
     fun create(actor: TileMapActor): TileMapClickListener {
-        return TileMapClickListener(actor, fragmentCopierProvider.get())
+        return TileMapClickListener(actor, eventNotifier)
     }
 }
 
@@ -37,14 +40,11 @@ class TileMapClickListenerFactory @Inject constructor(val fragmentCopierProvider
  * Defines action to be performed when user clicks on a tile.
  */
 class TileMapClickListener(@Assisted val actor: TileMapActor,
-                           val fragmentCopier: TileMapOperationsHandler) : ClickListener() {
+                           val eventNotifier: EventNotifier) : ClickListener() {
     override fun touchDown(event: InputEvent, x: Float,
                            y: Float, pointer: Int, button: Int): Boolean {
         println("X: ${actor.location.x}, y: ${actor.location.y}")
-        fragmentCopier.copyFragmentTo("BlankGrass.tmx",
-                minX = actor.location.x,
-                minY = actor.location.y,
-                fragmentName = TileMapFragment.City)
+        eventNotifier.notifyListeners(TacticalGuiEvent.TileClicked(actor.location))
         return false
     }
 }
@@ -58,17 +58,22 @@ class TiledMapStageFactory @Inject constructor(val actorFactory: Provider<ActorF
                                                val logicalTileTracker: LogicalTileTracker,
                                                val characterPuller: CharacterImageManager,
                                                val tileMapOperationsHandler: TileMapOperationsHandler,
-                                               val battleStarter: BattleStarter) {
+                                               val battleStarter: BattleStarter,
+                                               val characterActorFactory: CharacterActorFactory,
+                                               val tileMapProvider: TileMapProvider,
+                                               val tacticalMapController: TacticalMapController,
+                                               val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider) {
     fun create(tiledMap: TiledMap, orthographicCamera: OrthographicCamera): TiledMapStage {
         return TiledMapStage(tiledMap, actorFactory.get(), tileMapClickListenerFactoryProvider.get(),
-                orthographicCamera, logicalTileTracker, characterPuller, tileMapOperationsHandler, battleStarter)
+                orthographicCamera, logicalTileTracker, battleStarter, characterActorFactory,
+                tileMapProvider, tacticalTiledMapStageProvider)
     }
 }
 
 @Singleton
 class ActorFactory @Inject constructor(val fragmentCopierProvider: Provider<TileMapOperationsHandler>) {
-    fun create(tiledMap: TiledMap, tiledLayer: TiledMapTileLayer, cell: TiledMapTileLayer.Cell,
-                      tileLocation: TileLocation): TileMapActor {
+    fun createTileMapActor(tiledMap: TiledMap, tiledLayer: TiledMapTileLayer, cell: TiledMapTileLayer.Cell,
+                           tileLocation: TileLocation): TileMapActor {
         return TileMapActor(tiledMap, tiledLayer, cell, tileLocation,
                 fragmentCopierProvider.get())
     }
@@ -92,22 +97,36 @@ class LogicalTileTracker{
         return tiles.first{it.location == loc}
     }
 }
+
+@Singleton class TacticalTiledMapStageProvider : Provider<TiledMapStage>{
+    override fun get(): TiledMapStage {
+        return tiledMapStage
+    }
+
+    lateinit var tiledMapStage: TiledMapStage
+}
+
 @Singleton
 class TiledMapStage(@Assisted val tiledMap: TiledMap,
                     val actorFactory: ActorFactory,
                     val tileMapClickListenerFactory: TileMapClickListenerFactory,
                     @Assisted val orthographicCamera: OrthographicCamera,
                     val logicalTileTracker: LogicalTileTracker,
-                    val characterPuller: CharacterImageManager,
-                    val tileMapOperationsHandler: TileMapOperationsHandler,
-                    val battleStarter: BattleStarter) : Stage(), InputProcessor {
+                    val battleStarter: BattleStarter,
+                    val characterActorFactory: CharacterActorFactory,
+                    val tileMapProvider: TileMapProvider,
+                    val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider) : Stage(), InputProcessor {
     init {
+        tacticalTiledMapStageProvider.tiledMapStage = this
         val layer = tiledMap.getTileLayer(TileLayer.BASE)
         createActorsAndLocationsForLayer(layer)
-        // TODO: Move out of init function
-        val spriteActorFactory = GameModuleInjector.createSpriteActorFactory()
-        spriteActorFactory.stage = this
+        createFactoriesForStage()
         battleStarter.startBattle()
+    }
+
+    private fun createFactoriesForStage() {
+        characterActorFactory.stage = this
+        tileMapProvider.tiledMap = tiledMap
     }
 
     private fun createActorsAndLocationsForLayer(tiledLayer: TiledMapTileLayer) {
@@ -115,7 +134,7 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
             for (y in 0..tiledLayer.height) {
                 val cell = tiledLayer.getCell(x, y) ?: continue
                 println("Assigning actor to cell ID ${cell.tile.id} at $x $y}")
-                val actor = actorFactory.create(tiledMap, tiledLayer, cell, TileLocation(x, y)
+                val actor = actorFactory.createTileMapActor(tiledMap, tiledLayer, cell, TileLocation(x, y)
                 )
                 actor.setBounds(x * tiledLayer.tileWidth, y * tiledLayer.tileHeight, tiledLayer.tileWidth,
                         tiledLayer.tileHeight)
