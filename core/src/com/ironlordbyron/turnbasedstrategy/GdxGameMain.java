@@ -9,6 +9,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector;
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TiledMapStageFactory;
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.BlankMapGenerator;
@@ -36,10 +37,14 @@ public class GdxGameMain extends ApplicationAdapter  {
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         TiledMapStageFactory tiledMapStageFactory = GameModuleInjector.Companion.createTiledMapStageFactory();
         stage = tiledMapStageFactory.create(tiledMap, camera);
+        stage.setViewport(new FitViewport(800, 480, camera));
         Gdx.input.setInputProcessor(stage);
         stage.getViewport().setCamera(camera);
     }
-
+    @Override
+    public void resize(int width, int height) {
+        stage.getViewport().update(width, height);
+    }
     @Override
     public void render() {
         Gdx.gl.glClearColor(1, 0, 0, 1);

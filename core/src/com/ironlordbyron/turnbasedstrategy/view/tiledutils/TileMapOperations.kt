@@ -111,6 +111,7 @@ fun TiledMap.getObjectLayerRectangles(): List<LogicalTiledObject> {
     return logicalobjects
 }
 
+//TODO
 const val TILE_SIZE = 16
 
 fun TiledMap.getTilesInObject(name: String): List<TileLocation> {
