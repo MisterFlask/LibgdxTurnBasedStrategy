@@ -3,6 +3,9 @@
  <tileset firstgid="1" source="Player0.tsx"/>
  <tileset firstgid="121" source="mountains.tsx"/>
  <tileset firstgid="241" source="Player1.tsx"/>
+ <tileset firstgid="361" source="tilehighlights/red_tile.tsx"/>
+ <tileset firstgid="362" source="tilehighlights/green_tile.tsx"/>
+ <tileset firstgid="363" source="tilehighlights/blue_tile.tsx"/>
  <layer name="Tile Layer 1" width="3" height="3">
   <data encoding="csv">
 244,6,246,

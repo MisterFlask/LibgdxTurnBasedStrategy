@@ -4,8 +4,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTile
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
+import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.Touchable
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.common.TiledTexturePath
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,25 +19,28 @@ data class BoundingRectangle(val x: Int, val y: Int, val width: Int, val height:
 fun TiledMapTile.getBounds(): BoundingRectangle {
     return BoundingRectangle(this.textureRegion.regionX, this.textureRegion.regionY, this.textureRegion.regionWidth, this.textureRegion.regionHeight)
 }
-
-data class LogicalCharacter(val actor: SpriteActor, var tileLocation: TileLocation)
-
 class CharacterImageManager @Inject constructor(val tileMapOperationsHandler: TileMapOperationsHandler,
-                                                val characterActorFactory: CharacterActorFactory,
-                                                val logicalTileTracker: LogicalTileTracker) {
+                                                val spriteActorFactory: SpriteActorFactory,
+                                                val logicalTileTracker: LogicalTileTracker) : CanTransformTextureToActor<SpriteActor> {
+
+    override fun placeSprite(tiledMap: TiledMap, tileLocation: TileLocation, texture: TextureRegion): SpriteActor {
+        return placeCharacterSprite(tiledMap, tileLocation, texture)
+    }
 
     private val characterSpriteSheet = "tilesets/Player0Characters.tmx"
 
     fun getCharacterSprite(): TextureRegion {
-        return tileMapOperationsHandler.pullTextureFromTilemap(characterSpriteSheet, "6", "Player0")
+        return tileMapOperationsHandler.pullTextureFromTilemap(characterSpriteSheet, "0", "Player0")
     }
 
     fun placeCharacterSprite(tiledMap: TiledMap, tileLocation: TileLocation, characterTexture: TextureRegion) : SpriteActor {
-        val logicalTile = logicalTileTracker.getLogicalTileFromLocation(tileLocation)!!
-        val boundingBox = (tiledMap.layers[0] as TiledMapTileLayer).getBoundsOfTile(logicalTile.location)
-        val characterActor = characterActorFactory.createSpriteActor(characterTexture, boundingBox)
+        val boundingBox = (tiledMap.layers[0] as TiledMapTileLayer).getBoundsOfTile(tileLocation)
+        val characterActor = spriteActorFactory.createSpriteActor(characterTexture, boundingBox)
         return characterActor
     }
+}
+interface CanTransformTextureToActor<out T> {
+    fun placeSprite(tiledMap: TiledMap, tileLocation: TileLocation, texture: TextureRegion) : T
 }
 
 private fun TiledMapTileLayer.getBoundsOfTile(tileLocation: TileLocation): BoundingRectangle {
@@ -49,21 +57,33 @@ private val TextureRegion.boundingRectangle: BoundingRectangle
     }
 
 @Singleton
-class CharacterActorFactory @Inject constructor() {
-    lateinit var stage: Stage
-    fun createSpriteActor(texture: TextureRegion, bounds: BoundingRectangle): SpriteActor {
-        val spriteActor = SpriteActor(texture, bounds)
+class SpriteActorFactory @Inject constructor(val stageProvider: TacticalTiledMapStageProvider) {
+    fun createSpriteActor(texture: TextureRegion, bounds: BoundingRectangle, alpha: Float = 1f): SpriteActor {
+        val spriteActor = SpriteActor(texture, bounds, alpha)
 
-        stage.addActor(spriteActor)
+        stageProvider.tiledMapStage.addActor(spriteActor)
         spriteActor.toFront()
         return spriteActor
     }
+
+    fun createSpriteActorForTile(tiledMap: TiledMap, location: TileLocation, textureRegion: TextureRegion,
+                                 alpha: Float = 1f): SpriteActor {
+        val boundingBox = (tiledMap.layers[0] as TiledMapTileLayer).getBoundsOfTile(location)
+        return createSpriteActor(textureRegion, boundingBox, alpha)
+    }
 }
 
-class SpriteActor(texture: TextureRegion, var bounds: BoundingRectangle) : Image(texture) {
+class SpriteActor(val texture: TextureRegion, var bounds: BoundingRectangle,
+                  var alpha: Float = 1f) : Image(texture) {
     init {
         x = bounds.x.toFloat()
         y = bounds.y.toFloat()
+        addAction(Actions.alpha(alpha))
+    }
+
+    override fun hit(x: Float, y: Float, touchable: Boolean): Actor? {
+        super.hit(x, y, touchable)
+        return null
     }
 
 }

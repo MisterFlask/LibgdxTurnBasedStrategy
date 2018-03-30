@@ -16,7 +16,6 @@ import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.BlankMapGenera
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider;
 
 public class GdxGameMain extends ApplicationAdapter  {
-    Texture img;
     TiledMap tiledMap;
     OrthographicCamera camera;
     TiledMapRenderer tiledMapRenderer;

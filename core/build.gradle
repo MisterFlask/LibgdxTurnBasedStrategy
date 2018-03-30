@@ -23,7 +23,15 @@ sourceSets.main.kotlin.srcDirs = ["src/"]
 eclipse.project {
     name = appName + "-core"
 }
+ext {
+    jacksonVersion = "2.8.9"
+}
 dependencies{
+    compile group: 'org.mapeditor', name: 'libtiled', version: '0.17-SNAPSHOT'
+    compile group: 'com.fasterxml', name: 'jackson-xml-databind', version: '0.6.2'
+    compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.9.0'
+    compile(group: "com.fasterxml.jackson.datatype", name: "jackson-datatype-jsr310", version: "2.9.0")
+
     compile "org.jetbrains.kotlin:kotlin-runtime:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-stdlib"
     testCompile "org.jetbrains.kotlin:kotlin-test"

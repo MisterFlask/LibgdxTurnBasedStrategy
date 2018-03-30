@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen
 
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.google.inject.Inject
+import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.*
 import java.util.*
 import javax.inject.Singleton

@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.view.tiledutils
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -11,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.google.inject.assistedinject.Assisted
+import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalMapController
@@ -19,8 +21,6 @@ import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvide
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
-
-data class TileLocation(val x: Int, val y: Int)
 
 class TileMapActor(@Assisted val tiledMap: TiledMap,
                    @Assisted val tiledMapTileLayer: TiledMapTileLayer,
@@ -53,25 +53,25 @@ class TileMapClickListener(@Assisted val actor: TileMapActor,
  * Used internally by Guice.
  */
 @Singleton
-class TiledMapStageFactory @Inject constructor(val actorFactory: Provider<ActorFactory>,
+class TiledMapStageFactory @Inject constructor(val tileMapClickListenerActorFactory: Provider<TileMapClickListenerActorFactory>,
                                                val tileMapClickListenerFactoryProvider: Provider<TileMapClickListenerFactory>,
                                                val logicalTileTracker: LogicalTileTracker,
                                                val characterPuller: CharacterImageManager,
                                                val tileMapOperationsHandler: TileMapOperationsHandler,
                                                val battleStarter: BattleStarter,
-                                               val characterActorFactory: CharacterActorFactory,
+                                               val spriteActorFactory: SpriteActorFactory,
                                                val tileMapProvider: TileMapProvider,
                                                val tacticalMapController: TacticalMapController,
                                                val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider) {
     fun create(tiledMap: TiledMap, orthographicCamera: OrthographicCamera): TiledMapStage {
-        return TiledMapStage(tiledMap, actorFactory.get(), tileMapClickListenerFactoryProvider.get(),
-                orthographicCamera, logicalTileTracker, battleStarter, characterActorFactory,
+        return TiledMapStage(tiledMap, tileMapClickListenerActorFactory.get(), tileMapClickListenerFactoryProvider.get(),
+                orthographicCamera, logicalTileTracker, battleStarter, spriteActorFactory,
                 tileMapProvider, tacticalTiledMapStageProvider)
     }
 }
 
 @Singleton
-class ActorFactory @Inject constructor(val fragmentCopierProvider: Provider<TileMapOperationsHandler>) {
+class TileMapClickListenerActorFactory @Inject constructor(val fragmentCopierProvider: Provider<TileMapOperationsHandler>) {
     fun createTileMapActor(tiledMap: TiledMap, tiledLayer: TiledMapTileLayer, cell: TiledMapTileLayer.Cell,
                            tileLocation: TileLocation): TileMapActor {
         return TileMapActor(tiledMap, tiledLayer, cell, tileLocation,
@@ -81,6 +81,8 @@ class ActorFactory @Inject constructor(val fragmentCopierProvider: Provider<Tile
 
 data class LogicalTile(val tiledTile: TiledMapTile, val location: TileLocation, val actor: TileMapActor,
                               val cell: TiledMapTileLayer.Cell)
+
+data class LibgdxLocation(val x: Int, val y: Int)
 
 @Singleton
 class LogicalTileTracker{
@@ -96,6 +98,12 @@ class LogicalTileTracker{
     fun getLogicalTileFromLocation(loc: TileLocation) : LogicalTile? {
         return tiles.first{it.location == loc}
     }
+
+    fun getLibgdxCoordinatesFromLocation(loc: TileLocation): LibgdxLocation{
+        val tileActor = tiles.first{it.location == loc}.actor
+
+        return LibgdxLocation(tileActor.x.toInt(), tileActor.y.toInt()) // TODO: Verify
+    }
 }
 
 @Singleton class TacticalTiledMapStageProvider : Provider<TiledMapStage>{
@@ -108,12 +116,12 @@ class LogicalTileTracker{
 
 @Singleton
 class TiledMapStage(@Assisted val tiledMap: TiledMap,
-                    val actorFactory: ActorFactory,
+                    val tileMapClickListenerActorFactory: TileMapClickListenerActorFactory,
                     val tileMapClickListenerFactory: TileMapClickListenerFactory,
                     @Assisted val orthographicCamera: OrthographicCamera,
                     val logicalTileTracker: LogicalTileTracker,
                     val battleStarter: BattleStarter,
-                    val characterActorFactory: CharacterActorFactory,
+                    val spriteActorFactory: SpriteActorFactory,
                     val tileMapProvider: TileMapProvider,
                     val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider) : Stage(), InputProcessor {
     init {
@@ -122,10 +130,11 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
         createActorsAndLocationsForLayer(layer)
         createFactoriesForStage()
         battleStarter.startBattle()
+
+        Gdx.input.inputProcessor = this
     }
 
     private fun createFactoriesForStage() {
-        characterActorFactory.stage = this
         tileMapProvider.tiledMap = tiledMap
     }
 
@@ -134,7 +143,7 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
             for (y in 0..tiledLayer.height) {
                 val cell = tiledLayer.getCell(x, y) ?: continue
                 println("Assigning actor to cell ID ${cell.tile.id} at $x $y}")
-                val actor = actorFactory.createTileMapActor(tiledMap, tiledLayer, cell, TileLocation(x, y)
+                val actor = tileMapClickListenerActorFactory.createTileMapActor(tiledMap, tiledLayer, cell, TileLocation(x, y)
                 )
                 actor.setBounds(x * tiledLayer.tileWidth, y * tiledLayer.tileHeight, tiledLayer.tileWidth,
                         tiledLayer.tileHeight)

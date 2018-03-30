@@ -4,6 +4,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.*
 import com.google.inject.Singleton
+import com.ironlordbyron.turnbasedstrategy.common.CharacterTemplates
+import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.view.tiledutils.xml.TilemapXmlProcessor
 import java.util.*
 import javax.inject.Inject
 
@@ -16,7 +19,8 @@ data class TacticalTileMap(val tileMap: TiledMap,
  * and handling direct tilemap instructions.
  */
 @Singleton
-class TileMapOperationsHandler @Inject constructor(val logicalTileTracker: LogicalTileTracker) {
+class TileMapOperationsHandler @Inject constructor(val logicalTileTracker: LogicalTileTracker,
+                                                   val xmlParser: TilemapXmlProcessor) {
     val mapCache = HashMap<String, TiledMap>()
 
     fun copyFragmentTo(gameMapName: String,
@@ -31,14 +35,18 @@ class TileMapOperationsHandler @Inject constructor(val logicalTileTracker: Logic
                 minY)
     }
 
+    fun pullGenericTexture(textureId: String, tileSetName: String) : TextureRegion{
+        return pullTextureFromTilemap(CharacterTemplates.CHARACTER_PLACEHOLDER_TILEMAP_TSX_FILE, textureId, tileSetName)
+    }
 
     fun pullTextureFromTilemap(tileMapWithTextureName: String, textureId: String, tileSetWithTexture: String): TextureRegion {
         val map = getTileMapFromFullyQualifiedName(tileMapWithTextureName)
 
         val tiledMapTileSets = map.tileSets
-        val set = tiledMapTileSets.getTileSet(tileSetWithTexture)
-        val tile = set.getTile(Integer.valueOf(textureId))
-
+        val set = tiledMapTileSets.getTileSet(tileSetWithTexture) ?: throw IllegalStateException("Could not find set at map $tileMapWithTextureName, set $tileSetWithTexture")
+        val firstgid = xmlParser.getTilesetFirstgid(tileMapWithTextureName, tileSetWithTexture)
+        val tile = set.getTile(Integer.valueOf(textureId) + Integer.valueOf(firstgid)) ?: throw IllegalStateException("Could not find tile at map $tileMapWithTextureName, set $tileSetWithTexture, id $textureId ." +
+                "Only keys found were ${set.asIterable().map{it.id}}")
 
         val textureRegion = tile.textureRegion
         return textureRegion

@@ -2,7 +2,6 @@ package com.ironlordbyron.turnbasedstrategy.guice
 
 import com.google.inject.AbstractModule
 import com.google.inject.Guice
-import com.google.inject.Provider
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.BlankMapGenerator
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
@@ -19,8 +18,8 @@ class GameModuleInjector {
             return moduleInjector.getInstance(TileMapOperationsHandler::class.java)
         }
 
-        fun createSpriteActorFactory() : CharacterActorFactory {
-            return moduleInjector.getInstance(CharacterActorFactory::class.java)
+        fun createSpriteActorFactory() : SpriteActorFactory {
+            return moduleInjector.getInstance(SpriteActorFactory::class.java)
         }
 
         fun createGameStateProvider(): TileMapProvider {

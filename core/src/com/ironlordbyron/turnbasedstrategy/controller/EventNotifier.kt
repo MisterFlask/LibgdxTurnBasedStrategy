@@ -1,6 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.controller
 
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TileLocation
+import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import javax.inject.Singleton
 
 /**
