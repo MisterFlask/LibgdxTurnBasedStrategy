@@ -16,7 +16,7 @@ import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalMapController
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.BattleStarter
+import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TempBattleStarter
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
 import javax.inject.Inject
 import javax.inject.Provider
@@ -58,7 +58,7 @@ class TiledMapStageFactory @Inject constructor(val tileMapClickListenerActorFact
                                                val logicalTileTracker: LogicalTileTracker,
                                                val characterPuller: CharacterImageManager,
                                                val tileMapOperationsHandler: TileMapOperationsHandler,
-                                               val battleStarter: BattleStarter,
+                                               val battleStarter: TempBattleStarter,
                                                val spriteActorFactory: SpriteActorFactory,
                                                val tileMapProvider: TileMapProvider,
                                                val tacticalMapController: TacticalMapController,
@@ -79,34 +79,55 @@ class TileMapClickListenerActorFactory @Inject constructor(val fragmentCopierPro
     }
 }
 
-data class LogicalTile(val tiledTile: TiledMapTile, val location: TileLocation, val actor: TileMapActor,
-                              val cell: TiledMapTileLayer.Cell)
+data class LogicalTile(val terrainTile: TiledMapTile, val location: TileLocation, val actor: TileMapActor,
+                       val cell: TiledMapTileLayer.Cell, val allTilesAtThisSquare: List<TiledMapStage.TiledCellAgglomerate>) {
+    fun isTerrainMountainous(): Boolean {
+        return layerHasBooleanPropertySetToTrue(TileLayer.FEATURE, "mountain")
+    }
+
+    fun layerHasBooleanPropertySetToTrue(layer: TileLayer, property: String): Boolean {
+        val prop = allTilesAtThisSquare
+                .firstOrNull { it.tileLayer == layer }
+                ?.tiledCell?.tile?.properties?.get(property)
+        if (prop == null) {
+            return false
+        }
+        if (prop is Boolean) {
+            return prop
+        } else {
+            throw IllegalStateException("Property $property should be a boolean, but it's a ${prop.javaClass.name}")
+        }
+
+    }
+}
 
 data class LibgdxLocation(val x: Int, val y: Int)
 
 @Singleton
-class LogicalTileTracker{
+class LogicalTileTracker {
     val tiles = ArrayList<LogicalTile>()
 
-    fun addTile(logicalTile: LogicalTile){
+    fun addTile(logicalTile: LogicalTile) {
         tiles.add(logicalTile)
     }
 
     fun getLogicalTileFromTile(tile: TiledMapTile): LogicalTile {
-        return tiles.first{it.tiledTile === tile}
-    }
-    fun getLogicalTileFromLocation(loc: TileLocation) : LogicalTile? {
-        return tiles.first{it.location == loc}
+        return tiles.first { it.terrainTile === tile }
     }
 
-    fun getLibgdxCoordinatesFromLocation(loc: TileLocation): LibgdxLocation{
-        val tileActor = tiles.first{it.location == loc}.actor
+    fun getLogicalTileFromLocation(loc: TileLocation): LogicalTile? {
+        return tiles.first { it.location == loc }
+    }
+
+    fun getLibgdxCoordinatesFromLocation(loc: TileLocation): LibgdxLocation {
+        val tileActor = tiles.first { it.location == loc }.actor
 
         return LibgdxLocation(tileActor.x.toInt(), tileActor.y.toInt()) // TODO: Verify
     }
 }
 
-@Singleton class TacticalTiledMapStageProvider : Provider<TiledMapStage>{
+@Singleton
+class TacticalTiledMapStageProvider : Provider<TiledMapStage> {
     override fun get(): TiledMapStage {
         return tiledMapStage
     }
@@ -120,34 +141,46 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
                     val tileMapClickListenerFactory: TileMapClickListenerFactory,
                     @Assisted val orthographicCamera: OrthographicCamera,
                     val logicalTileTracker: LogicalTileTracker,
-                    val battleStarter: BattleStarter,
+                    val battleStarter: TempBattleStarter,
                     val spriteActorFactory: SpriteActorFactory,
                     val tileMapProvider: TileMapProvider,
                     val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider) : Stage(), InputProcessor {
     init {
         tacticalTiledMapStageProvider.tiledMapStage = this
         val layer = tiledMap.getTileLayer(TileLayer.BASE)
-        createActorsAndLocationsForLayer(layer)
+        createActorsAndLocationsForLayer(layer, tiledMap)
         createFactoriesForStage()
         battleStarter.startBattle()
-
-        Gdx.input.inputProcessor = this
     }
 
     private fun createFactoriesForStage() {
         tileMapProvider.tiledMap = tiledMap
     }
 
-    private fun createActorsAndLocationsForLayer(tiledLayer: TiledMapTileLayer) {
+    private fun getAllTilesAtXY(tileMap: TiledMap, tileLocation: TileLocation): List<TiledCellAgglomerate> {
+        val layers = tileMap.layers
+                .filter { it is TiledMapTileLayer }
+                .map { it as TiledMapTileLayer }
+                .filter { it.getCell(tileLocation.x, tileLocation.y) != null }
+                .filter { TileLayer.getTileLayerFromName(it.name) != null }
+                .map { TiledCellAgglomerate(it.getCell(tileLocation.x, tileLocation.y), TileLayer.getTileLayerFromName(it.name)!!) }
+        return layers
+    }
+
+    data class TiledCellAgglomerate(val tiledCell: TiledMapTileLayer.Cell, val tileLayer: TileLayer)
+
+    private fun createActorsAndLocationsForLayer(tiledLayer: TiledMapTileLayer, tiledMap: TiledMap) {
+
         for (x in 0..tiledLayer.width) {
             for (y in 0..tiledLayer.height) {
                 val cell = tiledLayer.getCell(x, y) ?: continue
                 println("Assigning actor to cell ID ${cell.tile.id} at $x $y}")
-                val actor = tileMapClickListenerActorFactory.createTileMapActor(tiledMap, tiledLayer, cell, TileLocation(x, y)
+                val actor = tileMapClickListenerActorFactory.createTileMapActor(this.tiledMap, tiledLayer, cell, TileLocation(x, y)
                 )
                 actor.setBounds(x * tiledLayer.tileWidth, y * tiledLayer.tileHeight, tiledLayer.tileWidth,
                         tiledLayer.tileHeight)
-                logicalTileTracker.addTile(LogicalTile(cell.tile, TileLocation(x,y), actor, cell))
+                logicalTileTracker.addTile(LogicalTile(cell.tile, TileLocation(x, y), actor, cell,
+                        getAllTilesAtXY(tiledMap, TileLocation(x, y))))
                 addActor(actor)
                 val eventListener = tileMapClickListenerFactory.create(actor)
                 actor.addListener(eventListener)

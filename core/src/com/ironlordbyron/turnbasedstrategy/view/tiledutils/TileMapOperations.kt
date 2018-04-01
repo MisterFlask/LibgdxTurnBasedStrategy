@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.view.tiledutils
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.maps.MapProperties
 import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.*
 import com.google.inject.Singleton
@@ -62,8 +63,10 @@ class TileMapOperationsHandler @Inject constructor(val logicalTileTracker: Logic
     }
 
     fun getPossiblePlayerSpawnPositions(map: TiledMap): Collection<TileLocation> {
-        return map.getTilesInObject("PLAYER_SPAWN")
-
+        return map.getTilesInObjectByType("PLAYER_SPAWN")
+    }
+    fun getPossibleEnemySpawnPositions(map: TiledMap) : Collection<TileLocation> {
+        return map.getTilesInObjectByType("ENEMY_SPAWN")
     }
 
 
@@ -101,8 +104,13 @@ enum class TileLayer(val layerName: String) {
     CHARACTER_IMAGES("CharacterImages"),
     TILE_HIGHLIGHT_LAYER_RED("TileHighlightLayerRed"),
     TILE_HIGHLIGHT_LAYER_BLUE("TileHighlightLayerBlue"),
-    TILE_HIGHLIGHT_LAYER_GREEN("TileHighlightLayerGreen")
+    TILE_HIGHLIGHT_LAYER_GREEN("TileHighlightLayerGreen");
 
+    companion object{
+        fun getTileLayerFromName(s : String): TileLayer? {
+            return TileLayer.values().firstOrNull{it.layerName == s}
+        }
+    }
 }
 
 
@@ -111,9 +119,10 @@ fun TiledMap.getObjectLayerRectangles(): List<LogicalTiledObject> {
     val rectangles = layer.objects.getByType(RectangleMapObject::class.java)
     val logicalobjects = ArrayList<LogicalTiledObject>()
     for (rec in rectangles) {
+
         val logicalTiledObject = LogicalTiledObject(Math.round(rec.rectangle.x), Math.round(rec.rectangle.y),
                 Math.round(rec.rectangle.width), Math.round(rec.rectangle.height),
-                rec.name)
+                rec.name, rec.properties, rec.properties["type"] as String)
         logicalobjects.add(logicalTiledObject)
     }
     return logicalobjects
@@ -122,9 +131,12 @@ fun TiledMap.getObjectLayerRectangles(): List<LogicalTiledObject> {
 //TODO
 const val TILE_SIZE = 16
 
-fun TiledMap.getTilesInObject(name: String): List<TileLocation> {
+data class TiledObjectIdentifier(val boundingRectangle: BoundingRectangle, val properties : Map<String, String>)
+
+
+fun TiledMap.getTilesInObjectByType(type: String): List<TileLocation> {
     val objectLayerRectangles = this.getObjectLayerRectangles()
-    val rec = objectLayerRectangles.first { it.name == name }
+    val rec = objectLayerRectangles.first { it.properties["type"] == type }
     val tiles = ArrayList<TileLocation>()
     for (x in (rec.x / TILE_SIZE) until (rec.x + rec.width) / TILE_SIZE) {
         for (y in (rec.y / TILE_SIZE) until (rec.y + rec.height) / TILE_SIZE) {
@@ -134,8 +146,8 @@ fun TiledMap.getTilesInObject(name: String): List<TileLocation> {
     return tiles
 }
 
-data class LogicalTiledObject(val x: Int, val y: Int, val width: Int, val height: Int, val name: String)
-
+data class LogicalTiledObject(val x: Int, val y: Int, val width: Int, val height: Int, val name: String,
+                              val properties: MapProperties, val type: String)
 
 fun TiledMap.getTileLayer(layer: TileLayer): TiledMapTileLayer {
 

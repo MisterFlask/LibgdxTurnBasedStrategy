@@ -1,11 +1,11 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.ironlordbyron.turnbasedstrategy.common.CharacterTemplates.CHARACTER_PLACEHOLDER_TILEMAP_TSX_FILE
+import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
 import javax.inject.Inject
@@ -13,9 +13,14 @@ import javax.inject.Singleton
 
 
 
-data class TacMapUnitTemplate(val movesPerTurn: Int, val tiledTexturePath: TiledTexturePath) {
+data class TacMapUnitTemplate(val movesPerTurn: Int,
+                              val tiledTexturePath: TiledTexturePath,
+                              val attackRadius: Int = 1,
+                              val attackDamage: Int = 1,
+                              val templateName: String ="Peasant") {
     companion object TacMapUnit {
         val DEFAULT_UNIT = TacMapUnitTemplate(8, TiledTexturePath("6"))
+        val DEFAULT_ENEMY_UNIT = TacMapUnitTemplate(8, TiledTexturePath("7"))
     }
 }
 
@@ -33,8 +38,20 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
                                             val stageProvider: TacticalTiledMapStageProvider,
                                             val logicalTileTracker: LogicalTileTracker,
                                             val imageActorFactory: SpriteActorFactory,
-                                            val boardState: BoardState) {
+                                            val boardState: TacticalMapState) : EventListener {
+    override fun consumeEvent(event: TacticalGuiEvent) {
+        when (event){
+            is TacticalGuiEvent.EndTurnButtonClicked -> endTurn()
+        }
+    }
 
+    private fun endTurn() {
+        println("End turn clicked.  TODO!")
+    }
+
+    init{
+        eventNotifier.registerListener(this)
+    }
     private val listOfHighlights = ArrayList<Actor>()
 
     fun moveCharacterToTile(character: LogicalCharacter, toTile: TileLocation) {
@@ -48,10 +65,10 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
         character.actor.remove()
     }
 
-    fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation) {
+    fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) {
         val actor = characterImageManager.placeCharacterSprite(tileMapProvider.tiledMap, tileLocation,
                 tileMapOperationsHandler.pullTextureFromTilemap(CHARACTER_PLACEHOLDER_TILEMAP_TSX_FILE, tacMapUnit.tiledTexturePath.spriteId, tacMapUnit.tiledTexturePath.tileSetName))
-        boardState.listOfCharacters.add(LogicalCharacter(actor, tileLocation, TacMapUnitTemplate.DEFAULT_UNIT))
+        boardState.listOfCharacters.add(LogicalCharacter(actor, tileLocation, TacMapUnitTemplate.DEFAULT_UNIT, playerControlled))
 
     }
 
@@ -72,10 +89,6 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
             listOfHighlights.add(actor)
 
         }
-    }
-
-    fun canUnitMoveTo(location: TileLocation, unit: LogicalCharacter): Boolean {
-        return true // TODO
     }
 
 }

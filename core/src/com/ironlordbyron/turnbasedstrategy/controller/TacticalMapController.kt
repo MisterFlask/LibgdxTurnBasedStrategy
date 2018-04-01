@@ -14,8 +14,8 @@ sealed class BoardInputState{
  */
 @Singleton
 class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoardOperator,
-                                                eventNotifier: EventNotifier,
-                                                val boardState: BoardState) : EventListener {
+                                                val eventNotifier: EventNotifier,
+                                                val boardState: TacticalMapState) : EventListener {
 
     var boardInputState : BoardInputState = BoardInputState.DefaultState
 
@@ -36,6 +36,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
         gameBoardOperator.killHighlights()
         if (character != null){
             selectCharacterInTacMap(character)
+            eventNotifier.notifyListeners(TacticalGuiEvent.CharacterSelected(character))
         }else{
             val currentBoardInputState = boardInputState
             when(currentBoardInputState){
@@ -47,12 +48,22 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
 
     private fun selectCharacterInTacMap(character: LogicalCharacter) {
         boardInputState = BoardInputState.UnitSelected(character)
-        val tilesToHighlight = boardState.getTileLocationsUpToNAway(character.tacMapUnit.movesPerTurn, character.tileLocation)
-        gameBoardOperator.highlightTiles(tilesToHighlight, HighlightType.GREEN_TILE)
+        if (character.playerControlled){
+            val tilesToHighlight = boardState.getWhereCharacterCanMoveTo(character)
+            gameBoardOperator.highlightTiles(tilesToHighlight, HighlightType.GREEN_TILE)
+        }
+    }
+
+
+    fun canUnitMoveTo(location: TileLocation, unit: LogicalCharacter): Boolean {
+        if (!unit.playerControlled){
+            return false // TODO: Inelegant
+        }
+        return boardState.getWhereCharacterCanMoveTo(unit).contains(location)
     }
 
     private fun moveUnitIfAble(unit: LogicalCharacter, location: TileLocation) {
-        if (gameBoardOperator.canUnitMoveTo(location, unit)){
+        if (canUnitMoveTo(location, unit)){
             gameBoardOperator.moveCharacterToTile(unit, location);
         }
     }

@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.controller
 
+import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import javax.inject.Singleton
 
@@ -26,5 +27,7 @@ public class EventNotifier(){
 
 
 sealed class TacticalGuiEvent{
-    class TileClicked(val tileLocation: TileLocation) : TacticalGuiEvent()
+    data class CharacterSelected(val character: LogicalCharacter) : TacticalGuiEvent()
+    data class TileClicked(val tileLocation: TileLocation) : TacticalGuiEvent()
+    class EndTurnButtonClicked() : TacticalGuiEvent()
 }
