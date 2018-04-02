@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea
+import com.badlogic.gdx.scenes.scene2d.ui.Window
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.FitViewport
@@ -20,6 +21,9 @@ import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalMapController
+import com.kotcrab.vis.ui.VisUI
+import com.kotcrab.vis.ui.widget.VisLabel
+import com.kotcrab.vis.ui.widget.VisWindow
 import ktx.scene2d.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -27,8 +31,9 @@ import javax.inject.Singleton
 /**
  * Created by Aaron on 3/30/2018.
  */
-val mySkin: Skin = Skin(Gdx.files.internal("tactical-ui/neonui/neonui/neon-ui.json"))
 
+//val mySkin: Skin = Skin(Gdx.files.internal("tactical-ui/vis/skin/x2/uiskin.json"))
+val mySkin : Skin? = null
 @Singleton
 class TacMapHudFactory @Inject constructor(val eventNotifier: EventNotifier,
                                            val tacticalMapState: TacticalMapState) {
@@ -41,51 +46,58 @@ class TacMapHudFactory @Inject constructor(val eventNotifier: EventNotifier,
 class TacMapHud(viewPort: Viewport,
                 val eventNotifier: EventNotifier,
                 val tacticalMapState: TacticalMapState) : Stage(viewPort), EventListener {
+    init{
+        VisUI.load();
+    }
     override fun consumeEvent(event: TacticalGuiEvent) {
         when (event) {
             is TacticalGuiEvent.CharacterSelected -> {
                 selectedUnitDescription?.setText(describeCharacter(event.character))
-                selectedUnitDescription?.setScale(3.5f)
+                selectedUnitDescription?.invalidate()
+                selectedUnitDescription?.pack()
             }
         }
     }
+    lateinit var window: VisWindow
 
     private fun describeCharacter(character: LogicalCharacter): String {
         return "Moves per turn: $character.tacMapUnit.movesPerTurn"
     }
 
-    var selectedUnitDescription: Label? = null
+    var selectedUnitDescription: VisLabel? = null
 
     init {
         eventNotifier.registerListener(this)
 
         this.isDebugAll = true
-        Scene2DSkin.defaultSkin = mySkin
+
 
         val actor =
-                table {
-                    setFillParent(true)
-
-                    add(label("Hello world!")).top().left()
-                    row()
-                    add(label("2asdfasdfas3 asdfasdf asdf asdfasdf asdf asdf asdf asdf") {
-                        setWrap(true)
-                        selectedUnitDescription = this
-                    }).width(300f)
-                    row().expandY()
-                    add(button { button ->
-                        label("End Turn")
-                        this.addListener(object : ClickListener() {
-                            override fun clicked(event: InputEvent?, x: Float, y: Float) {
-                                eventNotifier.notifyListeners(TacticalGuiEvent.EndTurnButtonClicked())
-                            }
-                        });
-                    }).left()
+                VisWindow("UI Window").let {
+                    it.width = 240f
+                    it.height = 400f
+                    it.add(missionObjectivesLabel()).prefWidth(width)
+                    it.row()
+                    it.add(selectedUnitDescription()).fill().expand()
+                    it
                 }
-        actor.x = 300f
-        actor.width = 300f
+        window = actor
+
+        actor.x = 650f
+        actor.y = 500f
+
 
         this.addActor(actor)
+    }
 
+    private fun missionObjectivesLabel(): Label {
+        val label = VisLabel("Mission Objectives")
+        return label
+    }
+    private fun selectedUnitDescription(): Label {
+        val label = VisLabel("")
+        label.setWrap(true)
+        selectedUnitDescription = label
+        return label
     }
 }

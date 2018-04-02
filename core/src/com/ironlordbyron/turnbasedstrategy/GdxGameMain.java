@@ -21,6 +21,13 @@ import com.ironlordbyron.turnbasedstrategy.view.ui.TacMapHudFactory;
 import com.sun.prism.image.ViewPort;
 
 public class GdxGameMain extends ApplicationAdapter  {
+    private final static int GAME_WIDTH = 800;
+    private final static int GAME_HEIGHT = 500;
+
+    private final static int WINDOW_WIDTH = 800;
+    private final static int WINDOW_HEIGHT = 500;
+
+
     TiledMap tiledMap;
     OrthographicCamera tacMapCamera;
     TiledMapRenderer tiledMapRenderer;
@@ -29,6 +36,9 @@ public class GdxGameMain extends ApplicationAdapter  {
     OrthographicCamera hudCamera;
     @Override
     public void create() {
+        Gdx.graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT);
+
+
         float w = Gdx.graphics.getWidth();
         float h = Gdx.graphics.getHeight();
 
@@ -44,8 +54,7 @@ public class GdxGameMain extends ApplicationAdapter  {
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         TiledMapStageFactory tiledMapStageFactory = GameModuleInjector.Companion.createTiledMapStageFactory();
         tiledMapStage = tiledMapStageFactory.create(tiledMap, tacMapCamera);
-        FitViewport tiledMapViewport = new FitViewport(800, 480, tacMapCamera);
-        tiledMapViewport.setScreenWidth(400);
+        FitViewport tiledMapViewport = new FitViewport(GAME_WIDTH, GAME_HEIGHT, tacMapCamera);
         tiledMapStage.setViewport(tiledMapViewport);
         tiledMapStage.getViewport().setCamera(tacMapCamera);
 
@@ -54,7 +63,7 @@ public class GdxGameMain extends ApplicationAdapter  {
         hudCamera.translate(500f, 0f);
 
         TacMapHudFactory tacMapHudFactory = GameModuleInjector.Companion.createTacMapHudFactory();
-        hudStage = tacMapHudFactory.create(new FitViewport(800, 480, hudCamera));
+        hudStage = tacMapHudFactory.create(new FitViewport(GAME_WIDTH, GAME_HEIGHT, hudCamera));
         hudCamera.update();
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(hudStage);
