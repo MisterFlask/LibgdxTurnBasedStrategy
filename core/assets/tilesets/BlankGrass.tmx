@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.3" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextobjectid="9">
+<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="10">
  <tileset firstgid="1" source="strategicTileset.tsx"/>
  <tileset firstgid="337" source="mountains.tsx"/>
  <tileset firstgid="457" source="Player1.tsx"/>
@@ -7,7 +7,7 @@
  <tileset firstgid="697" source="tilehighlights/green_tile.tsx"/>
  <tileset firstgid="698" source="tilehighlights/blue_tile.tsx"/>
  <tileset firstgid="699" source="tilehighlights/red_tile.tsx"/>
- <layer name="TerrainLayer" width="30" height="30">
+ <layer id="1" name="TerrainLayer" width="30" height="30">
   <data encoding="csv">
 18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
 18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,
@@ -41,7 +41,7 @@
 18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18,18
 </data>
  </layer>
- <layer name="TerrainFeatures" width="30" height="30">
+ <layer id="2" name="TerrainFeatures" width="30" height="30">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -75,7 +75,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer name="Markers" width="30" height="30">
+ <layer id="3" name="Markers" width="30" height="30">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -109,14 +109,19 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup name="ObjectLayer">
+ <objectgroup id="4" name="ObjectLayer">
   <object id="4" name="PLAYER_SPAWN" x="128" y="16" width="224" height="48">
    <properties>
     <property name="type" value="PLAYER_SPAWN"/>
    </properties>
   </object>
+  <object id="9" name="PLAYER_SPAWN" x="96" y="369" width="224" height="48">
+   <properties>
+    <property name="type" value="ENEMY_SPAWN"/>
+   </properties>
+  </object>
  </objectgroup>
- <layer name="CharacterImages" width="30" height="30">
+ <layer id="5" name="CharacterImages" width="30" height="30">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -150,7 +155,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer name="TileHighlightLayerBlue" width="30" height="30" opacity="0.5">
+ <layer id="6" name="TileHighlightLayerBlue" width="30" height="30" opacity="0.5">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -184,7 +189,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer name="TileHighlightLayerRed" width="30" height="30" opacity="0.5">
+ <layer id="7" name="TileHighlightLayerRed" width="30" height="30" opacity="0.5">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -218,7 +223,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer name="TileHighlightLayerGreen" width="30" height="30" opacity="0.5">
+ <layer id="8" name="TileHighlightLayerGreen" width="30" height="30" opacity="0.5">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

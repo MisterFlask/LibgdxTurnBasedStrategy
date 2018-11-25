@@ -13,7 +13,7 @@ buildscript {
 apply plugin: "java"
 apply plugin: 'kotlin'
 ext.kotlin_version = '1.2.30'
-
+ext.visuiVersion = '1.4.1'
 sourceCompatibility = 1.6
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
@@ -31,7 +31,7 @@ dependencies{
     compile group: 'com.fasterxml', name: 'jackson-xml-databind', version: '0.6.2'
     compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.9.0'
     compile(group: "com.fasterxml.jackson.datatype", name: "jackson-datatype-jsr310", version: "2.9.0")
-
+    compile "com.kotcrab.vis:vis-ui:$visuiVersion"
     compile "org.jetbrains.kotlin:kotlin-runtime:$kotlin_version"
     compile "org.jetbrains.kotlin:kotlin-stdlib"
     testCompile "org.jetbrains.kotlin:kotlin-test"

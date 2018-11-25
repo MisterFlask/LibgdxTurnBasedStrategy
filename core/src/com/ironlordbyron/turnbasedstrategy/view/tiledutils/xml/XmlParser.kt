@@ -6,7 +6,6 @@ import com.fasterxml.jackson.xml.XmlMapper
 import com.fasterxml.jackson.xml.annotate.JacksonXmlProperty
 import com.fasterxml.jackson.xml.annotate.JacksonXmlElementWrapper
 import org.w3c.dom.NodeList
-import sun.plugin.javascript.navig4.Layer
 import java.io.FileInputStream
 import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory

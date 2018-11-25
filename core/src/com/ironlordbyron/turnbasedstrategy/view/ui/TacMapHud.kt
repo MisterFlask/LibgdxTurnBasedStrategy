@@ -3,13 +3,12 @@ package com.ironlordbyron.turnbasedstrategy.view.ui
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Event
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
-import com.badlogic.gdx.scenes.scene2d.ui.TextArea
-import com.badlogic.gdx.scenes.scene2d.ui.Window
+import com.badlogic.gdx.scenes.scene2d.ui.*
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.FitViewport
@@ -23,8 +22,8 @@ import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalMapController
 import com.kotcrab.vis.ui.VisUI
 import com.kotcrab.vis.ui.widget.VisLabel
+import com.kotcrab.vis.ui.widget.VisTextButton
 import com.kotcrab.vis.ui.widget.VisWindow
-import ktx.scene2d.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -79,6 +78,8 @@ class TacMapHud(viewPort: Viewport,
                     it.add(missionObjectivesLabel()).prefWidth(width)
                     it.row()
                     it.add(selectedUnitDescription()).fill().expand()
+                    it.row()
+                    it.add(endTurnButton())
                     it
                 }
         window = actor
@@ -99,5 +100,16 @@ class TacMapHud(viewPort: Viewport,
         label.setWrap(true)
         selectedUnitDescription = label
         return label
+    }
+    private fun endTurnButton() : Button {
+        val button = VisTextButton("End Turn")
+        val clickListener = object : ClickListener(){
+            override fun clicked(event: InputEvent?, x: Float, y: Float) {
+                eventNotifier.notifyListeners((TacticalGuiEvent.EndTurnButtonClicked()))
+                super.clicked(event, x, y)
+            }
+        }
+        button.addListener(clickListener)
+        return button
     }
 }
