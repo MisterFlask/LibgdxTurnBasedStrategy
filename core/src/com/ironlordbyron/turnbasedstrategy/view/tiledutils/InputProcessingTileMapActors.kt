@@ -122,12 +122,12 @@ class LogicalTileTracker {
         tiles.add(logicalTile)
     }
 
-    fun getLogicalTileFromTile(tile: TiledMapTile): LogicalTile {
-        return tiles.first { it.terrainTile === tile }
+    fun getLogicalTileFromTile(tile: TiledMapTile): LogicalTile? {
+        return tiles.firstOrNull { it.terrainTile === tile }
     }
 
     fun getLogicalTileFromLocation(loc: TileLocation): LogicalTile? {
-        return tiles.first { it.location == loc }
+        return tiles.firstOrNull { it.location == loc }
     }
 
     fun getLibgdxCoordinatesFromLocation(loc: TileLocation): LibgdxLocation {
@@ -137,10 +137,10 @@ class LogicalTileTracker {
     }
 
     fun height() : Int{
-        return tiles.maxBy{it.location.y}!!.location.y
+        return tiles.maxBy{it.location.y}!!.location.y + 1
     }
     fun width() : Int{
-        return tiles.maxBy{it.location.x}!!.location.x
+        return tiles.maxBy{it.location.x}!!.location.x + 1
     }
 }
 

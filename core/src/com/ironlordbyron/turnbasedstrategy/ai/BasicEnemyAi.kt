@@ -24,7 +24,17 @@ public class BasicEnemyAi(val tileMapOperationsHandler: TileMapOperationsHandler
         if (closestEnemy == null){
             return null
         }
-        val pathToEnemy = aiGridGraph.acquireBestPathTo(thisCharacter, closestEnemy.tileLocation)
+
+        // TODO; this doesn't exactly work how i want, but it's a low priority for fixing.
+        val targetEndTile = aiGridGraph.findClosestUnoccupiedTileTo(closestEnemy.tileLocation, allowEndingOnLastTile = false)
+        if (targetEndTile == null){
+            println("WARNING: Could not acquire target tile for ai.")
+            return null
+        }
+
+        val pathToEnemy = aiGridGraph.acquireBestPathTo(thisCharacter, targetEndTile,
+                allowEndingOnLastTile = true)
+
         if (pathToEnemy == null){
             return null
         }
