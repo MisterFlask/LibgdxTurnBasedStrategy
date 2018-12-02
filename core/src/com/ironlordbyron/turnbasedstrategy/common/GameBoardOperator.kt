@@ -12,6 +12,7 @@ import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActionRunner
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import com.ironlordbyron.turnbasedstrategy.view.animation.foreverHighlightBlinking
+import com.ironlordbyron.turnbasedstrategy.view.animation.temporaryHighlightBlinking
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
 import javax.inject.Inject
@@ -55,11 +56,13 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
             val nextActions = ai.getNextActions(enemyCharacter);
             for (action in nextActions){
                 when(action){
-                    is AiPlannedAction.MoveToTile -> (moveCharacterToTile(enemyCharacter, action.to, true))
+                    is AiPlannedAction.MoveToTile -> moveCharacterToTile(enemyCharacter, action.to, true,
+                            wasPlayerInitiated = false)
                 }
             }
         }
         eventNotifier.notifyListeners(TacticalGuiEvent.FinishedEnemyTurn())
+        println("Action queue has elements: $actionQueue")
         actionRunner.runThroughActionQueue(actionQueue, finalAction = {})
         actionQueue = ArrayList()
     }
@@ -71,7 +74,16 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
     private val listOfHighlights = ArrayList<Actor>()
 
     // moves the character to the given tile logically, and returns the actor/action pair for animation purposes.
-    fun moveCharacterToTile(character: LogicalCharacter, toTile: TileLocation, waitOnQueuedActions: Boolean) : ActorActionPair{
+    fun moveCharacterToTile(character: LogicalCharacter, toTile: TileLocation, waitOnQueuedActions: Boolean,
+                            wasPlayerInitiated: Boolean){
+        if (!wasPlayerInitiated) {
+            // first, show the player where the ai COULD move to
+            val tilesToHighlight = boardState.getWhereCharacterCanMoveTo(character)
+            val actorActionPairForHighlights = getTileHighlightActorActionPairs(tilesToHighlight, HighlightType.RED_TILE)
+            actionQueue.add(actorActionPairForHighlights)
+        }
+
+        // next, move the character.
         character.tileLocation = toTile
         val libgdxLocation = logicalTileTracker.getLibgdxCoordinatesFromLocation(toTile)
         var moveAction : Action = Actions.moveTo(libgdxLocation.x.toFloat(), libgdxLocation.y.toFloat(), .5f)
@@ -82,7 +94,6 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
             actionRunner.runThroughActionQueue(actionQueue, finalAction = {})
             actionQueue = ArrayList()
         }
-        return result
 
     }
 
@@ -104,24 +115,45 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
     }
 
     public enum class ActionGeneratorType{
-        HIGHLIGHT_FOREVER
+        HIGHLIGHT_UNTIL_FURTHER_NOTICE
     }
 
     fun highlightTiles(tiles: Collection<TileLocation>,
                        highlightType: HighlightType,
-                       actionGenerator: ActionGeneratorType = ActionGeneratorType.HIGHLIGHT_FOREVER) {
+                       actionGenerator: ActionGeneratorType = ActionGeneratorType.HIGHLIGHT_UNTIL_FURTHER_NOTICE) {
         val texture = tileMapOperationsHandler.pullGenericTexture(
                 highlightType.tiledTexturePath.spriteId,
                 highlightType.tiledTexturePath.tileSetName)
         for (location in tiles) {
             val actionToApply = when(actionGenerator){
-                ActionGeneratorType.HIGHLIGHT_FOREVER -> foreverHighlightBlinking()
+                ActionGeneratorType.HIGHLIGHT_UNTIL_FURTHER_NOTICE -> foreverHighlightBlinking()
             }
             val actor = imageActorFactory.createSpriteActorForTile(tileMapProvider.tiledMap, location, texture,
                     alpha = .5f)
             actor.addAction(actionToApply)
             listOfHighlights.add(actor)
         }
+    }
+
+    fun getTileHighlightActorActionPairs(tiles: Collection<TileLocation>,
+                                         highlightType: HighlightType) : ActorActionPair{
+        val actorActionPairList = ArrayList<ActorActionPair>()
+        val texture = tileMapOperationsHandler.pullGenericTexture(
+                highlightType.tiledTexturePath.spriteId,
+                highlightType.tiledTexturePath.tileSetName)
+        for (location in tiles) {
+            val action = temporaryHighlightBlinking()
+            val actor = imageActorFactory.createSpriteActorForTile(tileMapProvider.tiledMap, location, texture,
+                    alpha = .0f)
+            actorActionPairList.add(ActorActionPair(actor, action))
+        }
+        val actorActionPair = ActorActionPair(actor = actorActionPairList[0].actor,
+                action = actorActionPairList[0].action,
+                secondaryActions = actorActionPairList.subList(1, actorActionPairList.size),
+                murderActorsOnceCompletedAnimation = true,
+                name="temporaryHighlights")
+
+        return actorActionPair
     }
 
 }

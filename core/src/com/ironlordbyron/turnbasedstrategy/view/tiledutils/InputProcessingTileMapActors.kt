@@ -192,7 +192,6 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
         for (x in 0..tiledLayer.width) {
             for (y in 0..tiledLayer.height) {
                 val cell = tiledLayer.getCell(x, y) ?: continue
-                println("Assigning actor to cell ID ${cell.tile.id} at $x $y}")
                 val actor = tileMapClickListenerActorFactory.createTileMapActor(this.tiledMap, tiledLayer, cell, TileLocation(x, y)
                 )
                 actor.setBounds(x * tiledLayer.tileWidth, y * tiledLayer.tileHeight, tiledLayer.tileWidth,

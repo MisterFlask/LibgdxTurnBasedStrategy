@@ -72,7 +72,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
 
     private fun moveUnitIfAble(unit: LogicalCharacter, location: TileLocation) {
         if (canUnitMoveTo(location, unit)){
-            gameBoardOperator.moveCharacterToTile(unit, location, false);
+            gameBoardOperator.moveCharacterToTile(unit, location, false, wasPlayerInitiated = true);
         }
     }
 }
