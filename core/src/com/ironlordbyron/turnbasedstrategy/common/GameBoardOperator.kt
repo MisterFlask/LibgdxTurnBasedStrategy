@@ -116,23 +116,4 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
 
 }
 
-enum class HighlightType(val tiledTexturePath: TiledTexturePath) {
-    RED_TILE(TiledTexturePaths.RED_TILE),
-    BLUE_TILE(TiledTexturePaths.BLUE_TILE),
-    GREEN_TILE(TiledTexturePaths.GREEN_TILE)
-}
 
-object TiledTexturePaths {
-    val RED_TILE = TiledTexturePath("0", "red_tile")
-    val BLUE_TILE = TiledTexturePath("0", "blue_tile")
-    val GREEN_TILE = TiledTexturePath("0", "green_tile")
-}
-
-
-/**
- * All tile textures are assumed to be contained within Player0Characters.tmx
- */
-data class TiledTexturePath(
-        val spriteId: String,
-        val tileSetName: String = "Player0" //Default path name
-)
