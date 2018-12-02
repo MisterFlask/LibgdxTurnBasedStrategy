@@ -103,20 +103,23 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
         listOfHighlights.removeAll{true}
     }
 
+    public enum class ActionGeneratorType{
+        HIGHLIGHT_FOREVER
+    }
+
     fun highlightTiles(tiles: Collection<TileLocation>,
                        highlightType: HighlightType,
-                       action: Action? = null) {
-        var realAction = action
-        if (realAction == null){
-            realAction = foreverHighlightBlinking()
-        }
+                       actionGenerator: ActionGeneratorType = ActionGeneratorType.HIGHLIGHT_FOREVER) {
         val texture = tileMapOperationsHandler.pullGenericTexture(
                 highlightType.tiledTexturePath.spriteId,
                 highlightType.tiledTexturePath.tileSetName)
         for (location in tiles) {
+            val actionToApply = when(actionGenerator){
+                ActionGeneratorType.HIGHLIGHT_FOREVER -> foreverHighlightBlinking()
+            }
             val actor = imageActorFactory.createSpriteActorForTile(tileMapProvider.tiledMap, location, texture,
                     alpha = .5f)
-            actor.addAction(realAction)
+            actor.addAction(actionToApply)
             listOfHighlights.add(actor)
         }
     }
