@@ -11,6 +11,8 @@ import com.ironlordbyron.turnbasedstrategy.common.CharacterTemplates.CHARACTER_P
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
+import com.ironlordbyron.turnbasedstrategy.view.animation.ActionRunner
+import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
 import javax.inject.Inject
@@ -33,10 +35,13 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
                                             val logicalTileTracker: LogicalTileTracker,
                                             val imageActorFactory: SpriteActorFactory,
                                             val boardState: TacticalMapState,
-                                            val enemyAiFactory:EnemyAiFactory) : EventListener {
+                                            val enemyAiFactory:EnemyAiFactory,
+                                            val actionRunner: ActionRunner) : EventListener {
     override fun consumeEvent(event: TacticalGuiEvent) {
 
     }
+
+    private var actionQueue = ArrayList<ActorActionPair>()
 
     public fun endTurn() {
         println("End turn clicked.  TODO!")
@@ -45,16 +50,24 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
     }
 
     private fun runEnemyTurn() {
+        actionQueue =  ArrayList()
         for (enemyCharacter in boardState.listOfEnemyCharacters) {
             val ai = enemyAiFactory.getEnemyAi(enemyCharacter.tacMapUnit.enemyAiType)
             val nextActions = ai.getNextActions(enemyCharacter);
             for (action in nextActions){
                 when(action){
-                    is AiPlannedAction.MoveToTile -> moveCharacterToTile(enemyCharacter, action.to, true)
+                    is AiPlannedAction.MoveToTile -> actionQueue.add(moveCharacterToTile(enemyCharacter, action.to, true))
                 }
             }
         }
         eventNotifier.notifyListeners(TacticalGuiEvent.FinishedEnemyTurn())
+        runActions(actionQueue)
+        actionQueue = ArrayList()
+    }
+
+
+    private fun runActions(actionQueue: ArrayList<ActorActionPair>) {
+        actionRunner.runThroughActionQueue(actionQueue)
     }
 
     init{
@@ -62,14 +75,13 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
     }
     private val listOfHighlights = ArrayList<Actor>()
 
-    var lastActionInQueue: Action? = null
-
-    fun moveCharacterToTile(character: LogicalCharacter, toTile: TileLocation, waitOnQueuedActions: Boolean) {
+    // moves the character to the given tile logically, and returns the actor/action pair for animation purposes.
+    fun moveCharacterToTile(character: LogicalCharacter, toTile: TileLocation, waitOnQueuedActions: Boolean) : ActorActionPair{
         character.tileLocation = toTile
         val libgdxLocation = logicalTileTracker.getLibgdxCoordinatesFromLocation(toTile)
-        val moveAction = Actions.moveTo(libgdxLocation.x.toFloat(), libgdxLocation.y.toFloat(), .5f)
-        lastActionInQueue
-        character.actor.addAction(moveAction);
+        var moveAction : Action = Actions.moveTo(libgdxLocation.x.toFloat(), libgdxLocation.y.toFloat(), .5f)
+
+        return ActorActionPair(actor = character.actor, action = moveAction)
     }
 
     fun removeCharacter(character: LogicalCharacter) {
