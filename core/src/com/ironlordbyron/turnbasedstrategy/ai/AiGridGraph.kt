@@ -4,7 +4,6 @@ import com.google.inject.Inject
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
-import com.ironlordbyron.turnbasedstrategy.rules.GameRules
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.LogicalTileTracker
 import org.xguzm.pathfinding.grid.NavigationGrid
 import org.xguzm.pathfinding.grid.finders.AStarGridFinder
@@ -15,19 +14,16 @@ import java.lang.IllegalArgumentException
 private val SENTINEL_VALUE = 100000
 
 public class AiGridGraphFactory @Inject constructor(val tileTracker: LogicalTileTracker,
-                                                    val tacticalMapState: TacticalMapState,
-                                                    val gameRules: GameRules){
+                                                    val tacticalMapState: TacticalMapState){
 
     public fun createGridGraph(logicalCharacter: LogicalCharacter) : AiGridGraph{
         return AiGridGraph(tileTracker,
-                tacticalMapState,
-                 gameRules, logicalCharacter)
+                tacticalMapState, logicalCharacter)
     }
 }
 
 public class AiGridGraph (val tileTracker: LogicalTileTracker,
                          val tacticalMapState: TacticalMapState,
-                          val gameRules: GameRules,
                           val logicalCharacter: LogicalCharacter) {
 
     val navigationGrid = NavigationGrid<PathfindingTileLocation>();
@@ -43,7 +39,7 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
                 pathingTile.location = TileLocation(x,y)
                 pathingTile.x = x
                 pathingTile.y = y
-                pathingTile.isWalkable = gameRules.canWalkOnTile(logicalCharacter, pathingTile.location)
+                pathingTile.isWalkable = tacticalMapState.canWalkOnTile(logicalCharacter, pathingTile.location)
             }
         }
         return tileArray

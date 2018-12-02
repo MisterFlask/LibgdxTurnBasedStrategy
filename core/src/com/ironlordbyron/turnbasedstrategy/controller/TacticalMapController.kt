@@ -40,8 +40,6 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
         eventNotifier.registerListener(this)
     }
 
-
-
     fun playerClickedOnTile(location: TileLocation){
         val character = boardState.getCharacterAtLocation(location)
         gameBoardOperator.killHighlights()
@@ -64,7 +62,6 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
             gameBoardOperator.highlightTiles(tilesToHighlight, HighlightType.GREEN_TILE)
         }
     }
-
 
     fun canUnitMoveTo(location: TileLocation, unit: LogicalCharacter): Boolean {
         if (!unit.playerControlled){

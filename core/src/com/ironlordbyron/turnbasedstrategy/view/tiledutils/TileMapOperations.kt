@@ -6,6 +6,7 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.*
 import com.google.inject.Singleton
 import com.ironlordbyron.turnbasedstrategy.common.CharacterTemplates
+import com.ironlordbyron.turnbasedstrategy.common.HighlightType
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.xml.TilemapXmlProcessor
 import java.util.*

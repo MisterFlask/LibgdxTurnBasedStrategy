@@ -4,15 +4,14 @@ import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.ironlordbyron.turnbasedstrategy.ai.AiPlannedAction
-import com.ironlordbyron.turnbasedstrategy.ai.BasicEnemyAi
 import com.ironlordbyron.turnbasedstrategy.ai.EnemyAiFactory
-import com.ironlordbyron.turnbasedstrategy.ai.EnemyAiType
 import com.ironlordbyron.turnbasedstrategy.common.CharacterTemplates.CHARACTER_PLACEHOLDER_TILEMAP_TSX_FILE
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActionRunner
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
+import com.ironlordbyron.turnbasedstrategy.view.animation.foreverHighlightBlinking
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
 import javax.inject.Inject
@@ -56,19 +55,15 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
             val nextActions = ai.getNextActions(enemyCharacter);
             for (action in nextActions){
                 when(action){
-                    is AiPlannedAction.MoveToTile -> actionQueue.add(moveCharacterToTile(enemyCharacter, action.to, true))
+                    is AiPlannedAction.MoveToTile -> (moveCharacterToTile(enemyCharacter, action.to, true))
                 }
             }
         }
         eventNotifier.notifyListeners(TacticalGuiEvent.FinishedEnemyTurn())
-        runActions(actionQueue)
+        actionRunner.runThroughActionQueue(actionQueue, finalAction = {})
         actionQueue = ArrayList()
     }
 
-
-    private fun runActions(actionQueue: ArrayList<ActorActionPair>) {
-        actionRunner.runThroughActionQueue(actionQueue)
-    }
 
     init{
         eventNotifier.registerListener(this)
@@ -80,8 +75,15 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
         character.tileLocation = toTile
         val libgdxLocation = logicalTileTracker.getLibgdxCoordinatesFromLocation(toTile)
         var moveAction : Action = Actions.moveTo(libgdxLocation.x.toFloat(), libgdxLocation.y.toFloat(), .5f)
+        val result = ActorActionPair(actor = character.actor, action = moveAction)
+        actionQueue.add(result)
+        if (!waitOnQueuedActions){
+            // TODO: This is probably wrong.
+            actionRunner.runThroughActionQueue(actionQueue, finalAction = {})
+            actionQueue = ArrayList()
+        }
+        return result
 
-        return ActorActionPair(actor = character.actor, action = moveAction)
     }
 
     fun removeCharacter(character: LogicalCharacter) {
@@ -101,15 +103,20 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
         listOfHighlights.removeAll{true}
     }
 
-    fun highlightTiles(tiles: Collection<TileLocation>, highlightType: HighlightType) {
+    fun highlightTiles(tiles: Collection<TileLocation>,
+                       highlightType: HighlightType,
+                       action: Action? = null) {
+        var realAction = action
+        if (realAction == null){
+            realAction = foreverHighlightBlinking()
+        }
         val texture = tileMapOperationsHandler.pullGenericTexture(
                 highlightType.tiledTexturePath.spriteId,
                 highlightType.tiledTexturePath.tileSetName)
         for (location in tiles) {
             val actor = imageActorFactory.createSpriteActorForTile(tileMapProvider.tiledMap, location, texture,
                     alpha = .5f)
-            val highlightBlinkingAction = highlightBlinking()
-            actor.addAction(highlightBlinkingAction)
+            actor.addAction(realAction)
             listOfHighlights.add(actor)
         }
     }

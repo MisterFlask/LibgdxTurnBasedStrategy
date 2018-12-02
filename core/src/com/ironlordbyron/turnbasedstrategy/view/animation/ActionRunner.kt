@@ -11,12 +11,14 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 // RECURSIVE CASE:  We create a sequence composed of the current action, and an instance of this attached to the next index.
 // the new TriggerActionAfterCurrentAction (if applicable).
 public class ActionRunner {
-    public fun runThroughActionQueue(actionQueue: List<ActorActionPair>, currentIndex: Int = 0) {
+    public fun runThroughActionQueue(actionQueue: List<ActorActionPair>, currentIndex: Int = 0,
+                                     finalAction : () -> Unit = {}) {
 
         val current = actionQueue[currentIndex]
         if (currentIndex == actionQueue.size - 1) {
             // we're at the end of the list.
             current.actor.addAction(current.action)
+            finalAction.invoke()
             return
         }
         current.actor.addAction(Actions.sequence(current.action, CustomAction {
