@@ -2,6 +2,10 @@ package com.ironlordbyron.turnbasedstrategy.common
 
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.ironlordbyron.turnbasedstrategy.ai.AiPlannedAction
+import com.ironlordbyron.turnbasedstrategy.ai.BasicEnemyAi
+import com.ironlordbyron.turnbasedstrategy.ai.EnemyAiFactory
+import com.ironlordbyron.turnbasedstrategy.ai.EnemyAiType
 import com.ironlordbyron.turnbasedstrategy.common.CharacterTemplates.CHARACTER_PLACEHOLDER_TILEMAP_TSX_FILE
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
@@ -13,16 +17,6 @@ import javax.inject.Singleton
 
 
 
-data class TacMapUnitTemplate(val movesPerTurn: Int,
-                              val tiledTexturePath: TiledTexturePath,
-                              val attackRadius: Int = 1,
-                              val attackDamage: Int = 1,
-                              val templateName: String ="Peasant") {
-    companion object TacMapUnit {
-        val DEFAULT_UNIT = TacMapUnitTemplate(8, TiledTexturePath("6"))
-        val DEFAULT_ENEMY_UNIT = TacMapUnitTemplate(8, TiledTexturePath("7"))
-    }
-}
 
 
 /**
@@ -35,18 +29,31 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
                                             val tileMapProvider: TileMapProvider,
                                             val characterImageManager: CharacterImageManager,
                                             val eventNotifier: EventNotifier,
-                                            val stageProvider: TacticalTiledMapStageProvider,
                                             val logicalTileTracker: LogicalTileTracker,
                                             val imageActorFactory: SpriteActorFactory,
-                                            val boardState: TacticalMapState) : EventListener {
+                                            val boardState: TacticalMapState,
+                                            val enemyAiFactory:EnemyAiFactory) : EventListener {
     override fun consumeEvent(event: TacticalGuiEvent) {
-        when (event){
-            is TacticalGuiEvent.EndTurnButtonClicked -> endTurn()
-        }
+
     }
 
-    private fun endTurn() {
+    public fun endTurn() {
         println("End turn clicked.  TODO!")
+
+        runEnemyTurn()
+    }
+
+    private fun runEnemyTurn() {
+        for (enemyCharacter in boardState.listOfEnemyCharacters) {
+            val ai = enemyAiFactory.getEnemyAi(enemyCharacter.tacMapUnit.enemyAiType)
+            val nextActions = ai.getNextActions(enemyCharacter);
+            for (action in nextActions){
+                when(action){
+                    is AiPlannedAction.MoveToTile -> moveCharacterToTile(enemyCharacter, action.to)
+                }
+            }
+        }
+        eventNotifier.notifyListeners(TacticalGuiEvent.FinishedEnemyTurn())
     }
 
     init{
@@ -68,7 +75,7 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
     fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) {
         val actor = characterImageManager.placeCharacterSprite(tileMapProvider.tiledMap, tileLocation,
                 tileMapOperationsHandler.pullTextureFromTilemap(CHARACTER_PLACEHOLDER_TILEMAP_TSX_FILE, tacMapUnit.tiledTexturePath.spriteId, tacMapUnit.tiledTexturePath.tileSetName))
-        boardState.listOfCharacters.add(LogicalCharacter(actor, tileLocation, TacMapUnitTemplate.DEFAULT_UNIT, playerControlled))
+        boardState.listOfCharacters.add(LogicalCharacter(actor, tileLocation, tacMapUnit, playerControlled))
 
     }
 
@@ -87,7 +94,6 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
             val highlightBlinkingAction = highlightBlinking()
             actor.addAction(highlightBlinkingAction)
             listOfHighlights.add(actor)
-
         }
     }
 

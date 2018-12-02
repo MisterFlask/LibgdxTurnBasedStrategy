@@ -81,9 +81,16 @@ class TileMapClickListenerActorFactory @Inject constructor(val fragmentCopierPro
 
 data class LogicalTile(val terrainTile: TiledMapTile, val location: TileLocation, val actor: TileMapActor,
                        val cell: TiledMapTileLayer.Cell, val allTilesAtThisSquare: List<TiledMapStage.TiledCellAgglomerate>) {
+
     fun isTerrainMountainous(): Boolean {
         return layerHasBooleanPropertySetToTrue(TileLayer.FEATURE, "mountain")
     }
+
+    val terrainType: TerrainType
+    get() = {
+        if (isTerrainMountainous()) TerrainType.MOUNTAIN
+        else TerrainType.GRASS
+    }()
 
     fun layerHasBooleanPropertySetToTrue(layer: TileLayer, property: String): Boolean {
         val prop = allTilesAtThisSquare
@@ -97,8 +104,12 @@ data class LogicalTile(val terrainTile: TiledMapTile, val location: TileLocation
         } else {
             throw IllegalStateException("Property $property should be a boolean, but it's a ${prop.javaClass.name}")
         }
-
     }
+}
+
+enum class TerrainType{
+    MOUNTAIN,
+    GRASS
 }
 
 data class LibgdxLocation(val x: Int, val y: Int)
@@ -123,6 +134,13 @@ class LogicalTileTracker {
         val tileActor = tiles.first { it.location == loc }.actor
 
         return LibgdxLocation(tileActor.x.toInt(), tileActor.y.toInt()) // TODO: Verify
+    }
+
+    fun height() : Int{
+        return tiles.maxBy{it.location.y}!!.location.y
+    }
+    fun width() : Int{
+        return tiles.maxBy{it.location.x}!!.location.x
     }
 }
 

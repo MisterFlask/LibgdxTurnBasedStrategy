@@ -10,7 +10,7 @@ sealed class BoardInputState{
 }
 
 /**
- * Created by Aaron on 3/24/2018.
+ *  Responsible for handling player inputs.
  */
 @Singleton
 class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoardOperator,
@@ -18,10 +18,21 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                                                 val boardState: TacticalMapState) : EventListener {
 
     var boardInputState : BoardInputState = BoardInputState.DefaultState
-
+    var playerHasPriority = true
     override fun consumeEvent(event: TacticalGuiEvent) {
         when(event){
-            is TacticalGuiEvent.TileClicked -> playerClickedOnTile(event.tileLocation)
+            is TacticalGuiEvent.TileClicked -> {
+                if (playerHasPriority) playerClickedOnTile(event.tileLocation)
+            }
+            is TacticalGuiEvent.EndTurnButtonClicked -> {
+                if (playerHasPriority) {
+                    playerHasPriority = false
+                    gameBoardOperator.endTurn()
+                }
+            }
+            is TacticalGuiEvent.FinishedEnemyTurn -> {
+                playerHasPriority = true
+            }
         }
     }
 

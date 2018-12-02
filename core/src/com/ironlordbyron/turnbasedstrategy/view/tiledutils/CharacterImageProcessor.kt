@@ -27,12 +27,6 @@ class CharacterImageManager @Inject constructor(val tileMapOperationsHandler: Ti
         return placeCharacterSprite(tiledMap, tileLocation, texture)
     }
 
-    private val characterSpriteSheet = "tilesets/Player0Characters.tmx"
-
-    fun getCharacterSprite(): TextureRegion {
-        return tileMapOperationsHandler.pullTextureFromTilemap(characterSpriteSheet, "0", "Player0")
-    }
-
     fun placeCharacterSprite(tiledMap: TiledMap, tileLocation: TileLocation, characterTexture: TextureRegion) : SpriteActor {
         val boundingBox = (tiledMap.layers[0] as TiledMapTileLayer).getBoundsOfTile(tileLocation)
         val characterActor = spriteActorFactory.createSpriteActor(characterTexture, boundingBox)

@@ -30,4 +30,5 @@ sealed class TacticalGuiEvent{
     data class CharacterSelected(val character: LogicalCharacter) : TacticalGuiEvent()
     data class TileClicked(val tileLocation: TileLocation) : TacticalGuiEvent()
     class EndTurnButtonClicked() : TacticalGuiEvent()
+    class FinishedEnemyTurn(): TacticalGuiEvent()
 }

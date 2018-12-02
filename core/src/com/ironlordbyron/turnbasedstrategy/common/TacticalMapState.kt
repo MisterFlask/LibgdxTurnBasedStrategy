@@ -14,8 +14,15 @@ class TacticalMapState @Inject constructor(val logicalTileTracker: LogicalTileTr
     val locations = HashMap<TileLocation, TacticalMapTileState>()
     val listOfCharacters = ArrayList<LogicalCharacter>()
 
+    val listOfEnemyCharacters: List<LogicalCharacter>
+    get() = listOfCharacters.filter{!it.playerControlled}
+
     fun getCharacterAtLocation(tileLocation: TileLocation): LogicalCharacter? {
         return listOfCharacters.firstOrNull{it.tileLocation == tileLocation}
+    }
+
+    fun isTileUnoccupied(tileLocation: TileLocation) : Boolean{
+        return getCharacterAtLocation(tileLocation) == null
     }
 
     fun init(){
