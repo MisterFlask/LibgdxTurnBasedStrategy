@@ -41,6 +41,11 @@ public class BasicEnemyAi(val tileMapOperationsHandler: TileMapOperationsHandler
         if (pathToEnemy.isEmpty()){
             return null
         }
+        val moverate = thisCharacter.tacMapUnit.movesPerTurn
+        if (pathToEnemy.size > moverate){
+            return pathToEnemy.toList()[moverate].location
+        }
+
         return pathToEnemy.last().location
         // TODO: Ensure tile isn't occupied by enemy (if it is, stop one short)
     }

@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
+import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.ironlordbyron.turnbasedstrategy.ai.AiPlannedAction
@@ -49,7 +50,7 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
             val nextActions = ai.getNextActions(enemyCharacter);
             for (action in nextActions){
                 when(action){
-                    is AiPlannedAction.MoveToTile -> moveCharacterToTile(enemyCharacter, action.to)
+                    is AiPlannedAction.MoveToTile -> moveCharacterToTile(enemyCharacter, action.to, true)
                 }
             }
         }
@@ -61,10 +62,14 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
     }
     private val listOfHighlights = ArrayList<Actor>()
 
-    fun moveCharacterToTile(character: LogicalCharacter, toTile: TileLocation) {
+    var lastActionInQueue: Action? = null
+
+    fun moveCharacterToTile(character: LogicalCharacter, toTile: TileLocation, waitOnQueuedActions: Boolean) {
         character.tileLocation = toTile
         val libgdxLocation = logicalTileTracker.getLibgdxCoordinatesFromLocation(toTile)
-        character.actor.addAction(Actions.moveTo(libgdxLocation.x.toFloat(), libgdxLocation.y.toFloat(), .5f));
+        val moveAction = Actions.moveTo(libgdxLocation.x.toFloat(), libgdxLocation.y.toFloat(), .5f)
+        lastActionInQueue
+        character.actor.addAction(moveAction);
     }
 
     fun removeCharacter(character: LogicalCharacter) {
