@@ -8,8 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
  */
 
 val lowAlpha = .1f
-val highAlpha = .7f
-val alphaDuration = .5f
+val highAlpha = .5f
+val defaultAlphaDuration = .5f
 
 fun foreverHighlightBlinking(): Action {
     return Actions.forever(
@@ -17,13 +17,10 @@ fun foreverHighlightBlinking(): Action {
             )
 }
 
-fun temporaryHighlightBlinking(): Action {
+fun temporaryHighlightBlinking(alphaDuration: Float = defaultAlphaDuration): Action {
             return Actions.sequence(
-                    Actions.delay(.1f),
                     Actions.alpha(highAlpha, alphaDuration),
-                    Actions.alpha(lowAlpha, alphaDuration),
-                    Actions.delay(.1f),
-                    Actions.alpha(highAlpha, alphaDuration)
+                    Actions.alpha(lowAlpha, alphaDuration)
             )
 }
 

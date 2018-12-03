@@ -36,16 +36,11 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
                                             val imageActorFactory: SpriteActorFactory,
                                             val boardState: TacticalMapState,
                                             val enemyAiFactory:EnemyAiFactory,
-                                            val actionRunner: ActionRunner) : EventListener {
-    override fun consumeEvent(event: TacticalGuiEvent) {
-
-    }
+                                            val actionRunner: ActionRunner) {
 
     private var actionQueue = ArrayList<ActorActionPair>()
 
     public fun endTurn() {
-        println("End turn clicked.  TODO!")
-
         runEnemyTurn()
     }
 
@@ -56,21 +51,20 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
             val nextActions = ai.getNextActions(enemyCharacter);
             for (action in nextActions){
                 when(action){
-                    is AiPlannedAction.MoveToTile -> moveCharacterToTile(enemyCharacter, action.to, true,
+                    is AiPlannedAction.MoveToTile -> moveCharacterToTile(enemyCharacter,
+                            action.to,
+                            waitOnQueuedActions = true,
                             wasPlayerInitiated = false)
                 }
             }
         }
-        eventNotifier.notifyListeners(TacticalGuiEvent.FinishedEnemyTurn())
         println("Action queue has elements: $actionQueue")
-        actionRunner.runThroughActionQueue(actionQueue, finalAction = {})
+        actionRunner.runThroughActionQueue(actionQueue, finalAction = {
+            eventNotifier.notifyListeners(TacticalGuiEvent.FinishedEnemyTurn())
+        })
         actionQueue = ArrayList()
     }
 
-
-    init{
-        eventNotifier.registerListener(this)
-    }
     private val listOfHighlights = ArrayList<Actor>()
 
     // moves the character to the given tile logically, and returns the actor/action pair for animation purposes.

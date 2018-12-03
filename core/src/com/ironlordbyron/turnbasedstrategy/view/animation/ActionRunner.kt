@@ -14,10 +14,11 @@ public class ActionRunner{
         if (currentIndex == actionQueue.size - 1) {
             // we're at the end of the list.
             current.actor.addAction(current.action)
+            finalAction.invoke()
             return
         }
         current.actor.addAction(Actions.sequence(current.action, CustomAction {
-            runThroughActionQueue(actionQueue, currentIndex + 1)
+            runThroughActionQueue(actionQueue, currentIndex + 1, finalAction)
             if (current.murderActorsOnceCompletedAnimation){
                 current.actor.remove()
                 for (pair in current.secondaryActions){
