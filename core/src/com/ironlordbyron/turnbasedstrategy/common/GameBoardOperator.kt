@@ -9,6 +9,7 @@ import com.ironlordbyron.turnbasedstrategy.common.CharacterTemplates.CHARACTER_P
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
+import com.ironlordbyron.turnbasedstrategy.view.CharacterSpriteUtils
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActionRunner
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import com.ironlordbyron.turnbasedstrategy.view.animation.foreverHighlightBlinking
@@ -36,7 +37,26 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
                                             val imageActorFactory: SpriteActorFactory,
                                             val boardState: TacticalMapState,
                                             val enemyAiFactory:EnemyAiFactory,
-                                            val actionRunner: ActionRunner) {
+                                            val actionRunner: ActionRunner,
+                                            val characterSpriteUtils: CharacterSpriteUtils) : EventListener {
+    override fun consumeEvent(event: TacticalGuiEvent) {
+        when(event){
+            is TacticalGuiEvent.FinishedEnemyTurn -> {
+                startPlayerTurn()
+            }
+        }
+    }
+
+    private fun startPlayerTurn() {
+        for (unit in boardState.listOfCharacters.filter{it.playerControlled}){
+            unit.movedThisTurn = false
+            characterSpriteUtils.brightenSprite(unit)
+        }
+    }
+
+    init{
+        eventNotifier.registerListener(this)
+    }
 
     private var actionQueue = ArrayList<ActorActionPair>()
 
@@ -89,6 +109,8 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
             actionQueue = ArrayList()
         }
 
+        // now mark the character as moved by darkening the sprite.
+        characterSpriteUtils.darkenSprite(character)
     }
 
     fun removeCharacter(character: LogicalCharacter) {

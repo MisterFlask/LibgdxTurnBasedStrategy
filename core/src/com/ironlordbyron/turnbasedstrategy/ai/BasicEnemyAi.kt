@@ -1,11 +1,18 @@
 package com.ironlordbyron.turnbasedstrategy.ai
 
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
+import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TileMapOperationsHandler
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
 
+/**
+ * Attempts to move to closest enemy.
+ * Will find the best path to that enemy.
+ * Will move to closest usable tile.
+ */
 public class BasicEnemyAi(val tileMapOperationsHandler: TileMapOperationsHandler,
+                          val tacticalMapState: TacticalMapState,
                           val tileMapProvider: TileMapProvider,
                           val aiGridGraphFactory: AiGridGraphFactory) : EnemyAi{
     override fun getNextActions(thisCharacter: LogicalCharacter): List<AiPlannedAction> {
@@ -41,9 +48,10 @@ public class BasicEnemyAi(val tileMapOperationsHandler: TileMapOperationsHandler
         if (pathToEnemy.isEmpty()){
             return null
         }
+
         val moverate = thisCharacter.tacMapUnit.movesPerTurn
-        if (pathToEnemy.size > moverate){
-            return pathToEnemy.toList()[moverate].location
+        if (pathToEnemy.size > moverate - 2){
+            return pathToEnemy.toList()[moverate - 2].location
         }
 
         return pathToEnemy.last().location

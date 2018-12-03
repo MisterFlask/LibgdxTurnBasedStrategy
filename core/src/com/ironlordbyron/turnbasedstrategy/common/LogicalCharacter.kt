@@ -11,6 +11,7 @@ import org.xguzm.pathfinding.grid.NavigationGridGraphNode
 data class LogicalCharacter(val actor: SpriteActor,
                             var tileLocation: TileLocation,
                             val tacMapUnit: TacMapUnitTemplate,
-                            val playerControlled: Boolean){
+                            val playerControlled: Boolean,
+                            var movedThisTurn: Boolean = false){
 
 }
