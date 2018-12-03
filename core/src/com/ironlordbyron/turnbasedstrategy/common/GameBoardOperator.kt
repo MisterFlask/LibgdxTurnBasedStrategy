@@ -10,10 +10,7 @@ import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.view.CharacterSpriteUtils
-import com.ironlordbyron.turnbasedstrategy.view.animation.ActionRunner
-import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
-import com.ironlordbyron.turnbasedstrategy.view.animation.foreverHighlightBlinking
-import com.ironlordbyron.turnbasedstrategy.view.animation.temporaryHighlightBlinking
+import com.ironlordbyron.turnbasedstrategy.view.animation.*
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
 import javax.inject.Inject
@@ -103,6 +100,7 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
         var moveAction : Action = Actions.moveTo(libgdxLocation.x.toFloat(), libgdxLocation.y.toFloat(), .5f)
         val result = ActorActionPair(actor = character.actor, action = moveAction)
         actionQueue.add(result)
+        actionQueue.add(SpriteColorActorAction.build(character, SpriteColorActorAction.DIM_COLOR))
         if (!waitOnQueuedActions){
             // TODO: This is probably wrong.
             actionRunner.runThroughActionQueue(actionQueue, finalAction = {})
@@ -110,7 +108,6 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
         }
 
         // now mark the character as moved by darkening the sprite.
-        characterSpriteUtils.darkenSprite(character)
     }
 
     fun removeCharacter(character: LogicalCharacter) {
