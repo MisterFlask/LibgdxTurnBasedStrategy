@@ -45,7 +45,7 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
     }
 
     private fun startPlayerTurn() {
-        for (unit in boardState.listOfCharacters.filter{it.playerControlled}){
+        for (unit in boardState.listOfCharacters){
             unit.movedThisTurn = false
             characterSpriteUtils.brightenSprite(unit)
         }
@@ -70,7 +70,7 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
                 when(action){
                     is AiPlannedAction.MoveToTile -> moveCharacterToTile(enemyCharacter,
                             action.to,
-                            waitOnQueuedActions = true,
+                            waitOnMoreQueuedActions = true,
                             wasPlayerInitiated = false)
                 }
             }
@@ -85,7 +85,7 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
     private val listOfHighlights = ArrayList<Actor>()
 
     // moves the character to the given tile logically, and returns the actor/action pair for animation purposes.
-    fun moveCharacterToTile(character: LogicalCharacter, toTile: TileLocation, waitOnQueuedActions: Boolean,
+    fun moveCharacterToTile(character: LogicalCharacter, toTile: TileLocation, waitOnMoreQueuedActions: Boolean,
                             wasPlayerInitiated: Boolean){
         if (!wasPlayerInitiated) {
             // first, show the player where the ai COULD move to
@@ -101,8 +101,7 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
         val result = ActorActionPair(actor = character.actor, action = moveAction)
         actionQueue.add(result)
         actionQueue.add(SpriteColorActorAction.build(character, SpriteColorActorAction.DIM_COLOR))
-        if (!waitOnQueuedActions){
-            // TODO: This is probably wrong.
+        if (!waitOnMoreQueuedActions){
             actionRunner.runThroughActionQueue(actionQueue, finalAction = {})
             actionQueue = ArrayList()
         }

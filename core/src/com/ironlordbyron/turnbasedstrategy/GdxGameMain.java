@@ -9,6 +9,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector;
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TiledMapStageFactory;
@@ -17,11 +18,9 @@ import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvide
 import com.ironlordbyron.turnbasedstrategy.view.ui.TacMapHudFactory;
 
 public class GdxGameMain extends ApplicationAdapter  {
-    private final static int GAME_WIDTH = 800;
-    private final static int GAME_HEIGHT = 500;
 
-    private final static int WINDOW_WIDTH = 800;
-    private final static int WINDOW_HEIGHT = 500;
+    private final static int WINDOW_WIDTH = 1100;
+    private final static int WINDOW_HEIGHT = 600;
 
 
     TiledMap tiledMap;
@@ -50,16 +49,13 @@ public class GdxGameMain extends ApplicationAdapter  {
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         TiledMapStageFactory tiledMapStageFactory = GameModuleInjector.Companion.createTiledMapStageFactory();
         tiledMapStage = tiledMapStageFactory.create(tiledMap, tacMapCamera);
-        FitViewport tiledMapViewport = new FitViewport(GAME_WIDTH, GAME_HEIGHT, tacMapCamera);
+        FitViewport tiledMapViewport = new FitViewport(w, h, tacMapCamera);
         tiledMapStage.setViewport(tiledMapViewport);
         tiledMapStage.getViewport().setCamera(tacMapCamera);
-
-
-        hudCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        hudCamera.translate(500f, 0f);
+        hudCamera = new OrthographicCamera(w, h);
 
         TacMapHudFactory tacMapHudFactory = GameModuleInjector.Companion.createTacMapHudFactory();
-        hudStage = tacMapHudFactory.create(new FitViewport(GAME_WIDTH, GAME_HEIGHT, hudCamera));
+        hudStage = tacMapHudFactory.create(new FitViewport(w, h, hudCamera));
         hudCamera.update();
         InputMultiplexer multiplexer = new InputMultiplexer();
         multiplexer.addProcessor(hudStage);
