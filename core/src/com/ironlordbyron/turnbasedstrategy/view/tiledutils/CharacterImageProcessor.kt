@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.TiledTexturePath
 import javax.inject.Inject
@@ -19,25 +20,11 @@ data class BoundingRectangle(val x: Int, val y: Int, val width: Int, val height:
 fun TiledMapTile.getBounds(): BoundingRectangle {
     return BoundingRectangle(this.textureRegion.regionX, this.textureRegion.regionY, this.textureRegion.regionWidth, this.textureRegion.regionHeight)
 }
-class CharacterImageManager @Inject constructor(val tileMapOperationsHandler: TileMapOperationsHandler,
-                                                val spriteActorFactory: SpriteActorFactory,
-                                                val logicalTileTracker: LogicalTileTracker) : CanTransformTextureToActor<SpriteActor> {
-
-    override fun placeSprite(tiledMap: TiledMap, tileLocation: TileLocation, texture: TextureRegion): SpriteActor {
-        return placeCharacterSprite(tiledMap, tileLocation, texture)
-    }
-
-    fun placeCharacterSprite(tiledMap: TiledMap, tileLocation: TileLocation, characterTexture: TextureRegion) : SpriteActor {
-        val boundingBox = (tiledMap.layers[0] as TiledMapTileLayer).getBoundsOfTile(tileLocation)
-        val characterActor = spriteActorFactory.createSpriteActor(characterTexture, boundingBox)
-        return characterActor
-    }
-}
 interface CanTransformTextureToActor<out T> {
     fun placeSprite(tiledMap: TiledMap, tileLocation: TileLocation, texture: TextureRegion) : T
 }
 
-private fun TiledMapTileLayer.getBoundsOfTile(tileLocation: TileLocation): BoundingRectangle {
+public fun TiledMapTileLayer.getBoundsOfTile(tileLocation: TileLocation): BoundingRectangle {
     val width = Math.round(this.tileWidth)
     val height = Math.round(this.tileHeight)
     val x = width * tileLocation.x
@@ -65,6 +52,7 @@ class SpriteActorFactory @Inject constructor(val stageProvider: TacticalTiledMap
         val boundingBox = (tiledMap.layers[0] as TiledMapTileLayer).getBoundsOfTile(location)
         return createSpriteActor(textureRegion, boundingBox, alpha)
     }
+
 }
 
 class SpriteActor(val texture: TextureRegion, var bounds: BoundingRectangle,

@@ -19,6 +19,7 @@ data class TacticalTileMap(val tileMap: TiledMap,
 /**
  * Responsible for ensuring tilemaps remain singletons,
  * and handling direct tilemap instructions.
+ * NOT for business logic.
  */
 @Singleton
 class TileMapOperationsHandler @Inject constructor(val logicalTileTracker: LogicalTileTracker,
