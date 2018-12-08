@@ -11,7 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 enum class Icon(val imagePath: String){
     ASSAULT("trample.png"),
     CHARGE("electric.png"),
-    RESCUE ("hand.png")
+    RESCUE ("hand.png"),
+    RARROW("rarrow.png")
 
 }
 
@@ -20,7 +21,7 @@ public class FileImageRetriever{
     public fun retrieveIconImage(icon: Icon): Texture {
          return Texture(Gdx.files.internal("icons/${icon.imagePath}" ));
     }
-    public fun retrieveIconImageAsSprite(icon: Icon, dimensions: Dimensions, color: Color?= Color.RED): Sprite {
+    public fun retrieveIconImageAsSprite(icon: Icon, dimensions: Dimensions, color: Color?): Sprite {
         val iconImage = retrieveIconImage(icon)
         val textureRegion = TextureRegion(iconImage)
         val sprite = Sprite(textureRegion);
@@ -37,7 +38,7 @@ public class FileImageRetriever{
         sprite.minHeight = dimensions.height.toFloat()
         sprite.minWidth = dimensions.width.toFloat()
         if (color != null){
-            sprite.tint(color)
+            return sprite.tint(color)
         }
         return sprite
     }

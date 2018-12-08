@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.view.ui
 
+import com.badlogic.gdx.assets.loaders.BitmapFontLoader
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.Actor
@@ -10,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
+import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
@@ -18,6 +20,9 @@ import com.ironlordbyron.turnbasedstrategy.view.images.FileImageRetriever
 import com.ironlordbyron.turnbasedstrategy.view.images.Icon
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.SpriteActorFactory
 import com.kotcrab.vis.ui.VisUI
+import com.kotcrab.vis.ui.building.CenteredTableBuilder
+import com.kotcrab.vis.ui.building.GridTableBuilder
+import com.kotcrab.vis.ui.building.StandardTableBuilder
 import com.kotcrab.vis.ui.layout.VerticalFlowGroup
 import com.kotcrab.vis.ui.widget.VisLabel
 import com.kotcrab.vis.ui.widget.VisTextButton
@@ -56,20 +61,23 @@ class TacMapHud(viewPort: Viewport,
                 selectedUnitDescription?.setText(describeCharacter(event.character))
                 selectedUnitDescription?.invalidate()
                 selectedUnitDescription?.pack()
-                selectedUnitAbilitiesHolder.addActor(ImageButton())
+                selectedUnitAbilitiesHolder.clearChildren()
+                for (ability in event.character.abilities){
+                    selectedUnitAbilitiesHolder.addActor(actionButton(ability))
+                }
+                table.pack()
             }
         }
     }
 
     private val buttonDimensions = Dimensions(55, 55)
 
-    private fun ImageButton(): Actor? {
-        val image=  fileImageRetriever.retrieveIconImageAsDrawable(Icon.ASSAULT, buttonDimensions, color = Color.RED);
-        val button = ImageButton(image)
+    private fun actionButton(ability : LogicalAbility): Actor? {
+        val button = VisTextButton(ability.name)
 
         val clickListener = object : ClickListener(){
             override fun clicked(event: InputEvent?, x: Float, y: Float) {
-                println("WOOO CLICKED ACTION BUTTON")
+                println("Clicked button for glorious ability ${ability.name}")
                 super.clicked(event, x, y)
             }
         }
@@ -85,23 +93,30 @@ class TacMapHud(viewPort: Viewport,
 
     var selectedUnitDescription: VisLabel? = null
     val selectedUnitAbilitiesHolder: VerticalFlowGroup = VerticalFlowGroup()
-
+    val table : Table
     init {
         eventNotifier.registerListener(this)
 
-        this.isDebugAll = true
+        // this.isDebugAll = true
+
+        table = StandardTableBuilder()
+
+                .append(endTurnButton())
+                .append(endTurnButton())
+                .append(endTurnButton())
+                .row()
+                .append(selectedUnitAbilitiesHolder)
+                .row()
+                .append(endTurnButton())
+                .append(endTurnButton())
+                .build()
 
         val actor =
                 VisWindow("UI Window").let {
                     it.width = 440f
                     it.height = 600f
-                    it.add(missionObjectivesLabel()).prefWidth(width)
-                    it.row()
-                    it.add(selectedUnitDescription()).fill().expand()
-                    it.row()
-                    it.add(getSelectedUnitAbilities()).expand()
-                    it.row()
-                    it.add(endTurnButton())
+                    it.add(table)
+
                     it
                 }
         window = actor

@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
+import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.SpriteActor
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TerrainType
 import org.xguzm.pathfinding.grid.NavigationGridGraphNode
@@ -13,5 +14,10 @@ data class LogicalCharacter(val actor: SpriteActor,
                             val tacMapUnit: TacMapUnitTemplate,
                             val playerControlled: Boolean,
                             var movedThisTurn: Boolean = false){
+    val abilities: Collection<LogicalAbility>
+    get() = acquireAbilities()
 
+    private fun acquireAbilities(): Collection<LogicalAbility> {
+        return tacMapUnit.abilities
+    }
 }
