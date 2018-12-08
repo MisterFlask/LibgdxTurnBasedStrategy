@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.ironlordbyron.turnbasedstrategy.common.GameBoardOperator
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
@@ -58,8 +59,8 @@ class TacMapHud(viewPort: Viewport,
                 regenerateTable()
             }
             is TacticalGuiEvent.CharacterUnselected -> {
-
                 this.selectedCharacter = null
+                regenerateTable()
             }
         }
     }
@@ -92,11 +93,12 @@ class TacMapHud(viewPort: Viewport,
         var selectedCharacter: LogicalCharacter? = selectedCharacter
         table.clearChildren()
         if (selectedCharacter != null){
+            table.add(Label(selectedCharacter.tacMapUnit.templateName, mySkin))
+            table.row()
             table.add(characterImageManager.retrieveCharacterImage(selectedCharacter))
                     .size(portraitDimensions.width.toFloat(),portraitDimensions.height.toFloat())
+            table.row()
         }
-        table.add(fileImageRetriever.retrieveIconImage(Icon.ASSAULT).toImage())
-                .size(portraitDimensions.width.toFloat(),portraitDimensions.height.toFloat())
         // NOTE TO FUTURE SELF: Table controls size of images, DOES NOT RESPECT image preferred size
         table.row()
 
@@ -105,8 +107,8 @@ class TacMapHud(viewPort: Viewport,
                 table.add(actionButton(ability))
             }
         }
+
         table.row()
-        table.add(endTurnButton())
         table.add(endTurnButton())
     }
 

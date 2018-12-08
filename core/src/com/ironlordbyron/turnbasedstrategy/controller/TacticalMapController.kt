@@ -53,6 +53,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 is BoardInputState.UnitSelected ->  moveUnitIfAble(currentBoardInputState.unit, location)
             }
             boardInputState = BoardInputState.DefaultState
+            eventNotifier.notifyListeners(TacticalGuiEvent.CharacterUnselected())
         }
     }
 
