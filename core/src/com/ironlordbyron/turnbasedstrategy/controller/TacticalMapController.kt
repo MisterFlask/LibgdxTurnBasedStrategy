@@ -23,6 +23,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                                                 val tacticalMapAlgorithms: TacticalMapAlgorithms) : EventListener {
 
     var boardInputState : BoardInputState = BoardInputState.DefaultState
+    var selectedCharacter: LogicalCharacter? = null
     var playerHasPriority = true
     override fun consumeEvent(event: TacticalGuiEvent) {
         when(event){
@@ -39,8 +40,10 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 playerHasPriority = true
             }
             is TacticalGuiEvent.ClickedButtonToActivateAbility -> {
-                if (event.ability.abilityClass == AbilityClass.TARGETED_ABILITY){
-
+                val selectedCharacter = selectedCharacter
+                if (event.ability.abilityClass == AbilityClass.TARGETED_ABILITY &&
+                        selectedCharacter != null){
+                    abilityController.SignalIntentToActOnAbility(selectedCharacter, event.ability)
                 }
             }
         }
@@ -55,6 +58,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
         mapHighlighter.killHighlights()
         if (character != null){
             selectCharacterInTacMap(character)
+            selectedCharacter = character
             eventNotifier.notifyListeners(TacticalGuiEvent.CharacterSelected(character))
         }else{
             val currentBoardInputState = boardInputState
@@ -62,6 +66,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 is BoardInputState.UnitSelected ->  moveUnitIfAble(currentBoardInputState.unit, location)
             }
             boardInputState = BoardInputState.DefaultState
+            selectedCharacter = null
             eventNotifier.notifyListeners(TacticalGuiEvent.CharacterUnselected())
         }
     }

@@ -20,7 +20,7 @@ public class MapHighlighter @Inject constructor(val tileMapOperationsHandler: Ti
 
     private val listOfHighlights = ArrayList<Actor>()
 
-    fun highlightTiles(tiles: Collection<TileLocation>,
+    public fun highlightTiles(tiles: Collection<TileLocation>,
                        highlightType: HighlightType,
                        actionGenerator: ActionGeneratorType = ActionGeneratorType.HIGHLIGHT_UNTIL_FURTHER_NOTICE) {
         val texture = tileMapOperationsHandler.pullGenericTexture(
@@ -37,7 +37,7 @@ public class MapHighlighter @Inject constructor(val tileMapOperationsHandler: Ti
         }
     }
 
-    fun killHighlights() {
+    public fun killHighlights() {
         listOfHighlights.forEach { it.remove() }
         listOfHighlights.removeAll{true}
     }

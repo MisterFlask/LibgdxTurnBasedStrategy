@@ -41,8 +41,8 @@ class TacticalMapAlgorithms @Inject constructor(override val logicalTileTracker:
                 CanWalkOnTile(logicalTileTracker, tacticalMapState))
         return tiles
     }
-    public fun getTilesInRange(character: LogicalCharacter, ability: LogicalAbility): Collection<TileLocation> {
-        val tiles = getWalkableTileLocationsUpToNAway(character.tacMapUnit.movesPerTurn, character.tileLocation, character,
+    public fun getTilesInRangeOfAbility(character: LogicalCharacter, ability: LogicalAbility): Collection<TileLocation> {
+        val tiles = getWalkableTileLocationsUpToNAway(ability.range, character.tileLocation, character,
                 AlwaysValid())
         return tiles
     }

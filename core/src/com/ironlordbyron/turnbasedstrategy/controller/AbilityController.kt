@@ -1,5 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.controller
 
+import com.ironlordbyron.turnbasedstrategy.common.HighlightType
+import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityClass
@@ -12,9 +14,14 @@ class AbilityController @Inject constructor(val tacticalMapState: TacticalMapSta
                                             val mapHighlighter: MapHighlighter,
                                             val mapAlgorithms: TacticalMapAlgorithms) {
 
-    fun ActOnAbility(logicalAbility: LogicalAbility){
+    /**
+     * Represents a person clicking on an ability usage button (which then requires additional parameters.)
+     */
+    fun SignalIntentToActOnAbility(characterUsingAbility: LogicalCharacter, logicalAbility: LogicalAbility){
         if(logicalAbility.abilityClass == AbilityClass.TARGETED_ABILITY){
-
+            val tilesInRange = mapAlgorithms.getTilesInRangeOfAbility(characterUsingAbility, logicalAbility)
+            mapHighlighter.killHighlights()
+            mapHighlighter.highlightTiles(tilesInRange, HighlightType.RED_TILE)
         }
     }
 }
