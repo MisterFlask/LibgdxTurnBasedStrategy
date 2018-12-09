@@ -3,12 +3,14 @@ package com.ironlordbyron.turnbasedstrategy.controller
 import com.badlogic.gdx.graphics.Color
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityClass
+import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import javax.inject.Inject
 import javax.inject.Singleton
 
 sealed class BoardInputState{
     data class UnitSelected(val unit: LogicalCharacter) : BoardInputState()
     object DefaultState : BoardInputState()
+    data class PlayerIntendsToUseAbility(val unit: LogicalCharacter, val ability: LogicalAbility): BoardInputState()
 }
 
 /**
@@ -20,7 +22,8 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                                                 val boardState: TacticalMapState,
                                                 val abilityController: AbilityController,
                                                 val mapHighlighter: MapHighlighter,
-                                                val tacticalMapAlgorithms: TacticalMapAlgorithms) : EventListener {
+                                                val tacticalMapAlgorithms: TacticalMapAlgorithms,
+                                                val abilityEffectFactory: AbilityEffectFactory) : EventListener {
 
     var boardInputState : BoardInputState = BoardInputState.DefaultState
     var selectedCharacter: LogicalCharacter? = null
@@ -41,8 +44,12 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
             }
             is TacticalGuiEvent.ClickedButtonToActivateAbility -> {
                 val selectedCharacter = selectedCharacter
-                if (event.ability.abilityClass == AbilityClass.TARGETED_ABILITY &&
-                        selectedCharacter != null){
+                if (selectedCharacter == null){
+                    throw IllegalStateException("Clicked button to activate ability when no char selected")
+                }
+                boardInputState = BoardInputState.PlayerIntendsToUseAbility(selectedCharacter,
+                        event.ability)
+                if (event.ability.abilityClass == AbilityClass.TARGETED_ABILITY){
                     abilityController.SignalIntentToActOnAbility(selectedCharacter, event.ability)
                 }
             }
@@ -56,6 +63,15 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
     fun playerClickedOnTile(location: TileLocation){
         val character = tacticalMapAlgorithms.getCharacterAtLocation(location)
         mapHighlighter.killHighlights()
+        val currentBoardInputState = boardInputState
+        if (currentBoardInputState is BoardInputState.PlayerIntendsToUseAbility){
+            if (isValidTargetForAbility(currentBoardInputState.ability, location)){
+                performAbilityOnLocation(currentBoardInputState.ability, location)
+            }
+
+            return
+        }
+
         if (character != null){
             selectCharacterInTacMap(character)
             selectedCharacter = character
@@ -69,6 +85,16 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
             selectedCharacter = null
             eventNotifier.notifyListeners(TacticalGuiEvent.CharacterUnselected())
         }
+    }
+
+    // TODO
+    private fun performAbilityOnLocation(ability: LogicalAbility, location: TileLocation) {
+        return
+    }
+
+    // TODO
+    private fun isValidTargetForAbility(ability: LogicalAbility, location: TileLocation): Boolean {
+        return true
     }
 
     private fun selectCharacterInTacMap(character: LogicalCharacter) {
