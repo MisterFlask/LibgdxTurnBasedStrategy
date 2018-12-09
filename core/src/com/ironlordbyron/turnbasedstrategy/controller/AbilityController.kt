@@ -14,6 +14,7 @@ class AbilityController @Inject constructor(val tacticalMapState: TacticalMapSta
 
     fun ActOnAbility(logicalAbility: LogicalAbility){
         if(logicalAbility.abilityClass == AbilityClass.TARGETED_ABILITY){
+
         }
     }
 }
