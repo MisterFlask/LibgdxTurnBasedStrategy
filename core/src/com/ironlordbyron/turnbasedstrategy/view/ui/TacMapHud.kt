@@ -21,11 +21,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import com.badlogic.gdx.utils.Scaling
 import com.ironlordbyron.turnbasedstrategy.view.ui.external.BackgroundColor
-import javax.swing.text.StyleConstants.setBackground
-
-
-
-
 
 
 /**
@@ -86,13 +81,13 @@ class TacMapHud(viewPort: Viewport,
             override fun enter(event: InputEvent?, x: Float, y:Float, pointer: Int, fromActor: Actor?){
                 eventNotifier.notifyListeners(TacticalGuiEvent.StartedHoveringOverAbility(ability))
                 hoveredAbility = ability
-                textArea.setText("${ability.name}: ${ability.description}")
+                abilityTextArea.setText("${ability.name}: ${ability.description}")
                 super.enter(event, x, y, pointer, fromActor)
             }
             override fun exit(event: InputEvent?, x: Float, y:Float, pointer: Int, fromActor: Actor?){
                 eventNotifier.notifyListeners(TacticalGuiEvent.StoppedHoveringOverAbility(ability))
                 hoveredAbility = null
-                textArea.setText("")
+                abilityTextArea.setText("")
                 super.exit(event, x, y, pointer, fromActor)
             }
         }
@@ -112,36 +107,43 @@ class TacMapHud(viewPort: Viewport,
     var selectedUnitDescription: Label? = null
     val portraitDimensions: Dimensions = Dimensions(150,150)
 
-    var textArea: Label = Label("", mySkin)
-    val table : Table = Table(mySkin)
+    var abilityTextArea: Label = Label("", mySkin)
+    val characterDisplayTable : Table = Table(mySkin)
 
     private fun regenerateTable(){
-        textArea = Label("", mySkin)
-        val backgroundColor = BackgroundColor("simple/white_color.png")
-        backgroundColor.setColor(255, 255, 255, 255)
-        table.setBackground(backgroundColor)
+        abilityTextArea = Label("", mySkin)
+        val backgroundColor = backgroundColor()
+        characterDisplayTable.setBackground(backgroundColor)
         var selectedCharacter: LogicalCharacter? = selectedCharacter
-        table.clearChildren()
+        characterDisplayTable.clearChildren()
         if (selectedCharacter != null){
-            table.add(Label(selectedCharacter.tacMapUnit.templateName, mySkin, "title"))
-            table.row()
-            table.add(characterImageManager.retrieveCharacterImage(selectedCharacter))
+            characterDisplayTable.add(Label(selectedCharacter.tacMapUnit.templateName, mySkin, "title"))
+            characterDisplayTable.row()
+            characterDisplayTable.add(characterImageManager.retrieveCharacterImage(selectedCharacter))
                     .size(portraitDimensions.width.toFloat(),portraitDimensions.height.toFloat())
-            table.row()
+            characterDisplayTable.row()
         }
         // NOTE TO FUTURE SELF: Table controls size of images, DOES NOT RESPECT image preferred size
-        table.row()
+        characterDisplayTable.row()
+        characterDisplayTable.add(Label("", mySkin)).fillY().expandY()
+        characterDisplayTable.row()
 
         if (selectedCharacter != null){
             for (ability in selectedCharacter.abilities){
-                table.add(actionButton(ability))
+                characterDisplayTable.add(actionButton(ability))
             }
         }
 
-        table.row()
-        table.add(endTurnButton())
-        table.row()
-        table.add(textArea)
+        characterDisplayTable.row()
+        characterDisplayTable.add(endTurnButton())
+        characterDisplayTable.row()
+        characterDisplayTable.add(abilityTextArea).bottom()
+    }
+
+    private fun backgroundColor(): BackgroundColor {
+        val backgroundColor = BackgroundColor("simple/white_color.png")
+        backgroundColor.setColor(0, 0, 0, 166)
+        return backgroundColor
     }
 
     init {
@@ -154,8 +156,7 @@ class TacMapHud(viewPort: Viewport,
                 Window("", mySkin).let {
                     it.width = 440f
                     it.height = 600f
-                    it.add(table)
-
+                    it.add(characterDisplayTable).fill().expand()
                     it
                 }
         window = actor
