@@ -7,7 +7,8 @@ public class LogicalAbility(val name: String,
                             val range: RangeValue,
                             val attackSprite: AbilitySprite? = null,
                             val missionLimit: Int? = null,
-                            val damage: Int? = null){
+                            val damage: Int? = null,
+                            val description: String? = null){
 
 }
 

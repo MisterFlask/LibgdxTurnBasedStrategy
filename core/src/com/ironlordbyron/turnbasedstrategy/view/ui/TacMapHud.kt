@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.view.ui
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.Input
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -20,6 +21,7 @@ import com.ironlordbyron.turnbasedstrategy.view.images.FileImageRetriever
 import com.ironlordbyron.turnbasedstrategy.view.images.Icon
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.CharacterImageManager
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.SpriteActorFactory
+import org.w3c.dom.Text
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -48,6 +50,7 @@ class TacMapHud(viewPort: Viewport,
                 val fileImageRetriever: FileImageRetriever,
                 val characterImageManager: CharacterImageManager) : Stage(viewPort), EventListener {
     var selectedCharacter: LogicalCharacter? = null
+    var hoveredAbility: LogicalAbility? = null
 
     override fun consumeEvent(event: TacticalGuiEvent) {
         when (event) {
@@ -72,12 +75,29 @@ class TacMapHud(viewPort: Viewport,
 
         val clickListener = object : ClickListener(){
             override fun clicked(event: InputEvent?, x: Float, y: Float) {
-                println("Clicked button for glorious ability ${ability.name}")
+                eventNotifier.notifyListeners(TacticalGuiEvent.ClickedButtonToActivateAbility(ability))
                 super.clicked(event, x, y)
+            }
+
+            override fun enter(event: InputEvent?, x: Float, y:Float, pointer: Int, fromActor: Actor?){
+                eventNotifier.notifyListeners(TacticalGuiEvent.StartedHoveringOverAbility(ability))
+                hoveredAbility = ability
+                textArea.setText("${ability.name}: ${ability.description}")
+                super.enter(event, x, y, pointer, fromActor)
+            }
+            override fun exit(event: InputEvent?, x: Float, y:Float, pointer: Int, fromActor: Actor?){
+                eventNotifier.notifyListeners(TacticalGuiEvent.StoppedHoveringOverAbility(ability))
+                hoveredAbility = null
+                textArea.setText("")
+                super.exit(event, x, y, pointer, fromActor)
             }
         }
         button.addListener(clickListener)
         return button
+    }
+
+    private fun showAbility(ability: LogicalAbility) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     lateinit var window: Window
@@ -88,8 +108,10 @@ class TacMapHud(viewPort: Viewport,
     var selectedUnitDescription: Label? = null
     val portraitDimensions: Dimensions = Dimensions(150,150)
 
+    var textArea: Label = Label("", mySkin)
     val table : Table = Table()
     private fun regenerateTable(){
+        textArea = Label("", mySkin)
         var selectedCharacter: LogicalCharacter? = selectedCharacter
         table.clearChildren()
         if (selectedCharacter != null){
@@ -110,6 +132,8 @@ class TacMapHud(viewPort: Viewport,
 
         table.row()
         table.add(endTurnButton())
+        table.row()
+        table.add(textArea)
     }
 
     init {

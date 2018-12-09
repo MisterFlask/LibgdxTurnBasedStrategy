@@ -4,6 +4,7 @@ object StandardAbilities{
     val MeleeAttack = LogicalAbility("Attack",
             AbilitySpeed.ENDS_TURN,
             damage = 1,
-            range = RangeValue.MeleeAttack()
+            range = RangeValue.MeleeAttack(),
+            description = "A melee attack.  Ends the turn."
             );
 }
