@@ -1,29 +1,32 @@
 package com.ironlordbyron.turnbasedstrategy.view.ui
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Input
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.ironlordbyron.turnbasedstrategy.common.GameBoardOperator
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
-import com.ironlordbyron.turnbasedstrategy.common.extensions.toImage
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.view.images.Dimensions
 import com.ironlordbyron.turnbasedstrategy.view.images.FileImageRetriever
-import com.ironlordbyron.turnbasedstrategy.view.images.Icon
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.CharacterImageManager
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.SpriteActorFactory
-import org.w3c.dom.Text
 import javax.inject.Inject
 import javax.inject.Singleton
+import com.badlogic.gdx.utils.Scaling
+import com.ironlordbyron.turnbasedstrategy.view.ui.external.BackgroundColor
+import javax.swing.text.StyleConstants.setBackground
+
+
+
+
+
 
 /**
  * Created by Aaron on 3/30/2018.
@@ -71,6 +74,7 @@ class TacMapHud(viewPort: Viewport,
     private val buttonDimensions = Dimensions(55, 55)
 
     private fun actionButton(ability : LogicalAbility): Actor? {
+
         val button = TextButton(ability.name, mySkin)
 
         val clickListener = object : ClickListener(){
@@ -109,13 +113,17 @@ class TacMapHud(viewPort: Viewport,
     val portraitDimensions: Dimensions = Dimensions(150,150)
 
     var textArea: Label = Label("", mySkin)
-    val table : Table = Table()
+    val table : Table = Table(mySkin)
+
     private fun regenerateTable(){
         textArea = Label("", mySkin)
+        val backgroundColor = BackgroundColor("simple/white_color.png")
+        backgroundColor.setColor(255, 255, 255, 255)
+        table.setBackground(backgroundColor)
         var selectedCharacter: LogicalCharacter? = selectedCharacter
         table.clearChildren()
         if (selectedCharacter != null){
-            table.add(Label(selectedCharacter.tacMapUnit.templateName, mySkin))
+            table.add(Label(selectedCharacter.tacMapUnit.templateName, mySkin, "title"))
             table.row()
             table.add(characterImageManager.retrieveCharacterImage(selectedCharacter))
                     .size(portraitDimensions.width.toFloat(),portraitDimensions.height.toFloat())
@@ -151,6 +159,11 @@ class TacMapHud(viewPort: Viewport,
                     it
                 }
         window = actor
+        val background = Image(mySkin, "bg")
+        background.setScaling(Scaling.stretch)
+        background.setFillParent(true)
+        window.addActor(background)
+        background.toBack()
 
         actor.x = 650f
         actor.y = 500f
@@ -180,4 +193,7 @@ class TacMapHud(viewPort: Viewport,
         button.addListener(clickListener)
         return button
     }
+
+
+
 }

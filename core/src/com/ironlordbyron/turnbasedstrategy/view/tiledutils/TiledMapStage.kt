@@ -66,14 +66,14 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
     }
 
     override fun keyUp(keycode: Int): Boolean {
-        if (keycode == Input.Keys.LEFT)
+        if (keycode == Input.Keys.LEFT || keycode == Input.Keys.A)
             orthographicCamera.translate(-32f, 0f)
-        if (keycode == Input.Keys.RIGHT)
+        if (keycode == Input.Keys.RIGHT || keycode == Input.Keys.D)
             orthographicCamera.translate(32f, 0f)
-        if (keycode == Input.Keys.UP)
-            orthographicCamera.translate(0f, -32f)
-        if (keycode == Input.Keys.DOWN)
+        if (keycode == Input.Keys.UP || keycode == Input.Keys.W)
             orthographicCamera.translate(0f, 32f)
+        if (keycode == Input.Keys.DOWN || keycode == Input.Keys.S)
+            orthographicCamera.translate(0f, -32f)
         if (keycode == Input.Keys.NUM_1)
             tiledMap.layers.get(0).isVisible = !tiledMap.layers.get(0).isVisible
         if (keycode == Input.Keys.NUM_2)
