@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.ai
 
 import com.google.inject.Inject
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
+import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.LogicalTileTracker
@@ -14,17 +15,19 @@ import java.lang.IllegalArgumentException
 private val SENTINEL_VALUE = 100000
 
 public class AiGridGraphFactory @Inject constructor(val tileTracker: LogicalTileTracker,
-                                                    val tacticalMapState: TacticalMapState){
+                                                    val tacticalMapState: TacticalMapState,
+                                                    val tacticalMapAlgorithms: TacticalMapAlgorithms){
 
     public fun createGridGraph(logicalCharacter: LogicalCharacter) : AiGridGraph{
         return AiGridGraph(tileTracker,
-                tacticalMapState, logicalCharacter)
+                tacticalMapState, logicalCharacter, tacticalMapAlgorithms)
     }
 }
 
 public class AiGridGraph (val tileTracker: LogicalTileTracker,
-                         val tacticalMapState: TacticalMapState,
-                          val logicalCharacter: LogicalCharacter) {
+                          val tacticalMapState: TacticalMapState,
+                          val logicalCharacter: LogicalCharacter,
+                          val tacticalMapAlgorithms: TacticalMapAlgorithms) {
 
     val navigationGrid = NavigationGrid<PathfindingTileLocation>();
     init{
@@ -39,7 +42,7 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
                 pathingTile.location = TileLocation(x,y)
                 pathingTile.x = x
                 pathingTile.y = y
-                pathingTile.isWalkable = tacticalMapState.canWalkOnTile(logicalCharacter, pathingTile.location)
+                pathingTile.isWalkable = tacticalMapAlgorithms.canWalkOnTile(logicalCharacter, pathingTile.location)
             }
         }
         return tileArray
@@ -76,7 +79,7 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
                 if (tile == origin && !allowEndingOnLastTile){
                     continue
                 }
-                if (tacticalMapState.isTileUnoccupied(tileLocation = tile)){
+                if (tacticalMapAlgorithms.isTileUnoccupied(tileLocation = tile)){
                     return tile
                 }
             }

@@ -19,7 +19,8 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                                                 val eventNotifier: EventNotifier,
                                                 val boardState: TacticalMapState,
                                                 val abilityController: AbilityController,
-                                                val mapHighlighter: MapHighlighter) : EventListener {
+                                                val mapHighlighter: MapHighlighter,
+                                                val tacticalMapAlgorithms: TacticalMapAlgorithms) : EventListener {
 
     var boardInputState : BoardInputState = BoardInputState.DefaultState
     var playerHasPriority = true
@@ -50,7 +51,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
     }
 
     fun playerClickedOnTile(location: TileLocation){
-        val character = boardState.getCharacterAtLocation(location)
+        val character = tacticalMapAlgorithms.getCharacterAtLocation(location)
         mapHighlighter.killHighlights()
         if (character != null){
             selectCharacterInTacMap(character)
@@ -68,7 +69,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
     private fun selectCharacterInTacMap(character: LogicalCharacter) {
         boardInputState = BoardInputState.UnitSelected(character)
         if (character.playerControlled){
-            val tilesToHighlight = boardState.getWhereCharacterCanMoveTo(character)
+            val tilesToHighlight = tacticalMapAlgorithms.getWhereCharacterCanMoveTo(character)
             mapHighlighter.highlightTiles(tilesToHighlight, HighlightType.GREEN_TILE)
         }
     }
@@ -77,7 +78,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
         if (!unit.playerControlled){
             return false // TODO: Inelegant
         }
-        return boardState.getWhereCharacterCanMoveTo(unit).contains(location)
+        return tacticalMapAlgorithms.getWhereCharacterCanMoveTo(unit).contains(location)
     }
 
     private fun moveUnitIfAble(unit: LogicalCharacter, location: TileLocation) {

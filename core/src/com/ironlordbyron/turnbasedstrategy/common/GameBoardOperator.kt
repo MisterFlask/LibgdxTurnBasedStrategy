@@ -37,7 +37,8 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
                                             val enemyAiFactory:EnemyAiFactory,
                                             val actionRunner: ActionRunner,
                                             val characterSpriteUtils: CharacterSpriteUtils,
-                                            val mapHighlighter: MapHighlighter) : EventListener {
+                                            val mapHighlighter: MapHighlighter,
+                                            val tacticalMapAlgorithms: TacticalMapAlgorithms) : EventListener {
     override fun consumeEvent(event: TacticalGuiEvent) {
         when(event){
             is TacticalGuiEvent.FinishedEnemyTurn -> {
@@ -89,7 +90,7 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
                             wasPlayerInitiated: Boolean){
         if (!wasPlayerInitiated) {
             // first, show the player where the ai COULD move to
-            val tilesToHighlight = boardState.getWhereCharacterCanMoveTo(character)
+            val tilesToHighlight = tacticalMapAlgorithms.getWhereCharacterCanMoveTo(character)
             val actorActionPairForHighlights = mapHighlighter.getTileHighlightActorActionPairs(tilesToHighlight, HighlightType.RED_TILE)
             actionQueue.add(actorActionPairForHighlights)
         }
