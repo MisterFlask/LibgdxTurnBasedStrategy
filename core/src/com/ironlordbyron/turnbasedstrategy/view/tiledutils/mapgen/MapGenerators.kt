@@ -8,7 +8,8 @@ import java.util.*
 import javax.inject.Singleton
 
 @Singleton
-class BlankMapGenerator @Inject constructor(val fragmentCopier: TileMapOperationsHandler) {
+class BlankMapGenerator @Inject constructor(val fragmentCopier: TileMapOperationsHandler,
+                                            val tileTracker: LogicalTileTracker) {
     companion object {
         val defaultMapGenParams = MapGenerationParams(numCities = 3,
                 sourceMapName = "BlankGrass.tmx",
@@ -31,8 +32,10 @@ class BlankMapGenerator @Inject constructor(val fragmentCopier: TileMapOperation
             if (fits) {
                 locationsUsed.addAll(getSpacesUsed(width, height, randomX, randomY))
                 fragmentCopier.copyFragmentTo(params.sourceMapName, randomX, randomY, params.cityFragmentMapName)
+                // TODO: Add functionality to enrich our map data with the fact that it's a city.
             }
         }
+
         return blankMap
     }
 

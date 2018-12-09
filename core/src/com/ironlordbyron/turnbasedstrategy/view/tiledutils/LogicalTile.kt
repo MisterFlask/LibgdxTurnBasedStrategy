@@ -5,14 +5,18 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 
 
-data class LogicalTile(val terrainTile: TiledMapTile, val location: TileLocation, val actor: TileMapActor,
-                       val cell: TiledMapTileLayer.Cell, val allTilesAtThisSquare: List<TiledMapStage.TiledCellAgglomerate>) {
+data class LogicalTile(val terrainTile: TiledMapTile,
+                       val location: TileLocation,
+                       val actor: TileMapActor,
+                       val cell: TiledMapTileLayer.Cell,
+                       val allTilesAtThisSquare: List<TiledMapStage.TiledCellAgglomerate>,
+                       var terrainType: TerrainType = TerrainType.GRASS) {
 
     fun isTerrainMountainous(): Boolean {
         return layerHasBooleanPropertySetToTrue(TileLayer.FEATURE, "mountain")
     }
 
-    val terrainType: TerrainType
+    val terrainTypeFromUnderlyingTile: TerrainType
         get() = {
             if (isTerrainMountainous()) TerrainType.MOUNTAIN
             else TerrainType.GRASS

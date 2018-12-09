@@ -5,6 +5,7 @@ object StandardAbilities{
             AbilitySpeed.ENDS_TURN,
             damage = 1,
             range = RangeValue.MeleeAttack(),
-            description = "A melee attack.  Ends the turn."
+            description = "A melee attack.  Ends the turn.",
+            abilityClass = AbilityClass.TARGETED_ABILITY
             );
 }

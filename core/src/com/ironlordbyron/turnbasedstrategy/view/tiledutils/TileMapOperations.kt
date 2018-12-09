@@ -122,8 +122,11 @@ fun TiledMap.getObjectLayerRectangles(): List<LogicalTiledObject> {
     val logicalobjects = ArrayList<LogicalTiledObject>()
     for (rec in rectangles) {
 
-        val logicalTiledObject = LogicalTiledObject(Math.round(rec.rectangle.x), Math.round(rec.rectangle.y),
-                Math.round(rec.rectangle.width), Math.round(rec.rectangle.height),
+        val logicalTiledObject = LogicalTiledObject(
+                Math.round(rec.rectangle.x),
+                Math.round(rec.rectangle.y),
+                Math.round(rec.rectangle.width),
+                Math.round(rec.rectangle.height),
                 rec.name, rec.properties, rec.properties["type"] as String)
         logicalobjects.add(logicalTiledObject)
     }

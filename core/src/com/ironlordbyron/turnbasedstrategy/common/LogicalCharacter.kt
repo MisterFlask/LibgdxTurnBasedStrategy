@@ -13,7 +13,9 @@ data class LogicalCharacter(val actor: SpriteActor,
                             var tileLocation: TileLocation,
                             val tacMapUnit: TacMapUnitTemplate,
                             val playerControlled: Boolean,
-                            var movedThisTurn: Boolean = false){
+                            var endedTurn: Boolean = false,
+                            var actionsLeft: Int = 2,
+                            var maxActionsLeft: Int = 2){
     val abilities: Collection<LogicalAbility>
     get() = acquireAbilities()
 

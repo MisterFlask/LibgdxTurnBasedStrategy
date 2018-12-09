@@ -8,8 +8,13 @@ public class LogicalAbility(val name: String,
                             val attackSprite: AbilitySprite? = null,
                             val missionLimit: Int? = null,
                             val damage: Int? = null,
-                            val description: String? = null){
+                            val description: String? = null,
+                            val abilityClass: AbilityClass){
 
+}
+
+public enum class AbilityClass {
+    TARGETED_ABILITY
 }
 
 public sealed class RangeValue{

@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.controller
 
 import com.badlogic.gdx.graphics.Color
 import com.ironlordbyron.turnbasedstrategy.common.*
+import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityClass
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,7 +17,9 @@ sealed class BoardInputState{
 @Singleton
 class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoardOperator,
                                                 val eventNotifier: EventNotifier,
-                                                val boardState: TacticalMapState) : EventListener {
+                                                val boardState: TacticalMapState,
+                                                val abilityController: AbilityController,
+                                                val mapHighlighter: MapHighlighter) : EventListener {
 
     var boardInputState : BoardInputState = BoardInputState.DefaultState
     var playerHasPriority = true
@@ -34,6 +37,11 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
             is TacticalGuiEvent.FinishedEnemyTurn -> {
                 playerHasPriority = true
             }
+            is TacticalGuiEvent.ClickedButtonToActivateAbility -> {
+                if (event.ability.abilityClass == AbilityClass.TARGETED_ABILITY){
+
+                }
+            }
         }
     }
 
@@ -43,7 +51,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
 
     fun playerClickedOnTile(location: TileLocation){
         val character = boardState.getCharacterAtLocation(location)
-        gameBoardOperator.killHighlights()
+        mapHighlighter.killHighlights()
         if (character != null){
             selectCharacterInTacMap(character)
             eventNotifier.notifyListeners(TacticalGuiEvent.CharacterSelected(character))
@@ -61,7 +69,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
         boardInputState = BoardInputState.UnitSelected(character)
         if (character.playerControlled){
             val tilesToHighlight = boardState.getWhereCharacterCanMoveTo(character)
-            gameBoardOperator.highlightTiles(tilesToHighlight, HighlightType.GREEN_TILE)
+            mapHighlighter.highlightTiles(tilesToHighlight, HighlightType.GREEN_TILE)
         }
     }
 

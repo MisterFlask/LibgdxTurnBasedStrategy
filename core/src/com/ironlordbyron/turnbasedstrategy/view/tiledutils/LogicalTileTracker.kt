@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.view.tiledutils
 
+import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTile
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import javax.inject.Singleton
@@ -7,6 +8,7 @@ import javax.inject.Singleton
 
 @Singleton
 class LogicalTileTracker {
+
     val tiles = ArrayList<LogicalTile>()
 
     fun addTile(logicalTile: LogicalTile) {

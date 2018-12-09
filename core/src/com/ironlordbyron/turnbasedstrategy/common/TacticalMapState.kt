@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
 import com.google.inject.Inject
+import com.ironlordbyron.turnbasedstrategy.view.tiledutils.LogicalTile
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.LogicalTileTracker
 import javax.inject.Singleton
 
@@ -34,6 +35,14 @@ class TacticalMapState @Inject constructor(val logicalTileTracker: LogicalTileTr
     fun getWhereCharacterCanMoveTo(character: LogicalCharacter): Collection<TileLocation> {
         val tiles = getWalkableTileLocationsUpToNAway(character.tacMapUnit.movesPerTurn, character.tileLocation, character)
         return tiles
+    }
+
+    fun moveCharacterToTile(character: LogicalCharacter, tile: TileLocation){
+        character.tileLocation = tile
+        character.actionsLeft -= 1
+        if (character.actionsLeft == 0){
+            character.endedTurn = true
+        }
     }
 
     /**
