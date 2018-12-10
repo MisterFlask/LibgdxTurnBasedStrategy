@@ -47,7 +47,9 @@ class SpriteActorFactory @Inject constructor(val stageProvider: TacticalTiledMap
         return spriteActor
     }
 
-    fun createSpriteActorForTile(tiledMap: TiledMap, location: TileLocation, textureRegion: TextureRegion,
+    fun createSpriteActorForTile(tiledMap: TiledMap,
+                                 location: TileLocation,
+                                 textureRegion: TextureRegion,
                                  alpha: Float = 1f): SpriteActor {
         val boundingBox = (tiledMap.layers[0] as TiledMapTileLayer).getBoundsOfTile(location)
         return createSpriteActor(textureRegion, boundingBox, alpha)

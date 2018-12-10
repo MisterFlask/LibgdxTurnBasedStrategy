@@ -1,6 +1,5 @@
 package com.ironlordbyron.turnbasedstrategy.controller
 
-import com.badlogic.gdx.graphics.Color
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityClass
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
@@ -26,7 +25,14 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                                                 val abilityEffectFactory: AbilityEffectFactory) : EventListener {
 
     var boardInputState : BoardInputState = BoardInputState.DefaultState
+        set(value) {
+            println("Setting board input state: $boardInputState")
+            field = value
+        }
+
+
     var selectedCharacter: LogicalCharacter? = null
+
     var playerHasPriority = true
     override fun consumeEvent(event: TacticalGuiEvent) {
         when(event){
@@ -50,7 +56,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 boardInputState = BoardInputState.PlayerIntendsToUseAbility(selectedCharacter,
                         event.ability)
                 if (event.ability.abilityClass == AbilityClass.TARGETED_ABILITY){
-                    abilityController.SignalIntentToActOnAbility(selectedCharacter, event.ability)
+                    abilityController.signalIntentToActOnAbility(selectedCharacter, event.ability)
                 }
             }
         }
@@ -65,10 +71,9 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
         mapHighlighter.killHighlights()
         val currentBoardInputState = boardInputState
         if (currentBoardInputState is BoardInputState.PlayerIntendsToUseAbility){
-            if (isValidTargetForAbility(currentBoardInputState.ability, location)){
-                performAbilityOnLocation(currentBoardInputState.ability, location)
+            if (abilityController.canUseAbilityOnSquare(currentBoardInputState.unit, currentBoardInputState.ability, character, location)){
+                abilityController.useAbility(currentBoardInputState.unit, currentBoardInputState.ability, character, location)
             }
-
             return
         }
 
@@ -87,15 +92,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
         }
     }
 
-    // TODO
-    private fun performAbilityOnLocation(ability: LogicalAbility, location: TileLocation) {
-        return
-    }
 
-    // TODO
-    private fun isValidTargetForAbility(ability: LogicalAbility, location: TileLocation): Boolean {
-        return true
-    }
 
     private fun selectCharacterInTacMap(character: LogicalCharacter) {
         boardInputState = BoardInputState.UnitSelected(character)

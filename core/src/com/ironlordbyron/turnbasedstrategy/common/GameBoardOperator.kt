@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
@@ -38,7 +39,8 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
                                             val actionRunner: ActionRunner,
                                             val characterSpriteUtils: CharacterSpriteUtils,
                                             val mapHighlighter: MapHighlighter,
-                                            val tacticalMapAlgorithms: TacticalMapAlgorithms) : EventListener {
+                                            val tacticalMapAlgorithms: TacticalMapAlgorithms,
+                                            val temporaryAnimationGenerator: TemporaryAnimationGenerator) : EventListener {
     override fun consumeEvent(event: TacticalGuiEvent) {
         when(event){
             is TacticalGuiEvent.FinishedEnemyTurn -> {
@@ -122,6 +124,18 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
                 tileMapOperationsHandler.pullTextureFromTilemap(CHARACTER_PLACEHOLDER_TILEMAP_TSX_FILE, tacMapUnit.tiledTexturePath.spriteId, tacMapUnit.tiledTexturePath.tileSetName))
         boardState.listOfCharacters.add(LogicalCharacter(actor, tileLocation, tacMapUnit, playerControlled))
 
+    }
+
+    fun damageCharacter(targetCharacter: LogicalCharacter?, waitOnMoreQueuedActions: Boolean = false) {
+        // TODO: Implement HP
+        if (targetCharacter == null){
+            throw IllegalArgumentException("Damage character called with no character selected")
+        }
+        actionQueue.add(temporaryAnimationGenerator.getTemporaryAnimationActorActionPair(targetCharacter.tileLocation))
+        if (!waitOnMoreQueuedActions){
+            actionRunner.runThroughActionQueue(actionQueue, finalAction = {})
+            actionQueue = ArrayList()
+        }
     }
 
 }
