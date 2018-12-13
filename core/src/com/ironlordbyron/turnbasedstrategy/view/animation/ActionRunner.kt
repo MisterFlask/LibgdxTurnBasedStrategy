@@ -10,13 +10,11 @@ public class ActionRunner{
     public fun runThroughActionQueue(actionQueue: List<ActorActionPair>, currentIndex: Int = 0,
                                      finalAction : () -> Unit = {}) {
 
-        val current = actionQueue[currentIndex]
-        if (currentIndex == actionQueue.size - 1) {
-            // we're at the end of the list.
-            current.actor.addAction(current.action)
+        if (currentIndex == actionQueue.size) {
             finalAction.invoke()
             return
         }
+        val current = actionQueue[currentIndex]
         current.actor.addAction(Actions.sequence(current.action, CustomAction {
             runThroughActionQueue(actionQueue, currentIndex + 1, finalAction)
             if (current.murderActorsOnceCompletedAnimation){
@@ -34,6 +32,8 @@ public class ActionRunner{
         }
     }
 }
+
+
 private class CustomAction(val execution: ()->Unit): Action() {
     override fun act(delta: Float): Boolean {
         execution.invoke()

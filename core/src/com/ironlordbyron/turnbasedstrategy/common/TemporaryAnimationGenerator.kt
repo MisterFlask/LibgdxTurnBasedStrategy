@@ -32,9 +32,10 @@ class AnimatedImage(val animation: Animation<TextureRegion>) : Image(animation.g
 }
 
 class AppearTemporarily(val animation: AnimatedImage) : Action(){
+    var currentTime = 0f
     override fun act(delta: Float): Boolean {
-        if (animation.animation.isAnimationFinished(delta)){
-            animation.remove()
+        currentTime+=delta
+        if (animation.animation.isAnimationFinished(currentTime)){
             return true
         }
         return false
