@@ -19,6 +19,9 @@ data class LogicalCharacter(val actor: SpriteActor,
     val abilities: Collection<LogicalAbility>
     get() = acquireAbilities()
 
+    val playerAlly: Boolean
+    get() = playerControlled //TODO: Differentiate if necessary
+
     private fun acquireAbilities(): Collection<LogicalAbility> {
         return tacMapUnit.abilities
     }

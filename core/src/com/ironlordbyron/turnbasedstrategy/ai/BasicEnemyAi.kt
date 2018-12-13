@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.ai
 
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
+import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TileMapOperationsHandler
@@ -14,7 +15,8 @@ import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvide
 public class BasicEnemyAi(val tileMapOperationsHandler: TileMapOperationsHandler,
                           val tacticalMapState: TacticalMapState,
                           val tileMapProvider: TileMapProvider,
-                          val aiGridGraphFactory: AiGridGraphFactory) : EnemyAi{
+                          val aiGridGraphFactory: AiGridGraphFactory,
+                          val mapAlgorithms: TacticalMapAlgorithms) : EnemyAi{
     override fun getNextActions(thisCharacter: LogicalCharacter): List<AiPlannedAction> {
         val nextMove = getNextMoveLocation(thisCharacter)
         if (nextMove == null){
@@ -23,7 +25,12 @@ public class BasicEnemyAi(val tileMapOperationsHandler: TileMapOperationsHandler
         return listOf(AiPlannedAction.MoveToTile(nextMove))
     }
 
+    // First priority: Can we hit an enemy with an ability from a reachable tile?  If so, DO IT.
     fun getNextMoveLocation(thisCharacter: LogicalCharacter) : TileLocation?{
+        val reachableLocations  = mapAlgorithms.getWhereCharacterCanMoveTo(thisCharacter)
+        
+        // TODO
+
         val map = tileMapProvider.tiledMap
         val aiGridGraph = aiGridGraphFactory.createGridGraph(thisCharacter)
 

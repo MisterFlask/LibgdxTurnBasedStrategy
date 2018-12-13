@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
+import com.ironlordbyron.turnbasedstrategy.controller.AbilityFactory
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.LogicalTileTracker
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,6 +32,11 @@ open class CanWalkOnTile(open val logicalTileTracker: LogicalTileTracker,
     }
 }
 
+public data class ActionResult(val logicalAbility: LogicalAbility,
+                               val logicalCharacter: LogicalCharacter,
+                               val butFirstMoveHere: TileLocation?,
+                               val squaresTargetable: Collection<TileLocation>)
+
 @Singleton
 class TacticalMapAlgorithms @Inject constructor(override val logicalTileTracker: LogicalTileTracker,
                                                 override val tacticalMapState: TacticalMapState): CanWalkOnTile(logicalTileTracker,
@@ -41,8 +47,8 @@ class TacticalMapAlgorithms @Inject constructor(override val logicalTileTracker:
                 CanWalkOnTile(logicalTileTracker, tacticalMapState))
         return tiles
     }
-    public fun getTilesInRangeOfAbility(character: LogicalCharacter, ability: LogicalAbility): Collection<TileLocation> {
-        val tiles = getWalkableTileLocationsUpToNAway(ability.range, character.tileLocation, character,
+    public fun getTilesInRangeOfAbility(character: LogicalCharacter, ability: LogicalAbility, sourceSquare: TileLocation? = null): Collection<TileLocation> {
+        val tiles = getWalkableTileLocationsUpToNAway(ability.range, sourceSquare?:character.tileLocation, character,
                 AlwaysValid())
         return tiles
     }

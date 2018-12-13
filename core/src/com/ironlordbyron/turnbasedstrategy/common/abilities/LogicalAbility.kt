@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.common.abilities
 
 import com.badlogic.gdx.graphics.g2d.Sprite
+import com.ironlordbyron.turnbasedstrategy.controller.RequiredTargetType
 
 public class LogicalAbility(val name: String,
                             val speed: AbilitySpeed,
@@ -10,7 +11,8 @@ public class LogicalAbility(val name: String,
                             val damage: Int? = null,
                             val description: String? = null,
                             val abilityClass: AbilityClass,
-                            val allowsTargetingSelf: Boolean = false){
+                            val allowsTargetingSelf: Boolean = false,
+                            val requiredTargetType: RequiredTargetType = RequiredTargetType.ANY){
 
 }
 
