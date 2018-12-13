@@ -13,7 +13,6 @@ sealed class TacticalGuiEvent{
     class CharacterUnselected(): TacticalGuiEvent()
     data class StartedHoveringOverAbility(val ability: LogicalAbility) : TacticalGuiEvent()
     data class StoppedHoveringOverAbility(val ability: LogicalAbility) : TacticalGuiEvent()
-    data class ClickedButtonToActivateAbility(val ability: LogicalAbility) : TacticalGuiEvent() {
-
-    }
+    data class ClickedButtonToActivateAbility(val ability: LogicalAbility) : TacticalGuiEvent()
+    data class SwitchedGuiState(val guiState: BoardInputState):TacticalGuiEvent()
 }

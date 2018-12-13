@@ -17,13 +17,16 @@ import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvide
 import javax.inject.Inject
 
 
-class AnimatedImage(val animation: Animation<TextureRegion>,
-                    val initiallyVisible: Boolean = false) : Image(animation.getKeyFrame(0f)) {
+class AnimatedImage(val animation: Animation<TextureRegion>) : Image(animation.getKeyFrame(0f)) {
     private var stateTime = 0f
+
+    init{
+        animation.playMode = Animation.PlayMode.NORMAL
+    }
 
     override fun act(delta: Float) {
         stateTime += delta
-        (getDrawable() as TextureRegionDrawable).setRegion(animation!!.getKeyFrame(stateTime, true))
+        (getDrawable() as TextureRegionDrawable).setRegion(animation!!.getKeyFrame(stateTime, false))
         super.act(delta)
     }
 }
@@ -44,7 +47,7 @@ class TemporaryAnimationGenerator @Inject constructor (val tileMapProvider: Tile
     val FRAME_ROWS = 4
     val FRAME_COLS = 4
     public fun getTemporaryAnimationActorActionPair(tileLocation: TileLocation): ActorActionPair{
-        val walkSheet = Texture(Gdx.files.internal("animations/exp2.jpg"))
+        val walkSheet = Texture(Gdx.files.internal("animations/exp2.png"))
 
         // Use the split utility method to create a 2D array of TextureRegions. This is
         // possible because this sprite sheet contains frames of equal size and they are
@@ -73,6 +76,7 @@ class TemporaryAnimationGenerator @Inject constructor (val tileMapProvider: Tile
         animatedImage.height = boundingBox.height.toFloat()
         return ActorActionPair(actor = animatedImage,
                 action = AppearTemporarily(animatedImage),
-                name = "Animation appearing temporarily")
+                name = "Animation appearing temporarily",
+                murderActorsOnceCompletedAnimation = true)
     }
 }

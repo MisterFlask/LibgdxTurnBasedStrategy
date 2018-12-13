@@ -20,7 +20,9 @@ import com.ironlordbyron.turnbasedstrategy.view.tiledutils.SpriteActorFactory
 import javax.inject.Inject
 import javax.inject.Singleton
 import com.badlogic.gdx.utils.Scaling
+import com.ironlordbyron.turnbasedstrategy.controller.BoardInputState
 import com.ironlordbyron.turnbasedstrategy.view.ui.external.BackgroundColor
+import com.kotcrab.vis.ui.building.utilities.Alignment
 
 
 /**
@@ -49,6 +51,7 @@ class TacMapHud(viewPort: Viewport,
                 val characterImageManager: CharacterImageManager) : Stage(viewPort), EventListener {
     var selectedCharacter: LogicalCharacter? = null
     var hoveredAbility: LogicalAbility? = null
+    var boardInputState : BoardInputState = BoardInputState.DefaultState()
 
     override fun consumeEvent(event: TacticalGuiEvent) {
         when (event) {
@@ -61,6 +64,10 @@ class TacMapHud(viewPort: Viewport,
             }
             is TacticalGuiEvent.CharacterUnselected -> {
                 this.selectedCharacter = null
+                regenerateTable()
+            }
+            is TacticalGuiEvent.SwitchedGuiState -> {
+                boardInputState = event.guiState
                 regenerateTable()
             }
         }
@@ -107,6 +114,7 @@ class TacMapHud(viewPort: Viewport,
     var selectedUnitDescription: Label? = null
     val portraitDimensions: Dimensions = Dimensions(150,150)
 
+    var debugTextArea: Label = Label("", mySkin)
     var abilityTextArea: Label = Label("", mySkin)
     val characterDisplayTable : Table = Table(mySkin)
 
@@ -134,10 +142,22 @@ class TacMapHud(viewPort: Viewport,
             }
         }
 
+
+        debugTextArea.setText(debugTextAreaText())
+        debugTextArea.setWrap(true)
+        debugTextArea.setAlignment(Alignment.CENTER.alignment)
+
         characterDisplayTable.row()
         characterDisplayTable.add(endTurnButton())
         characterDisplayTable.row()
-        characterDisplayTable.add(abilityTextArea).bottom()
+        characterDisplayTable.add(abilityTextArea)
+
+        characterDisplayTable.row()
+        characterDisplayTable.add(debugTextArea).width(300f)
+    }
+
+    private fun debugTextAreaText(): String {
+        return boardInputState.name
     }
 
     private fun backgroundColor(): BackgroundColor {

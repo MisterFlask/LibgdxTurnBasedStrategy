@@ -6,10 +6,11 @@ import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import javax.inject.Inject
 import javax.inject.Singleton
 
-sealed class BoardInputState{
-    data class UnitSelected(val unit: LogicalCharacter) : BoardInputState()
-    object DefaultState : BoardInputState()
-    data class PlayerIntendsToUseAbility(val unit: LogicalCharacter, val ability: LogicalAbility): BoardInputState()
+interface BoardInputState{
+    abstract val name: String
+    data class UnitSelected(val unit: LogicalCharacter, override val name: String = "UnitSelected") : BoardInputState
+    data class DefaultState(override val name: String = "DefaultState") : BoardInputState
+    data class PlayerIntendsToUseAbility(val unit: LogicalCharacter, val ability: LogicalAbility, override val name: String = "PlayerIntendsToUseAbility"):BoardInputState
 }
 
 /**
@@ -24,12 +25,12 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                                                 val tacticalMapAlgorithms: TacticalMapAlgorithms,
                                                 val abilityEffectFactory: AbilityEffectFactory) : EventListener {
 
-    var boardInputState : BoardInputState = BoardInputState.DefaultState
+    var boardInputState : BoardInputState = BoardInputState.DefaultState()
         set(value) {
-            println("Setting board input state: $boardInputState")
+            println("Setting board input state: $value")
+            eventNotifier.notifyListeners(TacticalGuiEvent.SwitchedGuiState(value))
             field = value
         }
-
 
     var selectedCharacter: LogicalCharacter? = null
 
@@ -73,6 +74,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
         if (currentBoardInputState is BoardInputState.PlayerIntendsToUseAbility){
             if (abilityController.canUseAbilityOnSquare(currentBoardInputState.unit, currentBoardInputState.ability, character, location)){
                 abilityController.useAbility(currentBoardInputState.unit, currentBoardInputState.ability, character, location)
+                boardInputState = BoardInputState.DefaultState()
             }
             return
         }
@@ -86,7 +88,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
             when(currentBoardInputState){
                 is BoardInputState.UnitSelected ->  moveUnitIfAble(currentBoardInputState.unit, location)
             }
-            boardInputState = BoardInputState.DefaultState
+            boardInputState = BoardInputState.DefaultState()
             selectedCharacter = null
             eventNotifier.notifyListeners(TacticalGuiEvent.CharacterUnselected())
         }

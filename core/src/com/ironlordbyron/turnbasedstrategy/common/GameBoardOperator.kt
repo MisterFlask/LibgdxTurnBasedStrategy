@@ -127,7 +127,6 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
     }
 
     fun damageCharacter(targetCharacter: LogicalCharacter?, waitOnMoreQueuedActions: Boolean = false) {
-        // TODO: Implement HP
         if (targetCharacter == null){
             throw IllegalArgumentException("Damage character called with no character selected")
         }
