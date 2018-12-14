@@ -97,11 +97,11 @@ class SimpleAttackAbility(
     }
 
     override fun activateAbility(location: TileLocation?, targetCharacter: LogicalCharacter?, sourceCharacter: LogicalCharacter) {
-        gameBoardOperator.damageCharacter(targetCharacter)
+        gameBoardOperator.damageCharacter(targetCharacter!!)
     }
 
     override fun getValidAbilityTargetSquares(sourceCharacter: LogicalCharacter, sourceSquare: TileLocation?) : Collection<TileLocation>{
-        return getTilesInRangeOfAbility(sourceCharacter, logicalAbility)
+        return getTilesInRangeOfAbility(sourceCharacter, logicalAbility, sourceSquare)
     }
     private fun getTilesInRangeOfAbility(character: LogicalCharacter, ability: LogicalAbility, sourceSquare: TileLocation? = null): Collection<TileLocation> {
         val tiles = boardAlgorithms.getWalkableTileLocationsUpToNAway(ability.range, sourceSquare?:character.tileLocation, character,

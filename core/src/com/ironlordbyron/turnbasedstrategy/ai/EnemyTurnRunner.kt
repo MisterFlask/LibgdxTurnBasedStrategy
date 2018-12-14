@@ -47,7 +47,7 @@ public class EnemyTurnRunner @Inject constructor(val tileMapOperationsHandler: T
                             wasPlayerInitiated = false)
                     is AiPlannedAction.AbilityUsage ->  {
                         val charToTarget = boardState.characterAt(action.squareToTarget)
-                        gameBoardOperator.damageCharacter(charToTarget, true)
+                        gameBoardOperator.damageCharacter(charToTarget!!, true) //TODO
                     }
                 }
             }
