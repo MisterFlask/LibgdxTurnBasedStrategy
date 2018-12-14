@@ -1,9 +1,8 @@
 package com.ironlordbyron.turnbasedstrategy.controller
 
 import com.ironlordbyron.turnbasedstrategy.common.*
-import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityClass
+import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityFactory
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
-import tiled.core.Tile
 import javax.inject.Inject
 import javax.inject.Singleton
 

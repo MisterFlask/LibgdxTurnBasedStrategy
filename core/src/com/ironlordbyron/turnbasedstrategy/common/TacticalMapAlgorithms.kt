@@ -1,7 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
-import com.ironlordbyron.turnbasedstrategy.controller.AbilityFactory
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.LogicalTileTracker
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -47,11 +46,7 @@ class TacticalMapAlgorithms @Inject constructor(override val logicalTileTracker:
                 CanWalkOnTile(logicalTileTracker, tacticalMapState))
         return tiles
     }
-    public fun getTilesInRangeOfAbility(character: LogicalCharacter, ability: LogicalAbility, sourceSquare: TileLocation? = null): Collection<TileLocation> {
-        val tiles = getWalkableTileLocationsUpToNAway(ability.range, sourceSquare?:character.tileLocation, character,
-                AlwaysValid())
-        return tiles
-    }
+
 
     /**
      * e.g. , getting tiles up to 1 away will always return 4 tiles assuming all are passable.

@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.controller
 
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityClass
+import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityEffectFactory
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import javax.inject.Inject
 import javax.inject.Singleton

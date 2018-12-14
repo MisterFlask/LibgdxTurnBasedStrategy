@@ -4,6 +4,8 @@ import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityFactory
+import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TileMapOperationsHandler
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
 
@@ -16,20 +18,44 @@ public class BasicEnemyAi(val tileMapOperationsHandler: TileMapOperationsHandler
                           val tacticalMapState: TacticalMapState,
                           val tileMapProvider: TileMapProvider,
                           val aiGridGraphFactory: AiGridGraphFactory,
-                          val mapAlgorithms: TacticalMapAlgorithms) : EnemyAi{
+                          val mapAlgorithms: TacticalMapAlgorithms,
+                          val abilityFactory: AbilityFactory) : EnemyAi{
+    
     override fun getNextActions(thisCharacter: LogicalCharacter): List<AiPlannedAction> {
         val nextMove = getNextMoveLocation(thisCharacter)
-        if (nextMove == null){
-            return listOf() // todo: add attacks
+        val locationAfterMove = nextMove?:thisCharacter.tileLocation
+        var abilityUsage : AiPlannedAction.AbilityUsage? = null
+        for (logicalAbility in thisCharacter.abilities){
+            val ability = abilityFactory.acquireAbility(logicalAbility)
+            val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter, locationAfterMove)
+            if (!targetableTilesFromThisSquare.isEmpty()){
+                abilityUsage = AiPlannedAction.AbilityUsage(targetableTilesFromThisSquare.first(), logicalAbility)
+                // Can make evaluation function later for telling which ability to use.
+            }
         }
-        return listOf(AiPlannedAction.MoveToTile(nextMove))
+        val listOfActions = ArrayList<AiPlannedAction>()
+        if (nextMove != null){
+            listOfActions.add(AiPlannedAction.MoveToTile(nextMove))
+        }
+        if (abilityUsage != null){
+            listOfActions.add(abilityUsage)
+        }
+        return listOfActions
     }
 
     // First priority: Can we hit an enemy with an ability from a reachable tile?  If so, DO IT.
     fun getNextMoveLocation(thisCharacter: LogicalCharacter) : TileLocation?{
         val reachableLocations  = mapAlgorithms.getWhereCharacterCanMoveTo(thisCharacter)
-        
-        // TODO
+        // First: if we can target the enemy from a location we can reach?  GO THERE.
+        for (reachableLocation in reachableLocations){
+            for (logicalAbility in thisCharacter.abilities){
+                val ability = abilityFactory.acquireAbility(logicalAbility)
+                val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter, reachableLocation)
+                if (!targetableTilesFromThisSquare.isEmpty()){
+                    return reachableLocation
+                }
+            }
+        }
 
         val map = tileMapProvider.tiledMap
         val aiGridGraph = aiGridGraphFactory.createGridGraph(thisCharacter)

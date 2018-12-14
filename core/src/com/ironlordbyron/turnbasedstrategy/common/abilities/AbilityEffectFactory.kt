@@ -1,9 +1,6 @@
-package com.ironlordbyron.turnbasedstrategy.controller
+package com.ironlordbyron.turnbasedstrategy.common.abilities
 
 import com.ironlordbyron.turnbasedstrategy.common.*
-import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityClass
-import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.LogicalTile
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -18,9 +15,9 @@ class AbilityEffectFactory {
 public class AbilityFactory @Inject constructor(val gameBoardOperator: GameBoardOperator,
                     val boardAlgorithms: TacticalMapAlgorithms,
                     val tacticalMapState: TacticalMapState){
-    fun acquireAbility(logicalAbility: LogicalAbility) : Ability{
+    fun acquireAbility(logicalAbility: LogicalAbility) : Ability {
         when(logicalAbility.abilityClass){
-            AbilityClass.TARGETED_ABILITY -> return SimpleAttackAbility(logicalAbility, tacticalMapState, boardAlgorithms, gameBoardOperator,boardAlgorithms)
+            AbilityClass.TARGETED_ABILITY -> return SimpleAttackAbility(logicalAbility, tacticalMapState, boardAlgorithms, gameBoardOperator, boardAlgorithms)
         }
     }
 
@@ -94,7 +91,7 @@ class SimpleAttackAbility(
         override val logicalAbility: LogicalAbility,
         override val tacticalMapState: TacticalMapState,
         val boardAlgorithms: TacticalMapAlgorithms,
-        val gameBoardOperator: GameBoardOperator, override val tacticalMapAlgorithms: TacticalMapAlgorithms) : Ability{
+        val gameBoardOperator: GameBoardOperator, override val tacticalMapAlgorithms: TacticalMapAlgorithms) : Ability {
     override fun isValidTarget(location: TileLocation?, targetCharacter: LogicalCharacter?, sourceCharacter: LogicalCharacter) : Boolean{
         return getValidAbilityTargetSquares(sourceCharacter).contains(location)
     }
@@ -104,7 +101,11 @@ class SimpleAttackAbility(
     }
 
     override fun getValidAbilityTargetSquares(sourceCharacter: LogicalCharacter, sourceSquare: TileLocation?) : Collection<TileLocation>{
-        return boardAlgorithms.getTilesInRangeOfAbility(sourceCharacter, logicalAbility)
+        return getTilesInRangeOfAbility(sourceCharacter, logicalAbility)
     }
-
+    private fun getTilesInRangeOfAbility(character: LogicalCharacter, ability: LogicalAbility, sourceSquare: TileLocation? = null): Collection<TileLocation> {
+        val tiles = boardAlgorithms.getWalkableTileLocationsUpToNAway(ability.range, sourceSquare?:character.tileLocation, character,
+                AlwaysValid())
+        return tiles
+    }
 }

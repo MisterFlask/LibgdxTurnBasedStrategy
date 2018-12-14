@@ -1,8 +1,5 @@
 package com.ironlordbyron.turnbasedstrategy.common.abilities
 
-import com.badlogic.gdx.graphics.g2d.Sprite
-import com.ironlordbyron.turnbasedstrategy.controller.RequiredTargetType
-
 public class LogicalAbility(val name: String,
                             val speed: AbilitySpeed,
                             val range: Int,
