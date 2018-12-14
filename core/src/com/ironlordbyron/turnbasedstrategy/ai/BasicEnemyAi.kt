@@ -20,7 +20,7 @@ public class BasicEnemyAi(val tileMapOperationsHandler: TileMapOperationsHandler
                           val aiGridGraphFactory: AiGridGraphFactory,
                           val mapAlgorithms: TacticalMapAlgorithms,
                           val abilityFactory: AbilityFactory) : EnemyAi{
-    
+
     override fun getNextActions(thisCharacter: LogicalCharacter): List<AiPlannedAction> {
         val nextMove = getNextMoveLocation(thisCharacter)
         val locationAfterMove = nextMove?:thisCharacter.tileLocation
