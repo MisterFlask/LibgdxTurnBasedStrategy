@@ -77,6 +77,10 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
                             action.to,
                             waitOnMoreQueuedActions = true,
                             wasPlayerInitiated = false)
+                    is AiPlannedAction.AbilityUsage ->  {
+                        val charToTarget = boardState.characterAt(action.squareToTarget)
+                        damageCharacter(charToTarget, true)
+                    }
                 }
             }
         }

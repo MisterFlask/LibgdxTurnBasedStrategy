@@ -25,6 +25,10 @@ class TacticalMapState @Inject constructor(val logicalTileTracker: LogicalTileTr
     }
 
 
+    fun characterAt(tile: TileLocation): LogicalCharacter?{
+        return listOfCharacters.filter{it.tileLocation == tile}.firstOrNull()
+    }
+
     fun moveCharacterToTile(character: LogicalCharacter, tile: TileLocation){
         character.tileLocation = tile
         character.actionsLeft -= 1

@@ -115,7 +115,7 @@
     <property name="type" value="PLAYER_SPAWN"/>
    </properties>
   </object>
-  <object id="9" name="ENEMY_SPAWN" x="96" y="369" width="111" height="29">
+  <object id="9" name="ENEMY_SPAWN" x="80" y="112" width="111" height="29">
    <properties>
     <property name="type" value="ENEMY_SPAWN"/>
    </properties>
