@@ -35,18 +35,26 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
                                             val logicalTileTracker: LogicalTileTracker,
                                             val imageActorFactory: SpriteActorFactory,
                                             val boardState: TacticalMapState,
-                                            val enemyAiFactory:EnemyAiFactory,
                                             val actionRunner: ActionRunner,
                                             val characterSpriteUtils: CharacterSpriteUtils,
                                             val mapHighlighter: MapHighlighter,
                                             val tacticalMapAlgorithms: TacticalMapAlgorithms,
                                             val temporaryAnimationGenerator: TemporaryAnimationGenerator) : EventListener {
+
+
+    // HACK: This shouldn't be public.
+    public var actionQueue = ArrayList<ActorActionPair>()
+
     override fun consumeEvent(event: TacticalGuiEvent) {
         when(event){
             is TacticalGuiEvent.FinishedEnemyTurn -> {
                 startPlayerTurn()
             }
         }
+    }
+
+    public fun clearQueue(){
+        actionQueue = ArrayList()
     }
 
     private fun startPlayerTurn() {
@@ -60,36 +68,6 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
         eventNotifier.registerListener(this)
     }
 
-    private var actionQueue = ArrayList<ActorActionPair>()
-
-    public fun endTurn() {
-        runEnemyTurn()
-    }
-
-    private fun runEnemyTurn() {
-        actionQueue =  ArrayList()
-        for (enemyCharacter in boardState.listOfEnemyCharacters) {
-            val ai = enemyAiFactory.getEnemyAi(enemyCharacter.tacMapUnit.enemyAiType)
-            val nextActions = ai.getNextActions(enemyCharacter);
-            for (action in nextActions){
-                when(action){
-                    is AiPlannedAction.MoveToTile -> moveCharacterToTile(enemyCharacter,
-                            action.to,
-                            waitOnMoreQueuedActions = true,
-                            wasPlayerInitiated = false)
-                    is AiPlannedAction.AbilityUsage ->  {
-                        val charToTarget = boardState.characterAt(action.squareToTarget)
-                        damageCharacter(charToTarget, true)
-                    }
-                }
-            }
-        }
-        println("Action queue has elements: $actionQueue")
-        actionRunner.runThroughActionQueue(actionQueue, finalAction = {
-            eventNotifier.notifyListeners(TacticalGuiEvent.FinishedEnemyTurn())
-        })
-        actionQueue = ArrayList()
-    }
 
     // moves the character to the given tile logically, and returns the actor/action pair for animation purposes.
     fun moveCharacterToTile(character: LogicalCharacter, toTile: TileLocation, waitOnMoreQueuedActions: Boolean,
@@ -130,10 +108,7 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
 
     }
 
-    fun damageCharacter(targetCharacter: LogicalCharacter?, waitOnMoreQueuedActions: Boolean = false) {
-        if (targetCharacter == null){
-            throw IllegalArgumentException("Damage character called with no character selected")
-        }
+    fun damageCharacter(targetCharacter: LogicalCharacter, waitOnMoreQueuedActions: Boolean = false) {
         actionQueue.add(temporaryAnimationGenerator.getTemporaryAnimationActorActionPair(targetCharacter.tileLocation))
         if (!waitOnMoreQueuedActions){
             actionRunner.runThroughActionQueue(actionQueue, finalAction = {})

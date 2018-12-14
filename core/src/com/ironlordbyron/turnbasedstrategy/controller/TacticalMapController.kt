@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.controller
 
+import com.ironlordbyron.turnbasedstrategy.ai.EnemyTurnRunner
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityClass
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityEffectFactory
@@ -24,7 +25,8 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                                                 val abilityController: AbilityController,
                                                 val mapHighlighter: MapHighlighter,
                                                 val tacticalMapAlgorithms: TacticalMapAlgorithms,
-                                                val abilityEffectFactory: AbilityEffectFactory) : EventListener {
+                                                val abilityEffectFactory: AbilityEffectFactory,
+                                                val enemyTurnRunner: EnemyTurnRunner) : EventListener {
 
     var boardInputState : BoardInputState = BoardInputState.DefaultState()
         set(value) {
@@ -44,7 +46,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
             is TacticalGuiEvent.EndTurnButtonClicked -> {
                 if (playerHasPriority) {
                     playerHasPriority = false
-                    gameBoardOperator.endTurn()
+                    enemyTurnRunner.endTurn()
                 }
             }
             is TacticalGuiEvent.FinishedEnemyTurn -> {
