@@ -17,11 +17,11 @@ import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvide
 import javax.inject.Inject
 
 
-class AnimatedImage(val animation: Animation<TextureRegion>) : Image(animation.getKeyFrame(0f)), Activatable {
+class AnimatedImage(val animation: Animation<TextureRegion>) : Image(animation.getKeyFrame(0f)) {
     init{
         this.isVisible = false
     }
-    override fun activate() {
+    fun activate() {
         if (alreadyActivated){
             return
         }
@@ -42,10 +42,6 @@ class AnimatedImage(val animation: Animation<TextureRegion>) : Image(animation.g
         (getDrawable() as TextureRegionDrawable).setRegion(animation!!.getKeyFrame(stateTime, false))
         super.act(delta)
     }
-}
-
-interface Activatable {
-    fun activate()
 }
 
 class AppearTemporarily(val animation: AnimatedImage) : Action(){
