@@ -1,18 +1,15 @@
-package com.ironlordbyron.turnbasedstrategy.common
+package com.ironlordbyron.turnbasedstrategy.view.animation
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.scenes.scene2d.Action
-import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
-import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
+import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TacticalTiledMapStageProvider
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TileMapOperationsHandler
 import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
 import javax.inject.Inject
 
@@ -44,7 +41,7 @@ class AnimatedImage(val animation: Animation<TextureRegion>) : Image(animation.g
     }
 }
 
-class AppearTemporarily(val animation: AnimatedImage) : Action(){
+class AnimationAppearTemporarily(val animation: AnimatedImage) : Action(){
 
     var currentTime = 0f
     override fun act(delta: Float): Boolean {
@@ -55,6 +52,24 @@ class AppearTemporarily(val animation: AnimatedImage) : Action(){
         }
         return false
     }
+}
+
+class ActorAppearTemporarily(val mainActor: ActivatableActor,
+                             val durationMilliseconds: Long) : Action(){
+
+    var currentTime = 0f
+    override fun act(delta: Float): Boolean {
+        mainActor.activateIfInactive()
+        currentTime+=delta
+        if (currentTime > durationMilliseconds){
+            return true
+        }
+        return false
+    }
+}
+
+public interface ActivatableActor {
+    public fun activateIfInactive()
 }
 
 class TemporaryAnimationGenerator @Inject constructor (val tileMapProvider: TileMapProvider,
@@ -91,7 +106,7 @@ class TemporaryAnimationGenerator @Inject constructor (val tileMapProvider: Tile
         animatedImage.width = boundingBox.width.toFloat()
         animatedImage.height = boundingBox.height.toFloat()
         return ActorActionPair(actor = animatedImage,
-                action = AppearTemporarily(animatedImage),
+                action = AnimationAppearTemporarily(animatedImage),
                 name = "Animation appearing temporarily",
                 murderActorsOnceCompletedAnimation = true)
     }

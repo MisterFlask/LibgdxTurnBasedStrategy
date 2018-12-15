@@ -1,11 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.scenes.scene2d.Action
-import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.ironlordbyron.turnbasedstrategy.ai.AiPlannedAction
-import com.ironlordbyron.turnbasedstrategy.ai.EnemyAiFactory
 import com.ironlordbyron.turnbasedstrategy.common.CharacterTemplates.CHARACTER_PLACEHOLDER_TILEMAP_TSX_FILE
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
