@@ -20,9 +20,6 @@ public class ActionRunner{
             if (current.name != null){
                 println("Actor ${current.name} has started processing.")
             }
-            if (current.actor is Activatable){
-                current.actor.activate()
-            }
             runThroughActionQueue(actionQueue, currentIndex + 1, finalAction)
             if (current.murderActorsOnceCompletedAnimation){
                 current.actor.remove()
