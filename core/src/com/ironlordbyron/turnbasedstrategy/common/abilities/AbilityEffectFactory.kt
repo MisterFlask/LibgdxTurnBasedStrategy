@@ -47,13 +47,14 @@ interface Ability{
         val nearbyCharacters = tacticalMapState.listOfCharacters.filter{abilityTargetSquares.contains(it.tileLocation)}
         val possibilities = arrayListOf<LogicalCharacter>()
         for (target in nearbyCharacters){
+            var opposingCharacters = target.playerAlly xor sourceCharacter.playerAlly
             if (logicalAbility.requiredTargetType == RequiredTargetType.ANY){
                 possibilities.add(target)
             }
-            else if (sourceCharacter.playerAlly && logicalAbility.requiredTargetType != RequiredTargetType.ENEMY_ONLY){
+            else if (!opposingCharacters && logicalAbility.requiredTargetType == RequiredTargetType.ALLY_ONLY){
                 possibilities.add(target)
             }
-            else if (!sourceCharacter.playerAlly && logicalAbility.requiredTargetType != RequiredTargetType.ALLY_ONLY){
+            else if (opposingCharacters && logicalAbility.requiredTargetType == RequiredTargetType.ENEMY_ONLY){
                 possibilities.add(target)
             }
         }

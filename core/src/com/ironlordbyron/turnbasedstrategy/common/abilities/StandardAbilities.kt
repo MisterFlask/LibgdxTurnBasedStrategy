@@ -6,6 +6,7 @@ object StandardAbilities{
             damage = 1,
             range = 2,
             description = "A melee attack.  Ends the turn.",
-            abilityClass = AbilityClass.TARGETED_ABILITY
+            abilityClass = AbilityClass.TARGETED_ABILITY,
+            requiredTargetType = RequiredTargetType.ENEMY_ONLY
             );
 }

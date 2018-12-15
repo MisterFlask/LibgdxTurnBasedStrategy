@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.view.animation
 
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.ironlordbyron.turnbasedstrategy.common.Activatable
 
 // BASE CASE:  This is the last item on the list, in which case, the action simply attaches itself to the actor and we exit.
 // RECURSIVE CASE:  We create a sequence composed of the current action, and an instance of this attached to the next index.
@@ -16,6 +17,12 @@ public class ActionRunner{
         }
         val current = actionQueue[currentIndex]
         current.actor.addAction(Actions.sequence(current.action, CustomAction {
+            if (current.name != null){
+                println("Actor ${current.name} has started processing.")
+            }
+            if (current.actor is Activatable){
+                current.actor.activate()
+            }
             runThroughActionQueue(actionQueue, currentIndex + 1, finalAction)
             if (current.murderActorsOnceCompletedAnimation){
                 current.actor.remove()
