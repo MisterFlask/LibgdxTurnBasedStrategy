@@ -12,6 +12,10 @@ public class FloatingTextGenerator @Inject constructor (val tileMapProvider: Til
     public fun getTemporaryAnimationActorActionPair(tileLocation: TileLocation): ActorActionPair{
 
         val floatingText = FloatingText("SAMPLE TEXT", 10L)
+        val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
+        floatingText.setPosition(boundingBox.x.toFloat(), boundingBox.y.toFloat())
+        floatingText.width = boundingBox.width.toFloat()
+        floatingText.height = boundingBox.height.toFloat()
         tiledMapStageProvider.tiledMapStage.addActor(floatingText)
         return ActorActionPair(floatingText,
                 ActorAppearTemporarily(floatingText, 1000),

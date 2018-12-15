@@ -35,7 +35,8 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
                                             val characterSpriteUtils: CharacterSpriteUtils,
                                             val mapHighlighter: MapHighlighter,
                                             val tacticalMapAlgorithms: TacticalMapAlgorithms,
-                                            val temporaryAnimationGenerator: TemporaryAnimationGenerator) : EventListener {
+                                            val temporaryAnimationGenerator: TemporaryAnimationGenerator,
+                                            val floatingTextGenerator: FloatingTextGenerator) : EventListener {
 
 
     // HACK: This shouldn't be public.
@@ -107,8 +108,9 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
     fun damageCharacter(targetCharacter: LogicalCharacter,
                         waitOnMoreQueuedActions: Boolean = false,
                         damageAmount: Int) {
-        targetCharacter.heathLeft-=damageAmount
+        targetCharacter.heathLeft-=damageAmount // TODO: Not the responsibility of this class
         actionQueue.add(temporaryAnimationGenerator.getTemporaryAnimationActorActionPair(targetCharacter.tileLocation))
+        actionQueue.add(floatingTextGenerator.getTemporaryAnimationActorActionPair(targetCharacter.tileLocation))
         if (!waitOnMoreQueuedActions){
             actionRunner.runThroughActionQueue(actionQueue, finalAction = {})
             actionQueue = ArrayList()
