@@ -2,7 +2,6 @@ package com.ironlordbyron.turnbasedstrategy.view.animation
 
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.ironlordbyron.turnbasedstrategy.common.Activatable
 
 // BASE CASE:  This is the last item on the list, in which case, the action simply attaches itself to the actor and we exit.
 // RECURSIVE CASE:  We create a sequence composed of the current action, and an instance of this attached to the next index.

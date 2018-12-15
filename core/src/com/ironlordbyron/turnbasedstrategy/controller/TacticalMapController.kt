@@ -46,6 +46,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
             is TacticalGuiEvent.EndTurnButtonClicked -> {
                 if (playerHasPriority) {
                     playerHasPriority = false
+                    mapHighlighter.killHighlights()
                     enemyTurnRunner.endTurn()
                 }
             }

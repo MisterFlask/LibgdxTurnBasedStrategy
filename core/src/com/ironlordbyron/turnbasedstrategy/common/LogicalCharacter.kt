@@ -15,7 +15,9 @@ data class LogicalCharacter(val actor: SpriteActor,
                             val playerControlled: Boolean,
                             var endedTurn: Boolean = false,
                             var actionsLeft: Int = 2,
-                            var maxActionsLeft: Int = 2){
+                            var maxActionsLeft: Int = 2,
+                            var heathLeft: Int = 3,
+                            var maxHealth: Int = 3){
     val abilities: Collection<LogicalAbility>
     get() = acquireAbilities()
 

@@ -98,7 +98,7 @@ class SimpleAttackAbility(
     }
 
     override fun activateAbility(location: TileLocation?, targetCharacter: LogicalCharacter?, sourceCharacter: LogicalCharacter) {
-        gameBoardOperator.damageCharacter(targetCharacter!!)
+        gameBoardOperator.damageCharacter(targetCharacter!!, !sourceCharacter.playerControlled, logicalAbility.damage!!)
     }
 
     override fun getValidAbilityTargetSquares(sourceCharacter: LogicalCharacter, sourceSquare: TileLocation?) : Collection<TileLocation>{

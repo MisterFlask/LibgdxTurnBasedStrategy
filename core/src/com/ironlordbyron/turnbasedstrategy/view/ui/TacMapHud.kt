@@ -130,6 +130,7 @@ class TacMapHud(viewPort: Viewport,
             characterDisplayTable.add(characterImageManager.retrieveCharacterImage(selectedCharacter))
                     .size(portraitDimensions.width.toFloat(),portraitDimensions.height.toFloat())
             characterDisplayTable.row()
+            characterDisplayTable.add(displayCharacterHp(selectedCharacter))
         }
         // NOTE TO FUTURE SELF: Table controls size of images, DOES NOT RESPECT image preferred size
         characterDisplayTable.row()
@@ -154,6 +155,10 @@ class TacMapHud(viewPort: Viewport,
 
         characterDisplayTable.row()
         characterDisplayTable.add(debugTextArea).width(300f)
+    }
+
+    private fun displayCharacterHp(selectedCharacter: LogicalCharacter): Label {
+        return Label("HP: ${selectedCharacter.heathLeft}/${selectedCharacter.maxHealth}", mySkin)
     }
 
     private fun debugTextAreaText(): String {

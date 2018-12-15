@@ -108,7 +108,10 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
 
     }
 
-    fun damageCharacter(targetCharacter: LogicalCharacter, waitOnMoreQueuedActions: Boolean = false) {
+    fun damageCharacter(targetCharacter: LogicalCharacter,
+                        waitOnMoreQueuedActions: Boolean = false,
+                        damageAmount: Int) {
+        targetCharacter.heathLeft-=damageAmount
         actionQueue.add(temporaryAnimationGenerator.getTemporaryAnimationActorActionPair(targetCharacter.tileLocation))
         if (!waitOnMoreQueuedActions){
             actionRunner.runThroughActionQueue(actionQueue, finalAction = {})
