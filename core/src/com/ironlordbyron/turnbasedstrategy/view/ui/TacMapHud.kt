@@ -158,7 +158,7 @@ class TacMapHud(viewPort: Viewport,
     }
 
     private fun displayCharacterHp(selectedCharacter: LogicalCharacter): Label {
-        return Label("HP: ${selectedCharacter.heathLeft}/${selectedCharacter.maxHealth}", mySkin)
+        return Label("HP: ${selectedCharacter.healthLeft}/${selectedCharacter.maxHealth}", mySkin)
     }
 
     private fun debugTextAreaText(): String {

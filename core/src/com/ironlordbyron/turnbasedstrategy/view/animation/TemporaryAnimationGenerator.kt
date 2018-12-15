@@ -55,13 +55,13 @@ class AnimationAppearTemporarily(val animation: AnimatedImage) : Action(){
 }
 
 class ActorAppearTemporarily(val mainActor: ActivatableActor,
-                             val durationMilliseconds: Long) : Action(){
+                             val durationSeconds: Float) : Action(){
 
     var currentTime = 0f
     override fun act(delta: Float): Boolean {
         mainActor.activateIfInactive()
         currentTime+=delta
-        if (currentTime > durationMilliseconds){
+        if (currentTime > durationSeconds){
             return true
         }
         return false

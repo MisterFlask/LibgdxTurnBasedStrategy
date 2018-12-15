@@ -36,7 +36,8 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
                                             val mapHighlighter: MapHighlighter,
                                             val tacticalMapAlgorithms: TacticalMapAlgorithms,
                                             val temporaryAnimationGenerator: TemporaryAnimationGenerator,
-                                            val floatingTextGenerator: FloatingTextGenerator) : EventListener {
+                                            val floatingTextGenerator: FloatingTextGenerator,
+                                            val deathAnimationGenerator: DeathAnimationGenerator) : EventListener {
 
 
     // HACK: This shouldn't be public.
@@ -108,13 +109,20 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
     fun damageCharacter(targetCharacter: LogicalCharacter,
                         waitOnMoreQueuedActions: Boolean = false,
                         damageAmount: Int) {
-        targetCharacter.heathLeft-=damageAmount // TODO: Not the responsibility of this class
+        targetCharacter.healthLeft -= damageAmount // TODO: Not the responsibility of this class
         actionQueue.add(temporaryAnimationGenerator.getTemporaryAnimationActorActionPair(targetCharacter.tileLocation))
-        actionQueue.add(floatingTextGenerator.getTemporaryAnimationActorActionPair(targetCharacter.tileLocation))
+        actionQueue.add(floatingTextGenerator.getTemporaryAnimationActorActionPair("${damageAmount}", targetCharacter.tileLocation))
+        if (targetCharacter.isDead){
+            actionQueue.add(deathAnimationGenerator.turnCharacterSideways(targetCharacter))
+        }
         if (!waitOnMoreQueuedActions){
             actionRunner.runThroughActionQueue(actionQueue, finalAction = {})
             actionQueue = ArrayList()
         }
+    }
+
+    fun zoomToFocusOnTile(){
+
     }
 
 }
