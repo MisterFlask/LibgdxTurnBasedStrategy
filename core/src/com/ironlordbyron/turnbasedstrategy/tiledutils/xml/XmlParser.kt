@@ -1,13 +1,7 @@
-package com.ironlordbyron.turnbasedstrategy.view.tiledutils.xml
+package com.ironlordbyron.turnbasedstrategy.tiledutils.xml
 
 import com.badlogic.gdx.Gdx
-import com.fasterxml.jackson.xml.JacksonXmlModule
-import com.fasterxml.jackson.xml.XmlMapper
-import com.fasterxml.jackson.xml.annotate.JacksonXmlProperty
-import com.fasterxml.jackson.xml.annotate.JacksonXmlElementWrapper
 import org.w3c.dom.NodeList
-import java.io.FileInputStream
-import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory

@@ -1,7 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.SpriteActor
+import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActor
 
 /**
  * Represents a mutable character generated from a template.

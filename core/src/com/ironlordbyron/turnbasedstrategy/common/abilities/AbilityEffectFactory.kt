@@ -24,7 +24,7 @@ public class AbilityFactory @Inject constructor(val gameBoardOperator: GameBoard
 }
 
 enum class RequiredTargetType{
-    ENEMY_ONLY, ALLY_ONLY, ANY
+    ENEMY_ONLY, ALLY_ONLY, ANY, NO_CHARACTER_AT_LOCATION
 }
 
 interface Ability{
@@ -42,7 +42,7 @@ interface Ability{
 
     // Like getValidAbilityTargetSquares, but takes into account allies vs enemies.
     // Note: SourceSquare is an optional parameter that represents where the logical character WOULD be using the ability from.
-    fun getSquaresThatCanActuallyBeTargetedByAbility(sourceCharacter: LogicalCharacter, sourceSquare: TileLocation?): Collection<TileLocation>{
+    fun getSquaresThatCanActuallyBeTargetedByAbility(sourceCharacter: LogicalCharacter, sourceSquare: TileLocation? = null): Collection<TileLocation>{
         val abilityTargetSquares = getValidAbilityTargetSquares(sourceCharacter, sourceSquare)
         val nearbyCharacters = tacticalMapState.listOfCharacters.filter{abilityTargetSquares.contains(it.tileLocation)}
         val possibilities = arrayListOf<LogicalCharacter>()

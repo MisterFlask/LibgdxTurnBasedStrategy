@@ -79,6 +79,8 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
             if (abilityController.canUseAbilityOnSquare(currentBoardInputState.unit, currentBoardInputState.ability, character, location)){
                 abilityController.useAbility(currentBoardInputState.unit, currentBoardInputState.ability, character, location)
                 boardInputState = BoardInputState.DefaultState()
+            }else{
+                boardInputState = BoardInputState.DefaultState()
             }
             return
         }

@@ -1,4 +1,4 @@
-package com.ironlordbyron.turnbasedstrategy.view.tiledutils
+package com.ironlordbyron.turnbasedstrategy.tiledutils
 
 import javax.inject.Provider
 import javax.inject.Singleton

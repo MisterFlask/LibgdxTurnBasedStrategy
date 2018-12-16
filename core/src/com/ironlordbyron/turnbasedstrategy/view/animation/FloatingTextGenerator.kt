@@ -3,8 +3,8 @@ package com.ironlordbyron.turnbasedstrategy.view.animation
 import com.badlogic.gdx.graphics.Color
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.view.animation.external.FloatingText
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TacticalTiledMapStageProvider
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import javax.inject.Inject
 
 public class FloatingTextGenerator @Inject constructor (val tileMapProvider: TileMapProvider,

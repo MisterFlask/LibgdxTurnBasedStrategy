@@ -1,6 +1,5 @@
-package com.ironlordbyron.turnbasedstrategy.view.tiledutils
+package com.ironlordbyron.turnbasedstrategy.tiledutils
 
-import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTile
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import javax.inject.Singleton

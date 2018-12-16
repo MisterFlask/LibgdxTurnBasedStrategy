@@ -9,9 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.BoundingRectangle
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.SpriteActor
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActor
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import javax.inject.Inject
 
 enum class Icon(val imagePath: String, val imageFolder: String){

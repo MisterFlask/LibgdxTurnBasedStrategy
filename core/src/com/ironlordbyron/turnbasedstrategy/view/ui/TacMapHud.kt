@@ -15,8 +15,8 @@ import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.view.images.Dimensions
 import com.ironlordbyron.turnbasedstrategy.view.images.FileImageRetriever
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.CharacterImageManager
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.SpriteActorFactory
+import com.ironlordbyron.turnbasedstrategy.tiledutils.CharacterImageManager
+import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActorFactory
 import javax.inject.Inject
 import javax.inject.Singleton
 import com.badlogic.gdx.utils.Scaling

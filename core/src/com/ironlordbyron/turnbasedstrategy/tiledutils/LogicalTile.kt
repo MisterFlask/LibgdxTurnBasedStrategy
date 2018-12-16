@@ -1,4 +1,4 @@
-package com.ironlordbyron.turnbasedstrategy.view.tiledutils
+package com.ironlordbyron.turnbasedstrategy.tiledutils
 
 import com.badlogic.gdx.maps.tiled.TiledMapTile
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer

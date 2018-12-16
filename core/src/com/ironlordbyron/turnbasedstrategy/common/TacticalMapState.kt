@@ -1,8 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
 import com.google.inject.Inject
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.LogicalTile
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.LogicalTileTracker
+import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import javax.inject.Singleton
 
 /**

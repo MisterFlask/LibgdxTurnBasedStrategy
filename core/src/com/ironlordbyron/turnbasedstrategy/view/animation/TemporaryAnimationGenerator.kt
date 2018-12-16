@@ -9,8 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.utils.Array
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TacticalTiledMapStageProvider
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import javax.inject.Inject
 
 

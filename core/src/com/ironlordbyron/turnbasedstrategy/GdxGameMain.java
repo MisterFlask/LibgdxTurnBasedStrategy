@@ -9,12 +9,11 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector;
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TiledMapStageFactory;
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.BlankMapGenerator;
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider;
+import com.ironlordbyron.turnbasedstrategy.tiledutils.TiledMapStageFactory;
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.BlankMapGenerator;
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider;
 import com.ironlordbyron.turnbasedstrategy.view.ui.TacMapHudFactory;
 
 public class GdxGameMain extends ApplicationAdapter  {

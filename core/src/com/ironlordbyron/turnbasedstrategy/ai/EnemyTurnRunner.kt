@@ -8,11 +8,11 @@ import com.ironlordbyron.turnbasedstrategy.controller.MapHighlighter
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.view.CharacterSpriteUtils
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActionRunner
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.CharacterImageManager
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.LogicalTileTracker
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.SpriteActorFactory
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TileMapOperationsHandler
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.CharacterImageManager
+import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
+import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActorFactory
+import com.ironlordbyron.turnbasedstrategy.tiledutils.TileMapOperationsHandler
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import javax.inject.Inject
 
 public class EnemyTurnRunner @Inject constructor(val tileMapOperationsHandler: TileMapOperationsHandler,

@@ -5,7 +5,7 @@ import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.LogicalTileTracker
+import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import org.xguzm.pathfinding.grid.NavigationGrid
 import org.xguzm.pathfinding.grid.finders.AStarGridFinder
 import org.xguzm.pathfinding.grid.finders.GridFinderOptions

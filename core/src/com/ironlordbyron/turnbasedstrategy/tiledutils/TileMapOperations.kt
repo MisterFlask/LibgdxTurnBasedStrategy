@@ -1,4 +1,4 @@
-package com.ironlordbyron.turnbasedstrategy.view.tiledutils
+package com.ironlordbyron.turnbasedstrategy.tiledutils
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.maps.MapProperties
@@ -6,9 +6,8 @@ import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.*
 import com.google.inject.Singleton
 import com.ironlordbyron.turnbasedstrategy.common.CharacterTemplates
-import com.ironlordbyron.turnbasedstrategy.common.HighlightType
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.xml.TilemapXmlProcessor
+import com.ironlordbyron.turnbasedstrategy.tiledutils.xml.TilemapXmlProcessor
 import java.util.*
 import javax.inject.Inject
 

@@ -22,15 +22,25 @@ class AbilityController @Inject constructor(val tacticalMapState: TacticalMapSta
         mapHighlighter.highlightTiles(tilesInRange, HighlightType.RED_TILE)
     }
 
-    fun canUseAbilityOnSquare(characterUsingAbility: LogicalCharacter,
-                              logicalAbility: LogicalAbility,
-                              targetCharacter: LogicalCharacter?,
-                              location: TileLocation) : Boolean{
+    fun isSquareInRangeForAbility(characterUsingAbility: LogicalCharacter,
+                                  logicalAbility: LogicalAbility,
+                                  targetCharacter: LogicalCharacter?,
+                                  location: TileLocation) : Boolean{
         val ability = abilityFactory.acquireAbility(logicalAbility)
         val isValid = ability.isValidTarget(location, targetCharacter, characterUsingAbility)
         return isValid
     }
 
+
+    fun canUseAbilityOnSquare(characterUsingAbility: LogicalCharacter,
+                                 logicalAbility: LogicalAbility,
+                                 targetCharacter: LogicalCharacter?,
+                                 location: TileLocation) : Boolean{
+        val ability = abilityFactory.acquireAbility(logicalAbility)
+        val isValid = ability.getSquaresThatCanActuallyBeTargetedByAbility(characterUsingAbility, sourceSquare = characterUsingAbility.tileLocation)
+                .contains(location)
+        return isValid
+    }
     fun useAbility(characterUsingAbility: LogicalCharacter,
                    logicalAbility: LogicalAbility,
                    targetCharacter: LogicalCharacter?,

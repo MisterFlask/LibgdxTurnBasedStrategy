@@ -2,11 +2,10 @@ package com.ironlordbyron.turnbasedstrategy.guice
 
 import com.google.inject.AbstractModule
 import com.google.inject.Guice
-import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
-import com.ironlordbyron.turnbasedstrategy.view.animation.TargetingCursorHandler
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.*
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.BlankMapGenerator
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
+import com.ironlordbyron.turnbasedstrategy.view.animation.TargetingCursorManager
+import com.ironlordbyron.turnbasedstrategy.tiledutils.*
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.BlankMapGenerator
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.view.ui.TacMapHudFactory
 
 class GameModule : AbstractModule() {
@@ -19,7 +18,7 @@ class GameModuleInjector {
         private val moduleInjector = Guice.createInjector(GameModule())
 
         init{
-            moduleInjector.getInstance(TargetingCursorHandler::class.java)
+            moduleInjector.getInstance(TargetingCursorManager::class.java)
         }
 
         fun createTiledMapOperationsHandler(): TileMapOperationsHandler {

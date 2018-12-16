@@ -1,4 +1,4 @@
-package com.ironlordbyron.turnbasedstrategy.view.tiledutils
+package com.ironlordbyron.turnbasedstrategy.tiledutils
 
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
@@ -8,8 +8,8 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.google.inject.assistedinject.Assisted
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TempBattleStarter
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TempBattleStarter
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import javax.inject.Singleton
 
 

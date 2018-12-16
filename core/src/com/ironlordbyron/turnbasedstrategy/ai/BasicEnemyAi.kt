@@ -5,9 +5,8 @@ import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityFactory
-import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TileMapOperationsHandler
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.TileMapOperationsHandler
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 
 /**
  * Attempts to move to closest enemy.

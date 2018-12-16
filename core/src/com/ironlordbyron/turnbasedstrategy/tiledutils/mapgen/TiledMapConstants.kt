@@ -1,4 +1,4 @@
-package com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen
+package com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen
 
 /**
  * Created by Aaron on 3/21/2018.

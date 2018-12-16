@@ -1,15 +1,14 @@
 package com.ironlordbyron.turnbasedstrategy.controller
 
 import com.badlogic.gdx.scenes.scene2d.Actor
-import com.ironlordbyron.turnbasedstrategy.common.GameBoardOperator
 import com.ironlordbyron.turnbasedstrategy.common.HighlightType
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import com.ironlordbyron.turnbasedstrategy.view.animation.foreverHighlightBlinking
 import com.ironlordbyron.turnbasedstrategy.view.animation.temporaryHighlightBlinking
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.SpriteActorFactory
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TileMapOperationsHandler
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen.TileMapProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActorFactory
+import com.ironlordbyron.turnbasedstrategy.tiledutils.TileMapOperationsHandler
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import javax.inject.Inject
 import javax.inject.Singleton
 

@@ -1,10 +1,9 @@
 package com.ironlordbyron.turnbasedstrategy.view.animation
 
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.LogicalTileTracker
+import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.kotcrab.vis.ui.building.utilities.Alignment
 import javax.inject.Inject
 

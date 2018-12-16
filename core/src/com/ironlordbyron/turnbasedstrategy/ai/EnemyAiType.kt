@@ -5,7 +5,9 @@ import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 
 public enum class EnemyAiType{
-    BASIC
+    BASIC,
+
+    IMMOBILE_UNIT
 }
 
 interface EnemyAi{

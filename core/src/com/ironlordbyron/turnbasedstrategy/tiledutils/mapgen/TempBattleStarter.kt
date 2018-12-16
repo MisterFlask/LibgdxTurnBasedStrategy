@@ -1,14 +1,13 @@
-package com.ironlordbyron.turnbasedstrategy.view.tiledutils.mapgen
+package com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen
 
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.ironlordbyron.turnbasedstrategy.common.GameBoardOperator
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.BoundingRectangle
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.CharacterImageManager
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.TileMapOperationsHandler
-import com.ironlordbyron.turnbasedstrategy.view.tiledutils.getBoundsOfTile
+import com.ironlordbyron.turnbasedstrategy.tiledutils.BoundingRectangle
+import com.ironlordbyron.turnbasedstrategy.tiledutils.TileMapOperationsHandler
+import com.ironlordbyron.turnbasedstrategy.tiledutils.getBoundsOfTile
 import javax.inject.Inject
 import javax.inject.Singleton
 
