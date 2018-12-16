@@ -37,17 +37,21 @@ class TileMapClickListenerFactory @Inject constructor(val eventNotifier: EventNo
 }
 
 /**
- * Defines action to be performed when user clicks on a tile.
+ * Defines action to be performed when user clicks on or hovers over a tile.
  */
 class TileMapClickListener(@Assisted val actor: TileMapActor,
                            val eventNotifier: EventNotifier) : ClickListener() {
     override fun touchDown(event: InputEvent, x: Float,
                            y: Float, pointer: Int, button: Int): Boolean {
-        println("X: ${actor.location.x}, y: ${actor.location.y}")
         eventNotifier.notifyListeners(TacticalGuiEvent.TileClicked(actor.location))
         return false
     }
+
+    override fun enter(event: InputEvent?, x: Float, y: Float, pointer: Int, fromActor: Actor?) {
+        eventNotifier.notifyListeners(TacticalGuiEvent.TileHovered(actor.location))
+    }
 }
+
 
 /**
  * Used internally by Guice.

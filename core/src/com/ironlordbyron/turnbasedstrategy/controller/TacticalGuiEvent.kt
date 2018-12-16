@@ -15,4 +15,7 @@ sealed class TacticalGuiEvent{
     data class StoppedHoveringOverAbility(val ability: LogicalAbility) : TacticalGuiEvent()
     data class ClickedButtonToActivateAbility(val ability: LogicalAbility) : TacticalGuiEvent()
     data class SwitchedGuiState(val guiState: BoardInputState):TacticalGuiEvent()
+    data class TileHovered(val location: TileLocation) : TacticalGuiEvent() {
+
+    }
 }
