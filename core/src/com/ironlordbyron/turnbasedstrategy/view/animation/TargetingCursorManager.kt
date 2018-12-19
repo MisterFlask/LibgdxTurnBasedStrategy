@@ -13,14 +13,14 @@ import javax.inject.Inject
 class TargetingCursorManager @Inject constructor(val tiledMapStageProvider: TacticalTiledMapStageProvider,
                                                  val imageRetriever: FileImageRetriever,
                                                  val eventNotifier: EventNotifier) : EventListener{
-    override fun consumeEvent(event: TacticalGuiEvent){
+    override fun consumeGuiEvent(event: TacticalGuiEvent){
         when(event){
             is TacticalGuiEvent.TileHovered -> hoversOverNewTile(event.location)
         }
     }
 
     init{
-        eventNotifier.registerListener(this)
+        eventNotifier.registerGuiListener(this)
     }
 
     var currentCursor: Actor? = null

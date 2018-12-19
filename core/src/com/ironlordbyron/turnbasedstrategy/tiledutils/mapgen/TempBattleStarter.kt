@@ -8,6 +8,7 @@ import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.tiledutils.BoundingRectangle
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TileMapOperationsHandler
 import com.ironlordbyron.turnbasedstrategy.tiledutils.getBoundsOfTile
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -25,14 +26,14 @@ class TileMapProvider {
 @Singleton
 class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
                                             val gameBoardOperator: GameBoardOperator,
-                                            val tileMapOperationsHandler: TileMapOperationsHandler){
+                                            val tiledMapInterpreter: TiledMapInterpreter){
     fun startBattle(){
-        val legitTiles = tileMapOperationsHandler.getPossiblePlayerSpawnPositions(boardProvider.tiledMap)
+        val legitTiles = tiledMapInterpreter.getPossiblePlayerSpawnPositions(boardProvider.tiledMap)
         for (tile in legitTiles){
             gameBoardOperator.addCharacterToTile(tacMapUnit = TacMapUnitTemplate.DEFAULT_UNIT, tileLocation = tile,
                     playerControlled = true)
         }
-        val enemyTiles = tileMapOperationsHandler.getPossibleEnemySpawnPositions(boardProvider.tiledMap)
+        val enemyTiles = tiledMapInterpreter.getPossibleEnemySpawnPositions(boardProvider.tiledMap)
         for (tile in enemyTiles){
             gameBoardOperator.addCharacterToTile(tacMapUnit = TacMapUnitTemplate.DEFAULT_ENEMY_UNIT, tileLocation = tile,
                     playerControlled = false)

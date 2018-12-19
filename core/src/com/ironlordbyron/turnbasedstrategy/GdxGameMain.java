@@ -39,6 +39,7 @@ public class GdxGameMain extends ApplicationAdapter  {
         tacMapCamera = new OrthographicCamera();
         tacMapCamera.setToOrtho(false, w, h);
         tacMapCamera.update();
+        GameModuleInjector.Companion.initGameCameraProvider(tacMapCamera);
 
 
         BlankMapGenerator tileMapGenerator = GameModuleInjector.Companion.createTiledMapGenerator();
@@ -77,9 +78,7 @@ public class GdxGameMain extends ApplicationAdapter  {
         tiledMapRenderer.setView(tacMapCamera);
         tiledMapRenderer.render();
         tiledMapStage.act();
-
-
-
+        GameModuleInjector.Companion.getGameCameraProvider().render();
         hudCamera.update();
         tiledMapStage.draw();
         hudStage.draw();

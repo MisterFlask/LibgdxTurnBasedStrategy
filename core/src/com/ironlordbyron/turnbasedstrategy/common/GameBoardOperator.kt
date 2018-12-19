@@ -43,7 +43,7 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
     // HACK: This shouldn't be public.
     public var actionQueue = ArrayList<ActorActionPair>()
 
-    override fun consumeEvent(event: TacticalGuiEvent) {
+    override fun consumeGuiEvent(event: TacticalGuiEvent) {
         when(event){
             is TacticalGuiEvent.FinishedEnemyTurn -> {
                 startPlayerTurn()
@@ -63,7 +63,7 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
     }
 
     init{
-        eventNotifier.registerListener(this)
+        eventNotifier.registerGuiListener(this)
     }
 
 

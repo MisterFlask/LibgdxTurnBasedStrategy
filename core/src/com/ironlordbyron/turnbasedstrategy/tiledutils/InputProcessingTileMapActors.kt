@@ -13,6 +13,7 @@ import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalMapController
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TempBattleStarter
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -38,12 +39,12 @@ class TileMapClickListener(@Assisted val actor: TileMapActor,
                            val eventNotifier: EventNotifier) : ClickListener() {
     override fun touchDown(event: InputEvent, x: Float,
                            y: Float, pointer: Int, button: Int): Boolean {
-        eventNotifier.notifyListeners(TacticalGuiEvent.TileClicked(actor.location))
+        eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.TileClicked(actor.location))
         return false
     }
 
     override fun enter(event: InputEvent?, x: Float, y: Float, pointer: Int, fromActor: Actor?) {
-        eventNotifier.notifyListeners(TacticalGuiEvent.TileHovered(actor.location))
+        eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.TileHovered(actor.location))
     }
 }
 
@@ -61,11 +62,12 @@ class TiledMapStageFactory @Inject constructor(val tileMapClickListenerActorFact
                                                val spriteActorFactory: SpriteActorFactory,
                                                val tileMapProvider: TileMapProvider,
                                                val tacticalMapController: TacticalMapController,
-                                               val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider) {
+                                               val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider,
+                                               val tiledMapInterpreter: TiledMapInterpreter) {
     fun create(tiledMap: TiledMap, orthographicCamera: OrthographicCamera): TiledMapStage {
         return TiledMapStage(tiledMap, tileMapClickListenerActorFactory.get(), tileMapClickListenerFactoryProvider.get(),
                 orthographicCamera, logicalTileTracker, battleStarter, spriteActorFactory,
-                tileMapProvider, tacticalTiledMapStageProvider)
+                tileMapProvider, tacticalTiledMapStageProvider, tiledMapInterpreter)
     }
 }
 

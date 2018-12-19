@@ -14,6 +14,6 @@ public class DeathAnimationGenerator @Inject constructor(val logicalTileTracker:
         val actor = character.actor
         actor.setOrigin(Alignment.CENTER.alignment)
         return ActorActionPair(actor, Actions.rotateTo(90f, .5f),
-                 secondaryActions = listOf(SpriteColorActorAction.build(character, SpriteColorActorAction.DIM_COLOR)))
+                secondaryActions = listOf(SpriteColorActorAction.build(character, SpriteColorActorAction.DIM_COLOR)))
     }
 }

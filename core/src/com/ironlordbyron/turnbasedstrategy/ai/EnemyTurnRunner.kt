@@ -52,7 +52,7 @@ public class EnemyTurnRunner @Inject constructor(val tileMapOperationsHandler: T
             }
         }
         actionRunner.runThroughActionQueue(gameBoardOperator.actionQueue, finalAction = {
-            eventNotifier.notifyListeners(TacticalGuiEvent.FinishedEnemyTurn())
+            eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.FinishedEnemyTurn())
         })
         gameBoardOperator.clearQueue()
     }

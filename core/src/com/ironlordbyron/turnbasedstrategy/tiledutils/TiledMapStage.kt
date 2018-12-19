@@ -10,6 +10,7 @@ import com.google.inject.assistedinject.Assisted
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TempBattleStarter
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 import javax.inject.Singleton
 
 
@@ -22,7 +23,8 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
                     val battleStarter: TempBattleStarter,
                     val spriteActorFactory: SpriteActorFactory,
                     val tileMapProvider: TileMapProvider,
-                    val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider) : Stage(), InputProcessor {
+                    val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider,
+                    val tiledMapInterpreter: TiledMapInterpreter) : Stage(), InputProcessor {
     init {
         tacticalTiledMapStageProvider.tiledMapStage = this
         val layer = tiledMap.getTileLayer(TileLayer.BASE)
@@ -35,17 +37,20 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
         tileMapProvider.tiledMap = tiledMap
     }
 
-    private fun getAllTilesAtXY(tileMap: TiledMap, tileLocation: TileLocation): List<TiledCellAgglomerate> {
-        val layers = tileMap.layers
-                .filter { it is TiledMapTileLayer }
-                .map { it as TiledMapTileLayer }
-                .filter { it.getCell(tileLocation.x, tileLocation.y) != null }
-                .filter { TileLayer.getTileLayerFromName(it.name) != null }
-                .map { TiledCellAgglomerate(it.getCell(tileLocation.x, tileLocation.y), TileLayer.getTileLayerFromName(it.name)!!) }
-        return layers
+
+    data class TiledCellAgglomerate(val tiledCell: TiledMapTileLayer.Cell, val tileLayer: TileLayer){
+        fun getPropertyInALayerAsString(property: String) : String{
+            return tiledCell.tile?.properties?.get(property) as String
+        }
+
+        fun cellHasProperty(property:String): Boolean {
+            return tiledCell.tile?.properties?.get(property) != null
+        }
     }
 
-    data class TiledCellAgglomerate(val tiledCell: TiledMapTileLayer.Cell, val tileLayer: TileLayer)
+    fun List<TiledCellAgglomerate>.getTileByLayer(tileLayer: TileLayer) : TiledCellAgglomerate? {
+        return this.filter { it.tileLayer == tileLayer }.firstOrNull()
+    }
 
     private fun createActorsAndLocationsForLayer(tiledLayer: TiledMapTileLayer, tiledMap: TiledMap) {
 
@@ -57,7 +62,7 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
                 actor.setBounds(x * tiledLayer.tileWidth, y * tiledLayer.tileHeight, tiledLayer.tileWidth,
                         tiledLayer.tileHeight)
                 logicalTileTracker.addTile(LogicalTile(cell.tile, TileLocation(x, y), actor, cell,
-                        getAllTilesAtXY(tiledMap, TileLocation(x, y))))
+                        tiledMapInterpreter.getAllTilesAtXY(tiledMap, TileLocation(x, y))))
                 addActor(actor)
                 val eventListener = tileMapClickListenerFactory.create(actor)
                 actor.addListener(eventListener)

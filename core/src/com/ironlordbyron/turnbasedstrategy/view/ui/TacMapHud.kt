@@ -53,7 +53,7 @@ class TacMapHud(viewPort: Viewport,
     var hoveredAbility: LogicalAbility? = null
     var boardInputState : BoardInputState = BoardInputState.DefaultState()
 
-    override fun consumeEvent(event: TacticalGuiEvent) {
+    override fun consumeGuiEvent(event: TacticalGuiEvent) {
         when (event) {
             is TacticalGuiEvent.CharacterSelected -> {
                 selectedUnitDescription?.setText(describeCharacter(event.character))
@@ -81,18 +81,18 @@ class TacMapHud(viewPort: Viewport,
 
         val clickListener = object : ClickListener(){
             override fun clicked(event: InputEvent?, x: Float, y: Float) {
-                eventNotifier.notifyListeners(TacticalGuiEvent.ClickedButtonToActivateAbility(ability))
+                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.ClickedButtonToActivateAbility(ability))
                 super.clicked(event, x, y)
             }
 
             override fun enter(event: InputEvent?, x: Float, y:Float, pointer: Int, fromActor: Actor?){
-                eventNotifier.notifyListeners(TacticalGuiEvent.StartedHoveringOverAbility(ability))
+                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.StartedHoveringOverAbility(ability))
                 hoveredAbility = ability
                 abilityTextArea.setText("${ability.name}: ${ability.description}")
                 super.enter(event, x, y, pointer, fromActor)
             }
             override fun exit(event: InputEvent?, x: Float, y:Float, pointer: Int, fromActor: Actor?){
-                eventNotifier.notifyListeners(TacticalGuiEvent.StoppedHoveringOverAbility(ability))
+                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.StoppedHoveringOverAbility(ability))
                 hoveredAbility = null
                 abilityTextArea.setText("")
                 super.exit(event, x, y, pointer, fromActor)
@@ -172,7 +172,7 @@ class TacMapHud(viewPort: Viewport,
     }
 
     init {
-        eventNotifier.registerListener(this)
+        eventNotifier.registerGuiListener(this)
 
         // this.isDebugAll = true
 
@@ -212,7 +212,7 @@ class TacMapHud(viewPort: Viewport,
         val button = TextButton("End Turn", mySkin)
         val clickListener = object : ClickListener(){
             override fun clicked(event: InputEvent?, x: Float, y: Float) {
-                eventNotifier.notifyListeners((TacticalGuiEvent.EndTurnButtonClicked()))
+                eventNotifier.notifyListenersOfGuiEvent((TacticalGuiEvent.EndTurnButtonClicked()))
                 super.clicked(event, x, y)
             }
         }

@@ -3,6 +3,7 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils
 import com.badlogic.gdx.maps.tiled.TiledMapTile
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.KnownObjectType
 
 
 data class LogicalTile(val terrainTile: TiledMapTile,
@@ -10,7 +11,13 @@ data class LogicalTile(val terrainTile: TiledMapTile,
                        val actor: TileMapActor,
                        val cell: TiledMapTileLayer.Cell,
                        val allTilesAtThisSquare: List<TiledMapStage.TiledCellAgglomerate>,
-                       var terrainType: TerrainType = TerrainType.GRASS) {
+                       var terrainType: TerrainType = TerrainType.GRASS,
+                       val markers: List<KnownObjectType> = listOf()) {
+
+    fun tileHasProperty(property: String) : Boolean{
+        // basically, if ANY cell has a property on this tile we return true regardless of what layer it's in.
+        return allTilesAtThisSquare.any{it.cellHasProperty(property)}
+    }
 
     fun isTerrainMountainous(): Boolean {
         return layerHasBooleanPropertySetToTrue(TileLayer.FEATURE, "mountain")

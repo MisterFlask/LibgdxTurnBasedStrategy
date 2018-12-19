@@ -63,14 +63,6 @@ class TileMapOperationsHandler @Inject constructor(val logicalTileTracker: Logic
         return mapCache[key]!!
     }
 
-    fun getPossiblePlayerSpawnPositions(map: TiledMap): Collection<TileLocation> {
-        return map.getTilesInObjectByType("PLAYER_SPAWN")
-    }
-    fun getPossibleEnemySpawnPositions(map: TiledMap) : Collection<TileLocation> {
-        return map.getTilesInObjectByType("ENEMY_SPAWN")
-    }
-
-
     fun getTileMap(name: String, mapType: MapType): TiledMap {
         val precursor = mapType.filePrefix
         val key = "$precursor/$name"
@@ -138,19 +130,23 @@ const val TILE_SIZE = 16
 data class TiledObjectIdentifier(val boundingRectangle: BoundingRectangle, val properties : Map<String, String>)
 
 
-fun TiledMap.getTilesInObjectByType(type: String): List<TileLocation> {
+fun TiledMap.getTilesInObjectByType(type: String): Collection<Collection<TileLocation>> {
     val objectLayerRectangles = this.getObjectLayerRectangles()
     if (!objectLayerRectangles.any{it.properties["type"] == type}){
         throw IllegalArgumentException("unable to find tiles matching type of " + type)
     }
-    val rec = objectLayerRectangles.first { it.properties["type"] == type }
-    val tiles = ArrayList<TileLocation>()
-    for (x in (rec.x / TILE_SIZE) until (rec.x + rec.width) / TILE_SIZE) {
-        for (y in (rec.y / TILE_SIZE) until (rec.y + rec.height) / TILE_SIZE) {
-            tiles.add(TileLocation(x, y))
+    val recs = objectLayerRectangles.filter { it.properties["type"] == type }
+    val objects = ArrayList<Collection<TileLocation>>()
+    for (rec in recs){
+        val tiles = ArrayList<TileLocation>()
+        for (x in (rec.x / TILE_SIZE) until (rec.x + rec.width) / TILE_SIZE) {
+            for (y in (rec.y / TILE_SIZE) until (rec.y + rec.height) / TILE_SIZE) {
+                tiles.add(TileLocation(x, y))
+            }
         }
+        objects.add(tiles)
     }
-    return tiles
+    return objects
 }
 
 data class LogicalTiledObject(val x: Int, val y: Int, val width: Int, val height: Int, val name: String,

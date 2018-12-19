@@ -1,7 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.view.animation
 
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 

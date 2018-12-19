@@ -1,11 +1,13 @@
 package com.ironlordbyron.turnbasedstrategy.guice
 
+import com.badlogic.gdx.graphics.Camera
 import com.google.inject.AbstractModule
 import com.google.inject.Guice
 import com.ironlordbyron.turnbasedstrategy.view.animation.TargetingCursorManager
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.BlankMapGenerator
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
+import com.ironlordbyron.turnbasedstrategy.view.animation.camera.GameCameraProvider
 import com.ironlordbyron.turnbasedstrategy.view.ui.TacMapHudFactory
 
 class GameModule : AbstractModule() {
@@ -42,6 +44,15 @@ class GameModuleInjector {
 
         fun createTiledMapStageFactory(): TiledMapStageFactory {
             return moduleInjector.getInstance(TiledMapStageFactory::class.java)
+        }
+        fun initGameCameraProvider(camera: Camera){
+            var provider = moduleInjector.getInstance(GameCameraProvider::class.java)
+            provider.camera = camera
+        }
+
+        fun getGameCameraProvider() : GameCameraProvider {
+            var provider = moduleInjector.getInstance(GameCameraProvider::class.java)
+            return provider
         }
     }
 }

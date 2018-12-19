@@ -31,14 +31,14 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
     var boardInputState : BoardInputState = BoardInputState.DefaultState()
         set(value) {
             println("Setting board input state: $value")
-            eventNotifier.notifyListeners(TacticalGuiEvent.SwitchedGuiState(value))
+            eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.SwitchedGuiState(value))
             field = value
         }
 
     var selectedCharacter: LogicalCharacter? = null
 
     var playerHasPriority = true
-    override fun consumeEvent(event: TacticalGuiEvent) {
+    override fun consumeGuiEvent(event: TacticalGuiEvent) {
         when(event){
             is TacticalGuiEvent.TileClicked -> {
                 if (playerHasPriority) playerClickedOnTile(event.tileLocation)
@@ -68,7 +68,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
     }
 
     init{
-        eventNotifier.registerListener(this)
+        eventNotifier.registerGuiListener(this)
     }
 
     fun playerClickedOnTile(location: TileLocation){
@@ -88,7 +88,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
         if (character != null){
             selectCharacterInTacMap(character)
             selectedCharacter = character
-            eventNotifier.notifyListeners(TacticalGuiEvent.CharacterSelected(character))
+            eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.CharacterSelected(character))
         }else{
             val currentBoardInputState = boardInputState
             when(currentBoardInputState){
@@ -96,7 +96,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
             }
             boardInputState = BoardInputState.DefaultState()
             selectedCharacter = null
-            eventNotifier.notifyListeners(TacticalGuiEvent.CharacterUnselected())
+            eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.CharacterUnselected())
         }
     }
 
