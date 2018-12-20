@@ -6,7 +6,6 @@ import com.ironlordbyron.turnbasedstrategy.common.GameBoardOperator
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.tiledutils.BoundingRectangle
-import com.ironlordbyron.turnbasedstrategy.tiledutils.TileMapOperationsHandler
 import com.ironlordbyron.turnbasedstrategy.tiledutils.getBoundsOfTile
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 import javax.inject.Inject

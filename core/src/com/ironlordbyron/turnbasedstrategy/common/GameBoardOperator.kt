@@ -2,7 +2,6 @@ package com.ironlordbyron.turnbasedstrategy.common
 
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.ironlordbyron.turnbasedstrategy.common.CharacterTemplates.CHARACTER_PLACEHOLDER_TILEMAP_TSX_FILE
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.MapHighlighter
@@ -11,6 +10,8 @@ import com.ironlordbyron.turnbasedstrategy.view.CharacterSpriteUtils
 import com.ironlordbyron.turnbasedstrategy.view.animation.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,7 +25,7 @@ import javax.inject.Singleton
  * Acts as a facade that should not include raw images and such in its interface.
  */
 @Singleton
-class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMapOperationsHandler,
+class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: TiledMapOperationsHandler,
                                             val tileMapProvider: TileMapProvider,
                                             val characterImageManager: CharacterImageManager,
                                             val eventNotifier: EventNotifier,
@@ -101,7 +102,8 @@ class GameBoardOperator @Inject constructor(val tileMapOperationsHandler: TileMa
 
     fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) {
         val actor = characterImageManager.placeCharacterSprite(tileMapProvider.tiledMap, tileLocation,
-                tileMapOperationsHandler.pullTextureFromTilemap(CHARACTER_PLACEHOLDER_TILEMAP_TSX_FILE, tacMapUnit.tiledTexturePath.spriteId, tacMapUnit.tiledTexturePath.tileSetName))
+                tiledMapOperationsHandler.pullTextureFromTilemap(SuperimposedTilemaps.COMMON_TILE_MAP, tacMapUnit.tiledTexturePath.spriteId, tacMapUnit.tiledTexturePath.tileSetName))
+
         boardState.listOfCharacters.add(LogicalCharacter(actor, tileLocation, tacMapUnit, playerControlled))
 
     }

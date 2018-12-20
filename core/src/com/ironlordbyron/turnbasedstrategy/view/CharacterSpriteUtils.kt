@@ -1,6 +1,5 @@
 package com.ironlordbyron.turnbasedstrategy.view
 
-import com.ironlordbyron.turnbasedstrategy.common.CharacterTemplates
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.view.animation.SpriteColorActorAction
 

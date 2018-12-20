@@ -7,13 +7,13 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import com.ironlordbyron.turnbasedstrategy.view.animation.foreverHighlightBlinking
 import com.ironlordbyron.turnbasedstrategy.view.animation.temporaryHighlightBlinking
 import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActorFactory
-import com.ironlordbyron.turnbasedstrategy.tiledutils.TileMapOperationsHandler
+import com.ironlordbyron.turnbasedstrategy.tiledutils.TiledMapOperationsHandler
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-public class MapHighlighter @Inject constructor(val tileMapOperationsHandler: TileMapOperationsHandler,
+public class MapHighlighter @Inject constructor(val tiledMapOperationsHandler: TiledMapOperationsHandler,
                                                 val imageActorFactory: SpriteActorFactory,
                                                 val tileMapProvider: TileMapProvider){
 
@@ -22,7 +22,7 @@ public class MapHighlighter @Inject constructor(val tileMapOperationsHandler: Ti
     public fun highlightTiles(tiles: Collection<TileLocation>,
                        highlightType: HighlightType,
                        actionGenerator: ActionGeneratorType = ActionGeneratorType.HIGHLIGHT_UNTIL_FURTHER_NOTICE) {
-        val texture = tileMapOperationsHandler.pullGenericTexture(
+        val texture = tiledMapOperationsHandler.pullGenericTexture(
                 highlightType.tiledTexturePath.spriteId,
                 highlightType.tiledTexturePath.tileSetName)
         for (location in tiles) {
@@ -44,7 +44,7 @@ public class MapHighlighter @Inject constructor(val tileMapOperationsHandler: Ti
     fun getTileHighlightActorActionPairs(tiles: Collection<TileLocation>,
                                          highlightType: HighlightType) : ActorActionPair {
         val actorActionPairList = ArrayList<ActorActionPair>()
-        val texture = tileMapOperationsHandler.pullGenericTexture(
+        val texture = tiledMapOperationsHandler.pullGenericTexture(
                 highlightType.tiledTexturePath.spriteId,
                 highlightType.tiledTexturePath.tileSetName)
         for (location in tiles) {

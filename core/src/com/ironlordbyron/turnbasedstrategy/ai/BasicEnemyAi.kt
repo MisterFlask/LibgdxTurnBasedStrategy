@@ -5,7 +5,7 @@ import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityFactory
-import com.ironlordbyron.turnbasedstrategy.tiledutils.TileMapOperationsHandler
+import com.ironlordbyron.turnbasedstrategy.tiledutils.TiledMapOperationsHandler
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 
 /**
@@ -13,7 +13,7 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
  * Will find the best path to that enemy.
  * Will move to closest usable tile.
  */
-public class BasicEnemyAi(val tileMapOperationsHandler: TileMapOperationsHandler,
+public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandler,
                           val tacticalMapState: TacticalMapState,
                           val tileMapProvider: TileMapProvider,
                           val aiGridGraphFactory: AiGridGraphFactory,

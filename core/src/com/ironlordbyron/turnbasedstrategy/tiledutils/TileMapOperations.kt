@@ -5,9 +5,9 @@ import com.badlogic.gdx.maps.MapProperties
 import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.*
 import com.google.inject.Singleton
-import com.ironlordbyron.turnbasedstrategy.common.CharacterTemplates
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.tiledutils.xml.TilemapXmlProcessor
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 import java.util.*
 import javax.inject.Inject
 
@@ -21,8 +21,7 @@ data class TacticalTileMap(val tileMap: TiledMap,
  * NOT for business logic.
  */
 @Singleton
-class TileMapOperationsHandler @Inject constructor(val logicalTileTracker: LogicalTileTracker,
-                                                   val xmlParser: TilemapXmlProcessor) {
+class TiledMapOperationsHandler @Inject constructor(val xmlParser: TilemapXmlProcessor) {
     val mapCache = HashMap<String, TiledMap>()
 
     fun copyFragmentTo(gameMapName: String,
@@ -38,7 +37,11 @@ class TileMapOperationsHandler @Inject constructor(val logicalTileTracker: Logic
     }
 
     fun pullGenericTexture(textureId: String, tileSetName: String) : TextureRegion{
-        return pullTextureFromTilemap(CharacterTemplates.CHARACTER_PLACEHOLDER_TILEMAP_TSX_FILE, textureId, tileSetName)
+        return pullTextureFromTilemap(SuperimposedTilemaps.COMMON_TILE_MAP, textureId, tileSetName)
+    }
+
+    fun pullTextures(superimposedTilemaps: SuperimposedTilemaps) : List<TextureRegion>{
+        return superimposedTilemaps.tileSetNames.map{pullTextureFromTilemap(superimposedTilemaps.tileMapWithTextureName, superimposedTilemaps.textureId, it)}
     }
 
     fun pullTextureFromTilemap(tileMapWithTextureName: String, textureId: String, tileSetWithTexture: String): TextureRegion {

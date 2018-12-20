@@ -22,7 +22,7 @@ class TileMapActor(@Assisted val tiledMap: TiledMap,
                    @Assisted val tiledMapTileLayer: TiledMapTileLayer,
                    @Assisted val cell: TiledMapTileLayer.Cell,
                    @Assisted val location: TileLocation,
-                   val fragmentCopier: TileMapOperationsHandler) : Actor()
+                   val fragmentCopier: TiledMapOperationsHandler) : Actor()
 
 
 @Singleton
@@ -57,7 +57,7 @@ class TiledMapStageFactory @Inject constructor(val tileMapClickListenerActorFact
                                                val tileMapClickListenerFactoryProvider: Provider<TileMapClickListenerFactory>,
                                                val logicalTileTracker: LogicalTileTracker,
                                                val characterPuller: CharacterImageManager,
-                                               val tileMapOperationsHandler: TileMapOperationsHandler,
+                                               val tiledMapOperationsHandler: TiledMapOperationsHandler,
                                                val battleStarter: TempBattleStarter,
                                                val spriteActorFactory: SpriteActorFactory,
                                                val tileMapProvider: TileMapProvider,
@@ -72,7 +72,7 @@ class TiledMapStageFactory @Inject constructor(val tileMapClickListenerActorFact
 }
 
 @Singleton
-class TileMapClickListenerActorFactory @Inject constructor(val fragmentCopierProvider: Provider<TileMapOperationsHandler>) {
+class TileMapClickListenerActorFactory @Inject constructor(val fragmentCopierProvider: Provider<TiledMapOperationsHandler>) {
     fun createTileMapActor(tiledMap: TiledMap, tiledLayer: TiledMapTileLayer, cell: TiledMapTileLayer.Cell,
                            tileLocation: TileLocation): TileMapActor {
         return TileMapActor(tiledMap, tiledLayer, cell, tileLocation,

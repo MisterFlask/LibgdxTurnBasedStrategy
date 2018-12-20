@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
+import com.badlogic.gdx.utils.Array
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 
 
 class AnimatedImage(val animation: Animation<TextureRegion>, val animatedImageParams: AnimatedImageParams) : Image(animation.getKeyFrame(0f)) {
@@ -34,17 +36,29 @@ class AnimatedImage(val animation: Animation<TextureRegion>, val animatedImagePa
     companion object {
         fun fromDataDrivenAnimation(dataDrivenOnePageAnimation: DataDrivenOnePageAnimation,
                                     animatedImageParams: AnimatedImageParams): AnimatedImage {
-            return AnimatedImage(AnimationParser().createAnimation(dataDrivenOnePageAnimation), animatedImageParams)
+            return AnimatedImage(SpriteSheetParser().createAnimation(dataDrivenOnePageAnimation), animatedImageParams)
+        }
+
+        fun fromTextureRegions(textures: List<TextureRegion>, animatedImageParams: AnimatedImageParams): AnimatedImage {
+            return AnimatedImage(Animation<TextureRegion>(animatedImageParams.frameDuration, textures.toLibgdxArray()), animatedImageParams)
         }
 
     }
 }
 
+
+fun <T> Collection<T>.toLibgdxArray() : Array<T> {
+  val walkFrames = Array<T>(this.size)
+    this.forEach{walkFrames.add(it)}
+    return walkFrames
+}
+
 data class AnimatedImageParams(
                                val startsVisible: Boolean = false,
-                               val loops : Boolean = false){
+                               val loops : Boolean = false,
+                               val frameDuration: Float){
     companion object {
-        val RUN_ONCE_AFTER_DELAY = AnimatedImageParams(startsVisible = false, loops = false)
-        val RUN_ALWAYS_AND_FOREVER = AnimatedImageParams(true, true)
+        val RUN_ONCE_AFTER_DELAY = AnimatedImageParams(startsVisible = false, loops = false, frameDuration = 0.25f)
+        val RUN_ALWAYS_AND_FOREVER = AnimatedImageParams(true, true, frameDuration = 0.25f)
     }
 }

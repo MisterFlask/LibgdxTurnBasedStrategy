@@ -8,7 +8,7 @@ import java.util.*
 import javax.inject.Singleton
 
 @Singleton
-class BlankMapGenerator @Inject constructor(val fragmentCopier: TileMapOperationsHandler,
+class BlankMapGenerator @Inject constructor(val fragmentCopier: TiledMapOperationsHandler,
                                             val tileTracker: LogicalTileTracker) {
     companion object {
         val defaultMapGenParams = MapGenerationParams(numCities = 3,

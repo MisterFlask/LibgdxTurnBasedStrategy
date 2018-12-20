@@ -11,23 +11,23 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.ActionRunner
 import com.ironlordbyron.turnbasedstrategy.tiledutils.CharacterImageManager
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActorFactory
-import com.ironlordbyron.turnbasedstrategy.tiledutils.TileMapOperationsHandler
+import com.ironlordbyron.turnbasedstrategy.tiledutils.TiledMapOperationsHandler
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import javax.inject.Inject
 
-public class EnemyTurnRunner @Inject constructor(val tileMapOperationsHandler: TileMapOperationsHandler,
-                             val tileMapProvider: TileMapProvider,
-                             val characterImageManager: CharacterImageManager,
-                             val eventNotifier: EventNotifier,
-                             val logicalTileTracker: LogicalTileTracker,
-                             val imageActorFactory: SpriteActorFactory,
-                             val boardState: TacticalMapState,
-                             val enemyAiFactory:EnemyAiFactory,
-                             val actionRunner: ActionRunner,
-                             val characterSpriteUtils: CharacterSpriteUtils,
-                             val mapHighlighter: MapHighlighter,
-                             val tacticalMapAlgorithms: TacticalMapAlgorithms,
-                             val gameBoardOperator: GameBoardOperator){
+public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: TiledMapOperationsHandler,
+                                                 val tileMapProvider: TileMapProvider,
+                                                 val characterImageManager: CharacterImageManager,
+                                                 val eventNotifier: EventNotifier,
+                                                 val logicalTileTracker: LogicalTileTracker,
+                                                 val imageActorFactory: SpriteActorFactory,
+                                                 val boardState: TacticalMapState,
+                                                 val enemyAiFactory:EnemyAiFactory,
+                                                 val actionRunner: ActionRunner,
+                                                 val characterSpriteUtils: CharacterSpriteUtils,
+                                                 val mapHighlighter: MapHighlighter,
+                                                 val tacticalMapAlgorithms: TacticalMapAlgorithms,
+                                                 val gameBoardOperator: GameBoardOperator){
 
     public fun endTurn() {
         runEnemyTurn()

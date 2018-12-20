@@ -25,8 +25,8 @@ class GameModuleInjector {
             moduleInjector.getInstance(EagerInitializer::class.java)
         }
 
-        fun createTiledMapOperationsHandler(): TileMapOperationsHandler {
-            return moduleInjector.getInstance(TileMapOperationsHandler::class.java)
+        fun createTiledMapOperationsHandler(): TiledMapOperationsHandler {
+            return moduleInjector.getInstance(TiledMapOperationsHandler::class.java)
         }
 
         fun createSpriteActorFactory() : SpriteActorFactory {
