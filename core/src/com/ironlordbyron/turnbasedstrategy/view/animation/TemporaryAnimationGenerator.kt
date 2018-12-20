@@ -5,9 +5,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.scenes.scene2d.Action
-import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.utils.Array
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
@@ -46,15 +44,30 @@ public interface ActivatableActor {
     public fun activateIfInactive()
 }
 
-data class DataDrivenAnimation(val filePath: String, val rows : Int, val cols: Int){
-    companion object {
-        val EXPLODE = DataDrivenAnimation("animations/exp2.png", 4, 4)
+public interface CanTransformIntoAnimatedImage{
+    fun toAnimatedImage(animatedImageParams: AnimatedImageParams) : AnimatedImage
+}
+
+/**
+ * Represents animations where it's just a spritesheet.
+ */
+data class DataDrivenOnePageAnimation(val filePath: String, val rows : Int, val cols: Int): CanTransformIntoAnimatedImage{
+    override fun toAnimatedImage(animatedImageParams: AnimatedImageParams): AnimatedImage {
+        return AnimatedImage.fromDataDrivenAnimation(this, animatedImageParams)
     }
+
+    companion object {
+        val EXPLODE = DataDrivenOnePageAnimation("animations/exp2.png", 4, 4)
+    }
+}
+
+data class OpposedSpritesheets(val spritesheets: Collection<String>, val spritesheetX: Int, val spritesheetY: Int){
+
 }
 
 
 class AnimationParser(){
-    public fun createAnimation(anim: DataDrivenAnimation): Animation<TextureRegion> {
+    public fun createAnimation(anim: DataDrivenOnePageAnimation): Animation<TextureRegion> {
         val frameRows = anim.rows
         val frameCols = anim.cols
         val walkSheet = Texture(Gdx.files.internal(anim.filePath))
@@ -87,8 +100,8 @@ class TemporaryAnimationGenerator @Inject constructor (val tileMapProvider: Tile
                                   ) {
     val FRAME_ROWS = 4
     val FRAME_COLS = 4
-    public fun getTemporaryAnimationActorActionPair(tileLocation: TileLocation, dataDrivenAnimation: DataDrivenAnimation): ActorActionPair{
-        val walkAnimation = animationParser.createAnimation(dataDrivenAnimation)
+    public fun getTemporaryAnimationActorActionPair(tileLocation: TileLocation, dataDrivenOnePageAnimation: DataDrivenOnePageAnimation): ActorActionPair{
+        val walkAnimation = animationParser.createAnimation(dataDrivenOnePageAnimation)
         val animatedImage = AnimatedImage(walkAnimation, AnimatedImageParams.RUN_ONCE_AFTER_DELAY)
         tiledMapStageProvider.tiledMapStage.addActor(animatedImage)
         val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)

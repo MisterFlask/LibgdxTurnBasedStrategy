@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
+import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActor
 
@@ -7,7 +8,7 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActor
  * Represents a mutable character generated from a template.
  * Has a location, an associated actor, and a
  */
-data class LogicalCharacter(val actor: SpriteActor,
+data class LogicalCharacter(val actor: Actor,
                             var tileLocation: TileLocation,
                             val tacMapUnit: TacMapUnitTemplate,
                             val playerControlled: Boolean,

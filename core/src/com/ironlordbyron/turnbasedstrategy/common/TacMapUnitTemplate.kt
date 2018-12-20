@@ -14,9 +14,9 @@ data class TacMapUnitTemplate(val movesPerTurn: Int,
                               val enemyAiType: EnemyAiType = EnemyAiType.BASIC
 ) {
     companion object TacMapUnit {
-        val DEFAULT_UNIT = TacMapUnitTemplate(8, TiledTexturePath("6"), templateName = "Friendly")
-        val DEFAULT_ENEMY_UNIT = TacMapUnitTemplate(8, TiledTexturePath("7"), templateName = "Enemy")
-        val DEFAULT_ENEMY_UNIT_SPAWNER = TacMapUnitTemplate(0, TiledTexturePath("8"), templateName = "EnemySpawner",
+        val DEFAULT_UNIT = TacMapUnitTemplate(8, TiledTexturePath("6", TileSetName.PLAYER), templateName = "Friendly")
+        val DEFAULT_ENEMY_UNIT = TacMapUnitTemplate(8, TiledTexturePath("7", TileSetName.PLAYER), templateName = "Enemy")
+        val DEFAULT_ENEMY_UNIT_SPAWNER = TacMapUnitTemplate(0, TiledTexturePath("8", TileSetName.PLAYER), templateName = "EnemySpawner",
                 abilities = listOf(StandardAbilities.spawnUnit),
                 enemyAiType = EnemyAiType.IMMOBILE_UNIT,
                 walkableTerrainTypes = listOf())

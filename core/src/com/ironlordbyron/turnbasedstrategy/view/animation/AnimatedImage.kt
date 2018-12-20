@@ -32,9 +32,9 @@ class AnimatedImage(val animation: Animation<TextureRegion>, val animatedImagePa
         super.act(delta)
     }
     companion object {
-        fun fromDataDrivenAnimation(dataDrivenAnimation: DataDrivenAnimation,
+        fun fromDataDrivenAnimation(dataDrivenOnePageAnimation: DataDrivenOnePageAnimation,
                                     animatedImageParams: AnimatedImageParams): AnimatedImage {
-            return AnimatedImage(AnimationParser().createAnimation(dataDrivenAnimation), animatedImageParams)
+            return AnimatedImage(AnimationParser().createAnimation(dataDrivenOnePageAnimation), animatedImageParams)
         }
 
     }
