@@ -26,9 +26,9 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                                                 val mapHighlighter: MapHighlighter,
                                                 val tacticalMapAlgorithms: TacticalMapAlgorithms,
                                                 val abilityEffectFactory: AbilityEffectFactory,
-                                                val enemyTurnRunner: EnemyTurnRunner) : EventListener {
+                                                val enemyTurnRunner: EnemyTurnRunner) : EventListener, BoardInputStateProvider {
 
-    var boardInputState : BoardInputState = BoardInputState.DefaultState()
+    override var boardInputState : BoardInputState = BoardInputState.DefaultState()
         set(value) {
             println("Setting board input state: $value")
             eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.SwitchedGuiState(value))

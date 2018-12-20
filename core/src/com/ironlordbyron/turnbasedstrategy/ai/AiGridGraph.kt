@@ -16,9 +16,9 @@ private val SENTINEL_VALUE = 100000
 
 public class AiGridGraphFactory @Inject constructor(val tileTracker: LogicalTileTracker,
                                                     val tacticalMapState: TacticalMapState,
-                                                    val tacticalMapAlgorithms: TacticalMapAlgorithms){
+                                                    val tacticalMapAlgorithms: TacticalMapAlgorithms) : PathfinderFactory{
 
-    public fun createGridGraph(logicalCharacter: LogicalCharacter) : AiGridGraph{
+    override public fun createGridGraph(logicalCharacter: LogicalCharacter) : AiGridGraph{
         return AiGridGraph(tileTracker,
                 tacticalMapState, logicalCharacter, tacticalMapAlgorithms)
     }
@@ -27,7 +27,7 @@ public class AiGridGraphFactory @Inject constructor(val tileTracker: LogicalTile
 public class AiGridGraph (val tileTracker: LogicalTileTracker,
                           val tacticalMapState: TacticalMapState,
                           val logicalCharacter: LogicalCharacter,
-                          val tacticalMapAlgorithms: TacticalMapAlgorithms) {
+                          val tacticalMapAlgorithms: TacticalMapAlgorithms) : Pathfinder {
 
     val navigationGrid = NavigationGrid<PathfindingTileLocation>();
     init{
@@ -95,7 +95,7 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
                 .filter{tileTracker.getLogicalTileFromLocation(it) != null}
     }
 
-    public fun acquireBestPathTo(startCharacter: LogicalCharacter, endLocation: TileLocation, allowEndingOnLastTile: Boolean) : Collection<PathfindingTileLocation>?{
+    override public fun acquireBestPathTo(startCharacter: LogicalCharacter, endLocation: TileLocation, allowEndingOnLastTile: Boolean) : Collection<PathfindingTileLocation>?{
         try {
             var opt = GridFinderOptions()
             opt.allowDiagonal = false

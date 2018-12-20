@@ -8,6 +8,7 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.BlankMapGenerator
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.camera.GameCameraProvider
+import com.ironlordbyron.turnbasedstrategy.view.animation.passive.EagerInitializer
 import com.ironlordbyron.turnbasedstrategy.view.ui.TacMapHudFactory
 
 class GameModule : AbstractModule() {
@@ -21,6 +22,7 @@ class GameModuleInjector {
 
         init{
             moduleInjector.getInstance(TargetingCursorManager::class.java)
+            moduleInjector.getInstance(EagerInitializer::class.java)
         }
 
         fun createTiledMapOperationsHandler(): TileMapOperationsHandler {

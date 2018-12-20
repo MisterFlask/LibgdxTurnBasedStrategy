@@ -19,7 +19,8 @@ enum class Icon(val imagePath: String, val imageFolder: String){
     RESCUE ("hand.png", "icons"),
     RARROW("rarrow.png", "icons"),
     TARGETING_CURSOR("Ardentryst-target.png", "cursors"),
-    ATTACK_CURSOR("Ardentryst-target2.png", "cursors")
+    ATTACK_CURSOR("Ardentryst-target2.png", "cursors"),
+    BREADCRUMB("breadcrumb.png", "icons")
 }
 
 public class FileImageRetriever @Inject constructor(val tileMapProvider: TileMapProvider){
