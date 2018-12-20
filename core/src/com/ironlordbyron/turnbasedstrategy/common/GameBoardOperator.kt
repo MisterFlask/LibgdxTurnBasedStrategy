@@ -101,8 +101,8 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
     }
 
     fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) {
-        val actor = characterImageManager.placeCharacterSprite(tileMapProvider.tiledMap, tileLocation,
-                tiledMapOperationsHandler.pullTextureFromTilemap(SuperimposedTilemaps.COMMON_TILE_MAP, tacMapUnit.tiledTexturePath.spriteId, tacMapUnit.tiledTexturePath.tileSetName))
+        val actor = characterImageManager.placeCharacterActor(tileLocation,tacMapUnit.tiledTexturePath)
+
 
         boardState.listOfCharacters.add(LogicalCharacter(actor, tileLocation, tacMapUnit, playerControlled))
 

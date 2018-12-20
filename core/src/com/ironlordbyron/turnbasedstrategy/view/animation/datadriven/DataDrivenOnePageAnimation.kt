@@ -7,8 +7,8 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 /**
  * Represents animations where it's just a spritesheet.
  */
-data class DataDrivenOnePageAnimation(val filePath: String, val rows : Int, val cols: Int): ProtoAnimation {
-    override fun toAnimatedImage(animatedImageParams: AnimatedImageParams): AnimatedImage {
+data class DataDrivenOnePageAnimation(val filePath: String, val rows : Int, val cols: Int): ProtoActor {
+    override fun toActor(animatedImageParams: AnimatedImageParams): AnimatedImage {
         return AnimatedImage.fromDataDrivenAnimation(this, animatedImageParams)
     }
 

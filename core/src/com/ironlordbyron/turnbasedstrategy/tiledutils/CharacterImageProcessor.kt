@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -16,8 +17,8 @@ data class BoundingRectangle(val x: Int, val y: Int, val width: Int, val height:
 fun TiledMapTile.getBounds(): BoundingRectangle {
     return BoundingRectangle(this.textureRegion.regionX, this.textureRegion.regionY, this.textureRegion.regionWidth, this.textureRegion.regionHeight)
 }
-interface CanTransformTextureToActor<out T> {
-    fun placeSprite(tiledMap: TiledMap, tileLocation: TileLocation, texture: TextureRegion) : T
+interface CanTransformTextureToActor {
+    fun placeCharacterActor(tileLocation: TileLocation, protoActor: ProtoActor) : Actor
 }
 
 public fun TiledMapTileLayer.getBoundsOfTile(tileLocation: TileLocation): BoundingRectangle {

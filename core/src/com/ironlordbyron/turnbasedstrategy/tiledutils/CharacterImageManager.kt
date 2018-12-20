@@ -1,8 +1,5 @@
 package com.ironlordbyron.turnbasedstrategy.tiledutils
 
-import com.badlogic.gdx.graphics.g2d.Animation
-import com.badlogic.gdx.graphics.g2d.TextureRegion
-import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Image
@@ -10,31 +7,21 @@ import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoAnimation
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import javax.inject.Inject
 
 
 class CharacterImageManager @Inject constructor(val tiledMapOperationsHandler: TiledMapOperationsHandler,
                                                 val spriteActorFactory: SpriteActorFactory,
                                                 val stageProvider: TacticalTiledMapStageProvider,
-                                                val tileMapProvider: TileMapProvider) : CanTransformTextureToActor<Actor> {
-
-    @Deprecated("Use placeCharacterActor instead")
-    override fun placeSprite(tiledMap: TiledMap, tileLocation: TileLocation, texture: TextureRegion): Actor {
-        return placeCharacterSprite(tiledMap, tileLocation, texture)
-    }
-
-    @Deprecated("Use placeCharacterActor instead")
-    fun placeCharacterSprite(tiledMap: TiledMap, tileLocation: TileLocation, characterTexture: TextureRegion) : Actor {
-        val boundingBox = (tiledMap.layers[0] as TiledMapTileLayer).getBoundsOfTile(tileLocation)
-        val characterActor = spriteActorFactory.createSpriteActor(characterTexture, boundingBox)
-        return characterActor
-    }
+                                                val tileMapProvider: TileMapProvider) : CanTransformTextureToActor {
 
 
-    fun placeCharacterActor( tileLocation: TileLocation, protoAnimation: ProtoAnimation) : Actor {
+
+    override fun placeCharacterActor(tileLocation: TileLocation, protoActor: ProtoActor) : Actor {
         val boundingBox = (tileMapProvider.tiledMap.layers[0] as TiledMapTileLayer).getBoundsOfTile(tileLocation)
-        val characterActor = protoAnimation.toAnimatedImage(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER)
+        val characterActor = protoActor.toActor(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER)
+        characterActor.setBoundingBox(boundingBox)
         stageProvider.tiledMapStage.addActor(characterActor)
         return characterActor
     }
@@ -44,4 +31,11 @@ class CharacterImageManager @Inject constructor(val tiledMapOperationsHandler: T
         val texture = tiledMapOperationsHandler.pullGenericTexture(tiledTexturePath.spriteId, tiledTexturePath.tileSetName)
         return Image(texture)
     }
+}
+
+private fun Actor.setBoundingBox(boundingBox: BoundingRectangle) {
+    this.x = boundingBox.x.toFloat()
+    this.y = boundingBox.y.toFloat()
+    this.width = boundingBox.width.toFloat()
+    this.height = boundingBox.height.toFloat()
 }

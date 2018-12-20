@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.view.animation
 
 import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Array
@@ -12,6 +13,12 @@ class AnimatedImage(val animation: Animation<TextureRegion>, val animatedImagePa
     init{
         this.isVisible = animatedImageParams.startsVisible
     }
+
+    override fun hit(x: Float, y: Float, touchable: Boolean): Actor? {
+        super.hit(x, y, touchable)
+        return null
+    }
+
     fun activate() {
         if (alreadyActivated){
             return
