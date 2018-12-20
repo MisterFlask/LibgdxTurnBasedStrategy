@@ -14,32 +14,6 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import javax.inject.Inject
 
 
-class AnimatedImage(val animation: Animation<TextureRegion>) : Image(animation.getKeyFrame(0f)) {
-    init{
-        this.isVisible = false
-    }
-    fun activate() {
-        if (alreadyActivated){
-            return
-        }
-        this.stateTime = 0f
-        this.isVisible = true //this isn't getting called before act() is.
-        this.alreadyActivated = true
-    }
-
-    private var alreadyActivated: Boolean = false;
-    private var stateTime = 0f
-
-    init{
-        animation.playMode = Animation.PlayMode.NORMAL
-    }
-
-    override fun act(delta: Float) {
-        stateTime += delta
-        (getDrawable() as TextureRegionDrawable).setRegion(animation!!.getKeyFrame(stateTime, false))
-        super.act(delta)
-    }
-}
 
 class AnimationAppearTemporarily(val animation: AnimatedImage) : Action(){
 
@@ -72,33 +46,50 @@ public interface ActivatableActor {
     public fun activateIfInactive()
 }
 
-class TemporaryAnimationGenerator @Inject constructor (val tileMapProvider: TileMapProvider,
-                                                       val tiledMapStageProvider: TacticalTiledMapStageProvider
-                                  ) {
-    val FRAME_ROWS = 4
-    val FRAME_COLS = 4
-    public fun getTemporaryAnimationActorActionPair(tileLocation: TileLocation): ActorActionPair{
-        val walkSheet = Texture(Gdx.files.internal("animations/exp2.png"))
+data class DataDrivenAnimation(val filePath: String, val rows : Int, val cols: Int){
+    companion object {
+        val EXPLODE = DataDrivenAnimation("animations/exp2.png", 4, 4)
+    }
+}
+
+
+class AnimationParser(){
+    public fun createAnimation(anim: DataDrivenAnimation): Animation<TextureRegion> {
+        val frameRows = anim.rows
+        val frameCols = anim.cols
+        val walkSheet = Texture(Gdx.files.internal(anim.filePath))
 
         // Use the split utility method to create a 2D array of TextureRegions. This is
         // possible because this sprite sheet contains frames of equal size and they are
         // all aligned.
         val tmp = TextureRegion.split(walkSheet,
-                walkSheet.getWidth() / FRAME_COLS,
-                walkSheet.getHeight() / FRAME_ROWS)
+                walkSheet.getWidth() / frameCols,
+                walkSheet.getHeight() / frameRows)
 
         // Place the regions into a 1D array in the correct order, starting from the top
         // left, going across first. The Animation constructor requires a 1D array.
-        val walkFrames = Array<TextureRegion>(FRAME_COLS * FRAME_ROWS)
-        for (i in 0 until FRAME_ROWS) {
-            for (j in 0 until FRAME_COLS) {
+        val walkFrames = Array<TextureRegion>(frameCols * frameRows)
+        for (i in 0 until frameRows) {
+            for (j in 0 until frameCols) {
                 walkFrames.add(tmp[i][j])
             }
         }
 
         // Initialize the Animation with the frame interval and array of frames
         val walkAnimation = Animation<TextureRegion>(0.025f, walkFrames)
-        val animatedImage = AnimatedImage(walkAnimation)
+        return walkAnimation
+    }
+}
+
+class TemporaryAnimationGenerator @Inject constructor (val tileMapProvider: TileMapProvider,
+                                                       val tiledMapStageProvider: TacticalTiledMapStageProvider,
+                                                       val animationParser: AnimationParser
+                                  ) {
+    val FRAME_ROWS = 4
+    val FRAME_COLS = 4
+    public fun getTemporaryAnimationActorActionPair(tileLocation: TileLocation, dataDrivenAnimation: DataDrivenAnimation): ActorActionPair{
+        val walkAnimation = animationParser.createAnimation(dataDrivenAnimation)
+        val animatedImage = AnimatedImage(walkAnimation, AnimatedImageParams.RUN_ONCE_AFTER_DELAY)
         tiledMapStageProvider.tiledMapStage.addActor(animatedImage)
         val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
         animatedImage.setX(boundingBox.x.toFloat())
@@ -110,4 +101,5 @@ class TemporaryAnimationGenerator @Inject constructor (val tileMapProvider: Tile
                 name = "Animation appearing temporarily",
                 murderActorsOnceCompletedAnimation = true)
     }
+
 }
