@@ -5,9 +5,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.common.TiledTexturePath
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
+import java.lang.IllegalStateException
 import javax.inject.Inject
 
 
@@ -28,8 +30,7 @@ class CharacterImageManager @Inject constructor(val tiledMapOperationsHandler: T
 
     fun retrieveCharacterImage(character: LogicalCharacter) : Actor {
         val tiledTexturePath = character.tacMapUnit.tiledTexturePath;
-        val texture = tiledMapOperationsHandler.pullGenericTexture(tiledTexturePath.spriteId, tiledTexturePath.tileSetName)
-        return Image(texture)
+        return tiledTexturePath.toActor(AnimatedImageParams(true, true, 0.4f))
     }
 }
 
