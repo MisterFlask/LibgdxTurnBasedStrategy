@@ -1,4 +1,4 @@
-package com.ironlordbyron.turnbasedstrategy.common
+package com.ironlordbyron.turnbasedstrategy.view.animation
 
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.Actor
