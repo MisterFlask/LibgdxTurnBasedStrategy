@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.view.animation.camera
 
 import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.OrthographicCamera
 import javax.inject.Singleton
 
 
@@ -10,7 +11,7 @@ interface RunsOnRender{
 
 @Singleton
 class GameCameraProvider(){
-    lateinit var camera: Camera
+    lateinit var camera: OrthographicCamera
 
     val toRunOnRender = ArrayList<RunsOnRender>()
     fun register(runsOnRender: RunsOnRender){

@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.guice
 
 import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.OrthographicCamera
 import com.google.inject.AbstractModule
 import com.google.inject.Guice
 import com.ironlordbyron.turnbasedstrategy.view.animation.TargetingCursorManager
@@ -49,7 +50,7 @@ class GameModuleInjector {
         }
         fun initGameCameraProvider(camera: Camera){
             var provider = moduleInjector.getInstance(GameCameraProvider::class.java)
-            provider.camera = camera
+            provider.camera = camera as OrthographicCamera
         }
 
         fun getGameCameraProvider() : GameCameraProvider {

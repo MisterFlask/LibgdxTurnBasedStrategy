@@ -92,7 +92,6 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
         if (amount == 1){
             orthographicCamera.zoom *= 1.1f
         }else{
-
             orthographicCamera.zoom /= 1.1f
         }
         return false
