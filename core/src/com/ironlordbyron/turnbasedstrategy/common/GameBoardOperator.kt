@@ -47,11 +47,9 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
                                             val tacticalMapAlgorithms: TacticalMapAlgorithms,
                                             val temporaryAnimationGenerator: TemporaryAnimationGenerator,
                                             val floatingTextGenerator: FloatingTextGenerator,
-                                            val deathAnimationGenerator: DeathAnimationGenerator) : EventListener {
-
-
-    // HACK: This shouldn't be public.
-    public var actionQueue = ArrayList<ActorActionPair>()
+                                            val deathAnimationGenerator: DeathAnimationGenerator) : EventListener,
+ ActionQueueProvider{
+    override public var actionQueue = ArrayList<ActorActionPair>()
 
     override fun consumeGuiEvent(event: TacticalGuiEvent) {
         when(event){
@@ -133,6 +131,10 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
 
     }
 
+}
+
+interface ActionQueueProvider {
+    val actionQueue: List<ActorActionPair>
 }
 
 
