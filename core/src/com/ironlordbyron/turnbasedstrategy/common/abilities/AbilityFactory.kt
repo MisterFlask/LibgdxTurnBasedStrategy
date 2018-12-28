@@ -4,20 +4,18 @@ import com.ironlordbyron.turnbasedstrategy.common.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
-class AbilityEffectFactory {
-
-}
-
 /**
  * Transmutes the data of "logical abilities" into actual functions that have effects on the board.
  */
 @Singleton
 public class AbilityFactory @Inject constructor(val gameBoardOperator: GameBoardOperator,
                     val boardAlgorithms: TacticalMapAlgorithms,
-                    val tacticalMapState: TacticalMapState){
+                    val tacticalMapState: TacticalMapState,
+                    val unitSpawner: CharacterSpawner){
     fun acquireAbility(logicalAbility: LogicalAbility) : Ability {
         when(logicalAbility.abilityClass){
-            AbilityClass.TARGETED_ABILITY -> return SimpleAttackAbility(logicalAbility, tacticalMapState, boardAlgorithms, gameBoardOperator, boardAlgorithms)
+            AbilityClass.TARGETED_ABILITY -> return SimpleAttackAbility(logicalAbility, tacticalMapState, boardAlgorithms, gameBoardOperator, boardAlgorithms,
+                    unitSpawner)
         }
     }
 
@@ -58,6 +56,10 @@ interface Ability{
                 possibilities.add(target)
             }
         }
+        if (logicalAbility.requiredTargetType == RequiredTargetType.NO_CHARACTER_AT_LOCATION){
+            val nearbyCharacterLocations = nearbyCharacters.map{char -> char.tileLocation}
+            return abilityTargetSquares.filter{!nearbyCharacterLocations.contains(it)}
+        }
         return possibilities.map{it.tileLocation}
 
     }
@@ -92,13 +94,25 @@ class SimpleAttackAbility(
         override val logicalAbility: LogicalAbility,
         override val tacticalMapState: TacticalMapState,
         val boardAlgorithms: TacticalMapAlgorithms,
-        val gameBoardOperator: GameBoardOperator, override val tacticalMapAlgorithms: TacticalMapAlgorithms) : Ability {
+        val gameBoardOperator: GameBoardOperator,
+        override val tacticalMapAlgorithms: TacticalMapAlgorithms,
+        val unitSpawner: CharacterSpawner) : Ability {
     override fun isValidTarget(location: TileLocation?, targetCharacter: LogicalCharacter?, sourceCharacter: LogicalCharacter) : Boolean{
         return getValidAbilityTargetSquares(sourceCharacter).contains(location)
     }
 
     override fun activateAbility(location: TileLocation?, targetCharacter: LogicalCharacter?, sourceCharacter: LogicalCharacter) {
-        gameBoardOperator.damageCharacter(targetCharacter!!, !sourceCharacter.playerControlled, logicalAbility.damage!!)
+        if (logicalAbility.damage != null){
+            gameBoardOperator.damageCharacter(targetCharacter!!, !sourceCharacter.playerControlled, logicalAbility.damage)
+        }
+        // processing ability effects
+
+        for (effect in logicalAbility.abilityEffects){
+            when(effect){
+                is LogicalAbilityEffect.SpawnsUnit -> unitSpawner.addCharacterToTile(effect.unitToBeSpawned.toTacMapUnitTemplate()!!, location!!,
+                        sourceCharacter.playerControlled) // TODO: Hook up with animation queue
+            }
+        }
     }
 
     override fun getValidAbilityTargetSquares(sourceCharacter: LogicalCharacter, sourceSquare: TileLocation?) : Collection<TileLocation>{

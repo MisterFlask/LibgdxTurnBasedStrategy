@@ -24,5 +24,18 @@ data class TacMapUnitTemplate(val movesPerTurn: Int,
                 abilities = listOf(StandardAbilities.spawnUnit),
                 enemyAiType = EnemyAiType.IMMOBILE_UNIT,
                 walkableTerrainTypes = listOf())
+
+        val Dict = mapOf<String, TacMapUnitTemplate>(TacMapUnitTemplateKeys.DEFAULT_UNIT to DEFAULT_UNIT,
+                TacMapUnitTemplateKeys.DEFAULT_ENEMY_UNIT to DEFAULT_ENEMY_UNIT,
+                TacMapUnitTemplateKeys.DEFAULT_ENEMY_UNIT_SPAWNER to DEFAULT_ENEMY_UNIT_SPAWNER)
     }
+}
+object TacMapUnitTemplateKeys{
+    val DEFAULT_UNIT = "default_unit"
+    val DEFAULT_ENEMY_UNIT = "default_enemy_unit"
+    val DEFAULT_ENEMY_UNIT_SPAWNER = "default_enemy_unit_spawner"
+}
+
+public fun String.toTacMapUnitTemplate() : TacMapUnitTemplate?{
+    return TacMapUnitTemplate.Dict[this]
 }

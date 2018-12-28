@@ -1,5 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.common.abilities
 
+import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
+
 public class LogicalAbility(val name: String,
                             val speed: AbilitySpeed,
                             val range: Int,
@@ -9,8 +11,13 @@ public class LogicalAbility(val name: String,
                             val description: String? = null,
                             val abilityClass: AbilityClass,
                             val allowsTargetingSelf: Boolean = false,
-                            val requiredTargetType: RequiredTargetType = RequiredTargetType.ANY){
+                            val requiredTargetType: RequiredTargetType = RequiredTargetType.ANY,
+                            val abilityEffects: Collection<LogicalAbilityEffect> = listOf()){
 
+}
+
+sealed class LogicalAbilityEffect {
+    public data class SpawnsUnit(val unitToBeSpawned: String): LogicalAbilityEffect()
 }
 
 public enum class AbilityClass {

@@ -3,6 +3,7 @@ package com.ironlordbyron.turnbasedstrategy.ai
 import com.ironlordbyron.turnbasedstrategy.common.GameBoardOperator
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
+import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityFactory
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.MapHighlighter
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
@@ -27,7 +28,8 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
                                                  val characterSpriteUtils: CharacterSpriteUtils,
                                                  val mapHighlighter: MapHighlighter,
                                                  val tacticalMapAlgorithms: TacticalMapAlgorithms,
-                                                 val gameBoardOperator: GameBoardOperator){
+                                                 val gameBoardOperator: GameBoardOperator,
+                                                 val abilityFactory: AbilityFactory){
 
     public fun endTurn() {
         runEnemyTurn()
@@ -46,7 +48,8 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
                             wasPlayerInitiated = false)
                     is AiPlannedAction.AbilityUsage ->  {
                         val charToTarget = boardState.characterAt(action.squareToTarget)
-                        gameBoardOperator.damageCharacter(charToTarget!!, true, action.ability.damage!!) //TODO
+                        val ability = abilityFactory.acquireAbility(action.ability)
+                        ability.activateAbility(action.squareToTarget, charToTarget, action.sourceCharacter)
                     }
                 }
             }

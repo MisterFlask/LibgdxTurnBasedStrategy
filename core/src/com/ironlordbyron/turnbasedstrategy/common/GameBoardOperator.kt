@@ -17,7 +17,16 @@ import javax.inject.Singleton
 
 
 
+public class CharacterSpawner @Inject constructor(
+        val characterImageManager: CharacterImageManager,
+        val boardState: TacticalMapState
+        ){
+    fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) {
+        val actor = characterImageManager.placeCharacterActor(tileLocation,tacMapUnit.tiledTexturePath)
+        boardState.listOfCharacters.add(LogicalCharacter(actor, tileLocation, tacMapUnit, playerControlled))
+    }
 
+}
 
 /**
  * Responsible for coordinating game-level actions between lower-level actors like the tile map operations handler
@@ -102,10 +111,7 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
 
     fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) {
         val actor = characterImageManager.placeCharacterActor(tileLocation,tacMapUnit.tiledTexturePath)
-
-
         boardState.listOfCharacters.add(LogicalCharacter(actor, tileLocation, tacMapUnit, playerControlled))
-
     }
 
     fun damageCharacter(targetCharacter: LogicalCharacter,

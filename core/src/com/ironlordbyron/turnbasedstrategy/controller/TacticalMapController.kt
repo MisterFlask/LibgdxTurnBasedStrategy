@@ -3,7 +3,6 @@ package com.ironlordbyron.turnbasedstrategy.controller
 import com.ironlordbyron.turnbasedstrategy.ai.EnemyTurnRunner
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityClass
-import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityEffectFactory
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -25,7 +24,6 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                                                 val abilityController: AbilityController,
                                                 val mapHighlighter: MapHighlighter,
                                                 val tacticalMapAlgorithms: TacticalMapAlgorithms,
-                                                val abilityEffectFactory: AbilityEffectFactory,
                                                 val enemyTurnRunner: EnemyTurnRunner) : EventListener, BoardInputStateProvider {
 
     override var boardInputState : BoardInputState = BoardInputState.DefaultState()

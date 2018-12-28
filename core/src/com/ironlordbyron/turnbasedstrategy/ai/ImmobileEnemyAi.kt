@@ -8,11 +8,15 @@ import javax.inject.Inject
 class ImmobileEnemyAi @Inject constructor(
                                           val abilityFactory: AbilityFactory) : EnemyAi{
     override fun getNextActions(thisCharacter: LogicalCharacter): List<AiPlannedAction> {
-        return listOf(AiPlannedAction.AbilityUsage(getTargetableSquare(thisCharacter), thisCharacter.abilities.first()))
+        val targetableSquare = getTargetableSquare(thisCharacter)
+        if (targetableSquare == null){
+            throw Exception("CAN't FIND TARGETABLE SQUARE")
+        }
+        return listOf(AiPlannedAction.AbilityUsage(targetableSquare, thisCharacter.abilities.first(), thisCharacter))
     }
 
-    private fun getTargetableSquare(thisCharacter: LogicalCharacter): TileLocation {
+    private fun getTargetableSquare(thisCharacter: LogicalCharacter): TileLocation? {
         val ability = abilityFactory.acquireAbility(thisCharacter.abilities.first())
-        return ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter).first()
+        return ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter).firstOrNull()
     }
 }

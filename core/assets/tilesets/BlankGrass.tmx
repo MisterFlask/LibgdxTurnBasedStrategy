@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="13">
+<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="37">
  <tileset firstgid="1" name="strategicTileset" tilewidth="16" tileheight="16" tilecount="336" columns="16">
   <image source="tileset.png" trans="ff00ff" width="256" height="336"/>
   <terraintypes>
@@ -1416,14 +1416,34 @@
     <property name="type" value="PLAYER_SPAWN"/>
    </properties>
   </object>
-  <object id="9" name="ENEMY_SPAWN" x="128" y="64" width="32" height="32">
+  <object id="9" name="ENEMY_SPAWN" x="208" y="64" width="32" height="32">
    <properties>
     <property name="type" value="ENEMY_SPAWN"/>
    </properties>
   </object>
-  <object id="11" name="ENEMY_SPAWN_2" x="288" y="256" width="32" height="32">
+  <object id="32" name="SPAWNER" x="112" y="208" width="16" height="16">
    <properties>
-    <property name="type" value="ENEMY_SPAWN"/>
+    <property name="type" value="SPAWNER"/>
+   </properties>
+  </object>
+  <object id="33" name="SPAWNER" x="368" y="192" width="16" height="16">
+   <properties>
+    <property name="type" value="SPAWNER"/>
+   </properties>
+  </object>
+  <object id="34" name="SPAWNER" x="336" y="352" width="16" height="16">
+   <properties>
+    <property name="type" value="SPAWNER"/>
+   </properties>
+  </object>
+  <object id="35" name="SPAWNER" x="208" y="320" width="16" height="16">
+   <properties>
+    <property name="type" value="SPAWNER"/>
+   </properties>
+  </object>
+  <object id="36" name="SPAWNER" x="288" y="288" width="16" height="16">
+   <properties>
+    <property name="type" value="SPAWNER"/>
    </properties>
   </object>
  </objectgroup>
@@ -1436,7 +1456,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
+0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,540,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,

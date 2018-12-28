@@ -28,7 +28,7 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
             val ability = abilityFactory.acquireAbility(logicalAbility)
             val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter, locationAfterMove)
             if (!targetableTilesFromThisSquare.isEmpty()){
-                abilityUsage = AiPlannedAction.AbilityUsage(targetableTilesFromThisSquare.first(), logicalAbility)
+                abilityUsage = AiPlannedAction.AbilityUsage(targetableTilesFromThisSquare.first(), logicalAbility, thisCharacter)
                 // Can make evaluation function later for telling which ability to use.
             }
         }

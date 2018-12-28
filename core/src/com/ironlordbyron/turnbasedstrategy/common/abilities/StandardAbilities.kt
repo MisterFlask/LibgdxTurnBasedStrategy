@@ -1,6 +1,9 @@
 package com.ironlordbyron.turnbasedstrategy.common.abilities
 
+import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplateKeys
+
 object StandardAbilities{
+
     val MeleeAttack = LogicalAbility("Attack",
             AbilitySpeed.ENDS_TURN,
             damage = 1,
@@ -12,8 +15,9 @@ object StandardAbilities{
     val spawnUnit = LogicalAbility("Spawn Unit",
             AbilitySpeed.ENDS_TURN,
             damage = null,
-            range = 1,
+            range = 2,
             description = "Spawns an enemy unit at targeted location.",
             abilityClass = AbilityClass.TARGETED_ABILITY,
-            requiredTargetType = RequiredTargetType.ANY)
+            requiredTargetType = RequiredTargetType.NO_CHARACTER_AT_LOCATION,
+            abilityEffects = listOf(LogicalAbilityEffect.SpawnsUnit(TacMapUnitTemplateKeys.DEFAULT_ENEMY_UNIT)))
 }

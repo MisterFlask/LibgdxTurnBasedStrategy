@@ -18,5 +18,5 @@ interface EnemyAi{
 
 interface AiPlannedAction{
     data class MoveToTile(val to : TileLocation) : AiPlannedAction
-    data class AbilityUsage(val squareToTarget: TileLocation, val ability: LogicalAbility): AiPlannedAction
+    data class AbilityUsage(val squareToTarget: TileLocation, val ability: LogicalAbility, val sourceCharacter: LogicalCharacter): AiPlannedAction
 }
