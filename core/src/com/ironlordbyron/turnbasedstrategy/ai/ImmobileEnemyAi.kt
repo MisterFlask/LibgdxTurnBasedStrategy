@@ -15,5 +15,4 @@ class ImmobileEnemyAi @Inject constructor(
         val ability = abilityFactory.acquireAbility(thisCharacter.abilities.first())
         return ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter).first()
     }
-
 }

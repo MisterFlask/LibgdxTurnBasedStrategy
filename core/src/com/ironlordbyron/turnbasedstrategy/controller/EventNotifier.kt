@@ -1,5 +1,8 @@
 package com.ironlordbyron.turnbasedstrategy.controller
 
+import com.ironlordbyron.turnbasedstrategy.common.abilities.Ability
+import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
 import javax.inject.Singleton
 
 /**
@@ -36,7 +39,6 @@ public class EventNotifier(){
 }
 
 public interface TacticalGameEvent{
-    // Represents the user having seen the unit get hit
-    class CameraShouldRumble() : TacticalGameEvent
+    class EntityDamage(val tileEntity: TileEntity, val ability: LogicalAbility) : TacticalGameEvent
 
 }

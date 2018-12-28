@@ -19,6 +19,7 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
     fun getPossiblePlayerSpawnPositions(map: TiledMap): Collection<TileLocation> {
         return map.getTilesInObjectByType("PLAYER_SPAWN").flatMap{it -> it}
     }
+
     fun getPossibleEnemySpawnPositions(map: TiledMap) : Collection<TileLocation> {
         return map.getTilesInObjectByType("ENEMY_SPAWN").flatMap{it -> it}
     }

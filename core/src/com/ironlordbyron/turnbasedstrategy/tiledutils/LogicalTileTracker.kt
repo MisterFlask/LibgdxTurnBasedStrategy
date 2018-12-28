@@ -2,7 +2,9 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils
 
 import com.badlogic.gdx.maps.tiled.TiledMapTile
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.WallEntity
 import javax.inject.Singleton
 
 
@@ -15,6 +17,15 @@ class LogicalTileTracker {
 
     fun addTile(logicalTile: LogicalTile) {
         tiles.add(logicalTile)
+    }
+
+    fun isDoor(location: TileLocation): Boolean{
+        // Now, we check the other layers for walls/doors that might overwrite the tile
+        return getEntitiesAtTile(location).any{it is DoorEntity}
+    }
+    fun isWall(location: TileLocation): Boolean{
+        // Now, we check the other layers for walls/doors that might overwrite the tile
+        return getEntitiesAtTile(location).any{it is WallEntity}
     }
 
     fun getEntitiesAtTile(location: TileLocation): List<TileEntity> {
@@ -40,5 +51,9 @@ class LogicalTileTracker {
     }
     fun width() : Int{
         return tiles.maxBy{it.location.x}!!.location.x + 1
+    }
+
+    fun removeEntity(tileEntity: WallEntity) {
+        throw NotImplementedError()
     }
 }

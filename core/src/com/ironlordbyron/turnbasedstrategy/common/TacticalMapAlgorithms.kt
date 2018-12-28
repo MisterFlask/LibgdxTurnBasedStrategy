@@ -19,6 +19,7 @@ open class CanWalkOnTile(open val logicalTileTracker: LogicalTileTracker,
                     open val tacticalMapState: TacticalMapState): TileIsValidAlgorithm{
     override fun canWalkOnTile(logicalCharacter: LogicalCharacter, tileLocation: TileLocation): Boolean {
         val terrain = logicalTileTracker.getLogicalTileFromLocation(tileLocation)!!.terrainType
+
         return logicalCharacter.tacMapUnit.walkableTerrainTypes.contains(terrain) && isTileUnoccupied(tileLocation)
     }
 
@@ -28,6 +29,8 @@ open class CanWalkOnTile(open val logicalTileTracker: LogicalTileTracker,
 
     fun isTileUnoccupied(tileLocation: TileLocation): Boolean {
         return getCharacterAtLocation(tileLocation) == null
+        && !logicalTileTracker.isDoor(tileLocation)
+        && !logicalTileTracker.isWall(tileLocation)
     }
 }
 
