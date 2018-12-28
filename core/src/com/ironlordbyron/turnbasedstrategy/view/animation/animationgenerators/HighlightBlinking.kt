@@ -1,4 +1,4 @@
-package com.ironlordbyron.turnbasedstrategy.view.animation
+package com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators
 
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.actions.Actions

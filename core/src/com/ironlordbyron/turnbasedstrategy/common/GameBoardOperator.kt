@@ -2,17 +2,16 @@ package com.ironlordbyron.turnbasedstrategy.common
 
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.google.inject.ImplementedBy
-import com.ironlordbyron.turnbasedstrategy.controller.EventListener
-import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
-import com.ironlordbyron.turnbasedstrategy.controller.MapHighlighter
-import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
+import com.ironlordbyron.turnbasedstrategy.controller.*
 import com.ironlordbyron.turnbasedstrategy.view.CharacterSpriteUtils
 import com.ironlordbyron.turnbasedstrategy.view.animation.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
+import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.DeathAnimationGenerator
+import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.FloatingTextGenerator
+import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.TemporaryAnimationGenerator
+import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.UnitSpawnAnimationGenerator
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,11 +19,14 @@ import javax.inject.Singleton
 
 public class CharacterSpawner @Inject constructor(
         val characterImageManager: CharacterImageManager,
-        val boardState: TacticalMapState
+        val boardState: TacticalMapState,
+        val eventNotifier: EventNotifier
         ){
     fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) {
         val actor = characterImageManager.placeCharacterActor(tileLocation,tacMapUnit.tiledTexturePath)
-        boardState.listOfCharacters.add(LogicalCharacter(actor, tileLocation, tacMapUnit, playerControlled))
+        val characterSpawned = LogicalCharacter(actor, tileLocation, tacMapUnit, playerControlled)
+        boardState.listOfCharacters.add(characterSpawned)
+        eventNotifier.notifyListenersOfGameEvent(TacticalGameEvent.UnitSpawned(characterSpawned))
     }
 
 }
@@ -50,13 +52,22 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
                                             val temporaryAnimationGenerator: TemporaryAnimationGenerator,
                                             val floatingTextGenerator: FloatingTextGenerator,
                                             val deathAnimationGenerator: DeathAnimationGenerator,
-                                            val actionQueueProvider: ActionQueueProvider) : EventListener{
+                                            val actionQueueProvider: ActionQueueProvider,
+                                            val unitSpawnAnimator: UnitSpawnAnimationGenerator) : EventListener{
 
 
     override fun consumeGuiEvent(event: TacticalGuiEvent) {
         when(event){
             is TacticalGuiEvent.FinishedEnemyTurn -> {
                 startPlayerTurn()
+            }
+        }
+    }
+
+    override fun consumeGameEvent(event: TacticalGameEvent) {
+        when(event){
+            is TacticalGameEvent.UnitSpawned -> {
+                actionQueueProvider.addAction(unitSpawnAnimator.createUnitSpawnAnimation(event.character))
             }
         }
     }

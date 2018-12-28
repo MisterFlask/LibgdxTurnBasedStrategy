@@ -15,4 +15,6 @@ data class ActorActionPair(val actor: Actor, val action: Action,
                            val secondaryActions: Collection<ActorActionPair> = ArrayList(),
                            val murderActorsOnceCompletedAnimation: Boolean = false,
                            val name: String? = null,
-                           val screenShake: Boolean = false)
+                           val screenShake: Boolean = false,
+                           val actionOnceAnimationCompletes: () -> Unit = {}) {
+}

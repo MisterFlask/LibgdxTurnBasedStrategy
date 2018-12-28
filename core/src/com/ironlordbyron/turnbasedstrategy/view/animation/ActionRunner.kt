@@ -38,6 +38,7 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler){
             if (current.name != null){
                 println("Actor ${current.name} has finished processing.")
             }
+            current.actionOnceAnimationCompletes()
         }))
         for (secondaryPair in current.secondaryActions){
             secondaryPair.actor.addAction(secondaryPair.action)

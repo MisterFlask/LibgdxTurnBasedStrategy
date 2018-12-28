@@ -1,8 +1,11 @@
 package com.ironlordbyron.turnbasedstrategy.controller
 
+import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
+import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.abilities.Ability
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
+import tiled.core.Tile
 import javax.inject.Singleton
 
 /**
@@ -39,6 +42,7 @@ public class EventNotifier(){
 }
 
 public interface TacticalGameEvent{
-    class EntityDamage(val tileEntity: TileEntity, val ability: LogicalAbility) : TacticalGameEvent
+    data class UnitSpawned(val character: LogicalCharacter) : TacticalGameEvent
+    data class EntityDamage(val tileEntity: TileEntity, val ability: LogicalAbility) : TacticalGameEvent
 
 }

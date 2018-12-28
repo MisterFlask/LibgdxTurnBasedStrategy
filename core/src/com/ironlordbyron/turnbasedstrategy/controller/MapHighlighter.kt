@@ -4,8 +4,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.HighlightType
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
-import com.ironlordbyron.turnbasedstrategy.view.animation.foreverHighlightBlinking
-import com.ironlordbyron.turnbasedstrategy.view.animation.temporaryHighlightBlinking
+import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.foreverHighlightBlinking
+import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.temporaryHighlightBlinking
 import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActorFactory
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TiledMapOperationsHandler
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider

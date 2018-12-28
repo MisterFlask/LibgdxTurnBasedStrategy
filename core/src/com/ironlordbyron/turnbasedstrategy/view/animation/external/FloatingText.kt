@@ -3,7 +3,7 @@ package com.ironlordbyron.turnbasedstrategy.view.animation.external
 import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.Actor
-import com.ironlordbyron.turnbasedstrategy.view.animation.ActivatableActor
+import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.ActivatableActor
 
 class FloatingText(val text: String,
                    val animationDurationInMillis: Long) : Actor(), ActivatableActor {
