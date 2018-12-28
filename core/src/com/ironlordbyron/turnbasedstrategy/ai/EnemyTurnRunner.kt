@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.ai
 
+import com.ironlordbyron.turnbasedstrategy.common.ActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.GameBoardOperator
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
@@ -29,6 +30,7 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
                                                  val mapHighlighter: MapHighlighter,
                                                  val tacticalMapAlgorithms: TacticalMapAlgorithms,
                                                  val gameBoardOperator: GameBoardOperator,
+                                                 val actionQueueProvider: ActionQueueProvider,
                                                  val abilityFactory: AbilityFactory){
 
     public fun endTurn() {
@@ -36,7 +38,7 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
     }
 
     public fun runEnemyTurn() {
-        gameBoardOperator.clearQueue()
+        actionQueueProvider.clearQueue()
         for (enemyCharacter in boardState.listOfEnemyCharacters) {
             val ai = enemyAiFactory.getEnemyAi(enemyCharacter.tacMapUnit.enemyAiType)
             val nextActions = ai.getNextActions(enemyCharacter);
@@ -54,9 +56,9 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
                 }
             }
         }
-        actionRunner.runThroughActionQueue(gameBoardOperator.actionQueue, finalAction = {
+        actionQueueProvider.runThroughActionQueue(finalAction = {
             eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.FinishedEnemyTurn())
         })
-        gameBoardOperator.clearQueue()
+        actionQueueProvider.clearQueue()
     }
 }

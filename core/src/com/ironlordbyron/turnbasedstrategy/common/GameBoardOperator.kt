@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.common
 
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.google.inject.ImplementedBy
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.MapHighlighter
@@ -32,6 +33,7 @@ public class CharacterSpawner @Inject constructor(
  * Responsible for coordinating game-level actions between lower-level actors like the tile map operations handler
  * and the character image processor.
  * Acts as a facade that should not include raw images and such in its interface.
+ * Responsible for handling animations
  */
 @Singleton
 class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: TiledMapOperationsHandler,
@@ -47,9 +49,9 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
                                             val tacticalMapAlgorithms: TacticalMapAlgorithms,
                                             val temporaryAnimationGenerator: TemporaryAnimationGenerator,
                                             val floatingTextGenerator: FloatingTextGenerator,
-                                            val deathAnimationGenerator: DeathAnimationGenerator) : EventListener,
- ActionQueueProvider{
-    override public var actionQueue = ArrayList<ActorActionPair>()
+                                            val deathAnimationGenerator: DeathAnimationGenerator,
+                                            val actionQueueProvider: ActionQueueProvider) : EventListener{
+
 
     override fun consumeGuiEvent(event: TacticalGuiEvent) {
         when(event){
@@ -59,9 +61,6 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
         }
     }
 
-    public fun clearQueue(){
-        actionQueue = ArrayList()
-    }
 
     private fun startPlayerTurn() {
         for (unit in boardState.listOfCharacters){
@@ -82,7 +81,7 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
             // first, show the player where the ai COULD move to
             val tilesToHighlight = tacticalMapAlgorithms.getWhereCharacterCanMoveTo(character)
             val actorActionPairForHighlights = mapHighlighter.getTileHighlightActorActionPairs(tilesToHighlight, HighlightType.RED_TILE)
-            actionQueue.add(actorActionPairForHighlights)
+            actionQueueProvider.addAction(actorActionPairForHighlights)
         }
 
         // next, move the character.
@@ -90,13 +89,13 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
         val libgdxLocation = logicalTileTracker.getLibgdxCoordinatesFromLocation(toTile)
         var moveAction : Action = Actions.moveTo(libgdxLocation.x.toFloat(), libgdxLocation.y.toFloat(), .5f)
         val result = ActorActionPair(actor = character.actor, action = moveAction)
-        actionQueue.add(result)
+        actionQueueProvider.addAction(result)
         if (character.endedTurn){
-            actionQueue.add(SpriteColorActorAction.build(character, SpriteColorActorAction.DIM_COLOR))
+            actionQueueProvider.addAction(SpriteColorActorAction.build(character, SpriteColorActorAction.DIM_COLOR))
         }
         if (!waitOnMoreQueuedActions){
-            actionRunner.runThroughActionQueue(actionQueue, finalAction = {})
-            actionQueue = ArrayList()
+            actionQueueProvider.runThroughActionQueue(finalAction = {})
+            actionQueueProvider.clearQueue()
         }
 
         // now mark the character as moved by darkening the sprite.
@@ -116,14 +115,14 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
                         waitOnMoreQueuedActions: Boolean = false,
                         damageAmount: Int) {
         targetCharacter.healthLeft -= damageAmount // TODO: Not the responsibility of this class
-        actionQueue.add(temporaryAnimationGenerator.getTemporaryAnimationActorActionPair(targetCharacter.tileLocation, DataDrivenOnePageAnimation.EXPLODE))
-        actionQueue.add(floatingTextGenerator.getTemporaryAnimationActorActionPair("${damageAmount}", targetCharacter.tileLocation))
+        actionQueueProvider.addAction(temporaryAnimationGenerator.getTemporaryAnimationActorActionPair(targetCharacter.tileLocation, DataDrivenOnePageAnimation.EXPLODE))
+        actionQueueProvider.addAction(floatingTextGenerator.getTemporaryAnimationActorActionPair("${damageAmount}", targetCharacter.tileLocation))
         if (targetCharacter.isDead){
-            actionQueue.add(deathAnimationGenerator.turnCharacterSideways(targetCharacter))
+            actionQueueProvider.addAction(deathAnimationGenerator.turnCharacterSideways(targetCharacter))
         }
         if (!waitOnMoreQueuedActions){
-            actionRunner.runThroughActionQueue(actionQueue, finalAction = {})
-            actionQueue = ArrayList()
+            actionQueueProvider.runThroughActionQueue(finalAction = {})
+            actionQueueProvider.clearQueue()
         }
     }
 
@@ -133,8 +132,21 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
 
 }
 
-interface ActionQueueProvider {
-    val actionQueue: List<ActorActionPair>
+@Singleton
+class ActionQueueProvider @Inject constructor(val actionRunner: ActionRunner) {
+    private var actionQueue = ArrayList<ActorActionPair>()
+
+    public fun runThroughActionQueue(finalAction: () -> Unit = {}){
+        actionRunner.runThroughActionQueue(actionQueue, finalAction = finalAction)
+    }
+
+    public fun addAction(actorActionPair: ActorActionPair){
+        actionQueue.add(actorActionPair)
+    }
+
+    public fun clearQueue(){
+        actionQueue = ArrayList()
+    }
 }
 
 
