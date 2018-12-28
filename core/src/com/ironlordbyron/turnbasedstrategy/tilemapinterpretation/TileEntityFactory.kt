@@ -3,6 +3,7 @@ package com.ironlordbyron.turnbasedstrategy.tilemapinterpretation
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import javax.inject.Inject
 
 public class TileEntityFactory @Inject constructor(val eventNotifier: EventNotifier){

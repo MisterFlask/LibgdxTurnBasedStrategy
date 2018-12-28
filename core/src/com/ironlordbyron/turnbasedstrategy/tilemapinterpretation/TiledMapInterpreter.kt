@@ -4,8 +4,15 @@ import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
+import javax.inject.Inject
 
-public class TiledMapInterpreter(){
+/// Responsible for figuring out which of the Tiled tiles need to become actors
+/// so that they can be manipulated.
+public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: TileEntityFactory,
+                                                     val tiledMapStageProvider: TacticalTiledMapStageProvider,
+                                                     val logicalTileTracker: LogicalTileTracker,
+                                                     val tileMapProvider: TileMapProvider){
 
 
 
@@ -15,6 +22,34 @@ public class TiledMapInterpreter(){
     fun getPossibleEnemySpawnPositions(map: TiledMap) : Collection<TileLocation> {
         return map.getTilesInObjectByType("ENEMY_SPAWN").flatMap{it -> it}
     }
+
+    fun retrieveTileEntities(tileMap: TiledMap, tileLocation: TileLocation){
+        val layersAtLocation = getAllTilesAtXY(tileMap, tileLocation)
+        val cells = layersAtLocation.map{it?.tiledCell}
+        val entities = ArrayList<TileEntity>()
+        for (cell in cells){
+            val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
+            val doorStr = "door"
+            if (hasProp(cell, doorStr)){
+                val actor = ActorFromTiledTextureRegion(cell).imageActor;
+                tiledMapStageProvider.tiledMapStage.addActor(actor)
+                actor.setBoundingBox(boundingBox)
+                entities.add(tileEntityFactory.createDoor(tileLocation, actor))
+            }
+            val wallStr = "wall"
+            if (hasProp(cell, wallStr)){
+                val actor = ActorFromTiledTextureRegion(cell).imageActor;
+                tiledMapStageProvider.tiledMapStage.addActor(actor)
+                entities.add(tileEntityFactory.createWall(tileLocation, actor))
+                actor.setBoundingBox(boundingBox)
+            }
+        }
+        logicalTileTracker.tileEntities.addAll(entities)
+    }
+
+    private fun hasProp(cell: TiledMapTileLayer.Cell, doorStr: String) =
+            cell?.tile?.properties?.get(doorStr) != null
+
     fun retrieveTerrainType(tileMap: TiledMap, tileLocation: TileLocation) : TerrainType{
         val layersAtLocation = getAllTilesAtXY(tileMap, tileLocation)
         val atLayer = layersAtLocation.getCellByLayer(TileLayer.FEATURE)
@@ -23,7 +58,8 @@ public class TiledMapInterpreter(){
             if (isMountain){
                 return TerrainType.MOUNTAIN
             }
-            val isTrees = atLayer.tiledCell.tile.properties["trees"]
+            val isTrees = atLayer.tiledCell.tile.properties["trees"] as Boolean
+
         }
         return TerrainType.GRASS
     }

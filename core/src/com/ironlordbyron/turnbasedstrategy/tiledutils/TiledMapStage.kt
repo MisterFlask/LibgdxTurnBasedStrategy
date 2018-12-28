@@ -53,7 +53,6 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
     }
 
     private fun createActorsAndLocationsForLayer(tiledLayer: TiledMapTileLayer, tiledMap: TiledMap) {
-
         for (x in 0..tiledLayer.width) {
             for (y in 0..tiledLayer.height) {
                 val cell = tiledLayer.getCell(x, y) ?: continue
@@ -61,9 +60,11 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
                 )
                 actor.setBounds(x * tiledLayer.tileWidth, y * tiledLayer.tileHeight, tiledLayer.tileWidth,
                         tiledLayer.tileHeight)
-                logicalTileTracker.addTile(LogicalTile(cell.tile, TileLocation(x, y), actor, cell,
+                val location = TileLocation(x, y)
+                logicalTileTracker.addTile(LogicalTile(cell.tile, location, actor, cell,
                         tiledMapInterpreter.getAllTilesAtXY(tiledMap, TileLocation(x, y))))
                 addActor(actor)
+                tiledMapInterpreter.retrieveTileEntities(tiledMap, location)
                 val eventListener = tileMapClickListenerFactory.create(actor)
                 actor.addListener(eventListener)
             }

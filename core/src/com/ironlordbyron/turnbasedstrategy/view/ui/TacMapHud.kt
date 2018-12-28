@@ -10,9 +10,6 @@ import com.badlogic.gdx.utils.viewport.Viewport
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
-import com.ironlordbyron.turnbasedstrategy.controller.EventListener
-import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
-import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.view.images.Dimensions
 import com.ironlordbyron.turnbasedstrategy.view.images.FileImageRetriever
 import com.ironlordbyron.turnbasedstrategy.tiledutils.CharacterImageManager
@@ -20,7 +17,10 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActorFactory
 import javax.inject.Inject
 import javax.inject.Singleton
 import com.badlogic.gdx.utils.Scaling
-import com.ironlordbyron.turnbasedstrategy.controller.BoardInputState
+import com.ironlordbyron.turnbasedstrategy.controller.*
+import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.WallEntity
 import com.ironlordbyron.turnbasedstrategy.view.ui.external.BackgroundColor
 import com.kotcrab.vis.ui.building.utilities.Alignment
 
@@ -36,9 +36,13 @@ class TacMapHudFactory @Inject constructor(val eventNotifier: EventNotifier,
                                            val tacticalMapState: TacticalMapState,
                                            val spriteActorFactory: SpriteActorFactory,
                                            val fileImageRetriever: FileImageRetriever,
-                                           val characterImageManager: CharacterImageManager) {
+                                           val characterImageManager: CharacterImageManager,
+                                           val boardInputStateProvider: BoardInputStateProvider,
+                                           val logicalTileTracker: LogicalTileTracker) {
     fun create(viewPort: Viewport): TacMapHud {
-        return TacMapHud(viewPort, eventNotifier, tacticalMapState, spriteActorFactory, fileImageRetriever, characterImageManager)
+        return TacMapHud(viewPort, eventNotifier, tacticalMapState, spriteActorFactory, fileImageRetriever, characterImageManager,
+                logicalTileTracker,
+                boardInputStateProvider)
     }
 }
 
@@ -48,10 +52,12 @@ class TacMapHud(viewPort: Viewport,
                 val tacticalMapState: TacticalMapState,
                 val spriteActorFactory: SpriteActorFactory,
                 val fileImageRetriever: FileImageRetriever,
-                val characterImageManager: CharacterImageManager) : Stage(viewPort), EventListener {
+                val characterImageManager: CharacterImageManager,
+                val logicalTileTracker: LogicalTileTracker,
+                val boardInputStateProvider: BoardInputStateProvider) : Stage(viewPort), EventListener {
     var selectedCharacter: LogicalCharacter? = null
     var hoveredAbility: LogicalAbility? = null
-    var boardInputState : BoardInputState = BoardInputState.DefaultState()
+    var entitySelected: TileEntity? = null
 
     override fun consumeGuiEvent(event: TacticalGuiEvent) {
         when (event) {
@@ -67,7 +73,11 @@ class TacMapHud(viewPort: Viewport,
                 regenerateTable()
             }
             is TacticalGuiEvent.SwitchedGuiState -> {
-                boardInputState = event.guiState
+                regenerateTable()
+            }
+            is TacticalGuiEvent.TileClicked -> {
+                val tileEntities = logicalTileTracker.getEntitiesAtTile(event.tileLocation)
+                entitySelected = tileEntities.firstOrNull() // TODO:  Not great
                 regenerateTable()
             }
         }
@@ -143,6 +153,11 @@ class TacMapHud(viewPort: Viewport,
             }
         }
 
+        val entitySelected = entitySelected
+        if (entitySelected != null){
+            characterDisplayTable.add(Label(entitySelected.name, mySkin))
+        }
+
 
         debugTextArea.setText(debugTextAreaText())
         debugTextArea.setWrap(true)
@@ -162,7 +177,7 @@ class TacMapHud(viewPort: Viewport,
     }
 
     private fun debugTextAreaText(): String {
-        return boardInputState.name
+        return boardInputStateProvider.boardInputState.name
     }
 
     private fun backgroundColor(): BackgroundColor {

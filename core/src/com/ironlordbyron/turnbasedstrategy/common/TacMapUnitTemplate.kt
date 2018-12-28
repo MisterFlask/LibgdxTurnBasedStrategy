@@ -10,7 +10,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.Superimpose
 
 data class TacMapUnitTemplate(val movesPerTurn: Int,
                               val tiledTexturePath: ProtoActor,
-                              val templateName: String ="Peasant",
+                              val templateName: String = "Peasant",
                               val abilities: List<LogicalAbility> = listOf(StandardAbilities.MeleeAttack),
                               val walkableTerrainTypes : Collection<TerrainType> = listOf(TerrainType.GRASS),
                               val enemyAiType: EnemyAiType = EnemyAiType.BASIC

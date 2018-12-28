@@ -2,16 +2,23 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils
 
 import com.badlogic.gdx.maps.tiled.TiledMapTile
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
 import javax.inject.Singleton
 
 
 @Singleton
 class LogicalTileTracker {
 
+    val tileEntities = ArrayList<TileEntity>()
+
     val tiles = ArrayList<LogicalTile>()
 
     fun addTile(logicalTile: LogicalTile) {
         tiles.add(logicalTile)
+    }
+
+    fun getEntitiesAtTile(location: TileLocation): List<TileEntity> {
+        return tileEntities.filter{it -> it.tileLocation == location}
     }
 
     fun getLogicalTileFromTile(tile: TiledMapTile): LogicalTile? {

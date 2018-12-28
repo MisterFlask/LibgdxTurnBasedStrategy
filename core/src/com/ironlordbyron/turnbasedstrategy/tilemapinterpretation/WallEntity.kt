@@ -10,7 +10,9 @@ import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
  */
 class WallEntity(
         val eventNotifier: EventNotifier,
-        override val tileLocation: TileLocation, override val actor: Actor) : TileEntity {
+        override val tileLocation: TileLocation,
+        override val actor: Actor,
+        override val name: String = "wall") : TileEntity {
     override fun damage(ability: LogicalAbility) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

@@ -34,7 +34,7 @@ class CharacterImageManager @Inject constructor(val tiledMapOperationsHandler: T
     }
 }
 
-private fun Actor.setBoundingBox(boundingBox: BoundingRectangle) {
+fun Actor.setBoundingBox(boundingBox: BoundingRectangle) {
     this.x = boundingBox.x.toFloat()
     this.y = boundingBox.y.toFloat()
     this.width = boundingBox.width.toFloat()

@@ -10,12 +10,14 @@ interface TileEntity {
     val tileLocation: TileLocation
     fun damage(ability : LogicalAbility)
     val actor: Actor
+    val name: String
     fun targetableByAbility(ability: LogicalAbility): Boolean
 }
 
 class DoorEntity(val eventNotifier: EventNotifier,
                  override val tileLocation: TileLocation,
                  override val actor: Actor,
+                 override val name: String = "door",
                  val hp: Int = 3) : TileEntity {
     override fun targetableByAbility(ability: LogicalAbility): Boolean {
         return true;
