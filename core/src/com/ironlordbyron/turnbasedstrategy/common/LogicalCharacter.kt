@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.common
 
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
+import com.ironlordbyron.turnbasedstrategy.common.equipment.Equipment
 import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActor
 
 /**
@@ -16,7 +17,8 @@ data class LogicalCharacter(val actor: Actor,
                             var actionsLeft: Int = 2,
                             var maxActionsLeft: Int = 2,
                             var maxHealth: Int = 3,
-                            var healthLeft: Int = maxHealth){
+                            var healthLeft: Int = maxHealth,
+                            val equipment: ArrayList<Equipment> = ArrayList()){
     val abilities: Collection<LogicalAbility>
     get() = acquireAbilities()
 
@@ -26,6 +28,6 @@ data class LogicalCharacter(val actor: Actor,
     get() = healthLeft < 1
 
     private fun acquireAbilities(): Collection<LogicalAbility> {
-        return tacMapUnit.abilities
+        return tacMapUnit.abilities + equipment.flatMap { it.abilityEnabled }
     }
 }

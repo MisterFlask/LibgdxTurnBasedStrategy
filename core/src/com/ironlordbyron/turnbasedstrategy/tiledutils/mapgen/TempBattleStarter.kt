@@ -6,6 +6,7 @@ import com.ironlordbyron.turnbasedstrategy.common.CharacterSpawner
 import com.ironlordbyron.turnbasedstrategy.common.GameBoardOperator
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.common.equipment.StandardEquipment
 import com.ironlordbyron.turnbasedstrategy.tiledutils.BoundingRectangle
 import com.ironlordbyron.turnbasedstrategy.tiledutils.getBoundsOfTile
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
@@ -31,17 +32,23 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
         val legitTiles = tiledMapInterpreter.getPossiblePlayerSpawnPositions(boardProvider.tiledMap)
         for (tile in legitTiles){
             gameBoardOperator.addCharacterToTile(tacMapUnit = TacMapUnitTemplate.DEFAULT_UNIT, tileLocation = tile,
-                    playerControlled = true)
+                    playerControlled = true).let{
+                it.equipment.add(StandardEquipment.sword)
+            }
         }
         val enemyTiles = tiledMapInterpreter.getPossibleEnemySpawnPositions(boardProvider.tiledMap)
         for (tile in enemyTiles){
             gameBoardOperator.addCharacterToTile(tacMapUnit = TacMapUnitTemplate.DEFAULT_ENEMY_UNIT, tileLocation = tile,
-                    playerControlled = false)
+                    playerControlled = false).let{
+                it.equipment.add(StandardEquipment.sword)
+            }
         }
         val spawners = tiledMapInterpreter.getSpawners(boardProvider.tiledMap)
         for (tile in spawners){
             gameBoardOperator.addCharacterToTile(tacMapUnit = TacMapUnitTemplate.DEFAULT_ENEMY_UNIT_SPAWNER, tileLocation = tile,
-                    playerControlled = false)
+                    playerControlled = false).let{
+                it.equipment.add(StandardEquipment.sword)
+            }
         }
     }
 }
