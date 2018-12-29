@@ -1,36 +1,64 @@
 package com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators
 
-import com.badlogic.gdx.graphics.Camera
+import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Actor
-import com.badlogic.gdx.scenes.scene2d.actions.Actions
-import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
+import com.ironlordbyron.turnbasedstrategy.view.animation.camera.CameraConfig
 import com.ironlordbyron.turnbasedstrategy.view.animation.camera.GameCameraProvider
 import javax.inject.Inject
+import javax.inject.Singleton
 
-public class CameraMovementAnimationGenerator @Inject constructor(val cameraProvider: GameCameraProvider){
-    fun generateCameraMovementActionToLookAt(tileLocation: TileLocation): ActorActionPair{
-        val actor = Actor()
-        val action = Actions.delay(.5f)
-
-        return ActorActionPair(actor, action)
+@Singleton
+public class CameraMovementAnimationGenerator @Inject constructor(val cameraProvider: GameCameraProvider,
+                                                                  val logicalTileTracker: LogicalTileTracker){
+    fun generateCameraMovementActionToLookAt(toLookAt: Actor): ActorActionPair{
+        val actor = toLookAt
+        val action = CameraMovementAction(CameraConfig.secondsForAutoCameraMove, cameraProvider.camera,
+                getDesiredPositionOfCameraForActionAtLocation(toLookAt))
+        println("Generated camera action")
+        return ActorActionPair(actor, action, name = "CameraMovement")
     }
 
-    fun getDesiredPositionOfCameraForActionAtLocation(){
-
+    fun getDesiredPositionOfCameraForActionAtLocation(actor: Actor) : Vector3{
+        return Vector3(actor.x,  actor.y, 0f)
     }
 }
 
+// Moves the camera such that we can clearly see the animation occurring in the queue.
 public class CameraMovementAction(val maxSeconds: Float,
-                                  val camera: Camera,
+                                  val camera: OrthographicCamera,
                                   val desiredPosition: Vector3): Action(){
 
+    val actorPosition: Vector3
+    var originalZoom = camera.zoom
+    init{
+        actorPosition = desiredPosition
+        desiredPosition.x = desiredPosition.x + CameraConfig.xOffsetForMainTacticsScreen
+
+    }
 
     var totalTimeInSeconds = 0f
     override fun act(delta: Float): Boolean {
+        if (totalTimeInSeconds == 0f){
+            if (camera.frustum.pointInFrustum(actorPosition)){
+                // we're just going to not do this if the actor is already in position.
+                return true
+            }
+            // first iteration
+            originalZoom = camera.zoom
+        }
+
+
         totalTimeInSeconds += delta
+
+        val progress = totalTimeInSeconds / maxSeconds
+        camera.position.lerp(desiredPosition, progress)
+        camera.zoom = MathUtils.lerp(originalZoom, CameraConfig.zoomTo, progress)
+
         if (totalTimeInSeconds > maxSeconds){
             return true
         }

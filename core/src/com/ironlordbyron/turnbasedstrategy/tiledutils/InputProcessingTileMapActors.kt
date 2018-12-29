@@ -3,6 +3,7 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
+import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
@@ -81,6 +82,10 @@ class TileMapClickListenerActorFactory @Inject constructor(val fragmentCopierPro
 }
 
 
-data class LibgdxLocation(val x: Int, val y: Int)
+data class LibgdxLocation(val x: Int, val y: Int) {
+    fun toVec(): Vector3 {
+        return Vector3(x.toFloat(), y.toFloat(), 0f)
+    }
+}
 
 

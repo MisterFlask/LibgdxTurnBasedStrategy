@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.view.animation
 
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.CameraMovementAnimationGenerator
 import com.ironlordbyron.turnbasedstrategy.view.animation.camera.GameCameraProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.camera.Rumbler
 import javax.inject.Inject
@@ -12,17 +13,28 @@ import javax.inject.Singleton
 // the new TriggerActionAfterCurrentAction (if applicable).
 @Singleton
 public class ActionRunner @Inject constructor (val rumbler: Rumbler,
-                                               val cameraProvider: GameCameraProvider){
+                                               val cameraProvider: GameCameraProvider,
+                                               val cameraMovementAnimationGenerator: CameraMovementAnimationGenerator){
 
-    public fun runThroughActionQueue(actionQueue: List<ActorActionPair>, currentIndex: Int = 0,
+    public fun runThroughActionQueue(actionQueue: List<ActorActionPair>,
+                                     currentIndex: Int = 0,
+                                     interleaveCameraActions: Boolean = true,
                                      finalAction : () -> Unit = {}) {
-        val finalActionQueue = interleaveActionQueueWithCameraMovements(actionQueue)
-        runThroughFinalActionQueue(actionQueue, currentIndex, finalAction)
+        if (interleaveCameraActions){
+            val finalActionQueue = interleaveActionQueueWithCameraMovements(actionQueue)
+            runThroughFinalActionQueue(finalActionQueue, currentIndex, finalAction)
+        }else{
+            runThroughFinalActionQueue(actionQueue, currentIndex, finalAction)
+        }
 
     }
 
-    private fun interleaveActionQueueWithCameraMovements(finalActionQueue: List<ActorActionPair>): List<ActorActionPair> {
-        //TODO
+    private fun interleaveActionQueueWithCameraMovements(actionQueue: List<ActorActionPair>): List<ActorActionPair> {
+        val finalActionQueue = ArrayList<ActorActionPair>()
+        for (i in 0 .. actionQueue.size - 1){
+            finalActionQueue.add(cameraMovementAnimationGenerator.generateCameraMovementActionToLookAt(actionQueue[i].actor))
+            finalActionQueue.add(actionQueue[i])
+        }
         return finalActionQueue
     }
 
@@ -43,7 +55,7 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
             if (current.name != null){
                 println("Actor ${current.name} has started processing.")
             }
-            runThroughActionQueue(actionQueue, currentIndex + 1, finalAction)
+            runThroughFinalActionQueue(actionQueue, currentIndex + 1, finalAction)
             if (current.murderActorsOnceCompletedAnimation){
                 current.actor.remove()
                 for (pair in current.secondaryActions){
