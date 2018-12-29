@@ -34,7 +34,7 @@ open class CanWalkOnTile(open val logicalTileTracker: LogicalTileTracker,
     }
 }
 
-public data class ActionResult(val logicalAbility: LogicalAbility,
+public data class ActionResult(val logicalAbilityAndEquipment: LogicalAbilityAndEquipment,
                                val logicalCharacter: LogicalCharacter,
                                val butFirstMoveHere: TileLocation?,
                                val squaresTargetable: Collection<TileLocation>)

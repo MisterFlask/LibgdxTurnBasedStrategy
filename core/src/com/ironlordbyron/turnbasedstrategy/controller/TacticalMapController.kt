@@ -11,7 +11,7 @@ interface BoardInputState{
     abstract val name: String
     data class UnitSelected(val unit: LogicalCharacter, override val name: String = "UnitSelected") : BoardInputState
     data class DefaultState(override val name: String = "DefaultState") : BoardInputState
-    data class PlayerIntendsToUseAbility(val unit: LogicalCharacter, val ability: LogicalAbility, override val name: String = "PlayerIntendsToUseAbility"):BoardInputState
+    data class PlayerIntendsToUseAbility(val unit: LogicalCharacter, val ability: LogicalAbilityAndEquipment, override val name: String = "PlayerIntendsToUseAbility"):BoardInputState
 }
 
 /**
@@ -54,12 +54,12 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
             is TacticalGuiEvent.ClickedButtonToActivateAbility -> {
                 val selectedCharacter = selectedCharacter
                 if (selectedCharacter == null){
-                    throw IllegalStateException("Clicked button to activate ability when no char selected")
+                    throw IllegalStateException("Clicked button to activate abilityEquipmentPair when no char selected")
                 }
                 boardInputState = BoardInputState.PlayerIntendsToUseAbility(selectedCharacter,
-                        event.ability)
-                if (event.ability.abilityClass == AbilityClass.TARGETED_ABILITY){
-                    abilityController.signalIntentToActOnAbility(selectedCharacter, event.ability)
+                        event.abilityEquipmentPair)
+                if (event.abilityEquipmentPair.ability.abilityClass == AbilityClass.TARGETED_ABILITY){
+                    abilityController.signalIntentToActOnAbility(selectedCharacter, event.abilityEquipmentPair)
                 }
             }
         }

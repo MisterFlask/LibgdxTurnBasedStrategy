@@ -24,12 +24,12 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
         val nextMove = getNextMoveLocation(thisCharacter)
         val locationAfterMove = nextMove?:thisCharacter.tileLocation
         var abilityUsage : AiPlannedAction.AbilityUsage? = null
-        for (logicalAbility in thisCharacter.abilities){
-            val ability = abilityFactory.acquireAbility(logicalAbility)
-            val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter, locationAfterMove)
+        for (logicalAbilityAndEquipment in thisCharacter.abilities){
+            val ability = abilityFactory.acquireAbility(logicalAbilityAndEquipment)
+            val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter, logicalAbilityAndEquipment.equipment, locationAfterMove)
             if (!targetableTilesFromThisSquare.isEmpty()){
-                abilityUsage = AiPlannedAction.AbilityUsage(targetableTilesFromThisSquare.first(), logicalAbility, thisCharacter)
-                // Can make evaluation function later for telling which ability to use.
+                abilityUsage = AiPlannedAction.AbilityUsage(targetableTilesFromThisSquare.first(), logicalAbilityAndEquipment, thisCharacter)
+                // Can make evaluation function later for telling which abilityEquipmentPair to use.
             }
         }
         val listOfActions = ArrayList<AiPlannedAction>()
@@ -42,14 +42,14 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
         return listOfActions
     }
 
-    // First priority: Can we hit an enemy with an ability from a reachable tile?  If so, DO IT.
+    // First priority: Can we hit an enemy with an abilityEquipmentPair from a reachable tile?  If so, DO IT.
     fun getNextMoveLocation(thisCharacter: LogicalCharacter) : TileLocation?{
         val reachableLocations  = mapAlgorithms.getWhereCharacterCanMoveTo(thisCharacter)
         // First: if we can target the enemy from a location we can reach?  GO THERE.
         for (reachableLocation in reachableLocations){
-            for (logicalAbility in thisCharacter.abilities){
-                val ability = abilityFactory.acquireAbility(logicalAbility)
-                val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter, reachableLocation)
+            for (logicalAbilityAndEquipment in thisCharacter.abilities){
+                val ability = abilityFactory.acquireAbility(logicalAbilityAndEquipment)
+                val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter,logicalAbilityAndEquipment.equipment, reachableLocation)
                 if (!targetableTilesFromThisSquare.isEmpty()){
                     return reachableLocation
                 }

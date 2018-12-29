@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.common.abilities
 
 import com.ironlordbyron.turnbasedstrategy.common.*
+import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -12,9 +13,9 @@ public class AbilityFactory @Inject constructor(val gameBoardOperator: GameBoard
                     val boardAlgorithms: TacticalMapAlgorithms,
                     val tacticalMapState: TacticalMapState,
                     val unitSpawner: CharacterSpawner){
-    fun acquireAbility(logicalAbility: LogicalAbility) : Ability {
-        when(logicalAbility.abilityClass){
-            AbilityClass.TARGETED_ABILITY -> return SimpleAttackAbility(logicalAbility, tacticalMapState, boardAlgorithms, gameBoardOperator, boardAlgorithms,
+    fun acquireAbility(logicalAbilityAndEquipment: LogicalAbilityAndEquipment) : Ability {
+        when(logicalAbilityAndEquipment.ability.abilityClass){
+            AbilityClass.TARGETED_ABILITY -> return SimpleAttackAbility(logicalAbilityAndEquipment, tacticalMapState, boardAlgorithms, gameBoardOperator, boardAlgorithms,
                     unitSpawner)
         }
     }
@@ -26,22 +27,24 @@ enum class RequiredTargetType{
 }
 
 interface Ability{
-    val logicalAbility: LogicalAbility
+    val logicalAbilityAndEquipment: LogicalAbilityAndEquipment
     val tacticalMapState: TacticalMapState
     val tacticalMapAlgorithms: TacticalMapAlgorithms
+    val logicalAbility:LogicalAbility
+    get() = logicalAbilityAndEquipment.ability
 
     abstract fun isValidTarget(location: TileLocation?, targetCharacter: LogicalCharacter?,
-                               sourceCharacter: LogicalCharacter) : Boolean
+                               sourceCharacter: LogicalCharacter, equipment: LogicalEquipment?) : Boolean
 
     abstract fun activateAbility(location: TileLocation?, targetCharacter: LogicalCharacter?,
-                                 sourceCharacter: LogicalCharacter)
+                                 sourceCharacter: LogicalCharacter, equipment: LogicalEquipment?)
 
-    abstract fun getValidAbilityTargetSquares(sourceCharacter: LogicalCharacter, sourceSquare: TileLocation? = null) : Collection<TileLocation>
+    abstract fun getValidAbilityTargetSquares(sourceCharacter: LogicalCharacter,  equipment: LogicalEquipment?, sourceSquare: TileLocation? = null) : Collection<TileLocation>
 
     // Like getValidAbilityTargetSquares, but takes into account allies vs enemies.
-    // Note: SourceSquare is an optional parameter that represents where the logical character WOULD be using the ability from.
-    fun getSquaresThatCanActuallyBeTargetedByAbility(sourceCharacter: LogicalCharacter, sourceSquare: TileLocation? = null): Collection<TileLocation>{
-        val abilityTargetSquares = getValidAbilityTargetSquares(sourceCharacter, sourceSquare)
+    // Note: SourceSquare is an optional parameter that represents where the logical character WOULD be using the abilityEquipmentPair from.
+    fun getSquaresThatCanActuallyBeTargetedByAbility(sourceCharacter: LogicalCharacter, equipment: LogicalEquipment?, sourceSquare: TileLocation? = null): Collection<TileLocation>{
+        val abilityTargetSquares = getValidAbilityTargetSquares(sourceCharacter, equipment, sourceSquare)
         val nearbyCharacters = tacticalMapState.listOfCharacters.filter{abilityTargetSquares.contains(it.tileLocation)}
         val possibilities = arrayListOf<LogicalCharacter>()
         for (target in nearbyCharacters){
@@ -69,17 +72,17 @@ interface Ability{
     /**
      * Returns all places that the character can move to which satisfies ALL of the following criteria:
      * 1)  The character can move to this location THIS turn, thus satisfying movement ranges.
-     * 2)  The character can hit someone with an ability that character possesses.
+     * 2)  The character can hit someone with an abilityEquipmentPair that character possesses.
      */
-    public fun getWhereCharacterCanHitSomeoneWithThisAbility(logicalCharacter: LogicalCharacter) : ActionResult?{
+    public fun getWhereCharacterCanHitSomeoneWithThisAbility(logicalCharacter: LogicalCharacter, equipment: LogicalEquipment?) : ActionResult?{
         // for now, we'll just try to get one of the abilities in order.  Can do fancier stuff later.
         val abilities = logicalCharacter.abilities
         val moveableSquares = tacticalMapAlgorithms.getWhereCharacterCanMoveTo(logicalCharacter)
         for (square in moveableSquares){
-            for (ability in abilities){
-                val validTargetSquares = this.getSquaresThatCanActuallyBeTargetedByAbility(logicalCharacter, square)
+            for (abilityAndEquipment in abilities){
+                val validTargetSquares = this.getSquaresThatCanActuallyBeTargetedByAbility(logicalCharacter, equipment, square)
                 if (!validTargetSquares.isEmpty()){
-                    return ActionResult(ability, logicalCharacter, butFirstMoveHere = square, squaresTargetable =
+                    return ActionResult(abilityAndEquipment, logicalCharacter, butFirstMoveHere = square, squaresTargetable =
                     validTargetSquares)
                 }
             }
@@ -91,21 +94,23 @@ interface Ability{
 
 
 class SimpleAttackAbility(
-        override val logicalAbility: LogicalAbility,
+        override val logicalAbilityAndEquipment: LogicalAbilityAndEquipment,
         override val tacticalMapState: TacticalMapState,
         val boardAlgorithms: TacticalMapAlgorithms,
         val gameBoardOperator: GameBoardOperator,
         override val tacticalMapAlgorithms: TacticalMapAlgorithms,
         val unitSpawner: CharacterSpawner) : Ability {
-    override fun isValidTarget(location: TileLocation?, targetCharacter: LogicalCharacter?, sourceCharacter: LogicalCharacter) : Boolean{
-        return getValidAbilityTargetSquares(sourceCharacter).contains(location)
+    override fun isValidTarget(location: TileLocation?, targetCharacter: LogicalCharacter?, sourceCharacter: LogicalCharacter,
+                               equipment: LogicalEquipment?) : Boolean{
+        return getValidAbilityTargetSquares(sourceCharacter, equipment).contains(location)
     }
 
-    override fun activateAbility(location: TileLocation?, targetCharacter: LogicalCharacter?, sourceCharacter: LogicalCharacter) {
+    override fun activateAbility(location: TileLocation?, targetCharacter: LogicalCharacter?, sourceCharacter: LogicalCharacter,
+                                 equipment: LogicalEquipment?) {
         if (logicalAbility.damage != null){
-            gameBoardOperator.damageCharacter(targetCharacter!!, !sourceCharacter.playerControlled, logicalAbility.damage)
+            gameBoardOperator.damageCharacter(targetCharacter!!, !sourceCharacter.playerControlled, logicalAbility.damage!!)
         }
-        // processing ability effects
+        // processing abilityEquipmentPair effects
 
         for (effect in logicalAbility.abilityEffects){
             when(effect){
@@ -115,7 +120,7 @@ class SimpleAttackAbility(
         }
     }
 
-    override fun getValidAbilityTargetSquares(sourceCharacter: LogicalCharacter, sourceSquare: TileLocation?) : Collection<TileLocation>{
+    override fun getValidAbilityTargetSquares(sourceCharacter: LogicalCharacter, equipment: LogicalEquipment?, sourceSquare: TileLocation?) : Collection<TileLocation>{
         return getTilesInRangeOfAbility(sourceCharacter, logicalAbility, sourceSquare)
     }
     private fun getTilesInRangeOfAbility(character: LogicalCharacter, ability: LogicalAbility, sourceSquare: TileLocation? = null): Collection<TileLocation> {

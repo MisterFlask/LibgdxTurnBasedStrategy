@@ -2,8 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.common
 
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
-import com.ironlordbyron.turnbasedstrategy.common.equipment.Equipment
-import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActor
+import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
 
 /**
  * Represents a mutable character generated from a template.
@@ -18,16 +17,25 @@ data class LogicalCharacter(val actor: Actor,
                             var maxActionsLeft: Int = 2,
                             var maxHealth: Int = 3,
                             var healthLeft: Int = maxHealth,
-                            val equipment: ArrayList<Equipment> = ArrayList()){
-    val abilities: Collection<LogicalAbility>
-    get() = acquireAbilities()
+                            val equipment: ArrayList<LogicalEquipment> = ArrayList()){
+    val abilities: Collection<LogicalAbilityAndEquipment>
+        get() = acquireAbilities()
 
     val playerAlly: Boolean
     get() = playerControlled //TODO: Differentiate if necessary
     val isDead: Boolean
     get() = healthLeft < 1
 
-    private fun acquireAbilities(): Collection<LogicalAbility> {
-        return tacMapUnit.abilities + equipment.flatMap { it.abilityEnabled }
+    private fun acquireAbilities(): Collection<LogicalAbilityAndEquipment> {
+        val abilitiesSansEquipment = tacMapUnit.abilities.map{LogicalAbilityAndEquipment(it, null)}
+        val abilitiesWithEquipment = ArrayList<LogicalAbilityAndEquipment>()
+        for (equip in equipment){
+            for (ability in equip.abilityEnabled){
+                abilitiesWithEquipment.add(LogicalAbilityAndEquipment(ability, equip))
+            }
+        }
+        return abilitiesSansEquipment + abilitiesWithEquipment
     }
 }
+
+data class LogicalAbilityAndEquipment(val ability: LogicalAbility, val equipment: LogicalEquipment?)

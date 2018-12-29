@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.ai
 
+import com.ironlordbyron.turnbasedstrategy.common.LogicalAbilityAndEquipment
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
@@ -18,5 +19,5 @@ interface EnemyAi{
 
 interface AiPlannedAction{
     data class MoveToTile(val to : TileLocation) : AiPlannedAction
-    data class AbilityUsage(val squareToTarget: TileLocation, val ability: LogicalAbility, val sourceCharacter: LogicalCharacter): AiPlannedAction
+    data class AbilityUsage(val squareToTarget: TileLocation, val ability: LogicalAbilityAndEquipment, val sourceCharacter: LogicalCharacter): AiPlannedAction
 }

@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.controller
 
+import com.ironlordbyron.turnbasedstrategy.common.LogicalAbilityAndEquipment
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
@@ -11,9 +12,9 @@ sealed class TacticalGuiEvent{
     class EndTurnButtonClicked() : TacticalGuiEvent()
     class FinishedEnemyTurn(): TacticalGuiEvent()
     class CharacterUnselected(): TacticalGuiEvent()
-    data class StartedHoveringOverAbility(val ability: LogicalAbility) : TacticalGuiEvent()
-    data class StoppedHoveringOverAbility(val ability: LogicalAbility) : TacticalGuiEvent()
-    data class ClickedButtonToActivateAbility(val ability: LogicalAbility) : TacticalGuiEvent()
+    data class StartedHoveringOverAbility(val abilityEquipmentPair: LogicalAbilityAndEquipment) : TacticalGuiEvent()
+    data class StoppedHoveringOverAbility(val abilityEquipmentPair: LogicalAbilityAndEquipment) : TacticalGuiEvent()
+    data class ClickedButtonToActivateAbility(val abilityEquipmentPair: LogicalAbilityAndEquipment) : TacticalGuiEvent()
     data class SwitchedGuiState(val guiState: BoardInputState):TacticalGuiEvent()
     data class TileHovered(val location: TileLocation) : TacticalGuiEvent() {
 

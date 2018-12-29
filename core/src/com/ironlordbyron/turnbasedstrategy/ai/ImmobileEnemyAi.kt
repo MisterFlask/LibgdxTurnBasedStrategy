@@ -15,8 +15,9 @@ class ImmobileEnemyAi @Inject constructor(
         return listOf(AiPlannedAction.AbilityUsage(targetableSquare, thisCharacter.abilities.first(), thisCharacter))
     }
 
+    // it just grabs the first abilityEquipmentPair available.  FOR NOW
     private fun getTargetableSquare(thisCharacter: LogicalCharacter): TileLocation? {
         val ability = abilityFactory.acquireAbility(thisCharacter.abilities.first())
-        return ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter).firstOrNull()
+        return ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter, thisCharacter.abilities.first().equipment).firstOrNull()
     }
 }

@@ -17,10 +17,10 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActorFactory
 import javax.inject.Inject
 import javax.inject.Singleton
 import com.badlogic.gdx.utils.Scaling
+import com.ironlordbyron.turnbasedstrategy.common.LogicalAbilityAndEquipment
 import com.ironlordbyron.turnbasedstrategy.controller.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
-import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.WallEntity
 import com.ironlordbyron.turnbasedstrategy.view.ui.external.BackgroundColor
 import com.kotcrab.vis.ui.building.utilities.Alignment
 
@@ -85,24 +85,24 @@ class TacMapHud(viewPort: Viewport,
 
     private val buttonDimensions = Dimensions(55, 55)
 
-    private fun actionButton(ability : LogicalAbility): Actor? {
+    private fun actionButton(abilityEquipmentPair : LogicalAbilityAndEquipment): Actor? {
 
-        val button = TextButton(ability.name, mySkin)
+        val button = TextButton(abilityEquipmentPair.ability.name, mySkin)
 
         val clickListener = object : ClickListener(){
             override fun clicked(event: InputEvent?, x: Float, y: Float) {
-                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.ClickedButtonToActivateAbility(ability))
+                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.ClickedButtonToActivateAbility(abilityEquipmentPair))
                 super.clicked(event, x, y)
             }
 
             override fun enter(event: InputEvent?, x: Float, y:Float, pointer: Int, fromActor: Actor?){
-                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.StartedHoveringOverAbility(ability))
-                hoveredAbility = ability
-                abilityTextArea.setText("${ability.name}: ${ability.description}")
+                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.StartedHoveringOverAbility(abilityEquipmentPair))
+                hoveredAbility = abilityEquipmentPair.ability
+                abilityTextArea.setText("${abilityEquipmentPair.ability.name}: ${abilityEquipmentPair.ability.description}")
                 super.enter(event, x, y, pointer, fromActor)
             }
             override fun exit(event: InputEvent?, x: Float, y:Float, pointer: Int, fromActor: Actor?){
-                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.StoppedHoveringOverAbility(ability))
+                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.StoppedHoveringOverAbility(abilityEquipmentPair))
                 hoveredAbility = null
                 abilityTextArea.setText("")
                 super.exit(event, x, y, pointer, fromActor)
