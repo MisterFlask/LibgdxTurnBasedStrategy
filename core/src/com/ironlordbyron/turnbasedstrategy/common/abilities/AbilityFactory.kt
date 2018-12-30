@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.common.abilities
 
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import javax.inject.Inject
 import javax.inject.Singleton
 

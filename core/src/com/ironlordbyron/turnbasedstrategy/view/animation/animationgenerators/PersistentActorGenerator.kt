@@ -8,8 +8,14 @@ import javax.inject.Inject
 public class PersistentActorGenerator @Inject constructor(){
     private val defaultAnimatedImageParams = AnimatedImageParams(startsVisible = true, loops = true, frameDuration = .04f)
 
-    public fun createPersistentActor(protoActor: ProtoActor, animatedImageParams: AnimatedImageParams? = null) : Actor {
-        val actor = protoActor.toActor(animatedImageParams?:defaultAnimatedImageParams)
+    public fun createPersistentActor(protoActor: ProtoActor,
+                                     animatedImageParams: AnimatedImageParams? = null,
+                                     alphaOverride: Float? = null) : Actor {
+        var animatedImageParams = animatedImageParams?:defaultAnimatedImageParams
+        if (alphaOverride != null){
+            animatedImageParams = animatedImageParams.copy(alpha = alphaOverride)
+        }
+        val actor = protoActor.toActor(animatedImageParams)
         return actor
     }
 }

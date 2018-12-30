@@ -11,7 +11,8 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
  */
 data class SuperimposedTilemaps(val tileMapWithTextureName: String = COMMON_TILE_MAP,
                                 val tileSetNames: List<String>,
-                                val textureId: String) : ProtoActor {
+                                val textureId: String,
+                                override val orientation: OrientationType = OrientationType.NEUTRAL) : ProtoActor {
 
     override fun toActor(animatedImageParams: AnimatedImageParams): AnimatedImage {
         val anim = AnimatedImage.fromTextureRegions(TiledMapOperationsHandler(TilemapXmlProcessor()).pullTextures(this),

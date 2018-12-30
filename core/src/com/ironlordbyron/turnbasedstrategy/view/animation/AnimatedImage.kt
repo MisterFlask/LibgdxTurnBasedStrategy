@@ -7,11 +7,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Array
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.OrientationType
 
 
 class AnimatedImage(val animation: Animation<TextureRegion>, val animatedImageParams: AnimatedImageParams) : Image(animation.getKeyFrame(0f)) {
     init{
         this.isVisible = animatedImageParams.startsVisible
+        this.color.a = animatedImageParams.alpha
     }
 
     override fun hit(x: Float, y: Float, touchable: Boolean): Actor? {
@@ -64,7 +66,8 @@ data class AnimatedImageParams(
                                val startsVisible: Boolean = false,
                                val loops : Boolean = false,
                                val frameDuration: Float,
-                               val alpha: Float = 1f){
+                               val alpha: Float = 1f,
+                               val orientationType: OrientationType = OrientationType.NEUTRAL){
     companion object {
         val RUN_ONCE_AFTER_DELAY = AnimatedImageParams(startsVisible = false, loops = false, frameDuration = 0.25f)
         val RUN_ALWAYS_AND_FOREVER = AnimatedImageParams(true, true, frameDuration = 0.25f)
