@@ -166,7 +166,7 @@ class TacMapHud(viewPort: Viewport,
         characterDisplayTable.row()
         characterDisplayTable.add(endTurnButton())
         characterDisplayTable.row()
-        characterDisplayTable.add(abilityTextArea)
+        characterDisplayTable.add(abilityTextArea).width(300f)
 
         characterDisplayTable.row()
         characterDisplayTable.add(debugTextArea).width(300f)

@@ -4,7 +4,7 @@ import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplateKeys
 
 object StandardAbilities{
 
-    val MeleeAttack = LogicalAbility("Attack",
+    val MeleeAttack = LogicalAbility("Stab",
             AbilitySpeed.ENDS_TURN,
             damage = 1,
             range = 2,
@@ -12,7 +12,16 @@ object StandardAbilities{
             abilityClass = AbilityClass.TARGETED_ABILITY,
             requiredTargetType = RequiredTargetType.ENEMY_ONLY
             );
-    val spawnUnit = LogicalAbility("Spawn Unit",
+    val RangedAttackThatLightsStuffOnFire = LogicalAbility("Torch",
+            AbilitySpeed.ENDS_TURN,
+            damage = 1,
+            range = 5,
+            description = "A ranged attack that lights stuff on fire.  Ends the turn.",
+            abilityClass = AbilityClass.TARGETED_ABILITY,
+            requiredTargetType = RequiredTargetType.ENEMY_ONLY,
+            abilityEffects = listOf(LogicalAbilityEffect.LightsTileOnFire())
+    );
+    val SpawnUnit = LogicalAbility("Spawn Unit",
             AbilitySpeed.ENDS_TURN,
             damage = null,
             range = 2,

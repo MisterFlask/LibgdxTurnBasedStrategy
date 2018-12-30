@@ -7,4 +7,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 
 public interface ProtoActor{
     fun toActor(animatedImageParams: AnimatedImageParams) : Actor
+    fun getDefaultAnimatedImageParams() : AnimatedImageParams? {
+        return null
+    }
 }

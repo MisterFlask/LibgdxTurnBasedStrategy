@@ -7,26 +7,33 @@ import com.ironlordbyron.turnbasedstrategy.view.CharacterSpriteUtils
 import com.ironlordbyron.turnbasedstrategy.view.animation.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
-import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.DeathAnimationGenerator
-import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.FloatingTextGenerator
-import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.TemporaryAnimationGenerator
-import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.UnitSpawnAnimationGenerator
+import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.*
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import javax.inject.Inject
 import javax.inject.Singleton
 
 
 
-public class CharacterSpawner @Inject constructor(
+public class EntitySpawner @Inject constructor(
         val characterImageManager: CharacterImageManager,
         val boardState: TacticalMapState,
-        val eventNotifier: EventNotifier
+        val eventNotifier: EventNotifier,
+        val persistentActorGenerator: PersistentActorGenerator,
+        val stageProvider: TacticalTiledMapStageProvider,
+        val tileMapProvider: TileMapProvider
         ){
     fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) {
         val actor = characterImageManager.placeCharacterActor(tileLocation,tacMapUnit.tiledTexturePath)
         val characterSpawned = LogicalCharacter(actor, tileLocation, tacMapUnit, playerControlled)
         boardState.listOfCharacters.add(characterSpawned)
         eventNotifier.notifyListenersOfGameEvent(TacticalGameEvent.UnitSpawned(characterSpawned))
+    }
+
+    fun addFireToTile(tileLocation: TileLocation){
+        val actor = persistentActorGenerator.createPersistentActor(DataDrivenOnePageAnimation.FIRE)
+        val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
+        actor.setBoundingBox(boundingBox)
+        stageProvider.tiledMapStage.addActor(actor)
     }
 
 }

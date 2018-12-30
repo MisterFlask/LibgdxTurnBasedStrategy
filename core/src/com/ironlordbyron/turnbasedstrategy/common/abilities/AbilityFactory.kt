@@ -12,7 +12,7 @@ import javax.inject.Singleton
 public class AbilityFactory @Inject constructor(val gameBoardOperator: GameBoardOperator,
                     val boardAlgorithms: TacticalMapAlgorithms,
                     val tacticalMapState: TacticalMapState,
-                    val unitSpawner: CharacterSpawner){
+                    val unitSpawner: EntitySpawner){
     fun acquireAbility(logicalAbilityAndEquipment: LogicalAbilityAndEquipment) : Ability {
         when(logicalAbilityAndEquipment.ability.abilityClass){
             AbilityClass.TARGETED_ABILITY -> return SimpleAttackAbility(logicalAbilityAndEquipment, tacticalMapState, boardAlgorithms, gameBoardOperator, boardAlgorithms,
@@ -99,7 +99,7 @@ class SimpleAttackAbility(
         val boardAlgorithms: TacticalMapAlgorithms,
         val gameBoardOperator: GameBoardOperator,
         override val tacticalMapAlgorithms: TacticalMapAlgorithms,
-        val unitSpawner: CharacterSpawner) : Ability {
+        val unitSpawner: EntitySpawner) : Ability {
     override fun isValidTarget(location: TileLocation?, targetCharacter: LogicalCharacter?, sourceCharacter: LogicalCharacter,
                                equipment: LogicalEquipment?) : Boolean{
         return getValidAbilityTargetSquares(sourceCharacter, equipment).contains(location)
@@ -115,7 +115,8 @@ class SimpleAttackAbility(
         for (effect in logicalAbility.abilityEffects){
             when(effect){
                 is LogicalAbilityEffect.SpawnsUnit -> unitSpawner.addCharacterToTile(effect.unitToBeSpawned.toTacMapUnitTemplate()!!, location!!,
-                        sourceCharacter.playerControlled) // TODO: Hook up with animation queue
+                        sourceCharacter.playerControlled)
+                is LogicalAbilityEffect.LightsTileOnFire -> unitSpawner.addFireToTile(location!!)
             }
         }
     }

@@ -23,7 +23,7 @@ data class TacMapUnitTemplate(val movesPerTurn: Int,
         val DEFAULT_UNIT = TacMapUnitTemplate(8, _default_sit.copy(textureId = "6"), templateName = "Friendly")
         val DEFAULT_ENEMY_UNIT = TacMapUnitTemplate(8, _default_sit.copy(textureId = "7"), templateName = "Enemy")
         val DEFAULT_ENEMY_UNIT_SPAWNER = TacMapUnitTemplate(0, _default_sit.copy(textureId = "8"), templateName = "EnemySpawner",
-                abilities = listOf(StandardAbilities.spawnUnit),
+                abilities = listOf(StandardAbilities.SpawnUnit),
                 enemyAiType = EnemyAiType.IMMOBILE_UNIT,
                 walkableTerrainTypes = listOf())
 

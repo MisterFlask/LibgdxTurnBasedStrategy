@@ -14,5 +14,6 @@ data class DataDrivenOnePageAnimation(val filePath: String, val rows : Int, val 
 
     companion object {
         val EXPLODE = DataDrivenOnePageAnimation("animations/exp2.png", 4, 4)
+        val FIRE = DataDrivenOnePageAnimation("animations/Fire.png", 3, 3)
     }
 }

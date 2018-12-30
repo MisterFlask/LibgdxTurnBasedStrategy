@@ -2,7 +2,6 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen
 
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
-import com.ironlordbyron.turnbasedstrategy.common.CharacterSpawner
 import com.ironlordbyron.turnbasedstrategy.common.GameBoardOperator
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
@@ -34,6 +33,7 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
             gameBoardOperator.addCharacterToTile(tacMapUnit = TacMapUnitTemplate.DEFAULT_UNIT, tileLocation = tile,
                     playerControlled = true).let{
                 it.equipment.add(StandardEquipment.sword)
+                it.equipment.add(StandardEquipment.flamethrower)
             }
         }
         val enemyTiles = tiledMapInterpreter.getPossibleEnemySpawnPositions(boardProvider.tiledMap)

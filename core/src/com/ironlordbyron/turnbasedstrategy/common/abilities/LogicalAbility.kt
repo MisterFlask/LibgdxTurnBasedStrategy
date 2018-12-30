@@ -16,8 +16,9 @@ public class LogicalAbility(val name: String,
 
 }
 
-sealed class LogicalAbilityEffect {
-    public data class SpawnsUnit(val unitToBeSpawned: String): LogicalAbilityEffect()
+interface LogicalAbilityEffect {
+    public data class SpawnsUnit(val unitToBeSpawned: String): LogicalAbilityEffect
+    public class LightsTileOnFire: LogicalAbilityEffect
 }
 
 public enum class AbilityClass {

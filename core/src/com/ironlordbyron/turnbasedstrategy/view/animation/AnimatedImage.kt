@@ -63,7 +63,8 @@ fun <T> Collection<T>.toLibgdxArray() : Array<T> {
 data class AnimatedImageParams(
                                val startsVisible: Boolean = false,
                                val loops : Boolean = false,
-                               val frameDuration: Float){
+                               val frameDuration: Float,
+                               val alpha: Float = 1f){
     companion object {
         val RUN_ONCE_AFTER_DELAY = AnimatedImageParams(startsVisible = false, loops = false, frameDuration = 0.25f)
         val RUN_ALWAYS_AND_FOREVER = AnimatedImageParams(true, true, frameDuration = 0.25f)
