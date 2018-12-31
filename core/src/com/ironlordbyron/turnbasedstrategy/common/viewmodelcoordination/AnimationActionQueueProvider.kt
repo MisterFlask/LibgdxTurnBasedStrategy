@@ -7,7 +7,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-class ActionQueueProvider @Inject constructor(val actionRunner: ActionRunner) {
+class AnimationActionQueueProvider @Inject constructor(val actionRunner: ActionRunner) {
     private var actionQueue = ArrayList<ActorActionPair>()
 
     public fun runThroughActionQueue(finalAction: () -> Unit = {}){
@@ -18,6 +18,9 @@ class ActionQueueProvider @Inject constructor(val actionRunner: ActionRunner) {
         actionQueue.add(actorActionPair)
     }
 
+    public fun addActions(actorActionPairs: List<ActorActionPair>){
+        actionQueue.addAll(actorActionPairs)
+    }
     public fun clearQueue(){
         actionQueue = ArrayList()
     }

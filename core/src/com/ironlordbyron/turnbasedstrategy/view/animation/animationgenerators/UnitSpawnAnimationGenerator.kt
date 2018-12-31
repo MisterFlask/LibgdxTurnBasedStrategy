@@ -1,14 +1,13 @@
 package com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators
 
-import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
-import com.ironlordbyron.turnbasedstrategy.common.TileLocation
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionQueueProvider
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import javax.inject.Inject
 
-public class UnitSpawnAnimationGenerator @Inject constructor(val animationQueueProvider: ActionQueueProvider,
+// TODO: Merge wtih revealActionGenerator, since they serve similar functions
+public class UnitSpawnAnimationGenerator @Inject constructor(val animationQueueProviderAnimation: AnimationActionQueueProvider,
                                                              val temporaryAnimationGenerator: TemporaryAnimationGenerator){
 
     fun createUnitSpawnAnimation(logicalCharacter: LogicalCharacter) : ActorActionPair {

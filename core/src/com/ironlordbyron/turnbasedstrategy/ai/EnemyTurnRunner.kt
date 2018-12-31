@@ -4,8 +4,7 @@ import com.ironlordbyron.turnbasedstrategy.common.GameBoardOperator
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityFactory
-import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionQueueProvider
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.MapHighlighter
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
@@ -31,7 +30,7 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
                                                  val mapHighlighter: MapHighlighter,
                                                  val tacticalMapAlgorithms: TacticalMapAlgorithms,
                                                  val gameBoardOperator: GameBoardOperator,
-                                                 val actionQueueProvider: ActionQueueProvider,
+                                                 val animationActionQueueProvider: AnimationActionQueueProvider,
                                                  val abilityFactory: AbilityFactory){
 
     public fun endTurn() {
@@ -39,7 +38,7 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
     }
 
     public fun runEnemyTurn() {
-        actionQueueProvider.clearQueue()
+        animationActionQueueProvider.clearQueue()
         for (enemyCharacter in boardState.listOfEnemyCharacters) {
             val ai = enemyAiFactory.getEnemyAi(enemyCharacter.tacMapUnit.enemyAiType)
             val nextActions = ai.getNextActions(enemyCharacter);
@@ -57,9 +56,9 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
                 }
             }
         }
-        actionQueueProvider.runThroughActionQueue(finalAction = {
+        animationActionQueueProvider.runThroughActionQueue(finalAction = {
             eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.FinishedEnemyTurn())
         })
-        actionQueueProvider.clearQueue()
+        animationActionQueueProvider.clearQueue()
     }
 }

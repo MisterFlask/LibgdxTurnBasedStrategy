@@ -17,8 +17,17 @@ class MovementAnimationGenerator @Inject constructor(val logicalTileTracker: Log
         return moveAction
     }
 
-    fun createMoveActorToTileActorActionPair(tile: TileLocation, actor: Actor, removeActorOnceAnimationIsComplete: Boolean = false) : ActorActionPair{
-        val actionPair = ActorActionPair(actor, createMoveActorToTileAction(tile), murderActorsOnceCompletedAnimation = removeActorOnceAnimationIsComplete)
+    fun createMoveActorToTileActorActionPair(tile: TileLocation, actor: Actor, actorOnlyExistsDuringAnimation: Boolean = false) : ActorActionPair{
+        if (actorOnlyExistsDuringAnimation){
+            actor.isVisible = false
+        }
+        val actionPair = ActorActionPair(actor, createMoveActorToTileAction(tile),
+                murderActorsOnceCompletedAnimation = actorOnlyExistsDuringAnimation,
+                actionOnceAnimationCompletes = {
+                    if (actorOnlyExistsDuringAnimation) {
+                        actor.remove()
+                    }
+                })
         return actionPair
     }
 }

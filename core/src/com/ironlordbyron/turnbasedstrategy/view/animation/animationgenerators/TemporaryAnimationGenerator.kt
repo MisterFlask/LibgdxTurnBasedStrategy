@@ -9,6 +9,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImage
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.SpriteSheetParser
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import javax.inject.Inject
 
 
@@ -48,7 +49,8 @@ class TemporaryAnimationGenerator @Inject constructor (val tileMapProvider: Tile
                                                        val tiledMapStageProvider: TacticalTiledMapStageProvider,
                                                        val spriteSheetParser: SpriteSheetParser
                                   ) {
-    public fun getTemporaryAnimationActorActionPair(tileLocation: TileLocation, dataDrivenOnePageAnimation: DataDrivenOnePageAnimation): ActorActionPair {
+    // WARNING: This doesn't actually work with protoactors that don't create AnimatedImages
+    public fun getTemporaryAnimationActorActionPair(tileLocation: TileLocation, dataDrivenOnePageAnimation: ProtoActor): ActorActionPair {
         val animatedImage = dataDrivenOnePageAnimation.toActor(animatedImageParams = AnimatedImageParams.RUN_ONCE_AFTER_DELAY) as AnimatedImage // HACK
         tiledMapStageProvider.tiledMapStage.addActor(animatedImage)
         val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)

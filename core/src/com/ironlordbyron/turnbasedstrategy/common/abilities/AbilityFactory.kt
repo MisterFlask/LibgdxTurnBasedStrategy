@@ -2,7 +2,10 @@ package com.ironlordbyron.turnbasedstrategy.common.abilities
 
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
+import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.TemporaryAnimationGenerator
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,11 +16,13 @@ import javax.inject.Singleton
 public class AbilityFactory @Inject constructor(val gameBoardOperator: GameBoardOperator,
                     val boardAlgorithms: TacticalMapAlgorithms,
                     val tacticalMapState: TacticalMapState,
-                    val unitSpawner: EntitySpawner){
+                    val unitSpawner: EntitySpawner,
+                    val animationActionQueueProvider: AnimationActionQueueProvider,
+                    val temporaryAnimationGenerator: TemporaryAnimationGenerator){
     fun acquireAbility(logicalAbilityAndEquipment: LogicalAbilityAndEquipment) : Ability {
         when(logicalAbilityAndEquipment.ability.abilityClass){
             AbilityClass.TARGETED_ABILITY -> return SimpleAttackAbility(logicalAbilityAndEquipment, tacticalMapState, boardAlgorithms, gameBoardOperator, boardAlgorithms,
-                    unitSpawner)
+                    unitSpawner, animationActionQueueProvider, temporaryAnimationGenerator)
         }
     }
 
@@ -100,7 +105,9 @@ class SimpleAttackAbility(
         val boardAlgorithms: TacticalMapAlgorithms,
         val gameBoardOperator: GameBoardOperator,
         override val tacticalMapAlgorithms: TacticalMapAlgorithms,
-        val unitSpawner: EntitySpawner) : Ability {
+        val unitSpawner: EntitySpawner,
+        val animationActionQueueProvider: AnimationActionQueueProvider,
+        val temporaryAnimationGenerator: TemporaryAnimationGenerator) : Ability {
     override fun isValidTarget(location: TileLocation?, targetCharacter: LogicalCharacter?, sourceCharacter: LogicalCharacter,
                                equipment: LogicalEquipment?) : Boolean{
         return getValidAbilityTargetSquares(sourceCharacter, equipment).contains(location)
@@ -108,16 +115,36 @@ class SimpleAttackAbility(
 
     override fun activateAbility(location: TileLocation?, targetCharacter: LogicalCharacter?, sourceCharacter: LogicalCharacter,
                                  equipment: LogicalEquipment?) {
+
+
+        val ability = logicalAbilityAndEquipment.ability
+
+        // if there's a projectile, do it
+        if (ability.projectileActor != null && location != null){
+            val projectile = unitSpawner.animateProjectileForLogicalAbility(logicalAbilityAndEquipment, sourceCharacter.tileLocation, location)
+            if (projectile != null){
+                animationActionQueueProvider.addAction(projectile)
+            }
+        }
+        // if there's an effect, do it
+        if (ability.landingActor != null && location != null){
+            val lander = temporaryAnimationGenerator.getTemporaryAnimationActorActionPair(location, ability.landingActor)
+            animationActionQueueProvider.addAction(lander)
+        }
+        // if there's a damage effect, do that (probably just the number-rising thing)
         if (logicalAbility.damage != null){
+            // so, the GBO shouldn't be responsible for handing damage animations, because those will vary based on attack.
             gameBoardOperator.damageCharacter(targetCharacter!!, !sourceCharacter.playerControlled, logicalAbility.damage!!)
         }
-        // processing abilityEquipmentPair effects
 
+        // create the effects
         for (effect in logicalAbility.abilityEffects){
             when(effect){
                 is LogicalAbilityEffect.SpawnsUnit -> unitSpawner.addCharacterToTile(effect.unitToBeSpawned.toTacMapUnitTemplate()!!, location!!,
                         sourceCharacter.playerControlled)
-                is LogicalAbilityEffect.LightsTileOnFire -> unitSpawner.addFireToTile(location!!)
+                is LogicalAbilityEffect.LightsTileOnFire -> {
+                    // TODO
+                }
             }
         }
     }

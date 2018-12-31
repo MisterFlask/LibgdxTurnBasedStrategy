@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.common.abilities
 
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 
 public class LogicalAbility(val name: String,
                             val speed: AbilitySpeed,
@@ -12,7 +13,9 @@ public class LogicalAbility(val name: String,
                             val abilityClass: AbilityClass,
                             val allowsTargetingSelf: Boolean = false,
                             val requiredTargetType: RequiredTargetType = RequiredTargetType.ANY,
-                            val abilityEffects: Collection<LogicalAbilityEffect> = listOf()){
+                            val abilityEffects: Collection<LogicalAbilityEffect> = listOf(),
+                            val projectileActor: ProtoActor?,
+                            val landingActor: ProtoActor?){
 
 }
 
