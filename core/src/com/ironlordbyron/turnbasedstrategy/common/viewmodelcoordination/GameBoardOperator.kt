@@ -38,7 +38,7 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
                                             val floatingTextGenerator: FloatingTextGenerator,
                                             val deathAnimationGenerator: DeathAnimationGenerator,
                                             val animationActionQueueProvider: AnimationActionQueueProvider,
-                                            val unitSpawnAnimator: UnitSpawnAnimationGenerator) : EventListener{
+                                            val revealActionGenerator: RevealActionGenerator) : EventListener{
 
 
     override fun consumeGuiEvent(event: TacticalGuiEvent) {
@@ -52,7 +52,7 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
     override fun consumeGameEvent(event: TacticalGameEvent) {
         when(event){
             is TacticalGameEvent.UnitSpawned -> {
-                animationActionQueueProvider.addAction(unitSpawnAnimator.createUnitSpawnAnimation(event.character))
+                animationActionQueueProvider.addAction(revealActionGenerator.generateRevealActorActionPair(event.character.actor))
             }
         }
     }

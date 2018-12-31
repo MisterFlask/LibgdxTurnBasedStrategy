@@ -29,7 +29,9 @@ public class AbilityFactory @Inject constructor(val gameBoardOperator: GameBoard
 }
 
 enum class RequiredTargetType{
-    ENEMY_ONLY, ALLY_ONLY, ANY, NO_CHARACTER_AT_LOCATION
+    ENEMY_ONLY, ALLY_ONLY, ANY, NO_CHARACTER_AT_LOCATION,
+
+    DOOR
 }
 
 interface Ability{
@@ -65,12 +67,16 @@ interface Ability{
                 possibilities.add(target)
             }
         }
+        if (logicalAbility.requiredTargetType == RequiredTargetType.DOOR){
+            // we're just gonna say we can only hit doors if that's the target type.
+            return abilityTargetSquares.filter { tacticalMapState.isDoorAt(it) }
+        }
+
         if (logicalAbility.requiredTargetType == RequiredTargetType.NO_CHARACTER_AT_LOCATION){
             val nearbyCharacterLocations = nearbyCharacters.map{char -> char.tileLocation}
             return abilityTargetSquares.filter{!nearbyCharacterLocations.contains(it)}
         }
         return possibilities.map{it.tileLocation}
-
     }
 
 
@@ -138,6 +144,9 @@ class SimpleAttackAbility(
                         sourceCharacter.playerControlled)
                 is LogicalAbilityEffect.LightsTileOnFire -> {
                     animationActionQueueProvider.addAction(unitSpawner.generateLightTileOnFireAction(location!!))
+                }
+                is LogicalAbilityEffect.OpensDoor -> {
+                    animationActionQueueProvider.addAction(unitSpawner.openDoorAction(location!!))
                 }
             }
         }

@@ -15,13 +15,15 @@ public class LogicalAbility(val name: String,
                             val requiredTargetType: RequiredTargetType = RequiredTargetType.ANY,
                             val abilityEffects: Collection<LogicalAbilityEffect> = listOf(),
                             val projectileActor: ProtoActor?,
-                            val landingActor: ProtoActor?){
+                            val landingActor: ProtoActor?,
+                            val context: ContextualAbilityParams? = null){
 
 }
 
 interface LogicalAbilityEffect {
     public data class SpawnsUnit(val unitToBeSpawned: String): LogicalAbilityEffect
     public class LightsTileOnFire: LogicalAbilityEffect
+    class OpensDoor: LogicalAbilityEffect
 }
 
 public enum class AbilityClass {

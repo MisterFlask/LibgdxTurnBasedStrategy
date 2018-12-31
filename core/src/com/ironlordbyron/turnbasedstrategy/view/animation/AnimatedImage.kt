@@ -45,11 +45,12 @@ class AnimatedImage(val animation: Animation<TextureRegion>, val animatedImagePa
     companion object {
         fun fromDataDrivenAnimation(dataDrivenOnePageAnimation: DataDrivenOnePageAnimation,
                                     animatedImageParams: AnimatedImageParams): AnimatedImage {
-            return AnimatedImage(SpriteSheetParser().createAnimation(dataDrivenOnePageAnimation), animatedImageParams)
+            return AnimatedImage(SpriteSheetParser().createAnimation(dataDrivenOnePageAnimation, dataDrivenOnePageAnimation.frameDurationInSeconds), animatedImageParams)
         }
 
         fun fromTextureRegions(textures: List<TextureRegion>, animatedImageParams: AnimatedImageParams): AnimatedImage {
-            return AnimatedImage(Animation<TextureRegion>(animatedImageParams.frameDuration, textures.toLibgdxArray()), animatedImageParams)
+            // todo: Don't hardcode frame duration
+            return AnimatedImage(Animation<TextureRegion>(.25f, textures.toLibgdxArray()), animatedImageParams)
         }
 
     }
@@ -65,11 +66,9 @@ fun <T> Collection<T>.toLibgdxArray() : Array<T> {
 data class AnimatedImageParams(
                                val startsVisible: Boolean = false,
                                val loops : Boolean = false,
-                               val frameDuration: Float,
-                               val alpha: Float = 1f,
-                               val orientationType: OrientationType = OrientationType.NEUTRAL){
+                               val alpha: Float = 1f){
     companion object {
-        val RUN_ONCE_AFTER_DELAY = AnimatedImageParams(startsVisible = false, loops = false, frameDuration = 0.25f)
-        val RUN_ALWAYS_AND_FOREVER = AnimatedImageParams(true, true, frameDuration = 0.25f)
+        val RUN_ONCE_AFTER_DELAY = AnimatedImageParams(startsVisible = false, loops = false)
+        val RUN_ALWAYS_AND_FOREVER = AnimatedImageParams(true, true)
     }
 }

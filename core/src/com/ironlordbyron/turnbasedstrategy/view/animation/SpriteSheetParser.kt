@@ -10,7 +10,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenO
 
 class SpriteSheetParser(){
     public fun createAnimation(anim: DataDrivenOnePageAnimation,
-                               frameDuration: Float = 0.025f): Animation<TextureRegion> {
+                               frameDuration: Float): Animation<TextureRegion> {
         val frameRows = anim.rows
         val frameCols = anim.cols
         val walkSheet = Texture(Gdx.files.internal(anim.filePath))

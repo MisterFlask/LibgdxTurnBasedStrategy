@@ -7,7 +7,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import javax.inject.Inject
 
 public class PersistentActorGenerator @Inject constructor(val revealActionGenerator: RevealActionGenerator){
-    private val defaultAnimatedImageParams = AnimatedImageParams(startsVisible = true, loops = true, frameDuration = .04f)
+    private val defaultAnimatedImageParams = AnimatedImageParams(startsVisible = true, loops = true)
 
     public fun createPersistentActor(protoActor: ProtoActor,
                                      animatedImageParams: AnimatedImageParams? = null,

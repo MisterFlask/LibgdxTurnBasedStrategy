@@ -13,4 +13,5 @@ object ContextualAbilities {
         requiredTargetType = RequiredTargetType.DOOR,
         context = ContextualAbilityParams(requiresDoorNearby = true)
     )
+    val allContextualAbilities: Collection<LogicalAbility> = listOf(OpenDoor)
 }

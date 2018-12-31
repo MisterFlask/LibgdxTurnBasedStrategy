@@ -61,4 +61,14 @@ public class EntitySpawner @Inject constructor(
         return movementAnimationGenerator.createMoveActorToTileActorActionPair(toTile, projectileActor, true)
     }
 
+    fun openDoorAction(location: TileLocation): ActorActionPair {
+        // step 1: get the door entity.
+        // step 2: get the secondary animation for that door entity.
+        // step 3: swap the door's first animation for the second. (In effect, destroy the first actor, and set the door's actor to
+        // being the secondary actor.)
+        // step 4: Update the door entity to "open" status.
+        // necessary precursor function: SwapActors.
+        throw NotImplementedError()
+    }
+
 }

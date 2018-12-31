@@ -18,6 +18,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import com.badlogic.gdx.utils.Scaling
 import com.ironlordbyron.turnbasedstrategy.common.LogicalAbilityAndEquipment
+import com.ironlordbyron.turnbasedstrategy.common.abilities.ContextualAbilityFactory
 import com.ironlordbyron.turnbasedstrategy.controller.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
@@ -38,11 +39,13 @@ class TacMapHudFactory @Inject constructor(val eventNotifier: EventNotifier,
                                            val fileImageRetriever: FileImageRetriever,
                                            val characterImageManager: CharacterImageManager,
                                            val boardInputStateProvider: BoardInputStateProvider,
-                                           val logicalTileTracker: LogicalTileTracker) {
+                                           val logicalTileTracker: LogicalTileTracker,
+                                           val contextualAbilityFactory: ContextualAbilityFactory) {
     fun create(viewPort: Viewport): TacMapHud {
         return TacMapHud(viewPort, eventNotifier, tacticalMapState, spriteActorFactory, fileImageRetriever, characterImageManager,
                 logicalTileTracker,
-                boardInputStateProvider)
+                boardInputStateProvider,
+                contextualAbilityFactory)
     }
 }
 
@@ -54,7 +57,8 @@ class TacMapHud(viewPort: Viewport,
                 val fileImageRetriever: FileImageRetriever,
                 val characterImageManager: CharacterImageManager,
                 val logicalTileTracker: LogicalTileTracker,
-                val boardInputStateProvider: BoardInputStateProvider) : Stage(viewPort), EventListener {
+                val boardInputStateProvider: BoardInputStateProvider,
+                val contextualAbilityFactory: ContextualAbilityFactory) : Stage(viewPort), EventListener {
     var selectedCharacter: LogicalCharacter? = null
     var hoveredAbility: LogicalAbility? = null
     var entitySelected: TileEntity? = null
@@ -150,6 +154,9 @@ class TacMapHud(viewPort: Viewport,
         if (selectedCharacter != null){
             for (ability in selectedCharacter.abilities){
                 characterDisplayTable.add(actionButton(ability))
+            }
+            for (ability in contextualAbilityFactory.getContextualAbilitiesAvailableForCharacter(selectedCharacter)){
+                characterDisplayTable.add(actionButton(LogicalAbilityAndEquipment(ability, null)))
             }
         }
 

@@ -13,7 +13,7 @@ object StandardAbilities{
             abilityClass = AbilityClass.TARGETED_ABILITY,
             requiredTargetType = RequiredTargetType.ENEMY_ONLY,
             projectileActor = null,
-            landingActor = DataDrivenOnePageAnimation.EXPLODE
+            landingActor = DataDrivenOnePageAnimation.CLAWSLASH
             );
     val RangedAttackThatLightsStuffOnFire = LogicalAbility("Torch",
             AbilitySpeed.ENDS_TURN,

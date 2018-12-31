@@ -4,6 +4,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 
 
 interface TileEntity {
@@ -26,5 +28,12 @@ class DoorEntity(val eventNotifier: EventNotifier,
     override fun damage(ability: LogicalAbility){
     }
 
+    fun openDoor(){
 
+    }
+
+    companion object {
+        val doorEntityProtoActor: ProtoActor = SuperimposedTilemaps(tileSetNames = listOf("Door0", "Door1"), textureId = "0")
+
+    }
 }

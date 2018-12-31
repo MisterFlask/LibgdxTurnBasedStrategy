@@ -5,7 +5,7 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import javax.inject.Singleton
 
 /**
- * Responsible for doing very basic game rule enforcement
+ * Responsible for doing tracking what tiles contain what characters.
  */
 @Singleton
 class TacticalMapState @Inject constructor(val logicalTileTracker: LogicalTileTracker){
@@ -34,6 +34,10 @@ class TacticalMapState @Inject constructor(val logicalTileTracker: LogicalTileTr
         if (character.actionsLeft == 0){
             character.endedTurn = true
         }
+    }
+
+    fun isDoorAt(it: TileLocation): Boolean {
+        return logicalTileTracker.isDoor(it)
     }
 }
 
