@@ -40,3 +40,6 @@ fun Actor.setBoundingBox(boundingBox: BoundingRectangle) {
     this.width = boundingBox.width.toFloat()
     this.height = boundingBox.height.toFloat()
 }
+fun Actor.getBoundingBox(): BoundingRectangle {
+    return BoundingRectangle(this.x.toInt(), this.y.toInt(), this.width.toInt(), this.height.toInt())
+}

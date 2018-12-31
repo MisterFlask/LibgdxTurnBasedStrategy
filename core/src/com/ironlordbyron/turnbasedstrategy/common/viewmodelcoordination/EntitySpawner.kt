@@ -5,15 +5,20 @@ import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.tiledutils.CharacterImageManager
+import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tiledutils.setBoundingBox
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
+import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
+import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.ActorSwapAnimationGenerator
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.MovementAnimationGenerator
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.PersistentActorGenerator
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.RevealActionGenerator
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
+import java.lang.IllegalArgumentException
 import javax.inject.Inject
 
 
@@ -25,7 +30,9 @@ public class EntitySpawner @Inject constructor(
         val stageProvider: TacticalTiledMapStageProvider,
         val tileMapProvider: TileMapProvider,
         val movementAnimationGenerator: MovementAnimationGenerator,
-        val revealActionGenerator: RevealActionGenerator
+        val revealActionGenerator: RevealActionGenerator,
+        val logicalTileTracker: LogicalTileTracker,
+        val actorSwapGenerator: ActorSwapAnimationGenerator
 ){
     fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) {
         val actor = characterImageManager.placeCharacterActor(tileLocation,tacMapUnit.tiledTexturePath)
@@ -62,13 +69,12 @@ public class EntitySpawner @Inject constructor(
     }
 
     fun openDoorAction(location: TileLocation): ActorActionPair {
-        // step 1: get the door entity.
-        // step 2: get the secondary animation for that door entity.
-        // step 3: swap the door's first animation for the second. (In effect, destroy the first actor, and set the door's actor to
-        // being the secondary actor.)
-        // step 4: Update the door entity to "open" status.
-        // necessary precursor function: SwapActors.
-        throw NotImplementedError()
+        if (!logicalTileTracker.isDoor(location)){
+            throw IllegalArgumentException("Cannot call openDoorAction where there is no door, at tile $location")
+        }
+        val doorEntity = logicalTileTracker.getEntitiesAtTile(location).first{it is DoorEntity} as DoorEntity
+        doorEntity.isOpen = true
+        return actorSwapGenerator.generateActorSwapActorActionPair(doorEntity.openAnimation, AnimatedImageParams(startsVisible = false, loops = true), actorSettable = doorEntity)
     }
 
 }

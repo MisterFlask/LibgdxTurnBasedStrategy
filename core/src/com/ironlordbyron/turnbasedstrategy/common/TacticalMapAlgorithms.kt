@@ -2,6 +2,8 @@ package com.ironlordbyron.turnbasedstrategy.common
 
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
+import tiled.core.Tile
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,8 +31,16 @@ open class CanWalkOnTile(open val logicalTileTracker: LogicalTileTracker,
 
     fun isTileUnoccupied(tileLocation: TileLocation): Boolean {
         return getCharacterAtLocation(tileLocation) == null
-        && !logicalTileTracker.isDoor(tileLocation)
+        && !isClosedDoor(tileLocation)
         && !logicalTileTracker.isWall(tileLocation)
+    }
+
+    private fun isClosedDoor(location:TileLocation): Boolean {
+        if (!logicalTileTracker.isDoor(location)){
+            return false
+        }
+        val doorEntity = logicalTileTracker.getEntitiesAtTile(location).filter{it is DoorEntity}.first() as DoorEntity
+        return !doorEntity.isOpen
     }
 }
 

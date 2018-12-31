@@ -56,7 +56,6 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
             }
         }
 
-        val map = tileMapProvider.tiledMap
         val aiGridGraph = aiGridGraphFactory.createGridGraph(thisCharacter)
 
         val closestEnemy = aiGridGraph.acquireClosestEnemy(thisCharacter)

@@ -48,7 +48,10 @@ class TiledMapOperationsHandler @Inject constructor(val xmlParser: TilemapXmlPro
         val map = getTileMapFromFullyQualifiedName(tileMapWithTextureName)
 
         val tiledMapTileSets = map.tileSets
-        val set = tiledMapTileSets.getTileSet(tileSetWithTexture) ?: throw IllegalStateException("Could not find set at map $tileMapWithTextureName, set $tileSetWithTexture")
+        val set = tiledMapTileSets.getTileSet(tileSetWithTexture)
+        if (set == null) {
+            throw IllegalStateException("Could not find set at map $tileMapWithTextureName, set $tileSetWithTexture")
+        }
         val firstgid = xmlParser.getTilesetFirstgid(tileMapWithTextureName, tileSetWithTexture)
         val tile = set.getTile(Integer.valueOf(textureId) + Integer.valueOf(firstgid)) ?: throw IllegalStateException("Could not find tile at map $tileMapWithTextureName, set $tileSetWithTexture, id $textureId ." +
                 "Only keys found were ${set.asIterable().map{it.id}}")

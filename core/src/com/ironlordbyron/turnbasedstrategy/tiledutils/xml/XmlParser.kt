@@ -21,8 +21,15 @@ class TilemapXmlProcessor {
     fun getTilesetFirstgid(tilemapPath: String, tilesetName: String): String {
         val tilesets = getTilemapXmlAttributes(tilemapPath)
 
-        val sourceFileName = sourceNameToFile[tilesetName] ?: throw IllegalStateException("Attempted to pull nonexistent tile set name: $tilesetName , " +
-                "please make sure it's added to XmlParser.kt" )
+        var sourceFileName = sourceNameToFile[tilesetName]
+        if (sourceFileName == null){
+            sourceFileName = tilesetName + ".tsx"
+        }
+        if (sourceFileName == null){
+            throw IllegalStateException("Attempted to pull nonexistent tile set name: $tilesetName , " +
+                    "please make sure it's added to XmlParser.kt" )
+        }
+
         return tilesets.first { it.source == sourceFileName }.firstgid // TODO
     }
 
