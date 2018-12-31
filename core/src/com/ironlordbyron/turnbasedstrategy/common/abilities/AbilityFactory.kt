@@ -131,21 +131,25 @@ class SimpleAttackAbility(
             val lander = temporaryAnimationGenerator.getTemporaryAnimationActorActionPair(location, ability.landingActor)
             animationActionQueueProvider.addAction(lander)
         }
-        // if there's a damage effect, do that (probably just the number-rising thing)
-        if (logicalAbility.damage != null){
-            // so, the GBO shouldn't be responsible for handing damage animations, because those will vary based on attack.
-            gameBoardOperator.damageCharacter(targetCharacter!!, !sourceCharacter.playerControlled, logicalAbility.damage!!)
-        }
-
         // create the effects
         for (effect in logicalAbility.abilityEffects){
             when(effect){
                 is LogicalAbilityEffect.SpawnsUnit -> unitSpawner.addCharacterToTile(effect.unitToBeSpawned.toTacMapUnitTemplate()!!, location!!,
                         sourceCharacter.playerControlled)
                 is LogicalAbilityEffect.LightsTileOnFire -> {
-                    // TODO
+                    animationActionQueueProvider.addAction(unitSpawner.generateLightTileOnFireAction(location!!))
                 }
             }
+        }
+        // if there's a damage effect, do that (probably just the number-rising thing)
+        if (logicalAbility.damage != null){
+            // so, the GBO shouldn't be responsible for handing damage animations, because those will vary based on attack.
+            gameBoardOperator.damageCharacter(targetCharacter!!, logicalAbility.damage!!)
+        }
+
+        if (sourceCharacter.playerControlled){
+            animationActionQueueProvider.runThroughActionQueue(finalAction = {})
+            animationActionQueueProvider.clearQueue()
         }
     }
 

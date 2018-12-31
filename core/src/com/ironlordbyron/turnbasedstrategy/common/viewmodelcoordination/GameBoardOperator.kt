@@ -110,16 +110,11 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
     }
 
     fun damageCharacter(targetCharacter: LogicalCharacter,
-                        waitOnMoreQueuedActions: Boolean = false,
                         damageAmount: Int) {
         targetCharacter.healthLeft -= damageAmount // TODO: Not the responsibility of this class
         animationActionQueueProvider.addAction(floatingTextGenerator.getTemporaryAnimationActorActionPair("${damageAmount}", targetCharacter.tileLocation))
         if (targetCharacter.isDead){
             animationActionQueueProvider.addAction(deathAnimationGenerator.turnCharacterSideways(targetCharacter))
-        }
-        if (!waitOnMoreQueuedActions){
-            animationActionQueueProvider.runThroughActionQueue(finalAction = {})
-            animationActionQueueProvider.clearQueue()
         }
     }
 

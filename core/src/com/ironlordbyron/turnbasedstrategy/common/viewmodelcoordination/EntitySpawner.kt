@@ -11,6 +11,7 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.setBoundingBox
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.MovementAnimationGenerator
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.PersistentActorGenerator
+import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.RevealActionGenerator
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import javax.inject.Inject
@@ -23,7 +24,8 @@ public class EntitySpawner @Inject constructor(
         val persistentActorGenerator: PersistentActorGenerator,
         val stageProvider: TacticalTiledMapStageProvider,
         val tileMapProvider: TileMapProvider,
-        val movementAnimationGenerator: MovementAnimationGenerator
+        val movementAnimationGenerator: MovementAnimationGenerator,
+        val revealActionGenerator: RevealActionGenerator
 ){
     fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) {
         val actor = characterImageManager.placeCharacterActor(tileLocation,tacMapUnit.tiledTexturePath)
@@ -41,6 +43,11 @@ public class EntitySpawner @Inject constructor(
         actor.setBoundingBox(boundingBox)
         stageProvider.tiledMapStage.addActor(actor)
         return actor
+    }
+
+    fun generateLightTileOnFireAction(tileLocation: TileLocation) : ActorActionPair {
+        val actor = addActorToTile(tileLocation, DataDrivenOnePageAnimation.FIRE, alphaOverride = .8f)
+        return ActorActionPair(actor, revealActionGenerator.generateRevealAction(actor))
     }
 
     fun animateProjectileForLogicalAbility(logicalAbilityAndEquipment: LogicalAbilityAndEquipment,
