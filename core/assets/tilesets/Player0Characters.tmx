@@ -7,11 +7,12 @@
  <tileset firstgid="362" source="tilehighlights/green_tile.tsx"/>
  <tileset firstgid="363" source="tilehighlights/blue_tile.tsx"/>
  <tileset firstgid="364" source="Door0.tsx"/>
+ <tileset firstgid="412" source="Door1.tsx"/>
  <layer id="1" name="Tile Layer 1" width="3" height="3">
   <data encoding="csv">
 244,6,246,
 252,253,254,
-31,28,370
+31,28,418
 </data>
  </layer>
 </map>

@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators
 
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 
 public class RevealActionGenerator(){

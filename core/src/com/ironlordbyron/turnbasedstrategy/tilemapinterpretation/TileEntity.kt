@@ -35,8 +35,8 @@ class DoorEntity(val eventNotifier: EventNotifier,
     }
 
     companion object {
-        val openDoorProtoActor: ProtoActor = SuperimposedTilemaps(tileSetNames = listOf("Door0"), textureId = "0")
-        val closedDoorProtoActor: ProtoActor = SuperimposedTilemaps(tileSetNames = listOf("Door1"), textureId = "0")
+        val openDoorProtoActor: ProtoActor = SuperimposedTilemaps(tileSetNames = listOf("Door1"), textureId = "0")
+        val closedDoorProtoActor: ProtoActor = SuperimposedTilemaps(tileSetNames = listOf("Door0"), textureId = "0")
         val animatedImageParams = AnimatedImageParams(startsVisible = true)
     }
 }
