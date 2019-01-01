@@ -12,10 +12,21 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.Superimpose
 
 interface TileEntity {
     val tileLocation: TileLocation
-    fun damage(ability : LogicalAbility)
     val actor: Actor
     val name: String
     fun targetableByAbility(ability: LogicalAbility): Boolean
+
+    fun init(){
+
+    }
+
+    fun runTurn(){
+
+    }
+
+    fun runOnDeath(){
+
+    }
 }
 
 class DoorEntity(val eventNotifier: EventNotifier,
@@ -28,10 +39,6 @@ class DoorEntity(val eventNotifier: EventNotifier,
                  var isOpen: Boolean = false) : TileEntity, ActorSettable {
     override fun targetableByAbility(ability: LogicalAbility): Boolean {
         return true;
-    }
-
-    override fun damage(ability: LogicalAbility){
-
     }
 
     companion object {

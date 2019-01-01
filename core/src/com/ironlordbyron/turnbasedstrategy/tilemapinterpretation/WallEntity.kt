@@ -14,13 +14,6 @@ class WallEntity(
         override val tileLocation: TileLocation,
         override val actor: Actor,
         override val name: String = "wall") : TileEntity {
-    var hp = 5;
-    override fun damage(ability: LogicalAbility) {
-        if (ability.damage == null){
-            return
-        }
-        eventNotifier.notifyListenersOfGameEvent(TacticalGameEvent.EntityDamage(this, ability))
-    }
 
     override fun targetableByAbility(logicalAbility: LogicalAbility): Boolean {
         return false
