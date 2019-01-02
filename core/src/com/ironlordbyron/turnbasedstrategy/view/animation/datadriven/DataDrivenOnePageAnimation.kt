@@ -15,6 +15,7 @@ data class DataDrivenOnePageAnimation(val filePath: String, val rows : Int, val 
     }
 
     companion object {
+        val RED_SHIELD_ACTOR = DataDrivenOnePageAnimation("animations/ring_red.png", 3, 6)
         val EXPLODE = DataDrivenOnePageAnimation("animations/exp2.png", 4, 4, frameDurationInSeconds = .04f)
         val FIRE = DataDrivenOnePageAnimation("animations/Fire.png", 3, 3)
         val FIREBALL = DataDrivenOnePageAnimation("animations/fireball.png", 2, 3, OrientationType.LEFT)

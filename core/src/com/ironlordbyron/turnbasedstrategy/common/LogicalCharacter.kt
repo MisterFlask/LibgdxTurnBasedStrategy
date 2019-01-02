@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.common
 
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
 
 /**
@@ -17,7 +18,8 @@ data class LogicalCharacter(val actor: Actor,
                             var maxActionsLeft: Int = 2,
                             var maxHealth: Int = 3,
                             var healthLeft: Int = maxHealth,
-                            val equipment: ArrayList<LogicalEquipment> = ArrayList()){
+                            val equipment: ArrayList<LogicalEquipment> = ArrayList(),
+                            val attributes: Collection<LogicalCharacterAttribute> = listOf()) {
     val abilities: Collection<LogicalAbilityAndEquipment>
         get() = acquireAbilities()
 
@@ -37,5 +39,6 @@ data class LogicalCharacter(val actor: Actor,
         return abilitiesSansEquipment + abilitiesWithEquipment
     }
 }
+
 
 data class LogicalAbilityAndEquipment(val ability: LogicalAbility, val equipment: LogicalEquipment?)

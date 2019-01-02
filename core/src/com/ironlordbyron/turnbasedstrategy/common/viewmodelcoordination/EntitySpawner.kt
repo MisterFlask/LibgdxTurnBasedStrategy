@@ -12,10 +12,7 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.setBoundingBox
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
-import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.ActorSwapAnimationGenerator
-import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.MovementAnimationGenerator
-import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.PersistentActorGenerator
-import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.RevealActionGenerator
+import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.*
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import java.lang.IllegalArgumentException
@@ -32,7 +29,10 @@ public class EntitySpawner @Inject constructor(
         val movementAnimationGenerator: MovementAnimationGenerator,
         val revealActionGenerator: RevealActionGenerator,
         val logicalTileTracker: LogicalTileTracker,
-        val actorSwapGenerator: ActorSwapAnimationGenerator
+        val actorSwapGenerator: ActorSwapAnimationGenerator,
+        val tiledMapStageProvider: TacticalTiledMapStageProvider,
+        val animationActionQueueProvider: AnimationActionQueueProvider,
+        val hideAnimationGenerator: HideAnimationGenerator
 ){
     fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) {
         val actor = characterImageManager.placeCharacterActor(tileLocation,tacMapUnit.tiledTexturePath)
@@ -44,6 +44,7 @@ public class EntitySpawner @Inject constructor(
 
     // todo: Migrate to more appropriate location
     // todo: improve flexibility (really?  Only allowing modification of alphaOverride?)
+    @Deprecated("Use spawnEntityAtTileInSequence instead")
     fun addActorToTile(tileLocation: TileLocation, protoActor: ProtoActor, alphaOverride: Float = 1f) : Actor {
         val actor = persistentActorGenerator.createPersistentActor(protoActor, alphaOverride = alphaOverride)
         val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
@@ -77,4 +78,27 @@ public class EntitySpawner @Inject constructor(
         return actorSwapGenerator.generateActorSwapActorActionPair(doorEntity.openAnimation, AnimatedImageParams(startsVisible = false, loops = true), actorSettable = doorEntity)
     }
 
+    /**
+     * Spawns an entity at a tile, AND puts it on the animation queue.
+     */
+    fun spawnEntityAtTileInSequence(protoActor: ProtoActor,
+                                    tileLocation: TileLocation,
+                                    animatedImageParams: AnimatedImageParams = AnimatedImageParams.RUN_ALWAYS_AND_FOREVER) : Actor{
+        val actor = protoActor.toActor(animatedImageParams)
+        val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
+        actor.setBoundingBox(boundingBox)
+        tiledMapStageProvider.tiledMapStage.addActor(actor)
+        actor.isVisible = false
+        animationActionQueueProvider.addAction(ActorActionPair(actor, revealActionGenerator.generateRevealAction(actor)))
+        return actor
+    }
+
+    fun despawnEntityInSequence(actor: Actor){
+        animationActionQueueProvider.addAction(hideAnimationGenerator.generateHideActorActionPair(actor))
+    }
+
+
+
 }
+// TODO: Data driven character generation
+data class SpawnCharacterAtTileParams(val tacMapUnit: TacMapUnitTemplate, val tileLocation: TileLocation, val protoActor: ProtoActor, val animatedImageParams: AnimatedImageParams = AnimatedImageParams.RUN_ALWAYS_AND_FOREVER)

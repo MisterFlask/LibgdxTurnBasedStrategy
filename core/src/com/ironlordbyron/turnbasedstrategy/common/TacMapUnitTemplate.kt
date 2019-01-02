@@ -3,6 +3,7 @@ package com.ironlordbyron.turnbasedstrategy.common
 import com.ironlordbyron.turnbasedstrategy.ai.EnemyAiType
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.common.abilities.StandardAbilities
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.equipment.EquipmentClass
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TerrainType
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
@@ -15,7 +16,8 @@ data class TacMapUnitTemplate(val movesPerTurn: Int,
                               val abilities: List<LogicalAbility> = listOf(),
                               val allowedEquipment: Collection<EquipmentClass> = listOf(EquipmentClass.MELEE_WEAPON_LARGE), //TODO
                               val walkableTerrainTypes : Collection<TerrainType> = listOf(TerrainType.GRASS),
-                              val enemyAiType: EnemyAiType = EnemyAiType.BASIC
+                              val enemyAiType: EnemyAiType = EnemyAiType.BASIC,
+                              val startingAttributes: Collection<LogicalCharacterAttribute> = listOf()
 ) {
     companion object TacMapUnit {
         private val _default_sit = SuperimposedTilemaps(tileSetNames = SuperimposedTilemaps.PLAYER_TILE_SETS,

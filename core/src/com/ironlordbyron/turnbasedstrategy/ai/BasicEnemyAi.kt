@@ -23,15 +23,7 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
     override fun getNextActions(thisCharacter: LogicalCharacter): List<AiPlannedAction> {
         val nextMove = getNextMoveLocation(thisCharacter)
         val locationAfterMove = nextMove?:thisCharacter.tileLocation
-        var abilityUsage : AiPlannedAction.AbilityUsage? = null
-        for (logicalAbilityAndEquipment in thisCharacter.abilities){
-            val ability = abilityFactory.acquireAbility(logicalAbilityAndEquipment)
-            val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter, logicalAbilityAndEquipment.equipment, locationAfterMove)
-            if (!targetableTilesFromThisSquare.isEmpty()){
-                abilityUsage = AiPlannedAction.AbilityUsage(targetableTilesFromThisSquare.first(), logicalAbilityAndEquipment, thisCharacter)
-                // Can make evaluation function later for telling which abilityEquipmentPair to use.
-            }
-        }
+        var abilityUsage: AiPlannedAction.AbilityUsage? = getNextAbilityUsage(thisCharacter, locationAfterMove)
         val listOfActions = ArrayList<AiPlannedAction>()
         if (nextMove != null){
             listOfActions.add(AiPlannedAction.MoveToTile(nextMove))
@@ -40,6 +32,19 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
             listOfActions.add(abilityUsage)
         }
         return listOfActions
+    }
+
+    private fun getNextAbilityUsage(thisCharacter: LogicalCharacter, locationAfterMove: TileLocation): AiPlannedAction.AbilityUsage? {
+        var abilityUsage: AiPlannedAction.AbilityUsage? = null
+        for (logicalAbilityAndEquipment in thisCharacter.abilities) {
+            val ability = abilityFactory.acquireAbility(logicalAbilityAndEquipment)
+            val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter, logicalAbilityAndEquipment.equipment, locationAfterMove)
+            if (!targetableTilesFromThisSquare.isEmpty()) {
+                abilityUsage = AiPlannedAction.AbilityUsage(targetableTilesFromThisSquare.first(), logicalAbilityAndEquipment, thisCharacter)
+                // Can make evaluation function later for telling which abilityEquipmentPair to use.
+            }
+        }
+        return abilityUsage
     }
 
     // First priority: Can we hit an enemy with an abilityEquipmentPair from a reachable tile?  If so, DO IT.

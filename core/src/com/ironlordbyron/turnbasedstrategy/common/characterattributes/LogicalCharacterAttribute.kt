@@ -40,7 +40,10 @@ public class ShieldsAnotherOrganFunctionalAttribute(val entitySpawner: EntitySpa
     var thisShields : LogicalCharacter? = null
     var shieldActor: Actor? = null
     override fun onDeath(thisCharacter: LogicalCharacter){
-
+        val shieldActor = this.shieldActor
+        if (shieldActor != null){
+            entitySpawner.despawnEntityInSequence(shieldActor)
+        }
     }
 
     override fun onInitialization(thisCharacter: LogicalCharacter) {
@@ -56,6 +59,7 @@ public class ShieldsAnotherOrganFunctionalAttribute(val entitySpawner: EntitySpa
             thisShields = masterOrgan
         }
     }
+
 
 }
 
