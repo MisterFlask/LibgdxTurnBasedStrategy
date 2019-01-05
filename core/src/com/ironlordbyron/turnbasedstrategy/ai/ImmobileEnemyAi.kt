@@ -5,8 +5,7 @@ import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityFactory
 import javax.inject.Inject
 
-class ImmobileEnemyAi @Inject constructor(
-                                          val abilityFactory: AbilityFactory) : EnemyAi{
+class ImmobileEnemyAi @Inject constructor(val abilityFactory: AbilityFactory) : EnemyAi{
     override fun getNextActions(thisCharacter: LogicalCharacter): List<AiPlannedAction> {
         val targetableSquare = getTargetableSquare(thisCharacter)
         if (targetableSquare == null){
