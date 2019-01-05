@@ -50,5 +50,11 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
                 it.equipment.add(StandardEquipment.sword)
             }
         }
+        val masterOrgans = tiledMapInterpreter.getMasterOrgan(boardProvider.tiledMap)
+        for (tile in masterOrgans){
+            gameBoardOperator.addCharacterToTile(tacMapUnit = TacMapUnitTemplate.MASTER_ORGAN, tileLocation = tile,
+                    playerControlled = false).let{
+            }
+        }
     }
 }

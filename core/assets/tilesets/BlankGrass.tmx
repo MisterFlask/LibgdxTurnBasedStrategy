@@ -1426,9 +1426,9 @@
     <property name="type" value="SPAWNER"/>
    </properties>
   </object>
-  <object id="33" name="SPAWNER" x="368" y="192" width="16" height="16">
+  <object id="33" name="MASTER_ORGAN" x="368" y="192" width="16" height="16">
    <properties>
-    <property name="type" value="SPAWNER"/>
+    <property name="type" value="MASTER_ORGAN"/>
    </properties>
   </object>
   <object id="34" name="SPAWNER" x="336" y="352" width="16" height="16">
