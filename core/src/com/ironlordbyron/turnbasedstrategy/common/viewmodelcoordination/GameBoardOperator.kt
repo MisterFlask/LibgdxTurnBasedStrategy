@@ -104,7 +104,7 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
 
     fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) : LogicalCharacter {
         val actor = characterImageManager.placeCharacterActor(tileLocation,tacMapUnit.tiledTexturePath)
-        val character=  LogicalCharacter(actor, tileLocation, tacMapUnit, playerControlled)
+        val character= LogicalCharacter(actor, tileLocation, tacMapUnit, playerControlled)
         boardState.listOfCharacters.add(character)
         return character
     }

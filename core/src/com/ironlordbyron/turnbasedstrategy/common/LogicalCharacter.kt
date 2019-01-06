@@ -19,7 +19,11 @@ data class LogicalCharacter(val actor: Actor,
                             var maxHealth: Int = 3,
                             var healthLeft: Int = maxHealth,
                             val equipment: ArrayList<LogicalEquipment> = ArrayList(),
-                            val attributes: Collection<LogicalCharacterAttribute> = listOf()) {
+                            val attributes: ArrayList<LogicalCharacterAttribute> = arrayListOf()) {
+    init{
+        attributes.addAll(tacMapUnit.startingAttributes)
+    }
+
     val abilities: Collection<LogicalAbilityAndEquipment>
         get() = acquireAbilities()
 

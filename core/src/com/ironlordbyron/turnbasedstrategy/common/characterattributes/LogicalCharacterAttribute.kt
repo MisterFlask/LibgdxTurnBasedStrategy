@@ -7,6 +7,7 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySp
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
+import javax.inject.Inject
 
 /**
  * So, here's how this works: Each attribute corresponds to a visible icon for the player to interact with.
@@ -17,7 +18,8 @@ public data class LogicalCharacterAttribute(val name: String,
                                             val explodesOnDeath: LogicalCharacterAttributeTrigger.ExplodesOnDeath? = null,
                                             val shieldsAnotherOrgan: LogicalCharacterAttributeTrigger.ShieldsAnotherOrgan? = null,
                                             val masterOrgan: Boolean = false,
-                                            val organ: Boolean = false){
+                                            val organ: Boolean = false,
+                                            val id: String = name){
     companion object {
         val _demonImg = SuperimposedTilemaps(tileSetNames = listOf("Demon0","Demon1"), textureId = "2")
         val EXPLODES_ON_DEATH = LogicalCharacterAttribute("Explodes On Death",
@@ -32,8 +34,8 @@ public data class LogicalCharacterAttribute(val name: String,
     }
 }
 
-public class FunctionalCharacterAttributeFactory(val entitySpawner: EntitySpawner,
-                                                 val tacticalMapState: TacticalMapState){
+public class FunctionalCharacterAttributeFactory @Inject constructor (val entitySpawner: EntitySpawner,
+                                                                      val tacticalMapState: TacticalMapState){
 
     fun getFunctionalAttributesForCharacter(logicalCharacter: LogicalCharacter): List<FunctionalCharacterAttribute> {
         return logicalCharacter.attributes.flatMap{getFunctionalAttributesFromLogicalAttribute(it, logicalCharacter)}
@@ -74,7 +76,7 @@ public class ShieldsAnotherOrganFunctionalAttribute(val entitySpawner: EntitySpa
 
     override fun onInitialization(thisCharacter: LogicalCharacter) {
 
-        val masterOrgan = getCharacterWithAttribute(LogicalCharacterAttributeTrigger.MasterOrgan())
+        val masterOrgan = getCharacterWithMasterAttribute()
         if (masterOrgan != null){
             val shieldActor = entitySpawner.spawnEntityAtTileInSequence(
                     DataDrivenOnePageAnimation.RED_SHIELD_ACTOR,
@@ -84,7 +86,7 @@ public class ShieldsAnotherOrganFunctionalAttribute(val entitySpawner: EntitySpa
         }
     }
 
-    private fun getCharacterWithAttribute(logicalCharacterAttribute: LogicalCharacterAttributeTrigger): LogicalCharacter? {
+    private fun getCharacterWithMasterAttribute(): LogicalCharacter? {
         return tacticalMapState
                 .listOfCharacters
                 .filter { character -> character.attributes.any { it.masterOrgan } }

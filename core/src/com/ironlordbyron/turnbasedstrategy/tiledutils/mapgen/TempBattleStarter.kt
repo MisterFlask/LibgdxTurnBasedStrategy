@@ -4,9 +4,13 @@ import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.ironlordbyron.turnbasedstrategy.common.GameBoardOperator
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
+import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttributeFactory
 import com.ironlordbyron.turnbasedstrategy.common.equipment.StandardEquipment
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.tiledutils.BoundingRectangle
+import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.getBoundsOfTile
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 import javax.inject.Inject
@@ -26,7 +30,10 @@ class TileMapProvider {
 @Singleton
 class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
                                             val gameBoardOperator: GameBoardOperator,
-                                            val tiledMapInterpreter: TiledMapInterpreter){
+                                            val tiledMapInterpreter: TiledMapInterpreter,
+                                            val tacmapState: TacticalMapState,
+                                            val functionalCharacterAttributeFactory: FunctionalCharacterAttributeFactory,
+                                            val animationActionQueueProvider: AnimationActionQueueProvider){
     fun startBattle(){
         val legitTiles = tiledMapInterpreter.getPossiblePlayerSpawnPositions(boardProvider.tiledMap)
         for (tile in legitTiles){
@@ -56,5 +63,19 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
                     playerControlled = false).let{
             }
         }
+        val shieldingOrgans = tiledMapInterpreter.getShieldingOrgan(boardProvider.tiledMap)
+        for (tile in shieldingOrgans){
+            gameBoardOperator.addCharacterToTile(tacMapUnit = TacMapUnitTemplate.SHIELDING_ORGAN, tileLocation = tile,
+                    playerControlled = false).let{
+            }
+        }
+
+        for (char in tacmapState.listOfCharacters){
+            val allCharacterFunctionalAttributes = functionalCharacterAttributeFactory.getFunctionalAttributesForCharacter(char)
+            for (func in allCharacterFunctionalAttributes){
+                func.onInitialization(char)
+            }
+        }
+        animationActionQueueProvider.runThroughActionQueue()
     }
 }
