@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils
 
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
@@ -24,7 +25,10 @@ class CharacterImageManager @Inject constructor(val tiledMapOperationsHandler: T
     override fun placeCharacterActor(tileLocation: TileLocation, protoActor: ProtoActor) : Actor {
         val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
         val characterActor = protoActor.toActor(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER)
+        val group = Group()
+        group.addActor(characterActor)
         characterActor.setBoundingBox(boundingBox)
+        group.setBoundingBox(boundingBox)
         stageProvider.tiledMapStage.addActor(characterActor)
         return characterActor
     }
