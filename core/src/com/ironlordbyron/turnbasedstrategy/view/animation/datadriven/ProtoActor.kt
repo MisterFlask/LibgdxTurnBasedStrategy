@@ -7,7 +7,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 
 public interface ProtoActor{
     val orientation: OrientationType
-    fun toActor(animatedImageParams: AnimatedImageParams) : Actor
+    fun toActor(animatedImageParams: AnimatedImageParams = AnimatedImageParams.RUN_ALWAYS_AND_FOREVER) : Actor
     fun getDefaultAnimatedImageParams() : AnimatedImageParams? {
         return null
     }

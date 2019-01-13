@@ -8,6 +8,7 @@ import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.TiledTexturePath
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
+import com.ironlordbyron.turnbasedstrategy.view.animation.ScaledActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import java.lang.IllegalStateException
 import javax.inject.Inject
@@ -35,10 +36,20 @@ class CharacterImageManager @Inject constructor(val tiledMapOperationsHandler: T
 }
 
 fun Actor.setBoundingBox(boundingBox: BoundingRectangle) {
-    this.x = boundingBox.x.toFloat()
-    this.y = boundingBox.y.toFloat()
-    this.width = boundingBox.width.toFloat()
-    this.height = boundingBox.height.toFloat()
+    if (this is ScaledActor){
+        val scaleFactor = this.scalingFactor
+        val trueWidth = boundingBox.width.toFloat() * scaleFactor
+        val trueHeight = boundingBox.height.toFloat() * scaleFactor
+        this.x = boundingBox.x.toFloat() - (trueWidth - boundingBox.width) / 2
+        this.y = boundingBox.y.toFloat() - (trueHeight - boundingBox.height) / 2
+        this.width = trueWidth
+        this.height = trueHeight
+    } else{
+        this.x = boundingBox.x.toFloat()
+        this.y = boundingBox.y.toFloat()
+        this.width = boundingBox.width.toFloat()
+        this.height = boundingBox.height.toFloat()
+    }
 }
 fun Actor.getBoundingBox(): BoundingRectangle {
     return BoundingRectangle(this.x.toInt(), this.y.toInt(), this.width.toInt(), this.height.toInt())

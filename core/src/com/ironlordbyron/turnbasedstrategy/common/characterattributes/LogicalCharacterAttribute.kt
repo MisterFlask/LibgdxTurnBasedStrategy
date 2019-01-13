@@ -7,6 +7,7 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySp
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
+import com.ironlordbyron.turnbasedstrategy.view.animation.external.SpecialEffectManager
 import javax.inject.Inject
 
 /**
@@ -35,7 +36,8 @@ public data class LogicalCharacterAttribute(val name: String,
 }
 
 public class FunctionalCharacterAttributeFactory @Inject constructor (val entitySpawner: EntitySpawner,
-                                                                      val tacticalMapState: TacticalMapState){
+                                                                      val tacticalMapState: TacticalMapState,
+                                                                      val specialEffectManager: SpecialEffectManager){
 
     fun getFunctionalAttributesForCharacter(logicalCharacter: LogicalCharacter): List<FunctionalCharacterAttribute> {
         return logicalCharacter.attributes.flatMap{getFunctionalAttributesFromLogicalAttribute(it, logicalCharacter)}
@@ -44,7 +46,7 @@ public class FunctionalCharacterAttributeFactory @Inject constructor (val entity
     fun getFunctionalAttributesFromLogicalAttribute(logicalAttribute: LogicalCharacterAttribute, character: LogicalCharacter) : Collection<FunctionalCharacterAttribute>{
         val attrsList = ArrayList<FunctionalCharacterAttribute>()
         if (logicalAttribute.shieldsAnotherOrgan != null){
-            attrsList.add(ShieldsAnotherOrganFunctionalAttribute(entitySpawner, tacticalMapState))
+            attrsList.add(ShieldsAnotherOrganFunctionalAttribute(entitySpawner, tacticalMapState, specialEffectManager))
         }
 
         return attrsList
@@ -63,7 +65,8 @@ public interface LogicalCharacterAttributeTrigger{
 
 
 public class ShieldsAnotherOrganFunctionalAttribute(val entitySpawner: EntitySpawner,
-                                                    val tacticalMapState: TacticalMapState): FunctionalCharacterAttribute {
+                                                    val tacticalMapState: TacticalMapState,
+                                                    val specialEffectManager: SpecialEffectManager): FunctionalCharacterAttribute {
     var thisShields : LogicalCharacter? = null
     var shieldActor: Actor? = null
 
@@ -75,7 +78,6 @@ public class ShieldsAnotherOrganFunctionalAttribute(val entitySpawner: EntitySpa
     }
 
     override fun onInitialization(thisCharacter: LogicalCharacter) {
-
         val masterOrgan = getCharacterWithMasterAttribute()
         if (masterOrgan != null){
             val shieldActor = entitySpawner.spawnEntityAtTileInSequence(
@@ -83,6 +85,7 @@ public class ShieldsAnotherOrganFunctionalAttribute(val entitySpawner: EntitySpa
                     masterOrgan.tileLocation)
             this.shieldActor = shieldActor
             thisShields = masterOrgan
+            specialEffectManager.generateLineEffect(thisCharacter.actor, masterOrgan.actor)
         }
     }
 

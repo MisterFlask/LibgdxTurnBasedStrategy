@@ -79,6 +79,7 @@ public class GdxGameMain extends ApplicationAdapter  {
         tiledMapRenderer.render();
         tiledMapStage.act();
         GameModuleInjector.Companion.getGameCameraProvider().render();
+        GameModuleInjector.Companion.getSpecialEffectManager().renderSpecialEffects();
         hudCamera.update();
         tiledMapStage.draw();
         hudStage.draw();

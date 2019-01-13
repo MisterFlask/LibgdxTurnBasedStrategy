@@ -9,6 +9,7 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.BlankMapGenerator
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.camera.GameCameraProvider
+import com.ironlordbyron.turnbasedstrategy.view.animation.external.SpecialEffectManager
 import com.ironlordbyron.turnbasedstrategy.view.animation.passive.EagerInitializer
 import com.ironlordbyron.turnbasedstrategy.view.ui.TacMapHudFactory
 
@@ -56,6 +57,11 @@ class GameModuleInjector {
         fun getGameCameraProvider() : GameCameraProvider {
             var provider = moduleInjector.getInstance(GameCameraProvider::class.java)
             return provider
+        }
+
+        fun getSpecialEffectManager() : SpecialEffectManager {
+            var manager = moduleInjector.getInstance(SpecialEffectManager::class.java)
+            return manager
         }
     }
 }

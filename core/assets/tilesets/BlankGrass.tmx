@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="37">
+<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="30" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="10" nextobjectid="38">
  <tileset firstgid="1" name="strategicTileset" tilewidth="16" tileheight="16" tilecount="336" columns="16">
   <image source="tileset.png" trans="ff00ff" width="256" height="336"/>
   <terraintypes>
@@ -1444,6 +1444,11 @@
   <object id="36" name="SPAWNER" x="288" y="288" width="16" height="16">
    <properties>
     <property name="type" value="SPAWNER"/>
+   </properties>
+  </object>
+  <object id="37" name="SHIELDING_ORGAN" x="96" y="80" width="16" height="16">
+   <properties>
+    <property name="type" value="SHIELDING_ORGAN"/>
    </properties>
   </object>
  </objectgroup>
