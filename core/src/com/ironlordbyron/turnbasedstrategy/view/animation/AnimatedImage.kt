@@ -51,7 +51,7 @@ ScaledActor{
     companion object {
         fun fromDataDrivenAnimation(dataDrivenOnePageAnimation: DataDrivenOnePageAnimation,
                                     animatedImageParams: AnimatedImageParams): AnimatedImage {
-            return AnimatedImage(SpriteSheetParser().createAnimation(dataDrivenOnePageAnimation, dataDrivenOnePageAnimation.frameDurationInSeconds), animatedImageParams,
+            return AnimatedImage(SpriteSheetParser.INSTANCE.createAnimation(dataDrivenOnePageAnimation, dataDrivenOnePageAnimation.frameDurationInSeconds), animatedImageParams,
                     dataDrivenOnePageAnimation.scaleFactor)
         }
 

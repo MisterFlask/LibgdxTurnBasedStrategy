@@ -12,8 +12,26 @@ import javax.inject.Singleton
 @Singleton
 class SpriteSheetParser(){
 
+    companion object{
+        val INSTANCE = SpriteSheetParser()
+    }
+
+    val cache = HashMap<DataDrivenOnePageAnimation, Array<TextureRegion>>()
+
     public fun createAnimation(anim: DataDrivenOnePageAnimation,
                                frameDuration: Float): Animation<TextureRegion> {
+
+        val walkFrames = retrieveTextureRegionFromAnimation(anim)
+
+        // Initialize the Animation with the frame interval and array of frames
+        val walkAnimation = Animation<TextureRegion>(frameDuration, walkFrames)
+        return walkAnimation
+    }
+
+    private fun retrieveTextureRegionFromAnimation(anim: DataDrivenOnePageAnimation): Array<TextureRegion> {
+        if (cache[anim] != null){
+            return cache[anim]!!
+        }
         val frameRows = anim.rows
         val frameCols = anim.cols
         val walkSheet = Texture(Gdx.files.internal(anim.filePath))
@@ -33,9 +51,7 @@ class SpriteSheetParser(){
                 walkFrames.add(tmp[i][j])
             }
         }
-
-        // Initialize the Animation with the frame interval and array of frames
-        val walkAnimation = Animation<TextureRegion>(frameDuration, walkFrames)
-        return walkAnimation
+        cache[anim] = walkFrames
+        return walkFrames
     }
 }
