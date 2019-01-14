@@ -18,6 +18,8 @@ import com.ironlordbyron.turnbasedstrategy.view.ui.TacMapHudFactory;
 
 public class GdxGameMain extends ApplicationAdapter  {
 
+    public static Float TILEMAP_SCALING_FACTOR = 1.0f; // TODO: This super doesn't work, don't change it
+
     private final static int WINDOW_WIDTH = 1100;
     private final static int WINDOW_HEIGHT = 600;
 
@@ -46,7 +48,7 @@ public class GdxGameMain extends ApplicationAdapter  {
         tiledMap = tileMapGenerator.generateMap(BlankMapGenerator.Companion.getDefaultMapGenParams());
         TileMapProvider tileMapProvider = GameModuleInjector.Companion.createGameStateProvider();
         tileMapProvider.setTiledMap(tiledMap);
-        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+        tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap, TILEMAP_SCALING_FACTOR);
         TiledMapStageFactory tiledMapStageFactory = GameModuleInjector.Companion.createTiledMapStageFactory();
         tiledMapStage = tiledMapStageFactory.create(tiledMap, tacMapCamera);
         FitViewport tiledMapViewport = new FitViewport(w, h, tacMapCamera);

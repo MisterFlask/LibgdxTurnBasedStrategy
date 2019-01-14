@@ -16,10 +16,14 @@ data class DataDrivenOnePageAnimation(val filePath: String, val rows : Int, val 
     }
 
     companion object {
-        val RED_SHIELD_ACTOR = DataDrivenOnePageAnimation("animations/ring_red.png", 3, 6, scaleFactor = 2f)
-        val EXPLODE = DataDrivenOnePageAnimation("animations/exp2.png", 4, 4, frameDurationInSeconds = .04f)
+        val RED_SHIELD_ACTOR = DataDrivenOnePageAnimation("animations/ring_red.png", 3, 6,
+                scaleFactor = 2f,
+                frameDurationInSeconds = .01f)
+        val EXPLODE = DataDrivenOnePageAnimation("animations/exp2.png", 4, 4,
+                frameDurationInSeconds = .04f)
         val FIRE = DataDrivenOnePageAnimation("animations/Fire.png", 3, 3)
-        val LASER = DataDrivenOnePageAnimation("animations/laser.png", 3, 6, frameDurationInSeconds = .03f)
+        val LASER = DataDrivenOnePageAnimation("animations/laser.png", 3, 6,
+                frameDurationInSeconds = .03f)
         val FIREBALL = DataDrivenOnePageAnimation("animations/fireball.png", 2, 3, OrientationType.LEFT)
         val SWORDSLASH = DataDrivenOnePageAnimation("animations/swordslash.png", 6, 6, OrientationType.LEFT)
         val CLAWSLASH = DataDrivenOnePageAnimation("animations/clawslash.png", 5, 6, OrientationType.LEFT, frameDurationInSeconds = .01f)

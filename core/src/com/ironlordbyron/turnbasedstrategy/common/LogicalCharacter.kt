@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.Group
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
@@ -9,7 +10,7 @@ import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
  * Represents a mutable character generated from a template.
  * Has a location, an associated actor, and a
  */
-data class LogicalCharacter(val actor: Actor,
+data class LogicalCharacter(val actor: Group,
                             var tileLocation: TileLocation,
                             val tacMapUnit: TacMapUnitTemplate,
                             val playerControlled: Boolean,

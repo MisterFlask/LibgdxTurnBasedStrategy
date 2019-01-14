@@ -32,13 +32,16 @@ public class EntitySpawner @Inject constructor(
         val actorSwapGenerator: ActorSwapAnimationGenerator,
         val tiledMapStageProvider: TacticalTiledMapStageProvider,
         val animationActionQueueProvider: AnimationActionQueueProvider,
-        val hideAnimationGenerator: HideAnimationGenerator
+        val hideAnimationGenerator: HideAnimationGenerator,
+        val visibleCharacterDataFactory: VisibleCharacterDataFactory
 ){
-    fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) {
-        val actor = characterImageManager.placeCharacterActor(tileLocation,tacMapUnit.tiledTexturePath)
-        val characterSpawned = LogicalCharacter(actor, tileLocation, tacMapUnit, playerControlled)
+    fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) : LogicalCharacter {
+        val group = characterImageManager.placeCharacterActor(tileLocation,tacMapUnit.tiledTexturePath)
+        val characterSpawned = LogicalCharacter(group, tileLocation, tacMapUnit, playerControlled)
+        visibleCharacterDataFactory.generateCharacterHpMarker(characterSpawned)
         boardState.listOfCharacters.add(characterSpawned)
         eventNotifier.notifyListenersOfGameEvent(TacticalGameEvent.UnitSpawned(characterSpawned))
+        return characterSpawned
     }
 
 

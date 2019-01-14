@@ -9,6 +9,7 @@ import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.TiledTexturePath
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
+import com.ironlordbyron.turnbasedstrategy.view.animation.GroupNotRespectingClicks
 import com.ironlordbyron.turnbasedstrategy.view.animation.ScaledActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import java.lang.IllegalStateException
@@ -22,15 +23,14 @@ class CharacterImageManager @Inject constructor(val tiledMapOperationsHandler: T
 
 
 
-    override fun placeCharacterActor(tileLocation: TileLocation, protoActor: ProtoActor) : Actor {
+    override fun placeCharacterActor(tileLocation: TileLocation, protoActor: ProtoActor) : Group {
         val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
         val characterActor = protoActor.toActor(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER)
-        val group = Group()
+        val group = GroupNotRespectingClicks()
         group.addActor(characterActor)
-        characterActor.setBoundingBox(boundingBox)
         group.setBoundingBox(boundingBox)
-        stageProvider.tiledMapStage.addActor(characterActor)
-        return characterActor
+        stageProvider.tiledMapStage.addActor(group)
+        return group
     }
 
     fun retrieveCharacterImage(character: LogicalCharacter) : Actor {

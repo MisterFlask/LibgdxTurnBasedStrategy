@@ -30,7 +30,7 @@ import com.kotcrab.vis.ui.building.utilities.Alignment
  * Created by Aaron on 3/30/2018.
  */
 
-val mySkin: Skin = Skin(Gdx.files.internal("tactical-ui-skins/Tracer_UI_Skin/tracerui/tracer-ui.json"))
+public val mySkin: Skin = Skin(Gdx.files.internal("tactical-ui-skins/Tracer_UI_Skin/tracerui/tracer-ui.json"))
 //val mySkin : Skin? = null
 @Singleton
 class TacMapHudFactory @Inject constructor(val eventNotifier: EventNotifier,

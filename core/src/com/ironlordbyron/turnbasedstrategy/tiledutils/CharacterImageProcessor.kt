@@ -12,7 +12,35 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import javax.inject.Inject
 import javax.inject.Singleton
 
-data class BoundingRectangle(val x: Int, val y: Int, val width: Int, val height: Int)
+enum class JustificationType{
+    BOTTOM, // encompasses bottom 1/8th of the tile surface.
+
+    TOP_RIGHT // encompasses top 1/8th of the tile surface.
+}
+
+data class BoundingRectangle(val x: Int, val y: Int, val width: Int, val height: Int){
+    fun getChunkOfBoundingRectangle(numCols: Int, justify: JustificationType, n: Int): BoundingRectangle {
+        if (n >= numCols){
+            throw IllegalArgumentException("Can't have an n greater than numCols")
+        }
+        if (justify == JustificationType.TOP_RIGHT){
+            val proportionDedicatedToStuff = 1/4
+            val toBeDistributed = this.width * (1 - proportionDedicatedToStuff)
+            val x = this.width * toBeDistributed
+            val y = this.height * (1 - proportionDedicatedToStuff)
+            val widthPerCol = this.width / numCols
+            return BoundingRectangle(x + toBeDistributed/widthPerCol * n, y,
+                    width= widthPerCol,
+                    height = this.height * proportionDedicatedToStuff)
+        }else if (justify == JustificationType.BOTTOM){
+            val widthPerCol = this.width / numCols
+            val bottomHeight = this.height * 1/4
+            return BoundingRectangle(n * widthPerCol, 0, widthPerCol, bottomHeight)
+        }
+        throw java.lang.IllegalArgumentException("Gotta choose a justification")
+    }
+
+}
 
 fun TiledMapTile.getBounds(): BoundingRectangle {
     return BoundingRectangle(this.textureRegion.regionX, this.textureRegion.regionY, this.textureRegion.regionWidth, this.textureRegion.regionHeight)
