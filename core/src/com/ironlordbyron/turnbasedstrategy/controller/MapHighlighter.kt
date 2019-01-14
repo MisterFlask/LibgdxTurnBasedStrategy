@@ -51,7 +51,7 @@ public class MapHighlighter @Inject constructor(val tiledMapOperationsHandler: T
             val action = temporaryHighlightBlinking()
             val actor = imageActorFactory.createSpriteActorForTile(tileMapProvider.tiledMap, location, texture,
                     alpha = .0f)
-            actorActionPairList.add(ActorActionPair(actor, action))
+            actorActionPairList.add(ActorActionPair(actor, action, murderActorsOnceCompletedAnimation = true))
         }
         val actorActionPair = ActorActionPair(actor = actorActionPairList[0].actor,
                 action = actorActionPairList[0].action,

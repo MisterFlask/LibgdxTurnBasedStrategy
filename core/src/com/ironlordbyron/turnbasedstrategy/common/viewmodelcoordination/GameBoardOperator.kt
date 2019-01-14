@@ -64,7 +64,9 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
     private fun startPlayerTurn() {
         for (unit in boardState.listOfCharacters){
             unit.actionsLeft = unit.maxActionsLeft
-            characterSpriteUtils.brightenSprite(unit)
+            if (!unit.isDead){
+                characterSpriteUtils.brightenSprite(unit)
+            }
         }
     }
 
