@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
+import com.ironlordbyron.turnbasedstrategy.view.animation.LogicalCharacterActorGroup
 import com.ironlordbyron.turnbasedstrategy.view.animation.camera.CameraConfig
 import com.ironlordbyron.turnbasedstrategy.view.animation.camera.GameCameraProvider
 import javax.inject.Inject
@@ -15,12 +16,25 @@ import javax.inject.Singleton
 @Singleton
 public class CameraMovementAnimationGenerator @Inject constructor(val cameraProvider: GameCameraProvider,
                                                                   val logicalTileTracker: LogicalTileTracker){
+
     fun generateCameraMovementActionToLookAt(toLookAt: Actor): ActorActionPair{
-        val actor = toLookAt
+        // HACK:   If the actor is a child of a logical character group, we're just going to look at the logical character group.
+        val actor = getCameraFocusTarget(toLookAt)
         val action = CameraMovementAction(CameraConfig.secondsForAutoCameraMove, cameraProvider.camera,
-                getDesiredPositionOfCameraForActionAtLocation(toLookAt))
+                getDesiredPositionOfCameraForActionAtLocation(actor))
         println("Generated camera action")
         return ActorActionPair(actor, action, name = "CameraMovement")
+    }
+
+    private fun getCameraFocusTarget(toLookAt: Actor): Actor {
+        var current: Actor? = toLookAt
+        while(current!=null){
+            if (current is LogicalCharacterActorGroup){
+                return current
+            }
+            current = current.parent
+        }
+        return toLookAt
     }
 
     fun getDesiredPositionOfCameraForActionAtLocation(actor: Actor) : Vector3{
