@@ -1,18 +1,14 @@
 package com.ironlordbyron.turnbasedstrategy.tiledutils
 
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Group
-import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
-import com.ironlordbyron.turnbasedstrategy.common.TiledTexturePath
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
-import com.ironlordbyron.turnbasedstrategy.view.animation.GroupNotRespectingClicks
+import com.ironlordbyron.turnbasedstrategy.view.animation.LogicalCharacterActorGroup
 import com.ironlordbyron.turnbasedstrategy.view.animation.ScaledActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
-import java.lang.IllegalStateException
 import javax.inject.Inject
 
 
@@ -23,10 +19,10 @@ class CharacterImageManager @Inject constructor(val tiledMapOperationsHandler: T
 
 
 
-    override fun placeCharacterActor(tileLocation: TileLocation, protoActor: ProtoActor) : Group {
+    override fun placeCharacterActor(tileLocation: TileLocation, protoActor: ProtoActor) : LogicalCharacterActorGroup {
         val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
         val characterActor = protoActor.toActor(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER)
-        val group = GroupNotRespectingClicks()
+        val group = LogicalCharacterActorGroup()
         group.addActor(characterActor)
         group.setBoundingBox(boundingBox)
         stageProvider.tiledMapStage.addActor(group)

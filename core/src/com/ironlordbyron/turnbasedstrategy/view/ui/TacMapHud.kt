@@ -31,7 +31,6 @@ import com.kotcrab.vis.ui.building.utilities.Alignment
  */
 
 public val mySkin: Skin = Skin(Gdx.files.internal("tactical-ui-skins/Tracer_UI_Skin/tracerui/tracer-ui.json"))
-//val mySkin : Skin? = null
 @Singleton
 class TacMapHudFactory @Inject constructor(val eventNotifier: EventNotifier,
                                            val tacticalMapState: TacticalMapState,

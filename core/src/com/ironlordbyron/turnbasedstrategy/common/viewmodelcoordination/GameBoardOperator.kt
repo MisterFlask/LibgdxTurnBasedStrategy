@@ -3,6 +3,7 @@ package com.ironlordbyron.turnbasedstrategy.common
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.VisibleCharacterDataFactory
 import com.ironlordbyron.turnbasedstrategy.controller.*
 import com.ironlordbyron.turnbasedstrategy.view.CharacterSpriteUtils
 import com.ironlordbyron.turnbasedstrategy.view.animation.*
@@ -38,7 +39,8 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
                                             val floatingTextGenerator: FloatingTextGenerator,
                                             val deathAnimationGenerator: DeathAnimationGenerator,
                                             val animationActionQueueProvider: AnimationActionQueueProvider,
-                                            val revealActionGenerator: RevealActionGenerator) : EventListener{
+                                            val revealActionGenerator: RevealActionGenerator,
+                                            val visibleCharacterDataFactory: VisibleCharacterDataFactory) : EventListener{
 
 
     override fun consumeGuiEvent(event: TacticalGuiEvent) {
@@ -106,6 +108,7 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
                         damageAmount: Int) {
         targetCharacter.healthLeft -= damageAmount // TODO: Not the responsibility of this class
         animationActionQueueProvider.addAction(floatingTextGenerator.getTemporaryAnimationActorActionPair("${damageAmount}", targetCharacter.tileLocation))
+        visibleCharacterDataFactory.updateCharacterHpMarkerInSequence(targetCharacter)
         if (targetCharacter.isDead){
             animationActionQueueProvider.addAction(deathAnimationGenerator.turnCharacterSideways(targetCharacter))
         }
