@@ -40,7 +40,8 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
                                             val deathAnimationGenerator: DeathAnimationGenerator,
                                             val animationActionQueueProvider: AnimationActionQueueProvider,
                                             val revealActionGenerator: RevealActionGenerator,
-                                            val visibleCharacterDataFactory: VisibleCharacterDataFactory) : EventListener{
+                                            val visibleCharacterDataFactory: VisibleCharacterDataFactory,
+                                            val characterModificationAnimationGenerator: CharacterModificationAnimationGenerator) : EventListener{
 
 
     override fun consumeGuiEvent(event: TacticalGuiEvent) {
@@ -107,7 +108,14 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
     fun damageCharacter(targetCharacter: LogicalCharacter,
                         damageAmount: Int) {
         targetCharacter.healthLeft -= damageAmount // TODO: Not the responsibility of this class
-        animationActionQueueProvider.addAction(floatingTextGenerator.getTemporaryAnimationActorActionPair("${damageAmount}", targetCharacter.tileLocation))
+        val secondaryActions = listOf(
+                characterModificationAnimationGenerator.getCharacterShudderActorActionPair(logicalCharacter = targetCharacter),
+                characterModificationAnimationGenerator.getCharacterTemporaryDarkenActorActionPair(logicalCharacter = targetCharacter)
+
+        )
+        animationActionQueueProvider.addAction(floatingTextGenerator.getTemporaryAnimationActorActionPair("${damageAmount}", targetCharacter.tileLocation)
+                    .copy(secondaryActions =secondaryActions
+                    ))
         visibleCharacterDataFactory.updateCharacterHpMarkerInSequence(targetCharacter)
         if (targetCharacter.isDead){
             animationActionQueueProvider.addAction(deathAnimationGenerator.turnCharacterSideways(targetCharacter))

@@ -16,5 +16,4 @@ private class TextAction(val textLabel : Label, val toText: String) : Action(){
         textLabel.setText(toText)
         return true
     }
-
 }

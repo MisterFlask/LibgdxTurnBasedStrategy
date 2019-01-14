@@ -60,7 +60,9 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
             if (current.murderActorsOnceCompletedAnimation){
                 current.actor.remove()
                 for (pair in current.secondaryActions){
-                    pair.actor.remove()
+                    if (pair.murderActorsOnceCompletedAnimation){
+                        pair.actor.remove()
+                    }
                 }
             }
             if (current.name != null){

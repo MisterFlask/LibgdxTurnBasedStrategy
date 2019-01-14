@@ -6,9 +6,12 @@ import com.badlogic.gdx.graphics.g2d.Animation
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.utils.Array
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
+import javax.inject.Singleton
 
 
+@Singleton
 class SpriteSheetParser(){
+
     public fun createAnimation(anim: DataDrivenOnePageAnimation,
                                frameDuration: Float): Animation<TextureRegion> {
         val frameRows = anim.rows

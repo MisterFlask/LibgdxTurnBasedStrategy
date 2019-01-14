@@ -13,8 +13,9 @@ class ImageNotRespectingClicks(pullGenericTexture: TextureRegion) : Image(pullGe
         return null
     }
 }
-class LogicalCharacterActorGroup() : Group(){
+class LogicalCharacterActorGroup(val characterActor: Actor) : Group(){
     var hpMarker: Label? = null
+
     override fun hit(x: Float, y: Float, touchable: Boolean): Actor? {
         super.hit(x, y, touchable)
         return null

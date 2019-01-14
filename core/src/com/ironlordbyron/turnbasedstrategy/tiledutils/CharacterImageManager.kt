@@ -22,7 +22,7 @@ class CharacterImageManager @Inject constructor(val tiledMapOperationsHandler: T
     override fun placeCharacterActor(tileLocation: TileLocation, protoActor: ProtoActor) : LogicalCharacterActorGroup {
         val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
         val characterActor = protoActor.toActor(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER)
-        val group = LogicalCharacterActorGroup()
+        val group = LogicalCharacterActorGroup(characterActor)
         group.addActor(characterActor)
         group.setBoundingBox(boundingBox)
         stageProvider.tiledMapStage.addActor(group)
