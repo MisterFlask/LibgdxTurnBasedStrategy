@@ -1,7 +1,9 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
 import com.badlogic.gdx.scenes.scene2d.Action
+import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.ironlordbyron.turnbasedstrategy.ai.PathfinderFactory
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.VisibleCharacterDataFactory
 import com.ironlordbyron.turnbasedstrategy.controller.*
@@ -10,7 +12,8 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.*
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
+import java.lang.IllegalStateException
+import java.util.ArrayList
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -41,7 +44,8 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
                                             val animationActionQueueProvider: AnimationActionQueueProvider,
                                             val revealActionGenerator: RevealActionGenerator,
                                             val visibleCharacterDataFactory: VisibleCharacterDataFactory,
-                                            val characterModificationAnimationGenerator: CharacterModificationAnimationGenerator) : EventListener{
+                                            val characterModificationAnimationGenerator: CharacterModificationAnimationGenerator,
+                                            val pathfinderFactory: PathfinderFactory) : EventListener{
 
 
     override fun consumeGuiEvent(event: TacticalGuiEvent) {
@@ -85,12 +89,9 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
             animationActionQueueProvider.addAction(actorActionPairForHighlights)
         }
 
-        // next, move the character.
+        val result = getCharacterMovementActorActionPair(toTile, character)
         boardState.moveCharacterToTile(character, toTile)
-        val libgdxLocation = logicalTileTracker.getLibgdxCoordinatesFromLocation(toTile)
-        var moveAction : Action = Actions.moveTo(libgdxLocation.x.toFloat(), libgdxLocation.y.toFloat(), .5f)
-        val result = ActorActionPair(actor = character.actor, action = moveAction)
-        animationActionQueueProvider.addAction(result)
+        animationActionQueueProvider.addActions(result)
         if (character.endedTurn){
             animationActionQueueProvider.addAction(SpriteColorActorAction.build(character, SpriteColorActorAction.DIM_COLOR))
         }
@@ -100,6 +101,33 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
         }
 
         // now mark the character as moved by darkening the sprite.
+    }
+
+    val TIME_TO_MOVE = .5f
+    //TODO: Migrate this to an animation generator
+    private fun getCharacterMovementActorActionPair(toTile: TileLocation,
+                                                    character: LogicalCharacter,
+                                                    breadcrumbHint: List<TileLocation>? = null) : List<ActorActionPair> {
+        val breadcrumbs = breadcrumbHint?:getBreadcrumbs(character, toTile)
+        val actorActionPairs = ArrayList<ActorActionPair>()
+        val timePerSquare = TIME_TO_MOVE/breadcrumbs.size
+        for (breadcrumb in breadcrumbs){
+            val libgdxLocation = logicalTileTracker.getLibgdxCoordinatesFromLocation(breadcrumb)
+            var moveAction: Action = Actions.moveTo(libgdxLocation.x.toFloat(), libgdxLocation.y.toFloat(), timePerSquare)
+            actorActionPairs.add(ActorActionPair(character.actor, moveAction))
+        }
+        return actorActionPairs
+
+    }
+
+    private fun getBreadcrumbs(logicalCharacter: LogicalCharacter,
+                               toTile: TileLocation): List<TileLocation> {
+        val pathfinder = pathfinderFactory.createGridGraph(logicalCharacter)
+        val tiles = pathfinder.acquireBestPathTo(
+                logicalCharacter,
+                toTile,
+                allowEndingOnLastTile = true)
+        return tiles?.map{it.location}?.toList() ?: throw IllegalStateException("Required to call this on a character that can go to the provided tile")
     }
 
     fun removeCharacter(character: LogicalCharacter) {
