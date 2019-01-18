@@ -49,7 +49,7 @@ public class EntitySpawner @Inject constructor(
     // todo: improve flexibility (really?  Only allowing modification of alphaOverride?)
     @Deprecated("Use spawnEntityAtTileInSequence instead")
     fun addActorToTile(tileLocation: TileLocation, protoActor: ProtoActor, alphaOverride: Float = 1f) : Actor {
-        val actor = persistentActorGenerator.createPersistentActor(protoActor, alphaOverride = alphaOverride)
+        val actor = persistentActorGenerator.createPersistentActor(protoActor, alphaOverride = alphaOverride).actor
         val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
         actor.setBoundingBox(boundingBox)
         stageProvider.tiledMapStage.addActor(actor)
@@ -87,7 +87,7 @@ public class EntitySpawner @Inject constructor(
     fun spawnEntityAtTileInSequence(protoActor: ProtoActor,
                                     tileLocation: TileLocation,
                                     animatedImageParams: AnimatedImageParams = AnimatedImageParams.RUN_ALWAYS_AND_FOREVER) : Actor{
-        val actor = protoActor.toActor(animatedImageParams)
+        val actor = protoActor.toActor(animatedImageParams).actor
         val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
         actor.setBoundingBox(boundingBox)
         tiledMapStageProvider.tiledMapStage.addActor(actor)

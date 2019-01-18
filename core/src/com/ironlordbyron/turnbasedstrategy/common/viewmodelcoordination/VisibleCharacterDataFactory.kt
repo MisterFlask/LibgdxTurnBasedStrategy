@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination
 
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
@@ -17,13 +18,18 @@ public class VisibleCharacterDataFactory @Inject constructor (val animationActio
 
     val NUM_BOTTOM_TIERS = 1
 
+    init{
+
+    }
+
     public fun generateCharacterHpMarker(character: LogicalCharacter){
         val skin: Skin? = mySkin
         // todo: we can do a high-contrast drop shadow by drawing text, then just drawing it slightly smaller
-        val hpMarker = Label("HP", skin)
+        val hpMarker = Label("${character.healthLeft}", skin)
+
         hpMarker.fontScaleX = .2f
         hpMarker.fontScaleY = .2f
-        hpMarker.setBoundingBox(character.actor.getBoundingBox().getChunkOfBoundingRectangle(NUM_BOTTOM_TIERS, JustificationType.BOTTOM, 0))
+        hpMarker.setBoundingBox(character.actor.getBoundingBox().getChunkOfBoundingRectangle(NUM_BOTTOM_TIERS, JustificationType.TOP, 0))
         character.actor.addActor(hpMarker)
         character.actor.hpMarker = hpMarker
     }

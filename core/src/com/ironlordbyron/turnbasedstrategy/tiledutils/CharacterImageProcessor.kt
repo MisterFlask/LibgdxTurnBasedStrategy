@@ -14,7 +14,7 @@ import javax.inject.Singleton
 
 enum class JustificationType{
     BOTTOM, // encompasses bottom 1/8th of the tile surface.
-
+    TOP,
     TOP_RIGHT // encompasses top 1/8th of the tile surface.
 }
 
@@ -32,10 +32,11 @@ data class BoundingRectangle(val x: Int, val y: Int, val width: Int, val height:
             return BoundingRectangle(x + toBeDistributed/widthPerCol * n, y,
                     width= widthPerCol,
                     height = this.height * proportionDedicatedToStuff)
-        }else if (justify == JustificationType.BOTTOM){
+        }else if (justify == JustificationType.BOTTOM || justify == JustificationType.TOP){
             val widthPerCol = this.width / numCols
             val bottomHeight = this.height * 1/4
-            return BoundingRectangle(n * widthPerCol, 0, widthPerCol, bottomHeight)
+            val minY : Float = if (justify == JustificationType.BOTTOM) 0f else 3.0f / 4.0f * height
+            return BoundingRectangle(n * widthPerCol, minY.toInt(), widthPerCol, bottomHeight)
         }
         throw java.lang.IllegalArgumentException("Gotta choose a justification")
     }

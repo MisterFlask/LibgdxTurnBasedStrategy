@@ -17,7 +17,7 @@ public class ActorSwapAnimationGenerator @Inject constructor(val stageProvider: 
                                                 actorSettable: ActorSettable
                                                 ) : ActorActionPair{
         val actorToReplace = actorSettable.actor
-        val actorToReveal = protoActorToCreate.toActor(animatedImageParams)
+        val actorToReveal = protoActorToCreate.toActor(animatedImageParams).actor
         actorToReveal.isVisible = false
         stageProvider.tiledMapStage.addActor(actorToReveal)
         actorToReveal.setBoundingBox(actorSettable.actor.getBoundingBox())

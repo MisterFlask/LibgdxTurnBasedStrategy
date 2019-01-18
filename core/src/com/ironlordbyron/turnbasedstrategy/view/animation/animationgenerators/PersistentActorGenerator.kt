@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators
 
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.ironlordbyron.turnbasedstrategy.common.wrappers.ShadeableActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
@@ -11,7 +12,7 @@ public class PersistentActorGenerator @Inject constructor(val revealActionGenera
 
     public fun createPersistentActor(protoActor: ProtoActor,
                                      animatedImageParams: AnimatedImageParams? = null,
-                                     alphaOverride: Float? = null) : Actor {
+                                     alphaOverride: Float? = null) : ShadeableActor {
         var animatedImageParams = animatedImageParams?:defaultAnimatedImageParams
         if (alphaOverride != null){
             animatedImageParams = animatedImageParams.copy(alpha = alphaOverride)
@@ -27,6 +28,6 @@ public class PersistentActorGenerator @Inject constructor(val revealActionGenera
                                         animatedImageParams: AnimatedImageParams? = null,
                                         alphaOverride: Float? = null) : ActorActionPair {
         val actor = createPersistentActor(protoActor, animatedImageParams, alphaOverride)
-        return ActorActionPair(actor, revealActionGenerator.generateRevealAction(actor))
+        return ActorActionPair(actor.actor, revealActionGenerator.generateRevealAction(actor.actor))
     }
 }

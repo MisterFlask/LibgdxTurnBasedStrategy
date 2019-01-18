@@ -140,7 +140,7 @@ class TacMapHud(viewPort: Viewport,
         if (selectedCharacter != null){
             characterDisplayTable.add(Label(selectedCharacter.tacMapUnit.templateName, mySkin, "title"))
             characterDisplayTable.row()
-            characterDisplayTable.add(characterImageManager.retrieveCharacterImage(selectedCharacter))
+            characterDisplayTable.add(characterImageManager.retrieveCharacterImage(selectedCharacter).actor)
                     .size(portraitDimensions.width.toFloat(),portraitDimensions.height.toFloat())
             characterDisplayTable.row()
             characterDisplayTable.add(displayCharacterHp(selectedCharacter))

@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Array
+import com.ironlordbyron.turnbasedstrategy.common.wrappers.ShadeableActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.OrientationType
 
@@ -15,11 +16,13 @@ interface ScaledActor{
 }
 
 class AnimatedImage(val animation: Animation<TextureRegion>, val animatedImageParams: AnimatedImageParams, override val scalingFactor: Float) : Image(animation.getKeyFrame(0f)),
-ScaledActor{
+ScaledActor, ShadeableActor {
     init{
         this.isVisible = animatedImageParams.startsVisible
         this.color.a = animatedImageParams.alpha
     }
+
+    override val actor: Actor get() = this
 
     override fun hit(x: Float, y: Float, touchable: Boolean): Actor? {
         super.hit(x, y, touchable)
