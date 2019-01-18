@@ -1,14 +1,15 @@
 package com.ironlordbyron.turnbasedstrategy.view.animation
 
 import com.badlogic.gdx.graphics.g2d.Animation
+import com.badlogic.gdx.graphics.g2d.Batch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.badlogic.gdx.utils.Array
-import com.ironlordbyron.turnbasedstrategy.common.wrappers.ShadeableActor
+import com.ironlordbyron.turnbasedstrategy.common.wrappers.ActorWrapper
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.OrientationType
 
 
 interface ScaledActor{
@@ -16,7 +17,9 @@ interface ScaledActor{
 }
 
 class AnimatedImage(val animation: Animation<TextureRegion>, val animatedImageParams: AnimatedImageParams, override val scalingFactor: Float) : Image(animation.getKeyFrame(0f)),
-ScaledActor, ShadeableActor {
+ScaledActor, ActorWrapper {
+
+    override var shader: ShaderProgram? = null
     init{
         this.isVisible = animatedImageParams.startsVisible
         this.color.a = animatedImageParams.alpha
@@ -49,6 +52,12 @@ ScaledActor, ShadeableActor {
         stateTime += delta
         (getDrawable() as TextureRegionDrawable).setRegion(animation.getKeyFrame(stateTime, animatedImageParams.loops))
         super.act(delta)
+    }
+
+    override fun draw(batch: Batch?, parentAlpha: Float) {
+        batch?.shader = shader
+        super.draw(batch, parentAlpha)
+        batch?.shader = null
     }
 
     companion object {

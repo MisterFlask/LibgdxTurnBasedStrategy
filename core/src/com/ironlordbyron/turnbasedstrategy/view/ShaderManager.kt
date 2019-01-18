@@ -109,5 +109,5 @@ class ShaderApplicator(val vertexShader: ShaderFile,
 */
 object Shaders{
     val outlineShader_fragment = ShaderFile("outline_fragment_shader", "outline")
-    val outlineShader_vertex = ShaderFile("outline_vertex_shader", "vertex")
+    val outlineShader_vertex = ShaderFile("outline_vertex_shader", "outline")
 }

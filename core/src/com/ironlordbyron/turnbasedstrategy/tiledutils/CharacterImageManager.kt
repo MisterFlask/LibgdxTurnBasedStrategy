@@ -1,10 +1,9 @@
 package com.ironlordbyron.turnbasedstrategy.tiledutils
 
 import com.badlogic.gdx.scenes.scene2d.Actor
-import com.badlogic.gdx.scenes.scene2d.Group
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
-import com.ironlordbyron.turnbasedstrategy.common.wrappers.ShadeableActor
+import com.ironlordbyron.turnbasedstrategy.common.wrappers.ActorWrapper
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.LogicalCharacterActorGroup
@@ -30,7 +29,7 @@ class CharacterImageManager @Inject constructor(val tiledMapOperationsHandler: T
         return group
     }
 
-    fun retrieveCharacterImage(character: LogicalCharacter) : ShadeableActor {
+    fun retrieveCharacterImage(character: LogicalCharacter) : ActorWrapper {
         val tiledTexturePath = character.tacMapUnit.tiledTexturePath;
         return tiledTexturePath.toActor(AnimatedImageParams(true, true, 0.4f))
     }

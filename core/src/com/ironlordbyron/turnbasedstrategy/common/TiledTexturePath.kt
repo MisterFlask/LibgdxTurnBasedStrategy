@@ -1,7 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
-import com.badlogic.gdx.scenes.scene2d.Actor
-import com.ironlordbyron.turnbasedstrategy.common.wrappers.ShadeableActor
+import com.ironlordbyron.turnbasedstrategy.common.wrappers.ActorWrapper
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TiledMapOperationsHandler
 import com.ironlordbyron.turnbasedstrategy.tiledutils.xml.TilemapXmlProcessor
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
@@ -20,7 +19,7 @@ data class TiledTexturePath(
         val tileSetName: String,
         val sourceTileMapName: String = COMMON_TILE_MAP, override val orientation: OrientationType = OrientationType.NEUTRAL
 ): ProtoActor {
-    override fun toActor(animatedImageParams: AnimatedImageParams): ShadeableActor {
+    override fun toActor(animatedImageParams: AnimatedImageParams): ActorWrapper {
         return ImageNotRespectingClicks(TiledMapOperationsHandler(TilemapXmlProcessor()).pullGenericTexture(spriteId, tileSetName))
     }
 
