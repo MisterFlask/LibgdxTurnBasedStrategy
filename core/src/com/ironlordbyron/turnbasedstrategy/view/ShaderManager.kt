@@ -4,16 +4,8 @@ import com.badlogic.gdx.utils.GdxRuntimeException
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import javax.swing.Spring.height
-import java.awt.Color.blue
-import java.awt.Color.green
-import java.awt.Color.red
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.Vector2
-import com.ironlordbyron.turnbasedstrategy.view.Shaders.outlineShader_fragment
-import com.ironlordbyron.turnbasedstrategy.view.Shaders.outlineShader_vertex
 import javax.inject.Inject
 
 public class ShaderFactory @Inject constructor (){
@@ -37,14 +29,14 @@ fun applyShader(spriteBatch: SpriteBatch){
     // ... previous draw calls ...
     spriteBatch.end()
     shaderOutline.begin()
-    shaderOutline.setUniformf("u_viewportInverse", Vector2(1f / width, 1f / height))
+    shaderOutline.setUniformf("u_viewportInverse", Vector2(1f / viewPortWidth, 1f / viewportHeight))
     shaderOutline.setUniformf("u_offset", outlineSize)
-    shaderOutline.setUniformf("u_step", Math.min(1f, width / 70f))
+    shaderOutline.setUniformf("u_step", Math.min(1f, viewPortWidth / 70f))
     shaderOutline.setUniformf("u_color", Vector3(red.toFloat(), green.toFloat(), blue.toFloat()))
     shaderOutline.end()
     spriteBatch.setShader(shaderOutline)
     spriteBatch.begin()
-    spriteBatch.draw(textureRegion, x, y, width, height, width, height, 1f, 1f, angle)
+    spriteBatch.draw(textureRegion, x, y, viewPortWidth, viewportHeight, viewPortWidth, viewportHeight, 1f, 1f, angle)
     spriteBatch.end()
     spriteBatch.setShader(null)
     spriteBatch.begin()
@@ -82,11 +74,12 @@ uniform float u_offset;
 // Step to check for neighbors
 uniform float u_step;
  */
-class OutlineShaderParamsCreationFunction(val color: Color, val outlineSize: Float, val width: Float, val height: Float) : ShaderParamsCreationFunction{
+class OutlineShaderParamsCreationFunction(val color: Color, val outlineSize: Float, val viewPortWidth: Float, val viewportHeight: Float) : ShaderParamsCreationFunction{
     override fun setShaderParams(shader: ShaderProgram) : Unit{
-        shader.setUniformf("u_viewportInverse", Vector2(1f / width, 1f / height))
+        ShaderProgram.pedantic = false
+        shader.setUniformf("u_viewportInverse", Vector2(1f / viewPortWidth, 1f / viewportHeight))
         shader.setUniformf("u_offset", outlineSize)
-        shader.setUniformf("u_step", Math.min(1f, width / 70f))
+        shader.setUniformf("u_step", Math.min(1f, viewPortWidth / 70f))
         shader.setUniformf("u_color", Vector3(color.r.toFloat(), color.g.toFloat(), color.b.toFloat()))
     }
 }

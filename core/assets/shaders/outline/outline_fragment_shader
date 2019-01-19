@@ -27,12 +27,14 @@ void main() {
 
    float alpha = 0.0;
    bool allin = true;
+   bool somein = false;
    for( float ix = -u_offset; ix < u_offset; ix += u_step )
    {
       for( float iy = -u_offset; iy < u_offset; iy += u_step )
        {
           float newAlpha = texture2D(u_texture, T + vec2(ix, iy) * u_viewportInverse).a;
           allin = allin && newAlpha > ALPHA_VALUE_BORDER;
+          somein = somein || newAlpha > ALPHA_VALUE_BORDER;
           if (newAlpha > ALPHA_VALUE_BORDER && newAlpha >= alpha)
           {
              alpha = newAlpha;
@@ -41,8 +43,8 @@ void main() {
    }
    if (allin)
    {
-      alpha = 0.0;
-   }
-
-   gl_FragColor = vec4(u_color,alpha);
+       gl_FragColor = v_color * texture2D(u_texture, v_texCoord);
+   } else if (somein){
+        gl_FragColor = vec4(u_color, 1.0);
+    }
 }

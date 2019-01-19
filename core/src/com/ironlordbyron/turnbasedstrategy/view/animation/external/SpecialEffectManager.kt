@@ -145,26 +145,26 @@ class LaserEffect(
         end1.color = color
         end2.color = rayColor
 
-        mid1.setSize(mid1!!.width, distance)
-        mid2.setSize(mid1!!.width, distance)
+        mid1.setSize(mid1!!.viewPortWidth, distance)
+        mid2.setSize(mid1!!.viewPortWidth, distance)
 
         begin1.setPosition(position.x, position.y)
         begin2.setPosition(position.x, position.y)
 
-        mid1.setPosition(begin1!!.x, begin1!!.y + begin1!!.height)
-        mid2.setPosition(begin1!!.x, begin1!!.y + begin1!!.height)
+        mid1.setPosition(begin1!!.x, begin1!!.y + begin1!!.viewportHeight)
+        mid2.setPosition(begin1!!.x, begin1!!.y + begin1!!.viewportHeight)
 
-        end1.setPosition(begin1!!.x, begin1!!.y + begin1!!.height + mid1!!.height)
-        end2.setPosition(begin1!!.x, begin1!!.y + begin1!!.height + mid1!!.height)
+        end1.setPosition(begin1!!.x, begin1!!.y + begin1!!.viewportHeight + mid1!!.viewportHeight)
+        end2.setPosition(begin1!!.x, begin1!!.y + begin1!!.viewportHeight + mid1!!.viewportHeight)
 
-        begin1.setOrigin(begin1!!.width / 2, 0f)
-        begin2.setOrigin(begin1!!.width / 2, 0f)
+        begin1.setOrigin(begin1!!.viewPortWidth / 2, 0f)
+        begin2.setOrigin(begin1!!.viewPortWidth / 2, 0f)
 
 
-        mid1.setOrigin(mid1!!.width / 2, -begin1!!.height)
-        mid2.setOrigin(mid2!!.width / 2, -begin1!!.height)
-        end1.setOrigin(mid1!!.width / 2, -begin1!!.height - mid1!!.height)
-        end2.setOrigin(mid2!!.width / 2, -begin1!!.height - mid2!!.height)
+        mid1.setOrigin(mid1!!.viewPortWidth / 2, -begin1!!.viewportHeight)
+        mid2.setOrigin(mid2!!.viewPortWidth / 2, -begin1!!.viewportHeight)
+        end1.setOrigin(mid1!!.viewPortWidth / 2, -begin1!!.viewportHeight - mid1!!.viewportHeight)
+        end2.setOrigin(mid2!!.viewPortWidth / 2, -begin1!!.viewportHeight - mid2!!.viewportHeight)
 
 
         begin1.rotation = degrees

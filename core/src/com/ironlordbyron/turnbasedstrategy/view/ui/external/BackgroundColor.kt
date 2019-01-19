@@ -36,7 +36,7 @@ class BackgroundColor @JvmOverloads constructor(filename: String, x: Float = 0.0
         val width = width
         val height = height
         if (width == null || height == null || width < 0.0f || height < 0.0f)
-            setSize()        // width = 0.0f; height = 0.0f;
+            setSize()        // viewPortWidth = 0.0f; viewportHeight = 0.0f;
         if (color == null)
             setColor(255, 255, 255, 255)
         if (sprite == null) {
