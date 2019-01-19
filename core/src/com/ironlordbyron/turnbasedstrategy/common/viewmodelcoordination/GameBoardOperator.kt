@@ -143,7 +143,8 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
                 characterModificationAnimationGenerator.getCharacterTemporaryDarkenActorActionPair(logicalCharacter = targetCharacter)
 
         )
-        animationActionQueueProvider.addAction(floatingTextGenerator.getTemporaryAnimationActorActionPair("${damageAmount}", targetCharacter.tileLocation)
+        animationActionQueueProvider.addAction(
+                floatingTextGenerator.getTemporaryAnimationActorActionPair("${damageAmount}", targetCharacter.tileLocation)
                     .copy(secondaryActions =secondaryActions
                     ))
         visibleCharacterDataFactory.updateCharacterHpMarkerInSequence(targetCharacter)

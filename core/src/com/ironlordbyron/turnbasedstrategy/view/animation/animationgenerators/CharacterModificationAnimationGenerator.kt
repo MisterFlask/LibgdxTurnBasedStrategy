@@ -20,9 +20,8 @@ public class CharacterModificationAnimationGenerator{
 
     fun getCharacterTemporaryDarkenActorActionPair(logicalCharacter: LogicalCharacter): ActorActionPair {
         val originalColor = logicalCharacter.actor.characterActor.color
-        val action = Actions.sequence(
-                Actions.color(Color.RED))
-        return ActorActionPair(logicalCharacter.actor, action)
+        val action = Actions.sequence(Actions.color(Color.RED, .2f, Interpolation.linear), Actions.color(originalColor, .2f, Interpolation.linear))
+        return ActorActionPair(logicalCharacter.actor.characterActor, action)
     }
 
 
