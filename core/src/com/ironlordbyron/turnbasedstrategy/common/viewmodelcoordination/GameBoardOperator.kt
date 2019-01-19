@@ -4,7 +4,9 @@ import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.ironlordbyron.turnbasedstrategy.ai.PathfinderFactory
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttributeFactory
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.TransientEntityTracker
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.VisibleCharacterDataFactory
 import com.ironlordbyron.turnbasedstrategy.controller.*
 import com.ironlordbyron.turnbasedstrategy.view.CharacterSpriteUtils
@@ -45,7 +47,9 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
                                             val revealActionGenerator: RevealActionGenerator,
                                             val visibleCharacterDataFactory: VisibleCharacterDataFactory,
                                             val characterModificationAnimationGenerator: CharacterModificationAnimationGenerator,
-                                            val pathfinderFactory: PathfinderFactory) : EventListener{
+                                            val pathfinderFactory: PathfinderFactory,
+                                            val pulseAnimationGenerator: PulseAnimationGenerator,
+                                            val functionalCharacterAttributeFactory: FunctionalCharacterAttributeFactory) : EventListener{
 
 
     override fun consumeGuiEvent(event: TacticalGuiEvent) {
@@ -86,6 +90,8 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
             // first, show the player where the ai COULD move to
             val tilesToHighlight = tacticalMapAlgorithms.getWhereCharacterCanMoveTo(character)
             val actorActionPairForHighlights = mapHighlighter.getTileHighlightActorActionPairs(tilesToHighlight, HighlightType.RED_TILE)
+            val pulseActionPair = pulseAnimationGenerator.generateActorActionPair(character.actor.characterActor, 1f)
+            actorActionPairForHighlights.secondaryActions += pulseActionPair
             animationActionQueueProvider.addAction(actorActionPairForHighlights)
         }
 
@@ -138,23 +144,21 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
     fun damageCharacter(targetCharacter: LogicalCharacter,
                         damageAmount: Int) {
         targetCharacter.healthLeft -= damageAmount // TODO: Not the responsibility of this class
-        val secondaryActions = listOf(
+        val secondaryActions = arrayListOf(
                 characterModificationAnimationGenerator.getCharacterShudderActorActionPair(logicalCharacter = targetCharacter),
                 characterModificationAnimationGenerator.getCharacterTemporaryDarkenActorActionPair(logicalCharacter = targetCharacter)
 
         )
         animationActionQueueProvider.addAction(
                 floatingTextGenerator.getTemporaryAnimationActorActionPair("${damageAmount}", targetCharacter.tileLocation)
-                    .copy(secondaryActions =secondaryActions
+                    .copy(secondaryActions = secondaryActions
                     ))
         visibleCharacterDataFactory.updateCharacterHpMarkerInSequence(targetCharacter)
         if (targetCharacter.isDead){
             animationActionQueueProvider.addAction(deathAnimationGenerator.turnCharacterSideways(targetCharacter))
+            functionalCharacterAttributeFactory.getFunctionalAttributesForCharacter(targetCharacter)
+                    .forEach{it.onDeath(targetCharacter)}
         }
-    }
-
-    fun zoomToFocusOnTile(){
-
     }
 
 }

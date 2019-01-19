@@ -4,10 +4,13 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.TransientEntityTracker
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
+import com.ironlordbyron.turnbasedstrategy.view.animation.external.LineEffect
 import com.ironlordbyron.turnbasedstrategy.view.animation.external.SpecialEffectManager
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -19,8 +22,7 @@ public data class LogicalCharacterAttribute(val name: String,
                                             val explodesOnDeath: LogicalCharacterAttributeTrigger.ExplodesOnDeath? = null,
                                             val shieldsAnotherOrgan: LogicalCharacterAttributeTrigger.ShieldsAnotherOrgan? = null,
                                             val masterOrgan: Boolean = false,
-                                            val organ: Boolean = false,
-                                            val id: String = name){
+                                            val organ: Boolean = false){
     companion object {
         val _demonImg = SuperimposedTilemaps(tileSetNames = listOf("Demon0","Demon1"), textureId = "2")
         val EXPLODES_ON_DEATH = LogicalCharacterAttribute("Explodes On Death",
@@ -37,7 +39,8 @@ public data class LogicalCharacterAttribute(val name: String,
 
 public class FunctionalCharacterAttributeFactory @Inject constructor (val entitySpawner: EntitySpawner,
                                                                       val tacticalMapState: TacticalMapState,
-                                                                      val specialEffectManager: SpecialEffectManager){
+                                                                      val specialEffectManager: SpecialEffectManager,
+                                                                      val transientEntityTracker: TransientEntityTracker){
 
     fun getFunctionalAttributesForCharacter(logicalCharacter: LogicalCharacter): List<FunctionalCharacterAttribute> {
         return logicalCharacter.attributes.flatMap{getFunctionalAttributesFromLogicalAttribute(it, logicalCharacter)}
@@ -46,7 +49,9 @@ public class FunctionalCharacterAttributeFactory @Inject constructor (val entity
     fun getFunctionalAttributesFromLogicalAttribute(logicalAttribute: LogicalCharacterAttribute, character: LogicalCharacter) : Collection<FunctionalCharacterAttribute>{
         val attrsList = ArrayList<FunctionalCharacterAttribute>()
         if (logicalAttribute.shieldsAnotherOrgan != null){
-            attrsList.add(ShieldsAnotherOrganFunctionalAttribute(entitySpawner, tacticalMapState, specialEffectManager))
+            val funcAttr = ShieldsAnotherOrganFunctionalAttribute(entitySpawner, tacticalMapState, specialEffectManager, logicalAttribute,
+                    transientEntityTracker)
+            attrsList.add(funcAttr)
         }
 
         return attrsList
@@ -57,35 +62,58 @@ public class FunctionalCharacterAttributeFactory @Inject constructor (val entity
 public interface LogicalCharacterAttributeTrigger{
     // The below are Organ abilities
     data class ExplodesOnDeath(val radius: Int, val damage: Int) : LogicalCharacterAttributeTrigger
-    class ShieldsAnotherOrgan: LogicalCharacterAttributeTrigger
+    data class ShieldsAnotherOrgan(var characterShieldedId: UUID? = null,
+                                   var _characterShieldActorId: UUID? = null,// transient attribute
+                                   var _lineActorId: UUID? = null // transient attribute
+    ): LogicalCharacterAttributeTrigger
     class MasterOrgan: LogicalCharacterAttributeTrigger
     class Organ: LogicalCharacterAttributeTrigger
 }
 
 
-
+/**
+ * NOTE:  This IS NOT allowed to track state directly.  All state must be tracked by the Logical* classes.
+ * Functional attributes are ONLY for algorithms.
+ */
 public class ShieldsAnotherOrganFunctionalAttribute(val entitySpawner: EntitySpawner,
                                                     val tacticalMapState: TacticalMapState,
-                                                    val specialEffectManager: SpecialEffectManager): FunctionalCharacterAttribute {
-    var thisShields : LogicalCharacter? = null
-    var shieldActor: Actor? = null
+                                                    val specialEffectManager: SpecialEffectManager,
+                                                    val logicalCharacterAttribute: LogicalCharacterAttribute,
+                                                    val transientEntityTracker: TransientEntityTracker): FunctionalCharacterAttribute {
+    val thisShieldsCharacter : UUID? get() = logicalCharacterAttribute.shieldsAnotherOrgan!!.characterShieldedId
+
+    val shieldActor: UUID? get() =logicalCharacterAttribute.shieldsAnotherOrgan!!._characterShieldActorId
+    val lineEffect: UUID? get() = logicalCharacterAttribute.shieldsAnotherOrgan!!._lineActorId
 
     override fun onDeath(thisCharacter: LogicalCharacter){
         val shieldActor = this.shieldActor
         if (shieldActor != null){
-            entitySpawner.despawnEntityInSequence(shieldActor)
+            entitySpawner.despawnEntityInSequence(transientEntityTracker.retrieveActorByUuid(shieldActor)!!)
+        }
+        if (lineEffect != null){
+            entitySpawner.destroySpecialEffectInSequence(lineEffect!!, thisCharacter.actor)
         }
     }
 
     override fun onInitialization(thisCharacter: LogicalCharacter) {
+        val logicalAttr = logicalCharacterAttribute.shieldsAnotherOrgan!!
         val masterOrgan = getCharacterWithMasterAttribute()
         if (masterOrgan != null){
+
+            val characterChosen = masterOrgan.id
+            logicalAttr.characterShieldedId  = characterChosen
+
             val shieldActor = entitySpawner.spawnEntityAtTileInSequence(
                     DataDrivenOnePageAnimation.RED_SHIELD_ACTOR,
                     masterOrgan.tileLocation)
-            this.shieldActor = shieldActor
-            thisShields = masterOrgan
-            specialEffectManager.generateLineEffect(thisCharacter.actor, masterOrgan.actor)
+            val uuid = transientEntityTracker.insertActor(shieldActor)
+
+            logicalAttr._characterShieldActorId = uuid
+            val line = specialEffectManager.generateLineEffect(thisCharacter.actor,
+                    masterOrgan.actor)
+            logicalAttr._lineActorId = line.guid
+            transientEntityTracker.insertLine(line)
+            logicalCharacterAttribute.shieldsAnotherOrgan!!._characterShieldActorId
         }
     }
 

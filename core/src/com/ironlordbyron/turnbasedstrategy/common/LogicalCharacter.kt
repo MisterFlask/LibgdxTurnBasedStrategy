@@ -6,12 +6,13 @@ import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
 import com.ironlordbyron.turnbasedstrategy.view.animation.LogicalCharacterActorGroup
+import java.util.*
 
 /**
  * Represents a mutable character generated from a template.
  * Has a location, an associated actor, and a
  */
-data class LogicalCharacter(val actor: LogicalCharacterActorGroup,
+data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This is a transient attribute, do not persist
                             var tileLocation: TileLocation,
                             val tacMapUnit: TacMapUnitTemplate,
                             val playerControlled: Boolean,
@@ -21,7 +22,8 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup,
                             var maxHealth: Int = 3,
                             var healthLeft: Int = maxHealth,
                             val equipment: ArrayList<LogicalEquipment> = ArrayList(),
-                            val attributes: ArrayList<LogicalCharacterAttribute> = arrayListOf()) {
+                            val attributes: ArrayList<LogicalCharacterAttribute> = arrayListOf(),
+                            val id: UUID = UUID.randomUUID()) {
     init{
         attributes.addAll(tacMapUnit.startingAttributes)
     }

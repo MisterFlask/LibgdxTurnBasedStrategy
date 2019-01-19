@@ -1,5 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination
 
+import com.badlogic.gdx.scenes.scene2d.Action
+import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActionRunner
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import javax.inject.Inject
@@ -18,10 +20,22 @@ class AnimationActionQueueProvider @Inject constructor(val actionRunner: ActionR
         actionQueue.add(actorActionPair)
     }
 
+    public fun addBareAction(actor: Actor, action : () -> Unit){
+        actionQueue.add(ActorActionPair(actor, CustomAction(action)))
+    }
+
     public fun addActions(actorActionPairs: List<ActorActionPair>){
         actionQueue.addAll(actorActionPairs)
     }
     public fun clearQueue(){
         actionQueue = ArrayList()
+    }
+
+    public class CustomAction(val action : () -> Unit) : Action() {
+        override fun act(delta: Float): Boolean {
+            action.invoke()
+            return true
+        }
+
     }
 }

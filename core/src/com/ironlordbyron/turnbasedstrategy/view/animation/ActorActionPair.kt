@@ -12,7 +12,7 @@ data class ActorActionPair(val actor: Actor, val action: Action,
                             * As of initial implementation, this is used so that we can have multiple tile highlights
                             * work within our queueing architecture.
                             */
-                           val secondaryActions: Collection<ActorActionPair> = ArrayList(),
+                           val secondaryActions: MutableList<ActorActionPair> = ArrayList(),
                            val murderActorsOnceCompletedAnimation: Boolean = false,
                            val name: String? = null,
                            val screenShake: Boolean = false,

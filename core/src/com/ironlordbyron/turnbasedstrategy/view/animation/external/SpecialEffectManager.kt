@@ -25,7 +25,7 @@ class SpecialEffectManager @Inject constructor(val stageProvider: TacticalTiledM
     val lines = ArrayList<LineEffect>()
     val spriteBatch: SpriteBatch = SpriteBatch()
 
-    fun generateLineEffect(actor1 : Actor, actor2: Actor) : Unit{
+    fun generateLineEffect(actor1 : Actor, actor2: Actor) : LineEffect{
         // TODO
         /*
         val laser = LaserEffect(
@@ -39,10 +39,13 @@ class SpecialEffectManager @Inject constructor(val stageProvider: TacticalTiledM
         stageProvider.tiledMapStage.addActor(lineEffect.actor)
 
         lines.add(lineEffect)
+        return lineEffect
     }
 
-    fun destroyLaserEffect(laserId: UUID){
-        this.lines.remove(lines.first{it.guid == laserId})
+    fun destroyLineEffect(laserId: UUID){
+        val line = lines.first{it.guid == laserId}
+        line.actor.remove()
+        this.lines.remove(line)
     }
 
 

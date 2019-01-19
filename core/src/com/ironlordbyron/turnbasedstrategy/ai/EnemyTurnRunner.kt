@@ -40,6 +40,9 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
     public fun runEnemyTurn() {
         animationActionQueueProvider.clearQueue()
         for (enemyCharacter in boardState.listOfEnemyCharacters) {
+            if (enemyCharacter.isDead){
+                continue //dead characters don't get turns
+            }
             val ai = enemyAiFactory.getEnemyAi(enemyCharacter.tacMapUnit.enemyAiType)
             val nextActions = ai.getNextActions(enemyCharacter);
             for (action in nextActions){

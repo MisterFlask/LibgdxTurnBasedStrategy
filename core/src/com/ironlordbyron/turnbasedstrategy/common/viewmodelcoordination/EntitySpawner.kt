@@ -15,7 +15,9 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.*
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
+import com.ironlordbyron.turnbasedstrategy.view.animation.external.SpecialEffectManager
 import java.lang.IllegalArgumentException
+import java.util.*
 import javax.inject.Inject
 
 
@@ -33,7 +35,8 @@ public class EntitySpawner @Inject constructor(
         val tiledMapStageProvider: TacticalTiledMapStageProvider,
         val animationActionQueueProvider: AnimationActionQueueProvider,
         val hideAnimationGenerator: HideAnimationGenerator,
-        val visibleCharacterDataFactory: VisibleCharacterDataFactory
+        val visibleCharacterDataFactory: VisibleCharacterDataFactory,
+        val specialEffectManager: SpecialEffectManager
 ){
     fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) : LogicalCharacter {
         val group = characterImageManager.placeCharacterActor(tileLocation,tacMapUnit.tiledTexturePath)
@@ -98,6 +101,10 @@ public class EntitySpawner @Inject constructor(
 
     fun despawnEntityInSequence(actor: Actor){
         animationActionQueueProvider.addAction(hideAnimationGenerator.generateHideActorActionPair(actor))
+    }
+
+    fun destroySpecialEffectInSequence(uuid: UUID, motherActor: Actor){
+        animationActionQueueProvider.addBareAction(motherActor, {specialEffectManager.destroyLineEffect(uuid)})
     }
 
 
