@@ -10,10 +10,11 @@ public interface LabelWrapper : ActorWrapper{
     val label: Label
 }
 
-public class LabelWrapperImpl(val text: String, val skin: Skin) : Label(text, skin), LabelWrapper{
+public class LabelWrapperImpl(val text: String, style:LabelStyle) : Label(text, style), LabelWrapper{
     override val label: Label get() = this
     override val actor: Actor get() = this
 
+    constructor(text:String, skin: Skin) : this(text, skin.get(LabelStyle::class.java))
 
     override var shader : ShaderProgram? = null
 

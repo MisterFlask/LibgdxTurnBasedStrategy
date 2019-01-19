@@ -6,11 +6,16 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.Vector2
+import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
 import javax.inject.Inject
 
-public class ShaderFactory @Inject constructor (){
+public class ShaderFactory @Inject constructor (val tiledMapStageProvider: TacticalTiledMapStageProvider){
+
     fun generateOutlineShaderOfColor(color: Color,
-                                     outlineSize: Float, width: Float, height: Float): ShaderProgram {
+                                     outlineSize: Float): ShaderProgram {
+        val viewport = tiledMapStageProvider.tiledMapStage.viewport
+        val width = viewport.worldWidth
+        val height =  viewport.worldHeight
         val shaderParamFunction = OutlineShaderParamsCreationFunction(color, outlineSize, width, height)
         val program = ShaderProgram(
                 Shaders.outlineShader_vertex.shaderString,
