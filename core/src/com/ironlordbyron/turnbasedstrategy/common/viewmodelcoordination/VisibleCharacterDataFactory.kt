@@ -26,16 +26,10 @@ public class VisibleCharacterDataFactory @Inject constructor (val animationActio
     }
 
     public fun generateCharacterHpMarker(character: LogicalCharacter){
-        // todo: we can do a high-contrast drop shadow by drawing text, then just drawing it slightly smaller
         val hpMarker = textLabelGenerator.generateLabel("${character.healthLeft}")
         val outlineShaderForCharacter = shaderFactory.generateOutlineShaderOfColor(
                 Color.BLACK,
                 outlineSize = 1.5f)
-        val outlineShaderForHpMarker = shaderFactory.generateOutlineShaderOfColor(
-                Color.BLACK,
-                outlineSize = .8f)
-
-        //hpMarker.shader = outlineShader
         character.actor.addActor(hpMarker.actor)
         character.actor.shadeableActor.shader = outlineShaderForCharacter
         character.actor.hpMarker = hpMarker.label
