@@ -4,7 +4,6 @@ import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 
 class ExplodesOnDeathFunctionalAttribute(val radius: Int,
                                          val damage: Int,
@@ -18,6 +17,6 @@ class ExplodesOnDeathFunctionalAttribute(val radius: Int,
                     DataDrivenOnePageAnimation.EXPLODE,
                     it,
                     AnimatedImageParams.RUN_ONCE_AFTER_DELAY)} //RUN ONCE AFTER DELAY IS THE PROBLEM CHILD
-        entitySpawner.spawnEntitiesAtTilesInSequence(explosions)
+        entitySpawner.spawnEntitiesAtTilesInSequenceForTempAnimation(explosions)
     }
 }

@@ -36,7 +36,8 @@ public class EntitySpawner @Inject constructor(
         val animationActionQueueProvider: AnimationActionQueueProvider,
         val hideAnimationGenerator: HideAnimationGenerator,
         val visibleCharacterDataFactory: VisibleCharacterDataFactory,
-        val specialEffectManager: SpecialEffectManager
+        val specialEffectManager: SpecialEffectManager,
+        val temporaryAnimationGenerator: TemporaryAnimationGenerator
 ){
     fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) : LogicalCharacter {
         val group = characterImageManager.placeCharacterActor(tileLocation,tacMapUnit.tiledTexturePath)
@@ -103,29 +104,25 @@ public class EntitySpawner @Inject constructor(
                                  val tileLocation: TileLocation,
                                  val animatedImageParams: AnimatedImageParams)
 
-    fun spawnEntitiesAtTilesInSequence(spawnEntityParams: Collection<SpawnEntityParams>){
+    fun spawnEntitiesAtTilesInSequenceForTempAnimation(spawnEntityParams: Collection<SpawnEntityParams>){
         if (spawnEntityParams.isEmpty()){
             return
         }
-        val first = convertToActorActionPairs(spawnEntityParams.first())
+        val first = convertToTempAnimationActorActionPairs(spawnEntityParams.first())
         val rest = ArrayList(spawnEntityParams)
         rest.removeAt(0)
 
         for (entity in rest){
-            val next = convertToActorActionPairs(entity)
+            val next = convertToTempAnimationActorActionPairs(entity)
             first.secondaryActions.add(next)
         }
+        first.name = "SpawnEntityFromParams"
         animationActionQueueProvider.addAction(first)
     }
 
-    private fun convertToActorActionPairs(spawnEntityParams: SpawnEntityParams): ActorActionPair {
-
-        val actor = spawnEntityParams.protoActor.toActor(spawnEntityParams.animatedImageParams).actor
-        val boundingBox = tileMapProvider.getBoundingBoxOfTile(spawnEntityParams.tileLocation)
-        actor.setBoundingBox(boundingBox)
-        tiledMapStageProvider.tiledMapStage.addActor(actor)
-        actor.isVisible = false
-        return ActorActionPair(actor, revealActionGenerator.generateRevealAction(actor))
+    private fun convertToTempAnimationActorActionPairs(spawnEntityParams: SpawnEntityParams): ActorActionPair {
+        return temporaryAnimationGenerator.getTemporaryAnimationActorActionPair(spawnEntityParams.tileLocation,
+                spawnEntityParams.protoActor)
     }
 
     fun despawnEntityInSequence(actor: Actor){
