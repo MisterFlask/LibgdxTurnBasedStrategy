@@ -22,18 +22,22 @@ public data class LogicalCharacterAttribute(val name: String,
                                             val explodesOnDeath: LogicalCharacterAttributeTrigger.ExplodesOnDeath? = null,
                                             val shieldsAnotherOrgan: LogicalCharacterAttributeTrigger.ShieldsAnotherOrgan? = null,
                                             val masterOrgan: Boolean = false,
-                                            val organ: Boolean = false){
+                                            val organ: Boolean = false,
+                                            val description: (LogicalCharacterAttribute) -> String){
     companion object {
         val _demonImg = SuperimposedTilemaps(tileSetNames = listOf("Demon0","Demon1"), textureId = "2")
         val EXPLODES_ON_DEATH = LogicalCharacterAttribute("Explodes On Death",
                 _demonImg,
-                LogicalCharacterAttributeTrigger.ExplodesOnDeath(3, 4))
+                LogicalCharacterAttributeTrigger.ExplodesOnDeath(3, 4),
+                description = {"Explodes on death, dealing ${it.explodesOnDeath!!.damage} to everything in a ${it.explodesOnDeath!!.radius} radius"})
         val MASTER_ORGAN = LogicalCharacterAttribute("Master Organ",
                 _demonImg.copy(textureId = "3"),
-                masterOrgan= true)
+                masterOrgan= true,
+                description = {"Master organ.  When destroyed, the fortress will begin sinking back into Hell."})
         val SHIELDS_ANOTHER_ORGAN = LogicalCharacterAttribute("Shields Organ",
                 _demonImg.copy(textureId = "4"),
-                shieldsAnotherOrgan = LogicalCharacterAttributeTrigger.ShieldsAnotherOrgan())
+                shieldsAnotherOrgan = LogicalCharacterAttributeTrigger.ShieldsAnotherOrgan(),
+                description = {"Shields an organ from all damage."})
     }
 }
 

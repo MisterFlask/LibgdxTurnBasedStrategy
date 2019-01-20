@@ -131,6 +131,15 @@ class TacMapHud(viewPort: Viewport,
     var abilityTextArea: Label = Label("", mySkin)
     val characterDisplayTable : Table = Table(mySkin)
 
+    fun displayCharacterAttributes(selectedCharacter: LogicalCharacter): Table{
+        val table = Table(mySkin)
+        for (item in selectedCharacter.attributes){
+            val label = Label(item.description.invoke(item), mySkin)
+            label.setWrap(true)
+            table.add(label).width(250f)
+        }
+        return table
+    }
     private fun regenerateTable(){
         abilityTextArea = Label("", mySkin)
         val backgroundColor = backgroundColor()
@@ -144,6 +153,8 @@ class TacMapHud(viewPort: Viewport,
                     .size(portraitDimensions.width.toFloat(),portraitDimensions.height.toFloat())
             characterDisplayTable.row()
             characterDisplayTable.add(displayCharacterHp(selectedCharacter))
+            characterDisplayTable.row()
+            characterDisplayTable.add(displayCharacterAttributes(selectedCharacter))
         }
         // NOTE TO FUTURE SELF: Table controls size of images, DOES NOT RESPECT image preferred size
         characterDisplayTable.row()
