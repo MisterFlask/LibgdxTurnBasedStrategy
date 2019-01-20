@@ -99,6 +99,35 @@ public class EntitySpawner @Inject constructor(
         return actor
     }
 
+    data class SpawnEntityParams(val protoActor: ProtoActor,
+                                 val tileLocation: TileLocation,
+                                 val animatedImageParams: AnimatedImageParams)
+
+    fun spawnEntitiesAtTilesInSequence(spawnEntityParams: Collection<SpawnEntityParams>){
+        if (spawnEntityParams.isEmpty()){
+            return
+        }
+        val first = convertToActorActionPairs(spawnEntityParams.first())
+        val rest = ArrayList(spawnEntityParams)
+        rest.removeAt(0)
+
+        for (entity in rest){
+            val next = convertToActorActionPairs(entity)
+            first.secondaryActions.add(next)
+        }
+        animationActionQueueProvider.addAction(first)
+    }
+
+    private fun convertToActorActionPairs(spawnEntityParams: SpawnEntityParams): ActorActionPair {
+
+        val actor = spawnEntityParams.protoActor.toActor(spawnEntityParams.animatedImageParams).actor
+        val boundingBox = tileMapProvider.getBoundingBoxOfTile(spawnEntityParams.tileLocation)
+        actor.setBoundingBox(boundingBox)
+        tiledMapStageProvider.tiledMapStage.addActor(actor)
+        actor.isVisible = false
+        return ActorActionPair(actor, revealActionGenerator.generateRevealAction(actor))
+    }
+
     fun despawnEntityInSequence(actor: Actor){
         animationActionQueueProvider.addAction(hideAnimationGenerator.generateHideActorActionPair(actor))
     }

@@ -137,6 +137,7 @@ class TacMapHud(viewPort: Viewport,
             val label = Label(item.description.invoke(item), mySkin)
             label.setWrap(true)
             table.add(label).width(250f)
+            table.row()
         }
         return table
     }

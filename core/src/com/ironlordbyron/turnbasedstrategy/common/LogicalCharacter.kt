@@ -19,7 +19,7 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
                             var endedTurn: Boolean = false,
                             var actionsLeft: Int = 2,
                             var maxActionsLeft: Int = 2,
-                            var maxHealth: Int = 3,
+                            var maxHealth: Int = 2,
                             var healthLeft: Int = maxHealth,
                             val equipment: ArrayList<LogicalEquipment> = ArrayList(),
                             val attributes: ArrayList<LogicalCharacterAttribute> = arrayListOf(),

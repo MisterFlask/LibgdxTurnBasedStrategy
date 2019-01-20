@@ -32,12 +32,14 @@ data class TacMapUnitTemplate(val movesPerTurn: Int,
                 _default_sit.copy(textureId = "9"),
                 templateName = "Master Organ",
                 enemyAiType = EnemyAiType.IMMOBILE_UNIT,
-                startingAttributes = listOf(LogicalCharacterAttribute.MASTER_ORGAN))
+                startingAttributes = listOf(LogicalCharacterAttribute.MASTER_ORGAN,
+                        LogicalCharacterAttribute.EXPLODES_ON_DEATH))
         val SHIELDING_ORGAN = TacMapUnitTemplate(0,
                 _default_sit.copy(textureId = "10"),
                 templateName = "Shielding Organ",
                 enemyAiType = EnemyAiType.IMMOBILE_UNIT,
-                startingAttributes = listOf(LogicalCharacterAttribute.SHIELDS_ANOTHER_ORGAN))
+                startingAttributes = listOf(LogicalCharacterAttribute.SHIELDS_ANOTHER_ORGAN,
+                        LogicalCharacterAttribute.EXPLODES_ON_DEATH))
 
         val Dict = mapOf<String, TacMapUnitTemplate>(TacMapUnitTemplateKeys.DEFAULT_UNIT to DEFAULT_UNIT,
                 TacMapUnitTemplateKeys.DEFAULT_ENEMY_UNIT to DEFAULT_ENEMY_UNIT,

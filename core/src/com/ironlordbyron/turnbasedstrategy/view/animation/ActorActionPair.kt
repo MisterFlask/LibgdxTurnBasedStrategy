@@ -13,7 +13,7 @@ data class ActorActionPair(val actor: Actor, val action: Action,
                             * work within our queueing architecture.
                             */
                            val secondaryActions: MutableList<ActorActionPair> = ArrayList(),
-                           val murderActorsOnceCompletedAnimation: Boolean = false,
+                           var murderActorsOnceCompletedAnimation: Boolean = false,
                            val name: String? = null,
                            val screenShake: Boolean = false,
                            val actionOnceAnimationCompletes: () -> Unit = {}) {

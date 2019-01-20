@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.common.characterattributes
 
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
+import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.TransientEntityTracker
@@ -38,13 +39,17 @@ public data class LogicalCharacterAttribute(val name: String,
                 _demonImg.copy(textureId = "4"),
                 shieldsAnotherOrgan = LogicalCharacterAttributeTrigger.ShieldsAnotherOrgan(),
                 description = {"Shields an organ from all damage."})
+        val UPGRADES_TROOPS = LogicalCharacterAttribute("Upgrades Troops",
+                _demonImg.copy(textureId = "5"),
+                description = {"Upgrades a unit each turn."})
     }
 }
 
 public class FunctionalCharacterAttributeFactory @Inject constructor (val entitySpawner: EntitySpawner,
                                                                       val tacticalMapState: TacticalMapState,
                                                                       val specialEffectManager: SpecialEffectManager,
-                                                                      val transientEntityTracker: TransientEntityTracker){
+                                                                      val transientEntityTracker: TransientEntityTracker,
+                                                                      val tacticalMapAlgorithms: TacticalMapAlgorithms){
 
     fun getFunctionalAttributesForCharacter(logicalCharacter: LogicalCharacter): List<FunctionalCharacterAttribute> {
         return logicalCharacter.attributes.flatMap{getFunctionalAttributesFromLogicalAttribute(it, logicalCharacter)}
@@ -55,6 +60,12 @@ public class FunctionalCharacterAttributeFactory @Inject constructor (val entity
         if (logicalAttribute.shieldsAnotherOrgan != null){
             val funcAttr = ShieldsAnotherOrganFunctionalAttribute(entitySpawner, tacticalMapState, specialEffectManager, logicalAttribute,
                     transientEntityTracker)
+            attrsList.add(funcAttr)
+        }
+        if (logicalAttribute.explodesOnDeath != null){
+            val explosionParams = logicalAttribute.explodesOnDeath
+            val funcAttr = ExplodesOnDeathFunctionalAttribute(radius = explosionParams.radius, damage = explosionParams.damage,
+                    entitySpawner = entitySpawner, tacticalMapAlgorithms = tacticalMapAlgorithms)
             attrsList.add(funcAttr)
         }
 
