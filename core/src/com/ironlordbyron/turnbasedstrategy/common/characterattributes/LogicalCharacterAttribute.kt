@@ -7,6 +7,7 @@ import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.TransientEntityTracker
+import com.ironlordbyron.turnbasedstrategy.common.wrappers.ActorWrapper
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
@@ -114,7 +115,7 @@ public class ShieldsAnotherOrganFunctionalAttribute(val entitySpawner: EntitySpa
                                                     val tacticalMapState: TacticalMapState,
                                                     val specialEffectManager: SpecialEffectManager,
                                                     val logicalCharacterAttribute: LogicalCharacterAttribute,
-                                                    val transientEntityTracker: TransientEntityTracker): FunctionalCharacterAttribute {
+                                                    val transientEntityTracker: TransientEntityTracker): FunctionalCharacterAttribute() {
     val thisShieldsCharacter : UUID? get() = logicalCharacterAttribute.shieldsAnotherOrgan!!.characterShieldedId
 
     val shieldActor: UUID? get() =logicalCharacterAttribute.shieldsAnotherOrgan!!._characterShieldActorId
@@ -163,18 +164,28 @@ public class ShieldsAnotherOrganFunctionalAttribute(val entitySpawner: EntitySpa
 }
 
 // These represent modifiers to characters that result in things happening on triggers.
-public interface FunctionalCharacterAttribute{
+public abstract class FunctionalCharacterAttribute{
+    var actor: ActorWrapper? = null
     // defines a function to be run on death.
-    fun onDeath(thisCharacter: LogicalCharacter){
+    open fun onDeath(thisCharacter: LogicalCharacter){
 
     }
 
     // this is run after all items have been placed on the map, but BEFORE the first turn is taken.
-    fun onInitialization(thisCharacter: LogicalCharacter){
+    open fun onInitialization(thisCharacter: LogicalCharacter){
 
     }
 
-    fun onCharacterTurnStart(thisCharacter: LogicalCharacter){
+    open fun onCharacterTurnStart(thisCharacter: LogicalCharacter){
 
+    }
+
+    // returns the representation of the attribute ON THE TAC MAP.
+    fun generateAttributeRepresentation(thisCharacter: LogicalCharacter){
+        this.actor = getAttributeRepresentationInternal(thisCharacter)?.toActor()
+    }
+
+    fun getAttributeRepresentationInternal(thisCharacter: LogicalCharacter): ProtoActor? {
+        return null
     }
 }

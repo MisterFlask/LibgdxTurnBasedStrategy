@@ -13,7 +13,7 @@ class ExplodesOnDeathFunctionalAttribute(val radius: Int,
                                          val tacticalMapAlgorithms: TacticalMapAlgorithms,
                                          val protoActor: ProtoActor = DataDrivenOnePageAnimation.EXPLODE,
                                          val damageOperator: DamageOperator,
-                                         val tacticalMapState: TacticalMapState) : FunctionalCharacterAttribute{
+                                         val tacticalMapState: TacticalMapState) : FunctionalCharacterAttribute(){
     override fun onDeath(thisCharacter: LogicalCharacter) {
         val locationsForExplosion = tacticalMapAlgorithms.getWalkableTileLocationsUpToNAway(n = radius, origin = thisCharacter.tileLocation, tileIsValidAlgorithm = AlwaysValid(),
                character = thisCharacter)
