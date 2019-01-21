@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.controller
 
+import com.google.inject.ImplementedBy
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.abilities.Ability
@@ -21,28 +22,46 @@ public interface EventListener{
     }
 }
 
+public interface GameEventListener{
+    fun consumeGameEvent(tacticalGameEvent: TacticalGameEvent)
+}
+
+@ImplementedBy(EventNotifier::class)
+interface GameEventNotifier{
+    fun notifyListenersOfGameEvent(tacticalGameEvent: TacticalGameEvent)
+    fun registerGameListener(gameEventListener: GameEventListener)
+}
+
 @Singleton
-public class EventNotifier(){
+public class EventNotifier() : GameEventNotifier{
     fun registerGuiListener(eventListener: EventListener){
         this.listeners += eventListener
     }
 
+    override fun registerGameListener(gameEventListener: GameEventListener){
+        gameEventListeners.add(gameEventListener)
+    }
+    val gameEventListeners = ArrayList<GameEventListener>()
     val listeners = ArrayList<EventListener>()
+    /**
+     * Used to notify the CONTROLLERs of things happening in the VIEW
+     */
     fun notifyListenersOfGuiEvent(tacticalGuiEvent: TacticalGuiEvent){
         for (listener in listeners){
             listener.consumeGuiEvent(event = tacticalGuiEvent)
         }
     }
 
-    fun notifyListenersOfGameEvent(tacticalGameEvent: TacticalGameEvent){
-        for (listener in listeners){
-            listener.consumeGameEvent(event = tacticalGameEvent)
+    // Used to notify the VIEW of things happening in the GAME
+    override fun notifyListenersOfGameEvent(tacticalGameEvent: TacticalGameEvent){
+        for (listener in gameEventListeners){
+            listener.consumeGameEvent(tacticalGameEvent)
         }
     }
 }
 
 public interface TacticalGameEvent{
-    data class UnitSpawned(val character: LogicalCharacter) : TacticalGameEvent
+    data class UnitKilled(val character: LogicalCharacter) : TacticalGameEvent
     data class EntityDamage(val tileEntity: TileEntity, val ability: LogicalAbility) : TacticalGameEvent
 
 }

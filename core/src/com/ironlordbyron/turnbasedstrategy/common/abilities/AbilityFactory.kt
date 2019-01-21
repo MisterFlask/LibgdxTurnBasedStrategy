@@ -3,6 +3,7 @@ package com.ironlordbyron.turnbasedstrategy.common.abilities
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.TemporaryAnimationGenerator
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
@@ -18,10 +19,11 @@ public class AbilityFactory @Inject constructor(val gameBoardOperator: GameBoard
                     val tacticalMapState: TacticalMapState,
                     val unitSpawner: EntitySpawner,
                     val animationActionQueueProvider: AnimationActionQueueProvider,
-                    val temporaryAnimationGenerator: TemporaryAnimationGenerator){
+                    val temporaryAnimationGenerator: TemporaryAnimationGenerator,
+                    val damageOperator: DamageOperator){
     fun acquireAbility(logicalAbilityAndEquipment: LogicalAbilityAndEquipment) : Ability {
         when(logicalAbilityAndEquipment.ability.abilityClass){
-            AbilityClass.TARGETED_ABILITY -> return SimpleAttackAbility(logicalAbilityAndEquipment, tacticalMapState, boardAlgorithms, gameBoardOperator, boardAlgorithms,
+            AbilityClass.TARGETED_ABILITY -> return SimpleAttackAbility(logicalAbilityAndEquipment, tacticalMapState, boardAlgorithms, damageOperator, boardAlgorithms,
                     unitSpawner, animationActionQueueProvider, temporaryAnimationGenerator)
         }
     }
@@ -109,7 +111,7 @@ class SimpleAttackAbility(
         override val logicalAbilityAndEquipment: LogicalAbilityAndEquipment,
         override val tacticalMapState: TacticalMapState,
         val boardAlgorithms: TacticalMapAlgorithms,
-        val gameBoardOperator: GameBoardOperator,
+        val damageOperator: DamageOperator,
         override val tacticalMapAlgorithms: TacticalMapAlgorithms,
         val unitSpawner: EntitySpawner,
         val animationActionQueueProvider: AnimationActionQueueProvider,
@@ -153,7 +155,7 @@ class SimpleAttackAbility(
         // if there's a damage effect, do that (probably just the number-rising thing)
         if (logicalAbility.damage != null){
             // so, the GBO shouldn't be responsible for handing damage animations, because those will vary based on attack.
-            gameBoardOperator.damageCharacter(targetCharacter!!, logicalAbility.damage!!)
+            damageOperator.damageCharacter(targetCharacter!!, logicalAbility.damage!!)
         }
 
         if (sourceCharacter.playerControlled){

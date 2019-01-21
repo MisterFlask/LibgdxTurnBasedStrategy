@@ -60,15 +60,6 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
         }
     }
 
-    override fun consumeGameEvent(event: TacticalGameEvent) {
-        when(event){
-            is TacticalGameEvent.UnitSpawned -> {
-                animationActionQueueProvider.addAction(revealActionGenerator.generateRevealActorActionPair(event.character.actor))
-            }
-        }
-    }
-
-
     private fun startPlayerTurn() {
         for (unit in boardState.listOfCharacters){
             unit.actionsLeft = unit.maxActionsLeft
@@ -141,28 +132,6 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
         character.actor.remove()
     }
 
-    fun damageCharacter(targetCharacter: LogicalCharacter,
-                        damageAmount: Int) {
-        if (targetCharacter.isDead){
-            return // doesn't matter if we're just kicking a dead horse
-        }
-        targetCharacter.healthLeft -= damageAmount // TODO: Not the responsibility of this class
-        val secondaryActions = arrayListOf(
-                characterModificationAnimationGenerator.getCharacterShudderActorActionPair(logicalCharacter = targetCharacter),
-                characterModificationAnimationGenerator.getCharacterTemporaryDarkenActorActionPair(logicalCharacter = targetCharacter)
-
-        )
-        animationActionQueueProvider.addAction(
-                floatingTextGenerator.getTemporaryAnimationActorActionPair("${damageAmount}", targetCharacter.tileLocation)
-                    .copy(secondaryActions = secondaryActions
-                    ))
-        visibleCharacterDataFactory.updateCharacterHpMarkerInSequence(targetCharacter)
-        if (targetCharacter.isDead){
-            animationActionQueueProvider.addAction(deathAnimationGenerator.turnCharacterSideways(targetCharacter))
-            functionalCharacterAttributeFactory.getFunctionalAttributesForCharacter(targetCharacter)
-                    .forEach{it.onDeath(targetCharacter)}
-        }
-    }
 
 }
 

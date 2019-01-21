@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.TransientEntityTracker
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
@@ -49,7 +50,8 @@ public class FunctionalCharacterAttributeFactory @Inject constructor (val entity
                                                                       val tacticalMapState: TacticalMapState,
                                                                       val specialEffectManager: SpecialEffectManager,
                                                                       val transientEntityTracker: TransientEntityTracker,
-                                                                      val tacticalMapAlgorithms: TacticalMapAlgorithms){
+                                                                      val tacticalMapAlgorithms: TacticalMapAlgorithms,
+                                                                      val damageOperator: DamageOperator){
 
     fun getFunctionalAttributesForCharacter(logicalCharacter: LogicalCharacter): List<FunctionalCharacterAttribute> {
         return logicalCharacter.attributes.flatMap{getFunctionalAttributesFromLogicalAttribute(it, logicalCharacter)}
@@ -65,7 +67,8 @@ public class FunctionalCharacterAttributeFactory @Inject constructor (val entity
         if (logicalAttribute.explodesOnDeath != null){
             val explosionParams = logicalAttribute.explodesOnDeath
             val funcAttr = ExplodesOnDeathFunctionalAttribute(radius = explosionParams.radius, damage = explosionParams.damage,
-                    entitySpawner = entitySpawner, tacticalMapAlgorithms = tacticalMapAlgorithms)
+                    entitySpawner = entitySpawner, tacticalMapAlgorithms = tacticalMapAlgorithms, damageOperator = damageOperator,
+                    tacticalMapState = tacticalMapState)
             attrsList.add(funcAttr)
         }
 

@@ -44,7 +44,7 @@ public class EntitySpawner @Inject constructor(
         val characterSpawned = LogicalCharacter(group, tileLocation, tacMapUnit, playerControlled)
         visibleCharacterDataFactory.generateCharacterHpMarker(characterSpawned)
         boardState.listOfCharacters.add(characterSpawned)
-        eventNotifier.notifyListenersOfGameEvent(TacticalGameEvent.UnitSpawned(characterSpawned))
+        animationActionQueueProvider.addAction(revealActionGenerator.generateRevealActorActionPair(characterSpawned.actor))
         return characterSpawned
     }
 
