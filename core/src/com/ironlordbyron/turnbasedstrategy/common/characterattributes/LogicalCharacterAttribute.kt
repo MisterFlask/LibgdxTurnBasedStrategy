@@ -8,6 +8,7 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOp
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.TransientEntityTracker
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 import com.ironlordbyron.turnbasedstrategy.view.animation.external.LineEffect
@@ -25,11 +26,14 @@ public data class LogicalCharacterAttribute(val name: String,
                                             val shieldsAnotherOrgan: LogicalCharacterAttributeTrigger.ShieldsAnotherOrgan? = null,
                                             val masterOrgan: Boolean = false,
                                             val organ: Boolean = false,
-                                            val description: (LogicalCharacterAttribute) -> String){
+                                            val description: (LogicalCharacterAttribute) -> String,
+                                            val statusEffect: Boolean = false,
+                                            val damageOverTime: LogicalCharacterAttributeTrigger.DamageOverTimeAttribute? = null){
     companion object {
         val _demonImg = SuperimposedTilemaps(tileSetNames = listOf("Demon0","Demon1"), textureId = "2")
+        val _painterlyIcon = ImageIcon(ImageIcon.PAINTERLY_FOLDER, "fire-arrows-1.png")
         val EXPLODES_ON_DEATH = LogicalCharacterAttribute("Explodes On Death",
-                _demonImg,
+                _painterlyIcon,
                 LogicalCharacterAttributeTrigger.ExplodesOnDeath(3, 4),
                 description = {"Explodes on death, dealing ${it.explodesOnDeath!!.damage} to everything in a ${it.explodesOnDeath!!.radius} radius"})
         val MASTER_ORGAN = LogicalCharacterAttribute("Master Organ",
@@ -43,6 +47,19 @@ public data class LogicalCharacterAttribute(val name: String,
         val UPGRADES_TROOPS = LogicalCharacterAttribute("Upgrades Troops",
                 _demonImg.copy(textureId = "5"),
                 description = {"Upgrades a unit each turn."})
+        val ON_FIRE  =LogicalCharacterAttribute("On Fire",
+                _demonImg.copy(textureId = "6"),
+                statusEffect = true,
+                damageOverTime = LogicalCharacterAttributeTrigger.DamageOverTimeAttribute(
+                        1, DamageType.FIRE
+                ),
+                description = {"This unit is on fire and will take one damage per turn until it's put out."})
+    }
+}
+
+public data class DamageType(val name: String, val icon: ProtoActor){
+    companion object {
+        val FIRE = DamageType("fire", DataDrivenOnePageAnimation.EXPLODE)
     }
 }
 
@@ -71,7 +88,6 @@ public class FunctionalCharacterAttributeFactory @Inject constructor (val entity
                     tacticalMapState = tacticalMapState)
             attrsList.add(funcAttr)
         }
-
         return attrsList
     }
 
@@ -86,6 +102,7 @@ public interface LogicalCharacterAttributeTrigger{
     ): LogicalCharacterAttributeTrigger
     class MasterOrgan: LogicalCharacterAttributeTrigger
     class Organ: LogicalCharacterAttributeTrigger
+    class DamageOverTimeAttribute(val damage: Int, val damageType: DamageType)
 }
 
 
@@ -152,13 +169,12 @@ public interface FunctionalCharacterAttribute{
 
     }
 
-    // Defines a function to be run on the start of the enemy (as opposed to player) turn.
-    fun onEnemyTurnStart(thisCharacter: LogicalCharacter){
+    // this is run after all items have been placed on the map, but BEFORE the first turn is taken.
+    fun onInitialization(thisCharacter: LogicalCharacter){
 
     }
 
-    // this is run after all items have been placed on the map, but BEFORE the first turn is taken.
-    fun onInitialization(thisCharacter: LogicalCharacter){
+    fun onCharacterTurnStart(thisCharacter: LogicalCharacter){
 
     }
 }

@@ -22,6 +22,7 @@ import com.ironlordbyron.turnbasedstrategy.common.abilities.ContextualAbilityFac
 import com.ironlordbyron.turnbasedstrategy.controller.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
+import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.ui.external.BackgroundColor
 import com.kotcrab.vis.ui.building.utilities.Alignment
 
@@ -87,6 +88,7 @@ class TacMapHud(viewPort: Viewport,
     }
 
     private val buttonDimensions = Dimensions(55, 55)
+    private val iconDimensions = Dimensions(55,55)
 
     private fun actionButton(abilityEquipmentPair : LogicalAbilityAndEquipment): Actor? {
 
@@ -134,6 +136,8 @@ class TacMapHud(viewPort: Viewport,
     fun displayCharacterAttributes(selectedCharacter: LogicalCharacter): Table{
         val table = Table(mySkin)
         for (item in selectedCharacter.attributes){
+            val attrImage = item.imageIcon.toActor(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER)
+            table.add(attrImage.actor).width(iconDimensions.width.toFloat()).height(iconDimensions.height.toFloat())
             val label = Label(item.description.invoke(item), mySkin)
             label.setWrap(true)
             table.add(label).width(250f)

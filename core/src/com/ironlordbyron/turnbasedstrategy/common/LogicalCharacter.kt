@@ -23,7 +23,9 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
                             var healthLeft: Int = maxHealth,
                             val equipment: ArrayList<LogicalEquipment> = ArrayList(),
                             val attributes: ArrayList<LogicalCharacterAttribute> = arrayListOf(),
-                            val id: UUID = UUID.randomUUID()) {
+                            val id: UUID = UUID.randomUUID(),
+                            val strength: Int = 0,
+                            val dexterity: Int = 0) {
     init{
         attributes.addAll(tacMapUnit.startingAttributes)
     }

@@ -29,6 +29,7 @@ public class FileImageRetriever @Inject constructor(val tileMapProvider: TileMap
          return Texture(Gdx.files.internal("${icon.imageFolder}/${icon.imagePath}" ));
     }
 
+    //duplicate id PARAMETRA
     public fun retrieveIconImageAsSprite(icon: Icon, dimensions: Dimensions, color: Color?): Sprite {
         val iconImage = retrieveIconImage(icon)
         val textureRegion = TextureRegion(iconImage)

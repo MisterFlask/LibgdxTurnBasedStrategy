@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.common.abilities
 
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 
 public class LogicalAbility(val name: String,
@@ -14,9 +15,15 @@ public class LogicalAbility(val name: String,
                             val allowsTargetingSelf: Boolean = false,
                             val requiredTargetType: RequiredTargetType = RequiredTargetType.ANY,
                             val abilityEffects: Collection<LogicalAbilityEffect> = listOf(),
+                            // if this is non-null, there will be a projectile animation.
                             val projectileActor: ProtoActor?,
+                            // this is the actor that is spawned when the projectile lands. (Like: a fireball projectile
+                            // could result in a langingActor being an explosion.
+                            // a projectileActor is NOT required for this to function.
                             val landingActor: ProtoActor?,
-                            val context: ContextualAbilityParams? = null){
+                            // this is specifically for contextual abilities, like opening doors.
+                            val context: ContextualAbilityParams? = null,
+                            val inflictsStatusAffect: LogicalCharacterAttribute? = null){
 
 }
 

@@ -66,6 +66,10 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
             if (!unit.isDead){
                 characterSpriteUtils.brightenSprite(unit)
             }
+            val functionalAttributes = unit.attributes.flatMap{functionalCharacterAttributeFactory.getFunctionalAttributesFromLogicalAttribute(it, unit)}
+            for (attr in functionalAttributes){
+                attr.onCharacterTurnStart(unit)
+            }
         }
     }
 
