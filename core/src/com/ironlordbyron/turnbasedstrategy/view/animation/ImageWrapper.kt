@@ -11,12 +11,17 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.ActorWrapper
 import com.ironlordbyron.turnbasedstrategy.view.images.Icon
 
-class ImageNotRespectingClicks(texture: TextureRegion) : Image(texture), ActorWrapper {
+class ImageWrapper(texture: TextureRegion,
+                   val hittable: Boolean = false) : Image(texture), ActorWrapper {
     override var shader: ShaderProgram? = null
     override val actor: Actor get() = this
     override fun hit(x: Float, y: Float, touchable: Boolean): Actor? {
-        super.hit(x, y, touchable)
-        return null
+        if (hittable){
+            return super.hit(x, y, touchable)
+        }else{
+            super.hit(x, y, touchable)
+            return null
+        }
     }
 }
 class LogicalCharacterActorGroup(val shadeableActor: ActorWrapper,
@@ -27,4 +32,6 @@ class LogicalCharacterActorGroup(val shadeableActor: ActorWrapper,
         super.hit(x, y, touchable)
         return null
     }
+
+
 }

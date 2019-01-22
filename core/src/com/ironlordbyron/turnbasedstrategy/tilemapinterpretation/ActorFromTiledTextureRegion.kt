@@ -1,11 +1,8 @@
 package com.ironlordbyron.turnbasedstrategy.tilemapinterpretation
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
-import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.ui.Image
-import com.ironlordbyron.turnbasedstrategy.common.TileLocation
-import com.ironlordbyron.turnbasedstrategy.view.animation.ImageNotRespectingClicks
+import com.ironlordbyron.turnbasedstrategy.view.animation.ImageWrapper
 
 class ActorFromTiledTextureRegion(cell: TiledMapTileLayer.Cell){
     lateinit var imageActor: Image
@@ -16,6 +13,6 @@ class ActorFromTiledTextureRegion(cell: TiledMapTileLayer.Cell){
     }
 
     fun acquireImageActor(){
-        imageActor = ImageNotRespectingClicks(originalTile.textureRegion)
+        imageActor = ImageWrapper(originalTile.textureRegion)
     }
 }

@@ -16,7 +16,8 @@ interface ScaledActor{
     val scalingFactor: Float
 }
 
-class AnimatedImage(val animation: Animation<TextureRegion>, val animatedImageParams: AnimatedImageParams, override val scalingFactor: Float) : Image(animation.getKeyFrame(0f)),
+class AnimatedImage(val animation: Animation<TextureRegion>, val animatedImageParams: AnimatedImageParams, override val scalingFactor: Float,
+                    val hittable: Boolean = false) : Image(animation.getKeyFrame(0f)),
 ScaledActor, ActorWrapper {
 
     override var shader: ShaderProgram? = null
@@ -28,8 +29,13 @@ ScaledActor, ActorWrapper {
     override val actor: Actor get() = this
 
     override fun hit(x: Float, y: Float, touchable: Boolean): Actor? {
-        super.hit(x, y, touchable)
-        return null
+        if (hittable){
+            return super.hit(x, y, touchable)
+        }
+        else{
+            super.hit(x, y, touchable)
+            return null
+        }
     }
 
     fun activate() {
@@ -63,13 +69,15 @@ ScaledActor, ActorWrapper {
     companion object {
         fun fromDataDrivenAnimation(dataDrivenOnePageAnimation: DataDrivenOnePageAnimation,
                                     animatedImageParams: AnimatedImageParams): AnimatedImage {
-            return AnimatedImage(SpriteSheetParser.INSTANCE.createAnimation(dataDrivenOnePageAnimation, dataDrivenOnePageAnimation.frameDurationInSeconds), animatedImageParams,
-                    dataDrivenOnePageAnimation.scaleFactor)
+            return AnimatedImage(SpriteSheetParser.INSTANCE.createAnimation(dataDrivenOnePageAnimation, dataDrivenOnePageAnimation.frameDurationInSeconds),
+                    animatedImageParams,
+                    dataDrivenOnePageAnimation.scaleFactor, animatedImageParams.hittable)
         }
 
         fun fromTextureRegions(textures: List<TextureRegion>, animatedImageParams: AnimatedImageParams): AnimatedImage {
             // todo: Don't hardcode frame duration
-            return AnimatedImage(Animation<TextureRegion>(.25f, textures.toLibgdxArray()), animatedImageParams, scalingFactor = 1f)
+            return AnimatedImage(Animation<TextureRegion>(.25f, textures.toLibgdxArray()), animatedImageParams, scalingFactor = 1f,
+                    hittable = animatedImageParams.hittable)
         }
     }
 }
@@ -84,7 +92,8 @@ fun <T> Collection<T>.toLibgdxArray() : Array<T> {
 data class AnimatedImageParams(
                                val startsVisible: Boolean = false,
                                val loops : Boolean = false,
-                               val alpha: Float = 1f){
+                               val alpha: Float = 1f,
+                               val hittable: Boolean = false){
     companion object {
         val RUN_ONCE_AFTER_DELAY = AnimatedImageParams(startsVisible = false, loops = false)
         val RUN_ALWAYS_AND_FOREVER = AnimatedImageParams(true, true)

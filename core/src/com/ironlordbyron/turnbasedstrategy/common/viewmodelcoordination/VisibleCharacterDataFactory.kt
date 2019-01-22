@@ -1,17 +1,11 @@
 package com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination
 
 import com.badlogic.gdx.graphics.Color
-import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
-import com.ironlordbyron.turnbasedstrategy.common.wrappers.LabelWrapperImpl
 import com.ironlordbyron.turnbasedstrategy.font.TextLabelGenerator
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.view.ShaderFactory
-import com.ironlordbyron.turnbasedstrategy.view.animation.ImageNotRespectingClicks
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.TextUpdateAnimationGenerator
-import com.ironlordbyron.turnbasedstrategy.view.ui.mySkin
 import javax.inject.Inject
 
 public class VisibleCharacterDataFactory @Inject constructor (val animationActionQueueProvider: AnimationActionQueueProvider,

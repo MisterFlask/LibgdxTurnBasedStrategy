@@ -181,11 +181,11 @@ public abstract class FunctionalCharacterAttribute{
     }
 
     // returns the representation of the attribute ON THE TAC MAP.
-    fun generateAttributeRepresentation(thisCharacter: LogicalCharacter){
-        this.actor = getAttributeRepresentationInternal(thisCharacter)?.toActor()
+    fun generateAttributeTacMapRepresentation(thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute){
+        this.actor = getAttributeTacMapRepresentationInternal(thisCharacter, logicalCharacterAttribute)?.toActor()
     }
 
-    fun getAttributeRepresentationInternal(thisCharacter: LogicalCharacter): ProtoActor? {
+    fun getAttributeTacMapRepresentationInternal(thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute): ProtoActor? {
         return null
     }
 }

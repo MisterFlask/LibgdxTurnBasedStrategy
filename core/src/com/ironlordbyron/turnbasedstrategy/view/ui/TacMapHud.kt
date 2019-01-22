@@ -19,6 +19,7 @@ import javax.inject.Singleton
 import com.badlogic.gdx.utils.Scaling
 import com.ironlordbyron.turnbasedstrategy.common.LogicalAbilityAndEquipment
 import com.ironlordbyron.turnbasedstrategy.common.abilities.ContextualAbilityFactory
+import com.ironlordbyron.turnbasedstrategy.common.wrappers.RenderingFunction
 import com.ironlordbyron.turnbasedstrategy.controller.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
@@ -137,8 +138,9 @@ class TacMapHud(viewPort: Viewport,
         val table = Table(mySkin)
         for (item in selectedCharacter.attributes){
             val attrImage = item.imageIcon.toActor(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER)
+            attrImage.addTooltip(RenderingFunction.simple(item.description(item)))
             table.add(attrImage.actor).width(iconDimensions.width.toFloat()).height(iconDimensions.height.toFloat())
-            val label = Label(item.description.invoke(item), mySkin)
+            val label = Label(item.name, mySkin)
             label.setWrap(true)
             table.add(label).width(250f)
             table.row()

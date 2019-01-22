@@ -1,16 +1,11 @@
 package com.ironlordbyron.turnbasedstrategy.view.animation.datadriven
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.ActorWrapper
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
-import com.ironlordbyron.turnbasedstrategy.view.animation.ImageNotRespectingClicks
-import com.ironlordbyron.turnbasedstrategy.view.images.Dimensions
-import com.ironlordbyron.turnbasedstrategy.view.images.FileImageRetriever
-import com.ironlordbyron.turnbasedstrategy.view.images.Icon
+import com.ironlordbyron.turnbasedstrategy.view.animation.ImageWrapper
 
 val IMAGE_ICON_CACHE = HashMap<String, Texture>()
 
@@ -24,7 +19,8 @@ public class ImageIcon (
     }
     override fun toActor(animatedImageParams: AnimatedImageParams): ActorWrapper {
         val fileTexture = retrieveIconImage(folder, filename)
-        return ImageNotRespectingClicks(texture = TextureRegion(fileTexture))
+        return ImageWrapper(texture = TextureRegion(fileTexture),
+                hittable = true)
     }
 
     public fun retrieveIconImage(folder: String, filename: String): Texture {

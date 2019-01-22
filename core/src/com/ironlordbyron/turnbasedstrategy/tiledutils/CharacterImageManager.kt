@@ -31,7 +31,8 @@ class CharacterImageManager @Inject constructor(val tiledMapOperationsHandler: T
 
     fun retrieveCharacterImage(character: LogicalCharacter) : ActorWrapper {
         val tiledTexturePath = character.tacMapUnit.tiledTexturePath;
-        return tiledTexturePath.toActor(AnimatedImageParams(true, true, 0.4f))
+        val actorWrapper = tiledTexturePath.toActor(AnimatedImageParams(true, true, 14f, hittable = true))
+        return actorWrapper
     }
 }
 

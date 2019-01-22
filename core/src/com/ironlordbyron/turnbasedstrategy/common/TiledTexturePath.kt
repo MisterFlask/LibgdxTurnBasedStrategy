@@ -4,7 +4,7 @@ import com.ironlordbyron.turnbasedstrategy.common.wrappers.ActorWrapper
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TiledMapOperationsHandler
 import com.ironlordbyron.turnbasedstrategy.tiledutils.xml.TilemapXmlProcessor
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
-import com.ironlordbyron.turnbasedstrategy.view.animation.ImageNotRespectingClicks
+import com.ironlordbyron.turnbasedstrategy.view.animation.ImageWrapper
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.OrientationType
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps.Companion.COMMON_TILE_MAP
@@ -20,7 +20,7 @@ data class TiledTexturePath(
         val sourceTileMapName: String = COMMON_TILE_MAP, override val orientation: OrientationType = OrientationType.NEUTRAL
 ): ProtoActor {
     override fun toActor(animatedImageParams: AnimatedImageParams): ActorWrapper {
-        return ImageNotRespectingClicks(TiledMapOperationsHandler(TilemapXmlProcessor()).pullGenericTexture(spriteId, tileSetName))
+        return ImageWrapper(TiledMapOperationsHandler(TilemapXmlProcessor()).pullGenericTexture(spriteId, tileSetName))
     }
 
     companion object {
