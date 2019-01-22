@@ -26,6 +26,7 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
 import com.ironlordbyron.turnbasedstrategy.view.ShaderFactory
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
 import com.ironlordbyron.turnbasedstrategy.view.ui.external.BackgroundColor
 import com.kotcrab.vis.ui.building.utilities.Alignment
 
@@ -95,7 +96,11 @@ class TacMapHud(viewPort: Viewport,
 
     private fun actionButton(abilityEquipmentPair : LogicalAbilityAndEquipment): Actor? {
 
-        val button = TextButton(abilityEquipmentPair.ability.name, mySkin)
+        var actor = abilityEquipmentPair.ability.attackSprite?.toActor()
+        if (actor == null){
+            actor = ImageIcon(ImageIcon.PAINTERLY_FOLDER, "rip-acid-1.png").toActor() //todo
+        }
+        val button = actor
 
         val clickListener = object : ClickListener(){
             override fun clicked(event: InputEvent?, x: Float, y: Float) {
@@ -116,8 +121,9 @@ class TacMapHud(viewPort: Viewport,
                 super.exit(event, x, y, pointer, fromActor)
             }
         }
-        button.addListener(clickListener)
-        return button
+        button.actor.addListener(clickListener)
+        button.addTooltip(RenderingFunction.simple(abilityEquipmentPair.ability.description?:"INSERT BODY TEXT"))
+        return button.actor
     }
 
     private fun showAbility(ability: LogicalAbility) {
@@ -166,18 +172,9 @@ class TacMapHud(viewPort: Viewport,
             characterDisplayTable.add(displayCharacterAttributes(selectedCharacter))
         }
         // NOTE TO FUTURE SELF: Table controls size of images, DOES NOT RESPECT image preferred size
-        characterDisplayTable.row()
-        characterDisplayTable.add(Label("", mySkin)).fillY().expandY()
-        characterDisplayTable.row()
 
-        if (selectedCharacter != null){
-            for (ability in selectedCharacter.abilities){
-                characterDisplayTable.add(actionButton(ability))
-            }
-            for (ability in contextualAbilityFactory.getContextualAbilitiesAvailableForCharacter(selectedCharacter)){
-                characterDisplayTable.add(actionButton(LogicalAbilityAndEquipment(ability, null)))
-            }
-        }
+        addActionButtons(selectedCharacter)
+        characterDisplayTable.add(Label("", mySkin)).fillY().expandY()
 
         val entitySelected = entitySelected
         if (entitySelected != null){
@@ -196,6 +193,25 @@ class TacMapHud(viewPort: Viewport,
 
         characterDisplayTable.row()
         characterDisplayTable.add(debugTextArea).width(300f)
+    }
+
+    private fun addActionButtons(selectedCharacter: LogicalCharacter?) {
+        characterDisplayTable.row()
+        val abilityTable = Table()
+        if (selectedCharacter != null) {
+            for (ability in selectedCharacter.abilities) {
+                abilityTable.add(actionButton(ability)).width(50f).height(50f)
+                abilityTable.add(Label(ability.ability.name, mySkin))
+                abilityTable.row()
+            }
+            for (ability in contextualAbilityFactory.getContextualAbilitiesAvailableForCharacter(selectedCharacter)) {
+                abilityTable.add(actionButton(LogicalAbilityAndEquipment(ability, null))).width(50f).height(50f)
+                abilityTable.add(Label(ability.name, mySkin))
+                abilityTable.row()
+            }
+        }
+
+        characterDisplayTable.add(abilityTable)
     }
 
     private fun displayCharacterHp(selectedCharacter: LogicalCharacter): Label {

@@ -43,7 +43,6 @@ public class GdxGameMain extends ApplicationAdapter  {
         tacMapCamera.update();
         GameModuleInjector.Companion.initGameCameraProvider(tacMapCamera);
 
-
         BlankMapGenerator tileMapGenerator = GameModuleInjector.Companion.createTiledMapGenerator();
         tiledMap = tileMapGenerator.generateMap(BlankMapGenerator.Companion.getDefaultMapGenParams());
         TileMapProvider tileMapProvider = GameModuleInjector.Companion.createGameStateProvider();

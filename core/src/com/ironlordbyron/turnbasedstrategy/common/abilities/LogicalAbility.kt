@@ -7,7 +7,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 public class LogicalAbility(val name: String,
                             val speed: AbilitySpeed,
                             val range: Int,
-                            val attackSprite: AbilitySprite? = null,
+                            val attackSprite: ProtoActor? = null,
                             val missionLimit: Int? = null,
                             val damage: Int? = null,
                             val description: String? = null,
@@ -35,7 +35,4 @@ interface LogicalAbilityEffect {
 
 public enum class AbilityClass {
     TARGETED_ABILITY
-}
-public enum class AbilitySprite(val fileName: String){
-    STRIKE("strike")
 }

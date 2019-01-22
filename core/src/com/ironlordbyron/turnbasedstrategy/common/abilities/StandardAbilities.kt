@@ -2,6 +2,8 @@ package com.ironlordbyron.turnbasedstrategy.common.abilities
 
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplateKeys
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
+import java.awt.Image
 
 object StandardAbilities{
 
@@ -13,7 +15,8 @@ object StandardAbilities{
             abilityClass = AbilityClass.TARGETED_ABILITY,
             requiredTargetType = RequiredTargetType.ENEMY_ONLY,
             projectileActor = null,
-            landingActor = DataDrivenOnePageAnimation.CLAWSLASH
+            landingActor = DataDrivenOnePageAnimation.CLAWSLASH,
+            attackSprite = ImageIcon(ImageIcon.PAINTERLY_FOLDER, "slice-acid-1.png")
             );
     val RangedAttackThatLightsStuffOnFire = LogicalAbility("Torch",
             AbilitySpeed.ENDS_TURN,
