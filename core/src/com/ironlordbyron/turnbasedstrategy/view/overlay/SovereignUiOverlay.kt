@@ -7,9 +7,8 @@ import com.ironlordbyron.turnbasedstrategy.view.ui.DEFAULT_SKIN
 import javax.inject.Inject
 
 
-// When activated, brings up a "Sovereign Menu" that forces the player to hit a selection to do anything.
+// When activated, brings up a sovereign menu that forces the player to hit a selection to do anything.
 public class SovereignUiOverlay @Inject constructor(val stage: TacticalTiledMapStageProvider){
-
     // DEMO
     public fun display(){
         val dialog = object : Dialog("Warning", DEFAULT_SKIN, "dialog") {

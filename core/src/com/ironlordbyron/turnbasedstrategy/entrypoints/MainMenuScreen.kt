@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
+import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.ui.DEFAULT_SKIN
@@ -29,13 +30,20 @@ public class MainMenuScreen(): ScreenAdapter(){
         title.setWidth(Gdx.graphics.width.toFloat())
         stage.addActor(title)
 
-        val playButton = TextButton("Play!", DEFAULT_SKIN)
+        addPlayButton(eventNotifier,
+                TacticalGuiEvent.SwapToTacticsScreen(),
+                "Default Scenario")
+    }
+
+    private fun addPlayButton(eventNotifier: EventNotifier,
+                              tacticalGuiEventToSend: TacticalGuiEvent,
+                              buttonName: String) {
+        val playButton = TextButton(buttonName, DEFAULT_SKIN)
         playButton.setWidth((Gdx.graphics.width / 2).toFloat())
         playButton.setPosition(Gdx.graphics.width / 2 - playButton.getWidth() / 2, Gdx.graphics.height / 2 - playButton.getHeight() / 2)
         playButton.addListener(object : InputListener() {
             override fun touchUp(event: InputEvent, x: Float, y: Float, pointer: Int, button: Int) {
-                println("TODO: Set game screen")
-                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.SwapToTacticsScreen())
+                eventNotifier.notifyListenersOfGuiEvent(tacticalGuiEventToSend)
             }
 
             override fun touchDown(event: InputEvent, x: Float, y: Float, pointer: Int, button: Int): Boolean {
@@ -43,20 +51,6 @@ public class MainMenuScreen(): ScreenAdapter(){
             }
         })
         stage.addActor(playButton)
-
-        val optionsButton = TextButton("Options", DEFAULT_SKIN)
-        optionsButton.setWidth((Gdx.graphics.width / 2).toFloat())
-        optionsButton.setPosition(Gdx.graphics.width / 2 - optionsButton.getWidth() / 2, Gdx.graphics.height / 4 - optionsButton.getHeight() / 2)
-        optionsButton.addListener(object : InputListener() {
-            override fun touchUp(event: InputEvent, x: Float, y: Float, pointer: Int, button: Int) {
-                println("TODO: Options screen")
-            }
-
-            override fun touchDown(event: InputEvent, x: Float, y: Float, pointer: Int, button: Int): Boolean {
-                return true
-            }
-        })
-        stage.addActor(optionsButton)
     }
 
     override fun resize(width: Int, height: Int) {
