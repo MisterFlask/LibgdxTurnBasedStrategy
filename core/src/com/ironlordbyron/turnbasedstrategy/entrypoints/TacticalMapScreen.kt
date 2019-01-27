@@ -2,7 +2,6 @@ package com.ironlordbyron.turnbasedstrategy.entrypoints
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
-import com.badlogic.gdx.Screen
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -13,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.BlankMapGenerator
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.ScenarioParams
 
 public class TacticalMapScreen : ScreenAdapter() {
 
@@ -21,13 +21,12 @@ public class TacticalMapScreen : ScreenAdapter() {
     private val WINDOW_WIDTH = 1100
     private val WINDOW_HEIGHT = 600
 
-
-    internal var tiledMap: TiledMap
-    internal var tacMapCamera: OrthographicCamera
-    internal var tiledMapRenderer: TiledMapRenderer
-    internal var tiledMapStage: Stage
-    internal var hudStage: Stage
-    internal var hudCamera: OrthographicCamera
+    internal lateinit var tiledMap: TiledMap
+    internal lateinit var tacMapCamera: OrthographicCamera
+    internal lateinit var tiledMapRenderer: TiledMapRenderer
+    internal lateinit var tiledMapStage: Stage
+    internal lateinit var hudStage: Stage
+    internal lateinit var hudCamera: OrthographicCamera
 
     init{
 
@@ -40,8 +39,14 @@ public class TacticalMapScreen : ScreenAdapter() {
         tacMapCamera.update()
         GameModuleInjector.initGameCameraProvider(tacMapCamera)
 
+        setupScenario(w, h, Scenarios.DEFAULT_SCENARIO)
+
+        initializeControls()
+    }
+
+    private fun setupScenario(w: Float, h: Float, scenarioParams: ScenarioParams) {
         val tileMapGenerator = GameModuleInjector.createTiledMapGenerator()
-        tiledMap = tileMapGenerator.generateMap(BlankMapGenerator.defaultMapGenParams)
+        tiledMap = tileMapGenerator.generateMap(scenarioParams)
         val tileMapProvider = GameModuleInjector.createGameStateProvider()
         tileMapProvider.tiledMap = tiledMap
         tiledMapRenderer = OrthogonalTiledMapRenderer(tiledMap, TILEMAP_SCALING_FACTOR)
@@ -51,12 +56,9 @@ public class TacticalMapScreen : ScreenAdapter() {
         tiledMapStage.viewport = tiledMapViewport
         tiledMapStage.viewport.camera = tacMapCamera
         hudCamera = OrthographicCamera(w, h)
-
         val tacMapHudFactory = GameModuleInjector.createTacMapHudFactory()
         hudStage = tacMapHudFactory.create(FitViewport(w, h, hudCamera))
         hudCamera.update()
-
-        initializeControls()
     }
 
     private fun initializeControls() {

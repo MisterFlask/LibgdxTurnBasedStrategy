@@ -10,14 +10,9 @@ import javax.inject.Singleton
 @Singleton
 class BlankMapGenerator @Inject constructor(val fragmentCopier: TiledMapOperationsHandler,
                                             val tileTracker: LogicalTileTracker) {
-    companion object {
-        val DEFAULT_SCENARIO = MapGenerationParams(
-                sourceMapName = "BlankGrass.tmx")
-    }
 
-    fun generateMap(params: MapGenerationParams): TiledMap {
+    fun generateMap(params: ScenarioParams): TiledMap {
         val blankMap = fragmentCopier.getTileMap(params.sourceMapName, MapType.SOURCE_MAP)
-
         /**
         val blankMapFirstLayer = blankMap.getTileLayer(TileLayer.BASE)
         val locationsUsed: HashSet<TileLocation> = hashSetOf()
@@ -65,4 +60,5 @@ class BlankMapGenerator @Inject constructor(val fragmentCopier: TiledMapOperatio
 }
 
 
-data class MapGenerationParams(val sourceMapName: String)
+data class ScenarioParams(val sourceMapName: String,
+                          val name: String)
