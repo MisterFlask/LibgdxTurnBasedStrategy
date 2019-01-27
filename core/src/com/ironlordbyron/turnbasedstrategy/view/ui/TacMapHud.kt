@@ -1,7 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.view.ui
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
@@ -24,7 +23,6 @@ import com.ironlordbyron.turnbasedstrategy.common.wrappers.RenderingFunction
 import com.ironlordbyron.turnbasedstrategy.controller.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
-import com.ironlordbyron.turnbasedstrategy.view.ShaderFactory
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
 import com.ironlordbyron.turnbasedstrategy.view.ui.external.BackgroundColor
@@ -35,7 +33,7 @@ import com.kotcrab.vis.ui.building.utilities.Alignment
  * Created by Aaron on 3/30/2018.
  */
 
-public val mySkin: Skin = Skin(Gdx.files.internal("tactical-ui-skins/Tracer_UI_Skin/tracerui/tracer-ui.json"))
+public val DEFAULT_SKIN: Skin = Skin(Gdx.files.internal("tactical-ui-skins/Tracer_UI_Skin/tracerui/tracer-ui.json"))
 @Singleton
 class TacMapHudFactory @Inject constructor(val eventNotifier: EventNotifier,
                                            val tacticalMapState: TacticalMapState,
@@ -138,17 +136,17 @@ class TacMapHud(viewPort: Viewport,
     var selectedUnitDescription: Label? = null
     val portraitDimensions: Dimensions = Dimensions(150,150)
 
-    var debugTextArea: Label = Label("", mySkin)
-    var abilityTextArea: Label = Label("", mySkin)
-    val characterDisplayTable : Table = Table(mySkin)
+    var debugTextArea: Label = Label("", DEFAULT_SKIN)
+    var abilityTextArea: Label = Label("", DEFAULT_SKIN)
+    val characterDisplayTable : Table = Table(DEFAULT_SKIN)
 
     fun displayCharacterAttributes(selectedCharacter: LogicalCharacter): Table{
-        val table = Table(mySkin)
+        val table = Table(DEFAULT_SKIN)
         for (item in selectedCharacter.attributes){
             val attrImage = item.imageIcon.toActor(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER.copy(hittable = true))
             attrImage.addTooltip(RenderingFunction.simple(item.description(item)))
             table.add(attrImage.actor).width(iconDimensions.width.toFloat()).height(iconDimensions.height.toFloat())
-            val label = Label(item.name, mySkin)
+            val label = Label(item.name, DEFAULT_SKIN)
             label.setWrap(true)
             table.add(label).width(250f)
             table.row()
@@ -156,13 +154,13 @@ class TacMapHud(viewPort: Viewport,
         return table
     }
     private fun regenerateTable(){
-        abilityTextArea = Label("", mySkin)
+        abilityTextArea = Label("", DEFAULT_SKIN)
         val backgroundColor = backgroundColor()
         characterDisplayTable.setBackground(backgroundColor)
         var selectedCharacter: LogicalCharacter? = selectedCharacter
         characterDisplayTable.clearChildren()
         if (selectedCharacter != null){
-            characterDisplayTable.add(Label(selectedCharacter.tacMapUnit.templateName, mySkin, "title"))
+            characterDisplayTable.add(Label(selectedCharacter.tacMapUnit.templateName, DEFAULT_SKIN, "title"))
             characterDisplayTable.row()
             characterDisplayTable.add(characterImageManager.retrieveCharacterImage(selectedCharacter).actor)
                     .size(portraitDimensions.width.toFloat(),portraitDimensions.height.toFloat())
@@ -174,11 +172,11 @@ class TacMapHud(viewPort: Viewport,
         // NOTE TO FUTURE SELF: Table controls size of images, DOES NOT RESPECT image preferred size
 
         addActionButtons(selectedCharacter)
-        characterDisplayTable.add(Label("", mySkin)).fillY().expandY()
+        characterDisplayTable.add(Label("", DEFAULT_SKIN)).fillY().expandY()
 
         val entitySelected = entitySelected
         if (entitySelected != null){
-            characterDisplayTable.add(Label(entitySelected.name, mySkin))
+            characterDisplayTable.add(Label(entitySelected.name, DEFAULT_SKIN))
         }
 
 
@@ -201,12 +199,12 @@ class TacMapHud(viewPort: Viewport,
         if (selectedCharacter != null) {
             for (ability in selectedCharacter.abilities) {
                 abilityTable.add(actionButton(ability)).width(50f).height(50f)
-                abilityTable.add(Label(ability.ability.name, mySkin))
+                abilityTable.add(Label(ability.ability.name, DEFAULT_SKIN))
                 abilityTable.row()
             }
             for (ability in contextualAbilityFactory.getContextualAbilitiesAvailableForCharacter(selectedCharacter)) {
                 abilityTable.add(actionButton(LogicalAbilityAndEquipment(ability, null))).width(50f).height(50f)
-                abilityTable.add(Label(ability.name, mySkin))
+                abilityTable.add(Label(ability.name, DEFAULT_SKIN))
                 abilityTable.row()
             }
         }
@@ -215,7 +213,7 @@ class TacMapHud(viewPort: Viewport,
     }
 
     private fun displayCharacterHp(selectedCharacter: LogicalCharacter): Label {
-        return Label("HP: ${selectedCharacter.healthLeft}/${selectedCharacter.maxHealth}", mySkin)
+        return Label("HP: ${selectedCharacter.healthLeft}/${selectedCharacter.maxHealth}", DEFAULT_SKIN)
     }
 
     private fun debugTextAreaText(): String {
@@ -235,14 +233,14 @@ class TacMapHud(viewPort: Viewport,
 
 
         val actor =
-                Window("", mySkin).let {
+                Window("", DEFAULT_SKIN).let {
                     it.width = 440f
                     it.height = 600f
                     it.add(characterDisplayTable).fill().expand()
                     it
                 }
         window = actor
-        val background = Image(mySkin, "bg")
+        val background = Image(DEFAULT_SKIN, "bg")
         background.setScaling(Scaling.stretch)
         background.setFillParent(true)
         window.addActor(background)
@@ -256,17 +254,17 @@ class TacMapHud(viewPort: Viewport,
     }
 
     private fun missionObjectivesLabel(): Label {
-        val label = Label("Mission Objectives", mySkin)
+        val label = Label("Mission Objectives", DEFAULT_SKIN)
         return label
     }
     private fun selectedUnitDescription(): Label {
-        val label = Label("", mySkin)
+        val label = Label("", DEFAULT_SKIN)
         label.setWrap(true)
         selectedUnitDescription = label
         return label
     }
     private fun endTurnButton() : Button {
-        val button = TextButton("End Turn", mySkin)
+        val button = TextButton("End Turn", DEFAULT_SKIN)
         val clickListener = object : ClickListener(){
             override fun clicked(event: InputEvent?, x: Float, y: Float) {
                 eventNotifier.notifyListenersOfGuiEvent((TacticalGuiEvent.EndTurnButtonClicked()))

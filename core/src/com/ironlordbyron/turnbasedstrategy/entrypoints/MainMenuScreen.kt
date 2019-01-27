@@ -1,24 +1,18 @@
 package com.ironlordbyron.turnbasedstrategy.entrypoints
 
-import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Align
-import javax.swing.text.StyleConstants.setAlignment
 import com.badlogic.gdx.utils.viewport.ScreenViewport
-import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
-import com.ironlordbyron.turnbasedstrategy.guice.GameModule
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
-import com.ironlordbyron.turnbasedstrategy.view.ui.mySkin
+import com.ironlordbyron.turnbasedstrategy.view.ui.DEFAULT_SKIN
 
 
 public class MainMenuScreen(): ScreenAdapter(){
@@ -29,13 +23,13 @@ public class MainMenuScreen(): ScreenAdapter(){
         val eventNotifier = GameModuleInjector.getEventNotifier()
         viewport = ScreenViewport()
         stage = Stage(viewport)
-        val title = Label("Title Screen", mySkin)
+        val title = Label("Title Screen", DEFAULT_SKIN)
         title.setAlignment(Align.center)
         title.setY((Gdx.graphics.height * 2 / 3).toFloat())
         title.setWidth(Gdx.graphics.width.toFloat())
         stage.addActor(title)
 
-        val playButton = TextButton("Play!", mySkin)
+        val playButton = TextButton("Play!", DEFAULT_SKIN)
         playButton.setWidth((Gdx.graphics.width / 2).toFloat())
         playButton.setPosition(Gdx.graphics.width / 2 - playButton.getWidth() / 2, Gdx.graphics.height / 2 - playButton.getHeight() / 2)
         playButton.addListener(object : InputListener() {
@@ -50,7 +44,7 @@ public class MainMenuScreen(): ScreenAdapter(){
         })
         stage.addActor(playButton)
 
-        val optionsButton = TextButton("Options", mySkin)
+        val optionsButton = TextButton("Options", DEFAULT_SKIN)
         optionsButton.setWidth((Gdx.graphics.width / 2).toFloat())
         optionsButton.setPosition(Gdx.graphics.width / 2 - optionsButton.getWidth() / 2, Gdx.graphics.height / 4 - optionsButton.getHeight() / 2)
         optionsButton.addListener(object : InputListener() {
