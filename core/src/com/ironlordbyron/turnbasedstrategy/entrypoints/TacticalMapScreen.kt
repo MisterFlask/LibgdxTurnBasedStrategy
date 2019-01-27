@@ -69,6 +69,11 @@ public class TacticalMapScreen : ScreenAdapter() {
     override fun show() {
         super.show()
         initializeControls()
+
+        // This is really stupid and I don't know why it is, but I have to call resize in order for input events to process
+        // after switching screens.
+        // HACK
+        this.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
     }
 
     override fun render(delta: Float) {
