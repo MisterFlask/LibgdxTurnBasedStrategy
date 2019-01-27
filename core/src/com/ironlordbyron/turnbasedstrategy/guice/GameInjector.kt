@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Camera
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.google.inject.AbstractModule
 import com.google.inject.Guice
+import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.view.animation.TargetingCursorManager
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.BlankMapGenerator
@@ -62,6 +63,10 @@ class GameModuleInjector {
         fun getSpecialEffectManager() : SpecialEffectManager {
             var manager = moduleInjector.getInstance(SpecialEffectManager::class.java)
             return manager
+        }
+
+        fun getEventNotifier(): EventNotifier {
+            return moduleInjector.getInstance(EventNotifier::class.java)
         }
     }
 }

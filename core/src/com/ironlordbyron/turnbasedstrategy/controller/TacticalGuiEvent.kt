@@ -16,7 +16,10 @@ sealed class TacticalGuiEvent{
     data class StoppedHoveringOverAbility(val abilityEquipmentPair: LogicalAbilityAndEquipment) : TacticalGuiEvent()
     data class ClickedButtonToActivateAbility(val abilityEquipmentPair: LogicalAbilityAndEquipment) : TacticalGuiEvent()
     data class SwitchedGuiState(val guiState: BoardInputState):TacticalGuiEvent()
-    data class TileHovered(val location: TileLocation) : TacticalGuiEvent() {
+    data class TileHovered(val location: TileLocation) : TacticalGuiEvent()
 
-    }
+    // screen swap events
+    class SwapToTacticsScreen: TacticalGuiEvent()
+    class SwapToMainMenu: TacticalGuiEvent()
+
 }
