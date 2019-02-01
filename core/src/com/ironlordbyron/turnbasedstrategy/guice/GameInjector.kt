@@ -21,12 +21,13 @@ class GameModule : AbstractModule() {
 
 class GameModuleInjector {
     companion object {
-        private val moduleInjector = Guice.createInjector(GameModule())
+        public val moduleInjector = Guice.createInjector(GameModule())
 
         init{
             moduleInjector.getInstance(TargetingCursorManager::class.java)
             moduleInjector.getInstance(EagerInitializer::class.java)
         }
+
 
         fun createTiledMapOperationsHandler(): TiledMapOperationsHandler {
             return moduleInjector.getInstance(TiledMapOperationsHandler::class.java)

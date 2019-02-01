@@ -41,7 +41,7 @@ public class TacticalMapScreen : ScreenAdapter() {
         GameModuleInjector.initGameCameraProvider(tacMapCamera)
 
         val tileMapGenerator = GameModuleInjector.createTiledMapGenerator()
-        tiledMap = tileMapGenerator.generateMap(BlankMapGenerator.defaultMapGenParams)
+        tiledMap = tileMapGenerator.generateMap(BlankMapGenerator.DEFAULT_SCENARIO)
         val tileMapProvider = GameModuleInjector.createGameStateProvider()
         tileMapProvider.tiledMap = tiledMap
         tiledMapRenderer = OrthogonalTiledMapRenderer(tiledMap, TILEMAP_SCALING_FACTOR)

@@ -11,10 +11,10 @@ class GdxGameMain : Game(), EventListener {
     var tacticsScreen: Screen? = null
 
     override fun create() {
-
         GameModuleInjector.getEventNotifier().registerGuiListener(this)
         mainMenuScreen = MainMenuScreen()
         tacticsScreen = TacticalMapScreen()
+        GameModuleInjector.moduleInjector.getInstance(AutoInjector::class.java).instantiateAutoinjectables()
         this.screen = mainMenuScreen
 
         this.screen.show()

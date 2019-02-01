@@ -8,6 +8,7 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOp
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.TransientEntityTracker
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.ActorWrapper
+import com.ironlordbyron.turnbasedstrategy.entrypoints.OnFireLogicalEffect
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
@@ -29,7 +30,10 @@ public data class LogicalCharacterAttribute(val name: String,
                                             val organ: Boolean = false,
                                             val description: (LogicalCharacterAttribute) -> String,
                                             val statusEffect: Boolean = false,
-                                            val damageOverTime: LogicalCharacterAttributeTrigger.DamageOverTimeAttribute? = null){
+                                            // See FunctionalUnitEffect for examples
+                                            // The key is an ID corresponding to the effect; the value
+                                            // is the parameters to be fed in.
+                                            val customEffects: Map<String, Any> = mapOf()){
     companion object {
         val _demonImg = SuperimposedTilemaps(tileSetNames = listOf("Demon0","Demon1"), textureId = "2")
         val _painterlyIcon = ImageIcon(ImageIcon.PAINTERLY_FOLDER, "fire-arrows-1.png")
@@ -51,9 +55,7 @@ public data class LogicalCharacterAttribute(val name: String,
         val ON_FIRE  =LogicalCharacterAttribute("On Fire",
                 _demonImg.copy(textureId = "6"),
                 statusEffect = true,
-                damageOverTime = LogicalCharacterAttributeTrigger.DamageOverTimeAttribute(
-                        1, DamageType.FIRE
-                ),
+                customEffects = mapOf(OnFireLogicalEffect(1).toPair()),
                 description = {"This unit is on fire and will take one damage per turn until it's put out."})
     }
 }
@@ -103,7 +105,6 @@ public interface LogicalCharacterAttributeTrigger{
     ): LogicalCharacterAttributeTrigger
     class MasterOrgan: LogicalCharacterAttributeTrigger
     class Organ: LogicalCharacterAttributeTrigger
-    class DamageOverTimeAttribute(val damage: Int, val damageType: DamageType)
 }
 
 
