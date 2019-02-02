@@ -13,6 +13,7 @@ public class ShaderFactory @Inject constructor (val tiledMapStageProvider: Tacti
 
     fun generateOutlineShaderOfColor(color: Color,
                                      outlineSize: Float): ShaderProgram {
+
         val viewport = tiledMapStageProvider.tiledMapStage.viewport
         val width = viewport.worldWidth
         val height =  viewport.worldHeight

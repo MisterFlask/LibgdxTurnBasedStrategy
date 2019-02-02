@@ -14,6 +14,7 @@ class AnimationActionQueueProvider @Inject constructor(val actionRunner: ActionR
 
     public fun runThroughActionQueue(finalAction: () -> Unit = {}){
         actionRunner.runThroughActionQueue(actionQueue, finalAction = finalAction)
+        clearQueue()
     }
 
     public fun addAction(actorActionPair: ActorActionPair){
