@@ -8,6 +8,7 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySp
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
+import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import org.reflections.Reflections
 import javax.inject.Inject
@@ -124,7 +125,16 @@ public data class OnFireLogicalEffect(val damagePerTurn: Int) : LogicalEffect{
 
 // TODO: Migrate this into a separate class
 @Singleton
-public class FunctionalEffectRegistrar(){
+@Autoinjectable
+public class FunctionalEffectRegistrar() : GameEventListener{
+    override fun consumeGameEvent(tacticalGameEvent: TacticalGameEvent) {
+        when(tacticalGameEvent){
+            is TacticalGameEvent.UnitTurnStart -> {
+                runTurnStartEffects(tacticalGameEvent.unit)
+            }
+        }
+    }
+
     val functionalAttributes = ArrayList<FunctionalUnitEffect<*>>()
     fun registerAttribute(functionalUnitAttribute: FunctionalUnitEffect<*>){
         functionalAttributes.add(functionalUnitAttribute)

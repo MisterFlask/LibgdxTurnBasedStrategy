@@ -69,5 +69,5 @@ public class EventNotifier() : GameEventNotifier{
 public interface TacticalGameEvent{
     data class UnitKilled(val character: LogicalCharacter) : TacticalGameEvent
     data class EntityDamage(val tileEntity: TileEntity, val ability: LogicalAbility) : TacticalGameEvent
-
+    data class UnitTurnStart(val unit: LogicalCharacter) : TacticalGameEvent
 }

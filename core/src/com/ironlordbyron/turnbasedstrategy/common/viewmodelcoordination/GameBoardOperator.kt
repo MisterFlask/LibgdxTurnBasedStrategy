@@ -66,11 +66,15 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
             if (!unit.isDead){
                 characterSpriteUtils.brightenSprite(unit)
             }
+            eventNotifier.notifyListenersOfGameEvent(TacticalGameEvent.UnitTurnStart(unit))
+
             val functionalAttributes = unit.attributes.flatMap{functionalCharacterAttributeFactory.getFunctionalAttributesFromLogicalAttribute(it, unit)}
             for (attr in functionalAttributes){
                 attr.onCharacterTurnStart(unit)
             }
         }
+        // now, run the animations
+        animationActionQueueProvider.runThroughActionQueue()
     }
 
     init{
@@ -134,6 +138,7 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
     fun removeCharacter(character: LogicalCharacter) {
         boardState.listOfCharacters.remove(character)
         character.actor.remove()
+
     }
 
 

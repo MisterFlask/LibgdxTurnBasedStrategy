@@ -39,7 +39,8 @@ data class TacMapUnitTemplate(val movesPerTurn: Int,
                 templateName = "Shielding Organ",
                 enemyAiType = EnemyAiType.IMMOBILE_UNIT,
                 startingAttributes = listOf(LogicalCharacterAttribute.SHIELDS_ANOTHER_ORGAN,
-                        LogicalCharacterAttribute.EXPLODES_ON_DEATH))
+                        LogicalCharacterAttribute.EXPLODES_ON_DEATH,
+                        LogicalCharacterAttribute.ON_FIRE))
 
         val Dict = mapOf<String, TacMapUnitTemplate>(TacMapUnitTemplateKeys.DEFAULT_UNIT to DEFAULT_UNIT,
                 TacMapUnitTemplateKeys.DEFAULT_ENEMY_UNIT to DEFAULT_ENEMY_UNIT,
