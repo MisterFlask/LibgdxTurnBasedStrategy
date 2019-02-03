@@ -48,10 +48,6 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
         }
     }
 
-    fun List<TiledCellAgglomerate>.getTileByLayer(tileLayer: TileLayer) : TiledCellAgglomerate? {
-        return this.filter { it.tileLayer == tileLayer }.firstOrNull()
-    }
-
     private fun createActorsAndLocationsForLayer(tiledLayer: TiledMapTileLayer, tiledMap: TiledMap) {
         for (x in 0..tiledLayer.width) {
             for (y in 0..tiledLayer.height) {
@@ -96,4 +92,8 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
         }
         return false
     }
+}
+
+public fun List<TiledMapStage.TiledCellAgglomerate>.getTileByLayer(tileLayer: TileLayer) : TiledMapStage.TiledCellAgglomerate? {
+    return this.filter { it.tileLayer == tileLayer }.firstOrNull()
 }

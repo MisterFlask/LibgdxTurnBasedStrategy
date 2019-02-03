@@ -12,7 +12,7 @@ public class ContextualAbilityFactory @Inject constructor (val logicalTileTracke
     fun isContextualAbilityValidForUse(contextualAbilityParams: ContextualAbilityParams,
                                        sourceCharacter: LogicalCharacter) : Boolean{
         if (contextualAbilityParams.requiresDoorNearby){
-            val neighbors = (tacticalMapAlgorithms.getNeighbors(sourceCharacter.tileLocation))
+            val neighbors = (logicalTileTracker.getNeighbors(sourceCharacter.tileLocation))
             if (neighbors.filter{logicalTileTracker.isDoor(it)}.isNotEmpty()){
                 return true
             }else{

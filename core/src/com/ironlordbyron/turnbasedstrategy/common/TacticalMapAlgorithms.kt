@@ -85,17 +85,8 @@ class TacticalMapAlgorithms @Inject constructor(override val logicalTileTracker:
         return tilesAlreadyProcessed
     }
 
-    public fun getNeighbors(tile: TileLocation): List<TileLocation> {
-        val north = tile.copy(y=tile.y+1)
-        val south = tile.copy(y=tile.y-1)
-        val east = tile.copy(x=tile.x+1)
-        val west = tile.copy(x=tile.x-1)
-
-        return listOf(north,south,east,west)
-    }
-
     private fun getPassableNeighbors(nextTile: TileLocation, character: LogicalCharacter, tileIsValidAlgorithm: TileIsValidAlgorithm): Collection<TileLocation> {
-       return getNeighbors(nextTile).filter{isPassable(it, character, tileIsValidAlgorithm)}
+       return logicalTileTracker.getNeighbors(nextTile).filter{isPassable(it, character, tileIsValidAlgorithm)}
     }
 
     private fun isPassable(loc: TileLocation, character: LogicalCharacter, tileIsValidAlgorithm: TileIsValidAlgorithm): Boolean {

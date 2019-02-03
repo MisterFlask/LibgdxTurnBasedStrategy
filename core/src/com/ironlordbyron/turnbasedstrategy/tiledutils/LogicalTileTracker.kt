@@ -19,6 +19,27 @@ class LogicalTileTracker {
         tiles.add(logicalTile)
     }
 
+    public fun getNeighborTiles(tile: TileLocation): List<LogicalTile> {
+        val north = tile.copy(y=tile.y+1)
+        val south = tile.copy(y=tile.y-1)
+        val east = tile.copy(x=tile.x+1)
+        val west = tile.copy(x=tile.x-1)
+
+        return listOf(north,south,east,west)
+                .map{getLogicalTileFromLocation(it)}
+                .filter{it != null} as List<LogicalTile>
+    }
+
+    public fun getNeighbors(tile: TileLocation): List<TileLocation> {
+        val north = tile.copy(y=tile.y+1)
+        val south = tile.copy(y=tile.y-1)
+        val east = tile.copy(x=tile.x+1)
+        val west = tile.copy(x=tile.x-1)
+
+        return listOf(north,south,east,west)
+                .filter{getLogicalTileFromLocation(it) != null}
+    }
+
     fun isDoor(location: TileLocation): Boolean{
         // Now, we check the other layers for walls/doors that might overwrite the tile
         return getEntitiesAtTile(location).any{it is DoorEntity}
