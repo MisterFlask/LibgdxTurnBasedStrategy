@@ -78,6 +78,7 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
                 func.onInitialization(char)
             }
         }
+
         animationActionQueueProvider.runThroughActionQueue()
     }
 }

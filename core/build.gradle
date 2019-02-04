@@ -36,4 +36,6 @@ dependencies{
     compile "org.jetbrains.kotlin:kotlin-stdlib"
     testCompile "org.jetbrains.kotlin:kotlin-test"
     testCompile "org.jetbrains.kotlin:kotlin-test-junit"
+    compile group: 'org.reflections', name: 'reflections', version: '0.9.11'
+
 }

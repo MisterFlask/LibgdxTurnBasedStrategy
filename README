@@ -1,0 +1,6 @@
+HOW TO RUN
+1)  You'll need Gradle 5+ to do this.  Get scoop and use that to pull in Gradle, it's what I did!
+2)  Run the DesktopLauncher.  Make sure the working directory selected is "<whatever>\LibgdxTurnBasedStrategy\core\assets",
+which is NOT the Intellij default.
+3)  You'll want to use the local Gradle distribution, which might be at somewhere similar to C:/Users/ironl/scoop/apps/gradle/5.1.1
+(assuming you used Scoop to download it.)

@@ -35,10 +35,16 @@ interface GameEventNotifier{
 @Singleton
 public class EventNotifier() : GameEventNotifier{
     fun registerGuiListener(eventListener: EventListener){
+        if (listeners.contains(eventListener)){
+            return
+        }
         this.listeners += eventListener
     }
 
     override fun registerGameListener(gameEventListener: GameEventListener){
+        if (gameEventListeners.contains(gameEventListener)){
+            return
+        }
         gameEventListeners.add(gameEventListener)
     }
     val gameEventListeners = ArrayList<GameEventListener>()
@@ -63,5 +69,5 @@ public class EventNotifier() : GameEventNotifier{
 public interface TacticalGameEvent{
     data class UnitKilled(val character: LogicalCharacter) : TacticalGameEvent
     data class EntityDamage(val tileEntity: TileEntity, val ability: LogicalAbility) : TacticalGameEvent
-
+    data class UnitTurnStart(val unit: LogicalCharacter) : TacticalGameEvent
 }
