@@ -33,7 +33,7 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
         return map.getTilesInObjectByType("SHIELDING_ORGAN").flatMap { it }
     }
 
-    fun retrieveTileEntities(tileMap: TiledMap, tileLocation: TileLocation){
+    fun initializeTileEntities(tileMap: TiledMap, tileLocation: TileLocation){
         val layersAtLocation = getAllTilesAtXY(tileMap, tileLocation)
         val cells = layersAtLocation.map{it?.tiledCell}
         val entities = ArrayList<TileEntity>()

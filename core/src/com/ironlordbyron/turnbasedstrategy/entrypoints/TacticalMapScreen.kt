@@ -9,12 +9,35 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
+import com.badlogic.gdx.scenes.scene2d.Event
+import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
+import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.BlankMapGenerator
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.MapGenerationApplicator
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.ScenarioParams
+import javax.inject.Inject
+import javax.inject.Singleton
 
-public class TacticalMapScreen : ScreenAdapter() {
+@Singleton
+public class  TacticalMapScreen @Inject constructor(val eventNotifier: EventNotifier,
+                                                    val tiledMapStageProvider: TacticalTiledMapStageProvider,
+                                                    val mapGenerationApplicator: MapGenerationApplicator) : ScreenAdapter(), com.ironlordbyron.turnbasedstrategy.controller.EventListener {
+
+
+
+    override fun consumeGuiEvent(event: TacticalGuiEvent) {
+        when(event){
+            is TacticalGuiEvent.SelectedScenario -> {
+                val newTiledMap = initializeTileMapFromScenario(event.scenarioParams)
+                tiledMapStageProvider.tiledMapStage.initializeBattle(newTiledMap)
+            }
+        }
+    }
 
     var TILEMAP_SCALING_FACTOR: Float = 1.0f // TODO: This super doesn't work, don't change it
 
@@ -22,12 +45,13 @@ public class TacticalMapScreen : ScreenAdapter() {
     private val WINDOW_HEIGHT = 600
 
 
-    internal var tiledMap: TiledMap
+     internal var tiledMap: TiledMap
     internal var tacMapCamera: OrthographicCamera
     internal var tiledMapRenderer: TiledMapRenderer
     internal var tiledMapStage: Stage
     internal var hudStage: Stage
     internal var hudCamera: OrthographicCamera
+
 
     init{
 
@@ -40,13 +64,10 @@ public class TacticalMapScreen : ScreenAdapter() {
         tacMapCamera.update()
         GameModuleInjector.initGameCameraProvider(tacMapCamera)
 
-        val tileMapGenerator = GameModuleInjector.createTiledMapGenerator()
-        tiledMap = tileMapGenerator.generateMap(Scenarios.DEFAULT_SCENARIO)
-        val tileMapProvider = GameModuleInjector.createGameStateProvider()
-        tileMapProvider.tiledMap = tiledMap
+        this.tiledMap = initializeTileMapFromScenario()
         tiledMapRenderer = OrthogonalTiledMapRenderer(tiledMap, TILEMAP_SCALING_FACTOR)
         val tiledMapStageFactory = GameModuleInjector.createTiledMapStageFactory()
-        tiledMapStage = tiledMapStageFactory.create(tiledMap, tacMapCamera)
+        tiledMapStage = tiledMapStageFactory.create(tacMapCamera)
         val tiledMapViewport = FitViewport(w, h, tacMapCamera)
         tiledMapStage.viewport = tiledMapViewport
         tiledMapStage.viewport.camera = tacMapCamera
@@ -57,6 +78,15 @@ public class TacticalMapScreen : ScreenAdapter() {
         hudCamera.update()
 
         initializeControls()
+    }
+
+    public fun initializeTileMapFromScenario(scenarioParams: ScenarioParams = Scenarios.DEFAULT_SCENARIO) : TiledMap{
+        val tileMapGenerator = GameModuleInjector.createTiledMapGenerator()
+        val tiledMap = tileMapGenerator.generateMap(scenarioParams)
+        val tileMapProvider = GameModuleInjector.createGameStateProvider()
+        tileMapProvider.tiledMap = tiledMap
+        mapGenerationApplicator.generateMapForScenario(scenarioParams)
+        return tiledMap
     }
 
     private fun initializeControls() {

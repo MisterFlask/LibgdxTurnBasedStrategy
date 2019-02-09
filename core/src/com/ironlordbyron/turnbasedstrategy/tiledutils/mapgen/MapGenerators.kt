@@ -4,6 +4,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap
 import com.google.inject.Inject
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 import java.util.*
 import javax.inject.Singleton
 
@@ -61,4 +62,28 @@ class BlankMapGenerator @Inject constructor(val fragmentCopier: TiledMapOperatio
 
 
 data class ScenarioParams(val sourceMapName: String,
-                          val name: String)
+                          val name: String,
+                          val mapGeneratorType: MapGeneratorType)
+enum class MapGeneratorType{
+    NONE,
+    PARTIAL_PROCEDURAL
+}
+
+/**
+ * This runs the tiled map interpreter, and the chosen tiled map stage algorithm.
+ */
+public class MapGenerationApplicator @Inject constructor(val tiledMapInterpreter: TiledMapInterpreter,
+                                               val partiallyProceduralMapGenerator: PartiallyProceduralMapGenerator,
+                                               val tileMapProvider: TileMapProvider){
+    fun generateMapForScenario(scenarioParams: ScenarioParams){
+        when(scenarioParams.mapGeneratorType){
+             MapGeneratorType.NONE -> {
+
+            }
+            MapGeneratorType.PARTIAL_PROCEDURAL -> {
+                partiallyProceduralMapGenerator.generateDungeon()
+            }
+        }
+    }
+}
+

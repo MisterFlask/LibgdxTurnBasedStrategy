@@ -15,7 +15,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-class TiledMapStage(@Assisted val tiledMap: TiledMap,
+class TiledMapStage(
                     val tileMapClickListenerActorFactory: TileMapClickListenerActorFactory,
                     val tileMapClickListenerFactory: TileMapClickListenerFactory,
                     @Assisted val orthographicCamera: OrthographicCamera,
@@ -24,8 +24,13 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
                     val spriteActorFactory: SpriteActorFactory,
                     val tileMapProvider: TileMapProvider,
                     val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider,
-                    val tiledMapInterpreter: TiledMapInterpreter) : Stage(), InputProcessor {
+                    val tiledMapInterpreter: TiledMapInterpreter,
+                    val tiledMapProvider: TileMapProvider) : Stage(), InputProcessor {
     init {
+        initializeBattle(tiledMapProvider.tiledMap)
+    }
+
+    public fun initializeBattle(tiledMap: TiledMap){
         tacticalTiledMapStageProvider.tiledMapStage = this
         val layer = tiledMap.getTileLayer(TileLayer.BASE)
         createActorsAndLocationsForLayer(layer, tiledMap)
@@ -34,7 +39,7 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
     }
 
     private fun createFactoriesForStage() {
-        tileMapProvider.tiledMap = tiledMap
+        tileMapProvider.tiledMap = tiledMapProvider.tiledMap
     }
 
 
@@ -52,7 +57,7 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
         for (x in 0..tiledLayer.width) {
             for (y in 0..tiledLayer.height) {
                 val cell = tiledLayer.getCell(x, y) ?: continue
-                val actor = tileMapClickListenerActorFactory.createTileMapActor(this.tiledMap, tiledLayer, cell, TileLocation(x, y)
+                val actor = tileMapClickListenerActorFactory.createTileMapActor(this.tiledMapProvider.tiledMap, tiledLayer, cell, TileLocation(x, y)
                 )
                 actor.setBounds(x * tiledLayer.tileWidth, y * tiledLayer.tileHeight, tiledLayer.tileWidth,
                         tiledLayer.tileHeight)
@@ -60,7 +65,7 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
                 logicalTileTracker.addTile(LogicalTile(cell.tile, location, actor, cell,
                         tiledMapInterpreter.getAllTilesAtXY(tiledMap, TileLocation(x, y))))
                 addActor(actor)
-                tiledMapInterpreter.retrieveTileEntities(tiledMap, location)
+                tiledMapInterpreter.initializeTileEntities(tiledMap, location)
                 val eventListener = tileMapClickListenerFactory.create(actor)
                 actor.addListener(eventListener)
             }
@@ -68,6 +73,7 @@ class TiledMapStage(@Assisted val tiledMap: TiledMap,
     }
 
     override fun keyUp(keycode: Int): Boolean {
+        val tiledMap = tiledMapProvider.tiledMap
         if (keycode == Input.Keys.LEFT || keycode == Input.Keys.A)
             orthographicCamera.translate(-32f, 0f)
         if (keycode == Input.Keys.RIGHT || keycode == Input.Keys.D)

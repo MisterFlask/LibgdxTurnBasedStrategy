@@ -4,6 +4,7 @@ import com.ironlordbyron.turnbasedstrategy.common.LogicalAbilityAndEquipment
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.ScenarioParams
 
 
 sealed class TacticalGuiEvent{
@@ -21,5 +22,6 @@ sealed class TacticalGuiEvent{
     // screen swap events
     class SwapToTacticsScreen: TacticalGuiEvent()
     class SwapToMainMenu: TacticalGuiEvent()
+    data class SelectedScenario(val scenarioParams: ScenarioParams) : TacticalGuiEvent()
 
 }

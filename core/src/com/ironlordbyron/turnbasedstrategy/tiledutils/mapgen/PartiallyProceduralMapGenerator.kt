@@ -1,9 +1,11 @@
 package com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen
 
+import com.google.inject.Singleton
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 import java.util.*
+import javax.inject.Inject
 
 class RoomAdjacency(_room1: UUID,_room2: UUID, val walls: HashSet<TileLocation> = HashSet()){
     val room1: UUID
@@ -39,9 +41,10 @@ data class MapArchitecture(val rooms: Collection<MapRoom>,
                            var adjacencyList: Collection<RoomAdjacency>,
                            var walls: Collection<LogicalWall>)
 
-class PartiallyProceduralMapGenerator(val tiledMapInterpreter: TiledMapInterpreter,
-                                      val logicalTileTracker: LogicalTileTracker,
-                                      val tiledMapModifier: TiledMapModifier){
+@Singleton
+class PartiallyProceduralMapGenerator @Inject constructor (val tiledMapInterpreter: TiledMapInterpreter,
+                                                           val logicalTileTracker: LogicalTileTracker,
+                                                           val tiledMapModifier: TiledMapModifier){
     // Requires a tilemap filled with rooms (no doors or anything else allowed.)
     // Then partitions them into rooms, and creates a graph of all the rooms that could connect to each other.
     // adds doors between 1/3 of all room adjacencies.  Then: Makes sure all rooms are connected via BFS.
