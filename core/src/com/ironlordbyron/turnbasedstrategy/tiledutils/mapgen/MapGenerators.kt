@@ -8,6 +8,9 @@ import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpr
 import java.util.*
 import javax.inject.Singleton
 
+/**
+ * Responsible for initializing a tilemap from a scenario.
+ */
 @Singleton
 class BlankMapGenerator @Inject constructor(val fragmentCopier: TiledMapOperationsHandler,
                                             val tileTracker: LogicalTileTracker) {

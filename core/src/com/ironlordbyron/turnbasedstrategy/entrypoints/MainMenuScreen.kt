@@ -6,17 +6,23 @@ import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.ScenarioParams
 import com.ironlordbyron.turnbasedstrategy.view.ui.DEFAULT_SKIN
+import com.kotcrab.vis.ui.building.utilities.Alignment
+import javax.inject.Inject
+import javax.inject.Singleton
 
-
-public class MainMenuScreen(): ScreenAdapter(){
+@Singleton
+public class MainMenuScreen @Inject constructor(val tacticalMapScreen: TacticalMapScreen): ScreenAdapter(){
 
     val viewport: ScreenViewport
     val stage: Stage
@@ -30,19 +36,30 @@ public class MainMenuScreen(): ScreenAdapter(){
         title.setWidth(Gdx.graphics.width.toFloat())
         stage.addActor(title)
 
-        addPlayButton(eventNotifier,
+        val table = Table()
+
+        table.add(playScenarioButton(eventNotifier,
                 TacticalGuiEvent.SwapToTacticsScreen(),
-                "Default Scenario")
+                "Default Scenario",
+                Scenarios.DEFAULT_SCENARIO))
+        table.row()
+        table.add(playScenarioButton(eventNotifier,
+                TacticalGuiEvent.SwapToTacticsScreen(),
+                buttonName = "Partially-procedurally-generated",
+                scenarioParams = Scenarios.PARTIAL_PROCEDURAL_SCENARIO))
+        table.setPosition(Gdx.graphics.width / 2 - table.getWidth() / 2, Gdx.graphics.height / 2 - table.getHeight() / 2, Alignment.CENTER.alignment)
+        stage.addActor(table)
     }
 
-    private fun addPlayButton(eventNotifier: EventNotifier,
-                              tacticalGuiEventToSend: TacticalGuiEvent,
-                              buttonName: String) {
+    private fun playScenarioButton(eventNotifier: EventNotifier,
+                                   tacticalGuiEventToSend: TacticalGuiEvent,
+                                   buttonName: String,
+                                   scenarioParams: ScenarioParams) : Button {
         val playButton = TextButton(buttonName, DEFAULT_SKIN)
         playButton.setWidth((Gdx.graphics.width / 2).toFloat())
-        playButton.setPosition(Gdx.graphics.width / 2 - playButton.getWidth() / 2, Gdx.graphics.height / 2 - playButton.getHeight() / 2)
         playButton.addListener(object : InputListener() {
             override fun touchUp(event: InputEvent, x: Float, y: Float, pointer: Int, button: Int) {
+                tacticalMapScreen.initializeTileMapFromScenario(scenarioParams)
                 eventNotifier.notifyListenersOfGuiEvent(tacticalGuiEventToSend)
             }
 
@@ -50,7 +67,7 @@ public class MainMenuScreen(): ScreenAdapter(){
                 return true
             }
         })
-        stage.addActor(playButton)
+        return playButton
     }
 
     override fun resize(width: Int, height: Int) {
