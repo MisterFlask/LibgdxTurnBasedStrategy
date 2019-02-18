@@ -134,10 +134,15 @@ class PartiallyProceduralMapGenerator @Inject constructor (val tiledMapInterpret
     fun floodFill(tile: LogicalTile) : Set<TileLocation>{
         var toProcess = HashSet<TileLocation>()
         val accepted = HashSet<TileLocation>()
+        val processed = HashSet<TileLocation>()
         toProcess.add(tile.location)
         var toProcessAfter = HashSet<TileLocation>()
         while(!toProcess.isEmpty()){
             for (s in toProcess){
+                if (processed.contains(s)){
+                    continue
+                }
+                processed.add(s)
                 if (isWall(logicalTileTracker.getLogicalTileFromLocation(s)!!)){
                     continue
                 }
