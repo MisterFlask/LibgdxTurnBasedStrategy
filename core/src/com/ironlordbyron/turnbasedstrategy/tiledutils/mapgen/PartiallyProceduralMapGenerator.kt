@@ -147,7 +147,7 @@ class PartiallyProceduralMapGenerator @Inject constructor (val tiledMapInterpret
                     continue
                 }
                 accepted.add(s)
-                toProcessAfter.addAll(logicalTileTracker.getNeighbors(s))
+                toProcessAfter.addAll(logicalTileTracker.getNeighbors(s).filter{!processed.contains(it)})
             }
             toProcess = toProcessAfter
             toProcessAfter = HashSet()

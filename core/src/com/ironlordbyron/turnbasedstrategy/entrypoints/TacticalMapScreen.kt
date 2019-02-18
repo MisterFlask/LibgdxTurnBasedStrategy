@@ -36,6 +36,7 @@ public class  TacticalMapScreen @Inject constructor(val eventNotifier: EventNoti
             is TacticalGuiEvent.SelectedScenario -> {
                 val newTiledMap = initializeTileMapFromScenario(event.scenarioParams)
                 tiledMapStageProvider.tiledMapStage.initializeBattle(newTiledMap)
+                mapGenerationApplicator.generateMapForScenario(event.scenarioParams)
             }
         }
     }
@@ -86,6 +87,9 @@ public class  TacticalMapScreen @Inject constructor(val eventNotifier: EventNoti
         hudCamera.update()
 
         initializeControls()
+
+        tiledMapStageProvider.tiledMapStage.initializeBattle(tiledMap)
+        mapGenerationApplicator.generateMapForScenario(scenarioParams)
     }
 
     private fun initializeTileMapFromScenario(scenarioParams: ScenarioParams) : TiledMap{
@@ -93,7 +97,6 @@ public class  TacticalMapScreen @Inject constructor(val eventNotifier: EventNoti
         val tiledMap = tileMapGenerator.generateMap(scenarioParams)
         val tileMapProvider = GameModuleInjector.createGameStateProvider()
         tileMapProvider.tiledMap = tiledMap
-        mapGenerationApplicator.generateMapForScenario(scenarioParams)
         return tiledMap
     }
 
