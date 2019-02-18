@@ -28,8 +28,8 @@ class TiledMapOperationsHandler @Inject constructor(val xmlParser: TilemapXmlPro
                        minX: Int,
                        minY: Int,
                        fragmentName: String) {
-        val gameMapLayer = pullTileMapLayer(gameMapName, MapType.SOURCE_MAP, tileLayer = TileLayer.FEATURE)
-        val fragmentLayer = pullTileMapLayer(fragmentName, MapType.FRAGMENT_MAP, tileLayer = TileLayer.BASE)
+        val gameMapLayer = pullTileMapLayer(gameMapName, MapType.SOURCE_MAP, tileLayer = TileLayer.FEATURE, allowCaching = false)
+        val fragmentLayer = pullTileMapLayer(fragmentName, MapType.FRAGMENT_MAP, tileLayer = TileLayer.BASE, allowCaching = false)
         copyTo(gameMapLayer,
                 fragmentLayer,
                 minX,
@@ -45,7 +45,7 @@ class TiledMapOperationsHandler @Inject constructor(val xmlParser: TilemapXmlPro
     }
 
     fun pullTextureFromTilemap(tileMapWithTextureName: String, textureId: String, tileSetWithTexture: String): TextureRegion {
-        val map = getTileMapFromFullyQualifiedName(tileMapWithTextureName)
+        val map = getTileMapFromFullyQualifiedName(tileMapWithTextureName, allowCaching = true)
 
         val tiledMapTileSets = map.tileSets
         val set = tiledMapTileSets.getTileSet(tileSetWithTexture)
@@ -60,8 +60,8 @@ class TiledMapOperationsHandler @Inject constructor(val xmlParser: TilemapXmlPro
         return textureRegion
     }
 
-    fun getTileMapFromFullyQualifiedName(key: String): TiledMap {
-        if (!mapCache.contains(key)) {
+    fun getTileMapFromFullyQualifiedName(key: String, allowCaching: Boolean): TiledMap {
+        if (!mapCache.contains(key) || !allowCaching) {
             val map = TmxMapLoader()
                     .load(key)
             mapCache[key] = map
@@ -69,14 +69,14 @@ class TiledMapOperationsHandler @Inject constructor(val xmlParser: TilemapXmlPro
         return mapCache[key]!!
     }
 
-    fun getTileMap(name: String, mapType: MapType): TiledMap {
+    fun getTileMap(name: String, mapType: MapType, allowCaching: Boolean): TiledMap {
         val precursor = mapType.filePrefix
         val key = "$precursor/$name"
-        return getTileMapFromFullyQualifiedName(key)
+        return getTileMapFromFullyQualifiedName(key, allowCaching)
     }
 
-    fun pullTileMapLayer(name: String, mapType: MapType, tileLayer: TileLayer): TiledMapTileLayer {
-        return getTileMap(name, mapType)
+    fun pullTileMapLayer(name: String, mapType: MapType, tileLayer: TileLayer, allowCaching: Boolean): TiledMapTileLayer {
+        return getTileMap(name, mapType, allowCaching)
                 .getTileLayer(tileLayer)
     }
 

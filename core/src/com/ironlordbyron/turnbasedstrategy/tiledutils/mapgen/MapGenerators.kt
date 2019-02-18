@@ -16,7 +16,7 @@ class BlankMapGenerator @Inject constructor(val fragmentCopier: TiledMapOperatio
                                             val tileTracker: LogicalTileTracker) {
 
     fun generateMap(params: ScenarioParams): TiledMap {
-        val blankMap = fragmentCopier.getTileMap(params.sourceMapName, MapType.SOURCE_MAP)
+        val blankMap = fragmentCopier.getTileMap(params.sourceMapName, MapType.SOURCE_MAP, allowCaching = false)
         /**
         val blankMapFirstLayer = blankMap.getTileLayer(TileLayer.BASE)
         val locationsUsed: HashSet<TileLocation> = hashSetOf()
