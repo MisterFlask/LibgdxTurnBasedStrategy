@@ -2,14 +2,30 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils
 
 import com.badlogic.gdx.maps.tiled.TiledMapTile
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
+import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.WallEntity
+import javax.inject.Inject
 import javax.inject.Singleton
 
 
 @Singleton
-class LogicalTileTracker {
+class LogicalTileTracker @Inject constructor (val eventNotifier: EventNotifier) : GameEventListener {
+
+    override fun consumeGameEvent(tacticalGameEvent: TacticalGameEvent) {
+        when(tacticalGameEvent){
+            is TacticalGameEvent.INITIALIZE -> {
+                tileEntities.clear()
+                tiles.clear()
+            }
+        }
+    }
+    init {
+        eventNotifier.registerGameListener(this)
+    }
 
     val tileEntities = ArrayList<TileEntity>()
 

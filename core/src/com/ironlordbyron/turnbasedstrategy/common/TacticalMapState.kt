@@ -1,6 +1,10 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
 import com.google.inject.Inject
+import com.ironlordbyron.turnbasedstrategy.controller.EventListener
+import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
+import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import javax.inject.Singleton
 
@@ -8,9 +12,23 @@ import javax.inject.Singleton
  * Responsible for doing tracking what tiles contain what characters.
  */
 @Singleton
-class TacticalMapState @Inject constructor(val logicalTileTracker: LogicalTileTracker){
+class TacticalMapState @Inject constructor(val logicalTileTracker: LogicalTileTracker,
+                                           val eventNotifier: EventNotifier) : GameEventListener{
 
-    val locations = HashMap<TileLocation, TacticalMapTileState>()
+    override fun consumeGameEvent(tacticalGameEvent: TacticalGameEvent) {
+        when(tacticalGameEvent){
+            is TacticalGameEvent.INITIALIZE -> {
+                // TODO: Remove locations list, is inappropriate
+                locations.clear()
+                listOfCharacters.clear()
+            }
+        }
+    }
+    init {
+        eventNotifier.registerGameListener(this)
+    }
+
+    private val locations = HashMap<TileLocation, TacticalMapTileState>()
     val listOfCharacters = ArrayList<LogicalCharacter>()
 
     val listOfEnemyCharacters: List<LogicalCharacter>

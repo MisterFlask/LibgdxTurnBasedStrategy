@@ -57,12 +57,9 @@ class TileMapClickListener(@Assisted val actor: TileMapActor,
 class TiledMapStageFactory @Inject constructor(val tileMapClickListenerActorFactory: Provider<TileMapClickListenerActorFactory>,
                                                val tileMapClickListenerFactoryProvider: Provider<TileMapClickListenerFactory>,
                                                val logicalTileTracker: LogicalTileTracker,
-                                               val characterPuller: CharacterImageManager,
-                                               val tiledMapOperationsHandler: TiledMapOperationsHandler,
                                                val battleStarter: TempBattleStarter,
                                                val spriteActorFactory: SpriteActorFactory,
                                                val tileMapProvider: TileMapProvider,
-                                               val tacticalMapController: TacticalMapController,
                                                val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider,
                                                val tiledMapInterpreter: TiledMapInterpreter) {
     fun create(orthographicCamera: OrthographicCamera): TiledMapStage {

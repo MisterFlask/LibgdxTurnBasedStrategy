@@ -136,9 +136,12 @@ const val TILE_SIZE = 16
 data class TiledObjectIdentifier(val boundingRectangle: BoundingRectangle, val properties : Map<String, String>)
 
 
-fun TiledMap.getTilesInObjectByType(type: String): Collection<Collection<TileLocation>> {
+fun TiledMap.getTilesInObjectByType(type: String, required: Boolean = true): Collection<Collection<TileLocation>> {
     val objectLayerRectangles = this.getObjectLayerRectangles()
     if (!objectLayerRectangles.any{it.properties["type"] == type}){
+        if (!required){
+            return ArrayList()
+        }
         throw IllegalArgumentException("unable to find tiles matching type of " + type)
     }
     val recs = objectLayerRectangles.filter { it.properties["type"] == type }

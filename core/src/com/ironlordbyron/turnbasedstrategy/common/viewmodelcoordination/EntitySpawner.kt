@@ -2,7 +2,9 @@ package com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination
 
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.*
+import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.tiledutils.CharacterImageManager
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
@@ -19,8 +21,10 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.external.SpecialEffect
 import java.lang.IllegalArgumentException
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Singleton
 
 
+@Singleton
 public class EntitySpawner @Inject constructor(
         val characterImageManager: CharacterImageManager,
         val boardState: TacticalMapState,
@@ -38,7 +42,8 @@ public class EntitySpawner @Inject constructor(
         val visibleCharacterDataFactory: VisibleCharacterDataFactory,
         val specialEffectManager: SpecialEffectManager,
         val temporaryAnimationGenerator: TemporaryAnimationGenerator
-){
+)  {
+
     fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) : LogicalCharacter {
         val group = characterImageManager.placeCharacterActor(tileLocation,tacMapUnit.tiledTexturePath)
         val characterSpawned = LogicalCharacter(group, tileLocation, tacMapUnit, playerControlled)

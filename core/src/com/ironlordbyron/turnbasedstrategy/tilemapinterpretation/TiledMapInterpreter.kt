@@ -17,20 +17,20 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
 
 
     fun getPossiblePlayerSpawnPositions(map: TiledMap): Collection<TileLocation> {
-        return map.getTilesInObjectByType("PLAYER_SPAWN").flatMap{it -> it}
+        return map.getTilesInObjectByType("PLAYER_SPAWN", false).flatMap{it -> it}
     }
 
     fun getPossibleEnemySpawnPositions(map: TiledMap) : Collection<TileLocation> {
-        return map.getTilesInObjectByType("ENEMY_SPAWN").flatMap{it -> it}
+        return map.getTilesInObjectByType("ENEMY_SPAWN", false).flatMap{it -> it}
     }
     fun getSpawners(map: TiledMap) : Collection<TileLocation> {
-        return map.getTilesInObjectByType("SPAWNER").flatMap{it -> it}
+        return map.getTilesInObjectByType("SPAWNER", false).flatMap{it -> it}
     }
     fun getMasterOrgan(map: TiledMap) : Collection<TileLocation> {
-        return map.getTilesInObjectByType("MASTER_ORGAN").flatMap { it }
+        return map.getTilesInObjectByType("MASTER_ORGAN", false).flatMap { it }
     }
     fun getShieldingOrgan(map: TiledMap)  : Collection<TileLocation> {
-        return map.getTilesInObjectByType("SHIELDING_ORGAN").flatMap { it }
+        return map.getTilesInObjectByType("SHIELDING_ORGAN", false).flatMap { it }
     }
 
     fun initializeTileEntities(tileMap: TiledMap, tileLocation: TileLocation){
