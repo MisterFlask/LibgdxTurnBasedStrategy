@@ -41,7 +41,6 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
             val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
             val doorStr = "door"
             if (hasProp(cell, doorStr)){
-                cell.tile.id
                 val actor = ActorFromTiledTextureRegion(cell).imageActor;
                 tiledMapStageProvider.tiledMapStage.addActor(actor)
                 actor.setBoundingBox(boundingBox)

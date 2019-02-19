@@ -10,6 +10,7 @@ import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.WallEntity
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.reflect.KClass
 
 
 @Singleton
@@ -67,6 +68,9 @@ class LogicalTileTracker @Inject constructor (val eventNotifier: EventNotifier) 
 
     fun getEntitiesAtTile(location: TileLocation): List<TileEntity> {
         return tileEntities.filter{it -> it.tileLocation == location}
+    }
+    fun removeWallAtTile(location: TileLocation){
+        tileEntities.removeIf{it is WallEntity && it.tileLocation == location}
     }
 
     fun getLogicalTileFromTile(tile: TiledMapTile): LogicalTile? {
