@@ -79,10 +79,12 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
         val layers = tileMap.layers
                 .filter { it is TiledMapTileLayer }
                 .map { it as TiledMapTileLayer }
-                .filter { it.getCell(tileLocation.x, tileLocation.y) != null }
+        val withCellHere = layers.filter { it.getCell(tileLocation.x, tileLocation.y) != null }
+        val withAppropriateNames = withCellHere
                 .filter { TileLayer.getTileLayerFromName(it.name) != null }
+        val toAggloms = withAppropriateNames
                 .map { TiledMapStage.TiledCellAgglomerate(it.getCell(tileLocation.x, tileLocation.y), TileLayer.getTileLayerFromName(it.name)!!) }
-        return layers
+        return toAggloms
     }
 }
 

@@ -62,7 +62,7 @@ class TiledMapStage(
                 actor.setBounds(x * tiledLayer.tileWidth, y * tiledLayer.tileHeight, tiledLayer.tileWidth,
                         tiledLayer.tileHeight)
                 val location = TileLocation(x, y)
-                logicalTileTracker.addTile(LogicalTile(cell.tile, location, actor, cell,
+                logicalTileTracker.addTile(LogicalTile(cell.tile, location, actor,
                         tiledMapInterpreter.getAllTilesAtXY(tiledMap, TileLocation(x, y))))
                 addActor(actor)
                 tiledMapInterpreter.initializeTileEntities(tiledMap, location)

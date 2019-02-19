@@ -9,7 +9,6 @@ import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.KnownObjectType
 data class LogicalTile(val terrainTile: TiledMapTile,
                        val location: TileLocation,
                        val actor: TileMapActor,
-                       val cell: TiledMapTileLayer.Cell,
                        val allTilesAtThisSquare: List<TiledMapStage.TiledCellAgglomerate>,
                        var terrainType: TerrainType = TerrainType.GRASS,
                        val markers: List<KnownObjectType> = listOf()) {

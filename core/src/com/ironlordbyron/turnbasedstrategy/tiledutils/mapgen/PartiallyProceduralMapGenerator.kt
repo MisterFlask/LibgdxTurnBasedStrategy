@@ -124,9 +124,7 @@ class PartiallyProceduralMapGenerator @Inject constructor (val tiledMapInterpret
     }
 
     private fun isWall(tile: LogicalTile): Boolean {
-        val featureTile = tile.allTilesAtThisSquare.getTileByLayer(TileLayer.FEATURE)
-        val isWall = featureTile?.cellHasProperty("wall") ?: false
-        return isWall
+        return logicalTileTracker.isWall(tile.location)
     }
 
     // Returns all the tiles reachable from the tile location without passing through a wall.

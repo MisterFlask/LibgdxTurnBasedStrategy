@@ -16,7 +16,7 @@ public class TiledMapModifier  @Inject constructor (val logicalTileTracker: Logi
     fun purgeTile(tileLocation: TileLocation,
                     layer: TileLayer){
         val tile = logicalTileTracker.getLogicalTileFromLocation(tileLocation)
-        tile!!.cell.tile = null // Removing this tile
+        tile!!.allTilesAtThisSquare.first{it.tileLayer == layer}.tiledCell.tile = null // Removing this tile
     }
 
     fun placeDoor(tileLocation: TileLocation){
