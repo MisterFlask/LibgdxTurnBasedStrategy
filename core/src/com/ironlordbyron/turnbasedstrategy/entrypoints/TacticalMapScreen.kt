@@ -27,19 +27,9 @@ import javax.inject.Singleton
 @Singleton
 public class  TacticalMapScreen @Inject constructor(val eventNotifier: EventNotifier,
                                                     val tiledMapStageProvider: TacticalTiledMapStageProvider,
-                                                    val mapGenerationApplicator: MapGenerationApplicator) : ScreenAdapter(), com.ironlordbyron.turnbasedstrategy.controller.EventListener {
+                                                    val mapGenerationApplicator: MapGenerationApplicator) : ScreenAdapter(){
 
 
-
-    override fun consumeGuiEvent(event: TacticalGuiEvent) {
-        when(event){
-            is TacticalGuiEvent.SelectedScenario -> {
-                val newTiledMap = initializeTileMapFromScenario(event.scenarioParams)
-                tiledMapStageProvider.tiledMapStage.initializeBattle(newTiledMap)
-                mapGenerationApplicator.generateMapForScenario(event.scenarioParams)
-            }
-        }
-    }
 
     val w get() = Gdx.graphics.width.toFloat()
     val h get() = Gdx.graphics.height.toFloat()
@@ -65,7 +55,6 @@ public class  TacticalMapScreen @Inject constructor(val eventNotifier: EventNoti
         tacMapCamera.setToOrtho(false, w, h)
         tacMapCamera.update()
         GameModuleInjector.initGameCameraProvider(tacMapCamera)
-        scenarioStart(Scenarios.DEFAULT_SCENARIO)
     }
 
     public fun scenarioStart(scenarioParams: ScenarioParams){

@@ -37,6 +37,7 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
                                             val animationActionQueueProvider: AnimationActionQueueProvider,
                                             val entitySpawner: EntitySpawner){
     fun startBattle(){
+        println("Starting battle")
         val legitTiles = tiledMapInterpreter.getPossiblePlayerSpawnPositions(boardProvider.tiledMap)
         for (tile in legitTiles){
             entitySpawner.addCharacterToTile(tacMapUnit = TacMapUnitTemplate.DEFAULT_UNIT, tileLocation = tile,

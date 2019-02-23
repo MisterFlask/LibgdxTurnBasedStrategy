@@ -27,7 +27,7 @@ class TiledMapStage(
                     val tiledMapInterpreter: TiledMapInterpreter,
                     val tiledMapProvider: TileMapProvider) : Stage(), InputProcessor {
     init {
-        initializeBattle(tiledMapProvider.tiledMap)
+        tacticalTiledMapStageProvider.tiledMapStage = this
     }
 
     public fun initializeBattle(tiledMap: TiledMap){

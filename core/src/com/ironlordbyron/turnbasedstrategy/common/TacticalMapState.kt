@@ -41,6 +41,13 @@ class TacticalMapState @Inject constructor(val logicalTileTracker: LogicalTileTr
         }
     }
 
+    fun addCharacter(logicalCharacter: LogicalCharacter){
+        if (listOfCharacters.any{it.tileLocation == logicalCharacter.tileLocation}){
+            throw IllegalArgumentException("Attempted to add character to a tile with another character already created")
+        }
+        listOfCharacters.add(logicalCharacter)
+    }
+
 
     fun characterAt(tile: TileLocation): LogicalCharacter?{
         return listOfCharacters.filter{it.tileLocation == tile}.firstOrNull()

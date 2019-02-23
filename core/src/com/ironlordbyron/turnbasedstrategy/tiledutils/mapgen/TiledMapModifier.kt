@@ -33,7 +33,6 @@ public class TiledMapModifier  @Inject constructor (val logicalTileTracker: Logi
         val doorEntity = tileEntityFactory.createDoor(tileLocation, actor)
         // remove wall if it exists
         logicalTileTracker.removeWallAtTile(tileLocation)
-
         logicalTileTracker.tileEntities.add(doorEntity)
     }
 
