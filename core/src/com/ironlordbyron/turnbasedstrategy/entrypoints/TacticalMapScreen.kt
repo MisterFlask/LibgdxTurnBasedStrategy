@@ -79,6 +79,7 @@ public class  TacticalMapScreen @Inject constructor(val eventNotifier: EventNoti
 
         tiledMapStageProvider.tiledMapStage.initializeBattle(tiledMap)
         mapGenerationApplicator.generateMapForScenario(scenarioParams)
+        eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.ScenarioStart(scenarioParams))
     }
 
     private fun initializeTileMapFromScenario(scenarioParams: ScenarioParams) : TiledMap{

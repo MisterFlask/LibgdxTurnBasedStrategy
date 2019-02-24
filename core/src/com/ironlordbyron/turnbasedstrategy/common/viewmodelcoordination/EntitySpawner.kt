@@ -44,7 +44,7 @@ public class EntitySpawner @Inject constructor(
         val temporaryAnimationGenerator: TemporaryAnimationGenerator
 )  {
 
-    fun addCharacterToTile(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) : LogicalCharacter {
+    fun addCharacterToTileFromTemplate(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) : LogicalCharacter {
         println("Adding character to tile: ${tacMapUnit.templateName} at ${tileLocation}")
         val group = characterImageManager.placeCharacterActor(tileLocation,tacMapUnit.tiledTexturePath)
         val characterSpawned = LogicalCharacter(group, tileLocation, tacMapUnit, playerControlled)
@@ -53,7 +53,6 @@ public class EntitySpawner @Inject constructor(
         animationActionQueueProvider.addAction(revealActionGenerator.generateRevealActorActionPair(characterSpawned.actor))
         return characterSpawned
     }
-
 
     // todo: Migrate to more appropriate location
     // todo: improve flexibility (really?  Only allowing modification of alphaOverride?)

@@ -3,12 +3,14 @@ package com.ironlordbyron.turnbasedstrategy.controller
 import com.ironlordbyron.turnbasedstrategy.ai.EnemyTurnRunner
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityClass
-import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import javax.inject.Inject
 import javax.inject.Singleton
 
 interface BoardInputState{
     abstract val name: String
+    data class PlayerIsPlacingUnits(val units: ArrayList<TacMapUnitTemplate>, override val name: String = "PlacingUnits"): BoardInputState
     data class UnitSelected(val unit: LogicalCharacter, override val name: String = "UnitSelected") : BoardInputState
     data class DefaultState(override val name: String = "DefaultState") : BoardInputState
     data class PlayerIntendsToUseAbility(val unit: LogicalCharacter, val ability: LogicalAbilityAndEquipment, override val name: String = "PlayerIntendsToUseAbility"):BoardInputState
@@ -21,10 +23,12 @@ interface BoardInputState{
 class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoardOperator,
                                                 val eventNotifier: EventNotifier,
                                                 val boardState: TacticalMapState,
+                                                val entitySpawner: EntitySpawner,
                                                 val abilityController: AbilityController,
                                                 val mapHighlighter: MapHighlighter,
                                                 val tacticalMapAlgorithms: TacticalMapAlgorithms,
-                                                val enemyTurnRunner: EnemyTurnRunner) : EventListener, BoardInputStateProvider {
+                                                val enemyTurnRunner: EnemyTurnRunner,
+                                                val animationActionQueueProvider: AnimationActionQueueProvider) : EventListener, BoardInputStateProvider {
 
     override var boardInputState : BoardInputState = BoardInputState.DefaultState()
         set(value) {
@@ -62,6 +66,11 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                     abilityController.signalIntentToActOnAbility(selectedCharacter, event.abilityEquipmentPair)
                 }
             }
+            is TacticalGuiEvent.ScenarioStart -> {
+                boardInputState = BoardInputState.PlayerIsPlacingUnits(arrayListOf(TacMapUnitTemplate.DEFAULT_UNIT))
+                val boardInputState = boardInputState as BoardInputState.PlayerIsPlacingUnits
+                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.PlayerIsPlacingUnit(boardInputState.units.first()))
+            }
         }
     }
 
@@ -69,7 +78,26 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
         eventNotifier.registerGuiListener(this)
     }
 
+    fun placePlayerUnit(tileLocation: TileLocation, unit: TacMapUnitTemplate){
+        entitySpawner.addCharacterToTileFromTemplate(unit, tileLocation, playerControlled = true)
+        animationActionQueueProvider.runThroughActionQueue()
+
+    }
+
     fun playerClickedOnTile(location: TileLocation){
+        if (boardInputState is BoardInputState.PlayerIsPlacingUnits){
+            val boardInputState = boardInputState as BoardInputState.PlayerIsPlacingUnits
+            val characterToPlace = boardInputState.units.first()
+            boardInputState.units.removeAt(0)
+
+            placePlayerUnit(location, characterToPlace)
+            if (boardInputState.units.isEmpty()){
+                // todo: graphical showing that the input state has changed
+                this.boardInputState = BoardInputState.DefaultState()
+            }
+            return
+        }
+
         val character = tacticalMapAlgorithms.getCharacterAtLocation(location)
         mapHighlighter.killHighlights()
         val currentBoardInputState = boardInputState

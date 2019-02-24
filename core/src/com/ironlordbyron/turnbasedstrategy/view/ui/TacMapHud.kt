@@ -7,8 +7,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.Viewport
-import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
-import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.view.images.Dimensions
 import com.ironlordbyron.turnbasedstrategy.view.images.FileImageRetriever
@@ -17,13 +15,16 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActorFactory
 import javax.inject.Inject
 import javax.inject.Singleton
 import com.badlogic.gdx.utils.Scaling
-import com.ironlordbyron.turnbasedstrategy.common.LogicalAbilityAndEquipment
+import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.abilities.ContextualAbilityFactory
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
+import com.ironlordbyron.turnbasedstrategy.common.wrappers.ActorWrapper
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.RenderingFunction
 import com.ironlordbyron.turnbasedstrategy.controller.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
+import com.ironlordbyron.turnbasedstrategy.view.animation.LogicalCharacterActorGroup
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
 import com.ironlordbyron.turnbasedstrategy.view.ui.external.BackgroundColor
 import com.kotcrab.vis.ui.building.utilities.Alignment
@@ -85,6 +86,20 @@ class TacMapHud(viewPort: Viewport,
                 val tileEntities = logicalTileTracker.getEntitiesAtTile(event.tileLocation)
                 entitySelected = tileEntities.firstOrNull() // TODO:  Not great
                 regenerateTable()
+            }
+            is TacticalGuiEvent.PlayerIsPlacingUnit -> {
+                val template = event.unit
+                selectedCharacter = LogicalCharacter(
+                        actor = LogicalCharacterActorGroup(template.tiledTexturePath.toActor()),
+                        tileLocation = TileLocation(0,0),
+                        tacMapUnit = template,
+                        playerControlled = true
+                )
+                regenerateTable()
+                //kludge: This is NOT a valid logicalCharacter because its actor isn't
+                // present on the map.
+
+
             }
         }
     }
@@ -158,26 +173,7 @@ class TacMapHud(viewPort: Viewport,
         val backgroundColor = backgroundColor()
         characterDisplayTable.setBackground(backgroundColor)
         var selectedCharacter: LogicalCharacter? = selectedCharacter
-        characterDisplayTable.clearChildren()
-        if (selectedCharacter != null){
-            characterDisplayTable.add(Label(selectedCharacter.tacMapUnit.templateName, DEFAULT_SKIN, "title"))
-            characterDisplayTable.row()
-            characterDisplayTable.add(characterImageManager.retrieveCharacterImage(selectedCharacter).actor)
-                    .size(portraitDimensions.width.toFloat(),portraitDimensions.height.toFloat())
-            characterDisplayTable.row()
-            characterDisplayTable.add(displayCharacterHp(selectedCharacter))
-            characterDisplayTable.row()
-            characterDisplayTable.add(displayCharacterAttributes(selectedCharacter))
-        }
-        // NOTE TO FUTURE SELF: Table controls size of images, DOES NOT RESPECT image preferred size
-
-        addActionButtons(selectedCharacter)
-        characterDisplayTable.add(Label("", DEFAULT_SKIN)).fillY().expandY()
-
-        val entitySelected = entitySelected
-        if (entitySelected != null){
-            characterDisplayTable.add(Label(entitySelected.name, DEFAULT_SKIN))
-        }
+        regenerateCharacterDisplayTable(selectedCharacter)
 
 
         debugTextArea.setText(debugTextAreaText())
@@ -191,6 +187,29 @@ class TacMapHud(viewPort: Viewport,
 
         characterDisplayTable.row()
         characterDisplayTable.add(debugTextArea).width(300f)
+    }
+
+    private fun regenerateCharacterDisplayTable(selectedCharacter: LogicalCharacter?) {
+        characterDisplayTable.clearChildren()
+        if (selectedCharacter != null) {
+            characterDisplayTable.add(Label(selectedCharacter.tacMapUnit.templateName, DEFAULT_SKIN, "title"))
+            characterDisplayTable.row()
+            characterDisplayTable.add(characterImageManager.retrieveCharacterImage(selectedCharacter).actor)
+                    .size(portraitDimensions.width.toFloat(), portraitDimensions.height.toFloat())
+            characterDisplayTable.row()
+            characterDisplayTable.add(displayCharacterHp(selectedCharacter))
+            characterDisplayTable.row()
+            characterDisplayTable.add(displayCharacterAttributes(selectedCharacter))
+        }
+        // NOTE TO FUTURE SELF: Table controls size of images, DOES NOT RESPECT image preferred size
+
+        addActionButtons(selectedCharacter)
+        characterDisplayTable.add(Label("", DEFAULT_SKIN)).fillY().expandY()
+
+        val entitySelected = entitySelected
+        if (entitySelected != null) {
+            characterDisplayTable.add(Label(entitySelected.name, DEFAULT_SKIN))
+        }
     }
 
     private fun addActionButtons(selectedCharacter: LogicalCharacter?) {

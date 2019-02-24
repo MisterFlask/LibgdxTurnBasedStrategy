@@ -6,7 +6,6 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.Animatio
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.TemporaryAnimationGenerator
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -142,7 +141,7 @@ class SimpleAttackAbility(
         // create the effects
         for (effect in logicalAbility.abilityEffects){
             when(effect){
-                is LogicalAbilityEffect.SpawnsUnit -> unitSpawner.addCharacterToTile(effect.unitToBeSpawned.toTacMapUnitTemplate()!!, location!!,
+                is LogicalAbilityEffect.SpawnsUnit -> unitSpawner.addCharacterToTileFromTemplate(effect.unitToBeSpawned.toTacMapUnitTemplate()!!, location!!,
                         sourceCharacter.playerControlled)
                 is LogicalAbilityEffect.LightsTileOnFire -> {
                     animationActionQueueProvider.addAction(unitSpawner.generateLightTileOnFireAction(location!!))

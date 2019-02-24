@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.controller
 
 import com.ironlordbyron.turnbasedstrategy.common.LogicalAbilityAndEquipment
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
+import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.ScenarioParams
@@ -22,6 +23,6 @@ sealed class TacticalGuiEvent{
     // screen swap events
     class SwapToTacticsScreen: TacticalGuiEvent()
     class SwapToMainMenu: TacticalGuiEvent()
-    data class SelectedScenario(val scenarioParams: ScenarioParams) : TacticalGuiEvent()
-
+    data class ScenarioStart(val scenarioParams: ScenarioParams) : TacticalGuiEvent()
+    data class PlayerIsPlacingUnit(val unit: TacMapUnitTemplate) : TacticalGuiEvent()
 }
