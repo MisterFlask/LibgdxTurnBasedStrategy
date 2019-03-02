@@ -61,11 +61,13 @@ class TiledMapStageFactory @Inject constructor(val tileMapClickListenerActorFact
                                                val spriteActorFactory: SpriteActorFactory,
                                                val tileMapProvider: TileMapProvider,
                                                val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider,
-                                               val tiledMapInterpreter: TiledMapInterpreter) {
+                                               val tiledMapInterpreter: TiledMapInterpreter,
+                                               val eventNotifier : EventNotifier) {
     fun create(orthographicCamera: OrthographicCamera): TiledMapStage {
         val stage = TiledMapStage(tileMapClickListenerActorFactory.get(), tileMapClickListenerFactoryProvider.get(),
                 orthographicCamera, logicalTileTracker, battleStarter, spriteActorFactory,
-                tileMapProvider, tacticalTiledMapStageProvider, tiledMapInterpreter, tileMapProvider)
+                tileMapProvider, tacticalTiledMapStageProvider, tiledMapInterpreter, tileMapProvider,
+                eventNotifier)
         return stage
     }
 }

@@ -6,9 +6,11 @@ import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.ScenarioParams
+import java.util.*
 
 
 sealed class TacticalGuiEvent{
+    data class CycleUnitCarousel(val characterIdSelected : UUID? = null) : TacticalGuiEvent()
     data class CharacterSelected(val character: LogicalCharacter) : TacticalGuiEvent()
     data class TileClicked(val tileLocation: TileLocation) : TacticalGuiEvent()
     class EndTurnButtonClicked() : TacticalGuiEvent()

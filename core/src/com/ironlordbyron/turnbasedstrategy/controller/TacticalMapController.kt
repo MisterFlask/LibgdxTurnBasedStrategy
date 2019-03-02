@@ -77,6 +77,25 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 val boardInputState = boardInputState as BoardInputState.PlayerIsPlacingUnits
                 eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.PlayerIsPlacingUnit(boardInputState.unitsToPlace.first()))
             }
+
+            is TacticalGuiEvent.CycleUnitCarousel -> {
+                val boardInputState = this.boardInputState
+                if (boardInputState !is BoardInputState.PlayerIsPlacingUnits){
+                    return // todo; may be other situations where this is valid
+                }
+                if (event.characterIdSelected == null){
+                    // just move to the next character
+                    val tmp = boardInputState.unitsToPlace[0]
+
+                    // cycle first to the end
+                    boardInputState.unitsToPlace.removeAt(0)
+                    boardInputState.unitsToPlace.add(tmp)
+                }else{
+                    throw NotImplementedError("Haven't yet done cycling to specific unit")
+                }
+                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.PlayerIsPlacingUnit(boardInputState.unitsToPlace.first()))
+
+            }
         }
     }
 

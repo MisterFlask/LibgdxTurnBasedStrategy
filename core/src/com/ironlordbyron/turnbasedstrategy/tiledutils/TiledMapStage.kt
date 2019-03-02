@@ -8,6 +8,8 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.google.inject.assistedinject.Assisted
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TempBattleStarter
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
@@ -25,7 +27,8 @@ class TiledMapStage(
                     val tileMapProvider: TileMapProvider,
                     val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider,
                     val tiledMapInterpreter: TiledMapInterpreter,
-                    val tiledMapProvider: TileMapProvider) : Stage(), InputProcessor {
+                    val tiledMapProvider: TileMapProvider,
+                    val eventNotifier: EventNotifier) : Stage(), InputProcessor {
     init {
         tacticalTiledMapStageProvider.tiledMapStage = this
     }
@@ -86,6 +89,9 @@ class TiledMapStage(
             tiledMap.layers.get(0).isVisible = !tiledMap.layers.get(0).isVisible
         if (keycode == Input.Keys.NUM_2)
             tiledMap.layers.get(1).isVisible = !tiledMap.layers.get(1).isVisible
+        if (keycode == Input.Keys.TAB){
+            eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.CycleUnitCarousel())
+        }
         return false
     }
 

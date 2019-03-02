@@ -19,6 +19,7 @@ import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.abilities.ContextualAbilityFactory
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.RenderingFunction
 import com.ironlordbyron.turnbasedstrategy.controller.*
+import com.ironlordbyron.turnbasedstrategy.font.TextLabelGenerator
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
@@ -43,12 +44,13 @@ class TacMapHudFactory @Inject constructor(val eventNotifier: EventNotifier,
                                            val boardInputStateProvider: BoardInputStateProvider,
                                            val logicalTileTracker: LogicalTileTracker,
                                            val contextualAbilityFactory: ContextualAbilityFactory,
-                                           val pulseAnimationGenerator: PulseAnimationGenerator) {
+                                           val pulseAnimationGenerator: PulseAnimationGenerator,
+                                           val textLabelGenerator: TextLabelGenerator) {
     fun create(viewPort: Viewport): TacMapHud {
         return TacMapHud(viewPort, eventNotifier, tacticalMapState, spriteActorFactory, fileImageRetriever, characterImageManager,
                 logicalTileTracker,
                 boardInputStateProvider,
-                contextualAbilityFactory, pulseAnimationGenerator)
+                contextualAbilityFactory, pulseAnimationGenerator, textLabelGenerator)
     }
 }
 
@@ -62,7 +64,8 @@ class TacMapHud(viewPort: Viewport,
                 val logicalTileTracker: LogicalTileTracker,
                 val boardInputStateProvider: BoardInputStateProvider,
                 val contextualAbilityFactory: ContextualAbilityFactory,
-                val pulseAnimationGenerator: PulseAnimationGenerator) : Stage(viewPort), EventListener {
+                val pulseAnimationGenerator: PulseAnimationGenerator,
+                val textLabelGenerator: TextLabelGenerator) : Stage(viewPort), EventListener {
     var selectedCharacter: LogicalCharacter? = null
     var hoveredAbility: LogicalAbility? = null
     var entitySelected: TileEntity? = null
@@ -90,6 +93,8 @@ class TacMapHud(viewPort: Viewport,
             }
             is TacticalGuiEvent.PlayerIsPlacingUnit -> {
                 val template = event.unit
+                this.selectedCharacter = createFakeLogicalCharacter(template)
+
                 regenerateTable()
                 //kludge: This is NOT a valid logicalCharacter because its actor isn't
                 // present on the map.
@@ -177,7 +182,7 @@ class TacMapHud(viewPort: Viewport,
         var selectedCharacter: LogicalCharacter? = selectedCharacter
         regenerateCharacterSelectionCarousel()
         regenerateCharacterDisplayTable(selectedCharacter)
-
+        regenerateTacMapHudCombatPhaseLabel()
 
         debugTextArea.setText(debugTextAreaText())
         debugTextArea.setWrap(true)
@@ -192,17 +197,35 @@ class TacMapHud(viewPort: Viewport,
         characterDisplayTable.add(debugTextArea).width(300f)
     }
 
+    val combatPhaseLabel = Table()
+
+    private fun regenerateTacMapHudCombatPhaseLabel(){
+        combatPhaseLabel.clearChildren()
+        var label = ""
+        if (boardInputStateProvider.boardInputState is BoardInputState.PlayerIsPlacingUnits){
+            label = "Deployment Phase"
+        }
+        else{
+            label = "Combat Phase"
+        }
+        val titleLabel = textLabelGenerator.generateLabel(label).label
+        titleLabel.setFontScale(.3f)
+        combatPhaseLabel.add(titleLabel).height(titleLabel.height)
+                .row()
+
+    }
+
     private fun regenerateCharacterSelectionCarousel() {
         // TODO:  Add indicator saying what the user should be doing here
         characterSelectCarousel.clearChildren()
         val boardInputState = boardInputStateProvider.boardInputState as? BoardInputState.PlayerIsPlacingUnits ?: return
         for (unit in boardInputState.unitsToPlace){
-            print("Carousel gets unit: ${unit.templateName}")
             var nextCharacterActor = characterImageManager.retrieveCharacterTemplateImage(unit).actor
+            nextCharacterActor.setScale(3f)
+            characterSelectCarousel.add(nextCharacterActor).width(nextCharacterActor.width).pad(10f)
             if (boardInputState.nextUnit()!!.uuid == unit.uuid){
                 nextCharacterActor = emphasizeActor(nextCharacterActor)
             }
-            characterSelectCarousel.add(nextCharacterActor)
         }
     }
 
@@ -277,6 +300,9 @@ class TacMapHud(viewPort: Viewport,
                 Window("", DEFAULT_SKIN).let {
                     it.width = 440f
                     it.height = 600f
+
+                    it.add(combatPhaseLabel).fill().expand()
+                    it.row()
                     it.add(characterSelectCarousel).fill().expand()
                     it.row()
                     it.add(characterDisplayTable).fill().expand()
