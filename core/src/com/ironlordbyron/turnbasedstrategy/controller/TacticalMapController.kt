@@ -10,7 +10,12 @@ import javax.inject.Singleton
 
 interface BoardInputState{
     abstract val name: String
-    data class PlayerIsPlacingUnits(val units: ArrayList<TacMapUnitTemplate>, override val name: String = "PlacingUnits"): BoardInputState
+    data class PlayerIsPlacingUnits(val unitsToPlace: ArrayList<TacMapUnitTemplate>, override val name: String = "PlacingUnits"): BoardInputState{
+        fun nextUnit() : TacMapUnitTemplate?
+        {
+            return unitsToPlace.firstOrNull()
+        }
+    }
     data class UnitSelected(val unit: LogicalCharacter, override val name: String = "UnitSelected") : BoardInputState
     data class DefaultState(override val name: String = "DefaultState") : BoardInputState
     data class PlayerIntendsToUseAbility(val unit: LogicalCharacter, val ability: LogicalAbilityAndEquipment, override val name: String = "PlayerIntendsToUseAbility"):BoardInputState
@@ -67,9 +72,10 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 }
             }
             is TacticalGuiEvent.ScenarioStart -> {
-                boardInputState = BoardInputState.PlayerIsPlacingUnits(arrayListOf(TacMapUnitTemplate.DEFAULT_UNIT))
+                boardInputState = BoardInputState.PlayerIsPlacingUnits(arrayListOf(TacMapUnitTemplate.DEFAULT_UNIT,
+                        TacMapUnitTemplate.DEFAULT_ENEMY_UNIT))
                 val boardInputState = boardInputState as BoardInputState.PlayerIsPlacingUnits
-                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.PlayerIsPlacingUnit(boardInputState.units.first()))
+                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.PlayerIsPlacingUnit(boardInputState.unitsToPlace.first()))
             }
         }
     }
@@ -87,11 +93,11 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
     fun playerClickedOnTile(location: TileLocation){
         if (boardInputState is BoardInputState.PlayerIsPlacingUnits){
             val boardInputState = boardInputState as BoardInputState.PlayerIsPlacingUnits
-            val characterToPlace = boardInputState.units.first()
-            boardInputState.units.removeAt(0)
+            val characterToPlace = boardInputState.unitsToPlace.first()
+            boardInputState.unitsToPlace.removeAt(0)
 
             placePlayerUnit(location, characterToPlace)
-            if (boardInputState.units.isEmpty()){
+            if (boardInputState.unitsToPlace.isEmpty()){
                 // todo: graphical showing that the input state has changed
                 this.boardInputState = BoardInputState.DefaultState()
             }

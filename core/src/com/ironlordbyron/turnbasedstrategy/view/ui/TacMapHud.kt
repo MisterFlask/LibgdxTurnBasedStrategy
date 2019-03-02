@@ -17,14 +17,13 @@ import javax.inject.Singleton
 import com.badlogic.gdx.utils.Scaling
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.abilities.ContextualAbilityFactory
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
-import com.ironlordbyron.turnbasedstrategy.common.wrappers.ActorWrapper
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.RenderingFunction
 import com.ironlordbyron.turnbasedstrategy.controller.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.LogicalCharacterActorGroup
+import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.PulseAnimationGenerator
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
 import com.ironlordbyron.turnbasedstrategy.view.ui.external.BackgroundColor
 import com.kotcrab.vis.ui.building.utilities.Alignment
@@ -43,12 +42,13 @@ class TacMapHudFactory @Inject constructor(val eventNotifier: EventNotifier,
                                            val characterImageManager: CharacterImageManager,
                                            val boardInputStateProvider: BoardInputStateProvider,
                                            val logicalTileTracker: LogicalTileTracker,
-                                           val contextualAbilityFactory: ContextualAbilityFactory) {
+                                           val contextualAbilityFactory: ContextualAbilityFactory,
+                                           val pulseAnimationGenerator: PulseAnimationGenerator) {
     fun create(viewPort: Viewport): TacMapHud {
         return TacMapHud(viewPort, eventNotifier, tacticalMapState, spriteActorFactory, fileImageRetriever, characterImageManager,
                 logicalTileTracker,
                 boardInputStateProvider,
-                contextualAbilityFactory)
+                contextualAbilityFactory, pulseAnimationGenerator)
     }
 }
 
@@ -61,7 +61,8 @@ class TacMapHud(viewPort: Viewport,
                 val characterImageManager: CharacterImageManager,
                 val logicalTileTracker: LogicalTileTracker,
                 val boardInputStateProvider: BoardInputStateProvider,
-                val contextualAbilityFactory: ContextualAbilityFactory) : Stage(viewPort), EventListener {
+                val contextualAbilityFactory: ContextualAbilityFactory,
+                val pulseAnimationGenerator: PulseAnimationGenerator) : Stage(viewPort), EventListener {
     var selectedCharacter: LogicalCharacter? = null
     var hoveredAbility: LogicalAbility? = null
     var entitySelected: TileEntity? = null
@@ -89,19 +90,19 @@ class TacMapHud(viewPort: Viewport,
             }
             is TacticalGuiEvent.PlayerIsPlacingUnit -> {
                 val template = event.unit
-                selectedCharacter = LogicalCharacter(
-                        actor = LogicalCharacterActorGroup(template.tiledTexturePath.toActor()),
-                        tileLocation = TileLocation(0,0),
-                        tacMapUnit = template,
-                        playerControlled = true
-                )
                 regenerateTable()
                 //kludge: This is NOT a valid logicalCharacter because its actor isn't
                 // present on the map.
-
-
             }
         }
+    }
+
+    private fun createFakeLogicalCharacter(template: TacMapUnitTemplate): LogicalCharacter {
+        return LogicalCharacter(
+                actor = LogicalCharacterActorGroup(template.tiledTexturePath.toActor()),
+        tileLocation = TileLocation(0,0),
+        tacMapUnit = template,
+        playerControlled = true)
     }
 
     private val buttonDimensions = Dimensions(55, 55)
@@ -154,6 +155,7 @@ class TacMapHud(viewPort: Viewport,
     var debugTextArea: Label = Label("", DEFAULT_SKIN)
     var abilityTextArea: Label = Label("", DEFAULT_SKIN)
     val characterDisplayTable : Table = Table(DEFAULT_SKIN)
+    val characterSelectCarousel : Table = Table(DEFAULT_SKIN)
 
     fun displayCharacterAttributes(selectedCharacter: LogicalCharacter): Table{
         val table = Table(DEFAULT_SKIN)
@@ -173,6 +175,7 @@ class TacMapHud(viewPort: Viewport,
         val backgroundColor = backgroundColor()
         characterDisplayTable.setBackground(backgroundColor)
         var selectedCharacter: LogicalCharacter? = selectedCharacter
+        regenerateCharacterSelectionCarousel()
         regenerateCharacterDisplayTable(selectedCharacter)
 
 
@@ -187,6 +190,25 @@ class TacMapHud(viewPort: Viewport,
 
         characterDisplayTable.row()
         characterDisplayTable.add(debugTextArea).width(300f)
+    }
+
+    private fun regenerateCharacterSelectionCarousel() {
+        // TODO:  Add indicator saying what the user should be doing here
+        characterSelectCarousel.clearChildren()
+        val boardInputState = boardInputStateProvider.boardInputState as? BoardInputState.PlayerIsPlacingUnits ?: return
+        for (unit in boardInputState.unitsToPlace){
+            print("Carousel gets unit: ${unit.templateName}")
+            var nextCharacterActor = characterImageManager.retrieveCharacterTemplateImage(unit).actor
+            if (boardInputState.nextUnit()!!.uuid == unit.uuid){
+                nextCharacterActor = emphasizeActor(nextCharacterActor)
+            }
+            characterSelectCarousel.add(nextCharacterActor)
+        }
+    }
+
+    private fun emphasizeActor(nextCharacterActor: Actor): Actor {
+        nextCharacterActor.addAction(pulseAnimationGenerator.foreverAction())
+        return nextCharacterActor
     }
 
     private fun regenerateCharacterDisplayTable(selectedCharacter: LogicalCharacter?) {
@@ -255,7 +277,10 @@ class TacMapHud(viewPort: Viewport,
                 Window("", DEFAULT_SKIN).let {
                     it.width = 440f
                     it.height = 600f
+                    it.add(characterSelectCarousel).fill().expand()
+                    it.row()
                     it.add(characterDisplayTable).fill().expand()
+
                     it
                 }
         window = actor

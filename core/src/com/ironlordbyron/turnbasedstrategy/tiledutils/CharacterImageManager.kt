@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils
 
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
+import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.ActorWrapper
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
@@ -30,7 +31,11 @@ class CharacterImageManager @Inject constructor(val tiledMapOperationsHandler: T
     }
 
     fun retrieveCharacterImage(character: LogicalCharacter) : ActorWrapper {
-        val tiledTexturePath = character.tacMapUnit.tiledTexturePath;
+        return retrieveCharacterTemplateImage(character.tacMapUnit)
+    }
+
+    fun retrieveCharacterTemplateImage(characterTemplate: TacMapUnitTemplate) : ActorWrapper{
+        val tiledTexturePath = characterTemplate.tiledTexturePath;
         val actorWrapper = tiledTexturePath.toActor(AnimatedImageParams(true, true, 14f, hittable = true))
         return actorWrapper
     }

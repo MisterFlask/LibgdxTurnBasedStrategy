@@ -11,12 +11,24 @@ public class PulseAnimationGenerator {
     val scaleFactor = .4f
 
     fun generateActorActionPair(actor: Actor, durationInSeconds: Float): ActorActionPair {
-        val actions =
-                Actions.sequence(
-                    Actions.scaleBy(scaleFactor, scaleFactor, durationInSeconds/2),
-                    Actions.scaleBy(-1 * scaleFactor, -1 * scaleFactor, durationInSeconds/2)
-                )
+        val actions = generateAction(durationInSeconds)
         actor.setOrigin(Alignment.CENTER.alignment)
         return ActorActionPair(actor, actions)
     }
+    private fun generateAction(durationInSeconds: Float): Action {
+        val actions =
+                Actions.sequence(
+                        Actions.scaleBy(scaleFactor, scaleFactor, durationInSeconds/2),
+                        Actions.scaleBy(-1 * scaleFactor, -1 * scaleFactor, durationInSeconds/2)
+                )
+        return actions
+
+
+    }
+
+    public fun foreverAction() : Action{
+        return Actions.forever(generateAction(.5f))
+    }
+
+
 }
