@@ -75,7 +75,8 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 boardInputState = BoardInputState.PlayerIsPlacingUnits(arrayListOf(TacMapUnitTemplate.DEFAULT_UNIT,
                         TacMapUnitTemplate.DEFAULT_ENEMY_UNIT))
                 val boardInputState = boardInputState as BoardInputState.PlayerIsPlacingUnits
-                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.PlayerIsPlacingUnit(boardInputState.unitsToPlace.first()))
+                // TODO:  This breaks in the case where we have zero units
+                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.PlayerIsPlacingUnit(boardInputState.nextUnit()!!))
             }
 
             is TacticalGuiEvent.CycleUnitCarousel -> {
@@ -116,9 +117,13 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
             boardInputState.unitsToPlace.removeAt(0)
 
             placePlayerUnit(location, characterToPlace)
+            if (boardInputState.nextUnit() != null){
+                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.PlayerIsPlacingUnit(boardInputState.nextUnit()!!))
+            }
             if (boardInputState.unitsToPlace.isEmpty()){
                 // todo: graphical showing that the input state has changed
                 this.boardInputState = BoardInputState.DefaultState()
+                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.CharacterUnselected())
             }
             return
         }

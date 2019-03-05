@@ -18,30 +18,30 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
                             val playerControlled: Boolean,
                             var endedTurn: Boolean = false,
                             var actionsLeft: Int = 2,
-                            var maxActionsLeft: Int = 2,
-                            var maxHealth: Int = 2,
-                            var healthLeft: Int = maxHealth,
-                            val equipment: ArrayList<LogicalEquipment> = ArrayList(),
-                            val attributes: ArrayList<LogicalCharacterAttribute> = arrayListOf(),
-                            val id: UUID = UUID.randomUUID(),
-                            val strength: Int = 0,
-                            val dexterity: Int = 0) {
-    init{
-        attributes.addAll(tacMapUnit.startingAttributes)
-    }
+                            val id: UUID = UUID.randomUUID()) {
 
+    val attributes: Collection<LogicalCharacterAttribute>
+        get() = tacMapUnit.attributes
     val abilities: Collection<LogicalAbilityAndEquipment>
         get() = acquireAbilities()
+    val healthLeft: Int
+        get() = tacMapUnit.healthLeft
+    val maxActionsLeft: Int
+        get() = tacMapUnit.maxActionsLeft
+    val equipment: Collection<LogicalEquipment>
+        get() = tacMapUnit.equipment
+    val maxHealth: Int
+        get() = tacMapUnit.maxHealth
 
     val playerAlly: Boolean
     get() = playerControlled //TODO: Differentiate if necessary
     val isDead: Boolean
-    get() = healthLeft < 1
+    get() = tacMapUnit.healthLeft < 1
 
     private fun acquireAbilities(): Collection<LogicalAbilityAndEquipment> {
         val abilitiesSansEquipment = tacMapUnit.abilities.map{LogicalAbilityAndEquipment(it, null)}
         val abilitiesWithEquipment = ArrayList<LogicalAbilityAndEquipment>()
-        for (equip in equipment){
+        for (equip in tacMapUnit.equipment){
             for (ability in equip.abilityEnabled){
                 abilitiesWithEquipment.add(LogicalAbilityAndEquipment(ability, equip))
             }

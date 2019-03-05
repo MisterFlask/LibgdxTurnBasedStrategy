@@ -1,13 +1,14 @@
 package com.ironlordbyron.turnbasedstrategy.common.abilities
 
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplateKeys
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
 import java.awt.Image
 
 object StandardAbilities{
 
-    val MeleeAttack = LogicalAbility("Stab",
+    val SwordSlashAttack = LogicalAbility("Stab",
             AbilitySpeed.ENDS_TURN,
             damage = 1,
             range = 2,
@@ -18,6 +19,16 @@ object StandardAbilities{
             landingActor = DataDrivenOnePageAnimation.CLAWSLASH,
             attackSprite = ImageIcon(ImageIcon.PAINTERLY_FOLDER, "slice-acid-1.png")
             );
+    val Beatdown = LogicalAbility("Beatdown",
+            AbilitySpeed.ENDS_TURN,
+            damage = 1,
+            range = 2,
+            description = "Stuns the targeted enemy for the turn.",
+            abilityClass = AbilityClass.TARGETED_ABILITY,
+            inflictsStatusAffect = LogicalCharacterAttribute.STUNNED,
+            landingActor = DataDrivenOnePageAnimation.CLAWSLASH,
+            projectileActor = null
+            )
     val RangedAttackThatLightsStuffOnFire = LogicalAbility("Torch",
             AbilitySpeed.ENDS_TURN,
             damage = 1,

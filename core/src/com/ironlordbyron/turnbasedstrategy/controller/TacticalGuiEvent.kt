@@ -27,4 +27,5 @@ sealed class TacticalGuiEvent{
     class SwapToMainMenu: TacticalGuiEvent()
     data class ScenarioStart(val scenarioParams: ScenarioParams) : TacticalGuiEvent()
     data class PlayerIsPlacingUnit(val unit: TacMapUnitTemplate) : TacticalGuiEvent()
+    class ShouldRefreshGui : TacticalGuiEvent()
 }

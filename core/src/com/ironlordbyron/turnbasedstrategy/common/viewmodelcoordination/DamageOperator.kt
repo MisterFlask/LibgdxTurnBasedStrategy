@@ -20,7 +20,7 @@ class DamageOperator @Inject constructor(val characterModificationAnimationGener
         if (targetCharacter.isDead){
             return // doesn't matter if we're just kicking a dead horse
         }
-        targetCharacter.healthLeft -= damageAmount // TODO: Not the responsibility of this class
+        targetCharacter.tacMapUnit.healthLeft -= damageAmount // TODO: Not the responsibility of this class
         val secondaryActions = arrayListOf(
                 characterModificationAnimationGenerator.getCharacterShudderActorActionPair(logicalCharacter = targetCharacter),
                 characterModificationAnimationGenerator.getCharacterTemporaryDarkenActorActionPair(logicalCharacter = targetCharacter)

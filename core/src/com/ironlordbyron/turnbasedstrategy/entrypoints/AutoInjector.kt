@@ -75,26 +75,6 @@ public interface FunctionalUnitEffect<T>{
     }
 
 }
-
-// TODO: Move into separate class (this is a test run of the FunctionalEffectRegistrar system)
-@Autoinjectable
-@Singleton
-public class OnFireFunctionalEffect @Inject constructor (val damageOperator: DamageOperator) : FunctionalUnitEffect<OnFireLogicalEffect>{
-    override val id: String = "ON_FIRE"
-    override val clazz: Class<OnFireLogicalEffect> = OnFireLogicalEffect::class.java
-    override fun onTurnStart(logicalAttr: OnFireLogicalEffect, thisCharacter: LogicalCharacter) {
-        damageOperator.damageCharacter(thisCharacter, damageAmount = logicalAttr.damagePerTurn)
-    }
-
-    companion object {
-        // for use as key in map
-        fun toEntry(onFireLogicalAttribute: OnFireLogicalEffect) : Pair<String, Any>{
-            return "ON_FIRE" to onFireLogicalAttribute
-        }
-    }
-}
-
-
 public class AppliesAttributeOnHit(val entitySpawner: EntitySpawner) : FunctionalUnitEffect<AppliesAttributeOnHitLogicalEffect>{
     override val id: String = "APPLIES_ATTRIBUTE_ON_HIT"
     override val clazz = AppliesAttributeOnHitLogicalEffect::class.java
@@ -117,10 +97,6 @@ public interface LogicalEffect{
 
 public data class AppliesAttributeOnHitLogicalEffect(val logicalAttributeApplied: LogicalCharacterAttribute) : LogicalEffect{
     override val id = "APPLIES_ATTRIBUTE_ON_HIT"
-}
-
-public data class OnFireLogicalEffect(val damagePerTurn: Int) : LogicalEffect{
-    override val id = "ON_FIRE"
 }
 
 // TODO: Migrate this into a separate class

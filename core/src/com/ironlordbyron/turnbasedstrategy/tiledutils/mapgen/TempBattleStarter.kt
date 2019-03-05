@@ -39,25 +39,25 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
         println("Starting battle")
         val legitTiles = tiledMapInterpreter.getPossiblePlayerSpawnPositions(boardProvider.tiledMap)
         for (tile in legitTiles){
-            entitySpawner.addCharacterToTileFromTemplate(tacMapUnit = TacMapUnitTemplate.DEFAULT_UNIT, tileLocation = tile,
-                    playerControlled = true).let{
-                it.equipment.add(StandardEquipment.sword)
-                it.equipment.add(StandardEquipment.flamethrower)
-            }
+            entitySpawner.addCharacterToTileFromTemplate(tacMapUnit = TacMapUnitTemplate.DEFAULT_UNIT.copy(
+
+                    equipment = arrayListOf(StandardEquipment.sword, StandardEquipment.flamethrower)
+
+            ), tileLocation = tile,
+                    playerControlled = true)
         }
         val enemyTiles = tiledMapInterpreter.getPossibleEnemySpawnPositions(boardProvider.tiledMap)
         for (tile in enemyTiles){
-            entitySpawner.addCharacterToTileFromTemplate(tacMapUnit = TacMapUnitTemplate.DEFAULT_ENEMY_UNIT, tileLocation = tile,
-                    playerControlled = false).let{
-                it.equipment.add(StandardEquipment.sword)
-            }
+            entitySpawner.addCharacterToTileFromTemplate(tacMapUnit = TacMapUnitTemplate.DEFAULT_ENEMY_UNIT.copy(
+                        equipment = arrayListOf(StandardEquipment.sword)
+                    ),
+                    tileLocation = tile,
+                    playerControlled = false)
         }
         val spawners = tiledMapInterpreter.getSpawners(boardProvider.tiledMap)
         for (tile in spawners){
             entitySpawner.addCharacterToTileFromTemplate(tacMapUnit = TacMapUnitTemplate.DEFAULT_ENEMY_UNIT_SPAWNER, tileLocation = tile,
-                    playerControlled = false).let{
-                it.equipment.add(StandardEquipment.sword)
-            }
+                    playerControlled = false)
         }
         val masterOrgans = tiledMapInterpreter.getMasterOrgan(boardProvider.tiledMap)
         for (tile in masterOrgans){
