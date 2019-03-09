@@ -44,7 +44,7 @@ class ExplodesOnDeathFunctionalUnitEffect @Inject constructor (val entitySpawner
         entitySpawner.spawnEntitiesAtTilesInSequenceForTempAnimation(explosions)
         val charactersAtTiles = tacticalMapState.listOfCharacters.filter{it.tileLocation in locationsForExplosion}
         for (character in charactersAtTiles){
-            damageOperator.damageCharacter(character, logicalAttr.damage)
+            damageOperator.damageCharacter(character, logicalAttr.damage, null)
         }
     }
 

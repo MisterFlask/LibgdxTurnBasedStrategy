@@ -57,8 +57,14 @@ public data class LogicalCharacterAttribute(val name: String,
                 _demonImg.copy(textureId = "7"),
                 statusEffect = true,
                 customEffects = mapOf(),
-                description = {"This unit is stunned for the round."}
+                description = {"This unit is stunned for the round."})
+        val ON_FIRE = LogicalCharacterAttribute("On Fire",
+                _demonImg.copy(textureId = "8"),
+                statusEffect = true,
+                customEffects = hashMapOf(OnFireLogicalEffect(1).toPair()),
+                description = {"This character is on fire."}
         )
+
     }
 }
 

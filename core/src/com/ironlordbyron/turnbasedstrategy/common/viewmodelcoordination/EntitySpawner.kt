@@ -45,9 +45,11 @@ public class EntitySpawner @Inject constructor(
 )  {
 
     fun addCharacterToTileFromTemplate(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) : LogicalCharacter {
+
+        val tacMapUnitTemplate = tacMapUnit.copy()
         println("Adding character to tile: ${tacMapUnit.templateName} at ${tileLocation}")
-        val group = characterImageManager.placeCharacterActor(tileLocation,tacMapUnit.tiledTexturePath)
-        val characterSpawned = LogicalCharacter(group, tileLocation, tacMapUnit, playerControlled)
+        val group = characterImageManager.placeCharacterActor(tileLocation,tacMapUnitTemplate.tiledTexturePath)
+        val characterSpawned = LogicalCharacter(group, tileLocation, tacMapUnitTemplate, playerControlled)
         visibleCharacterDataFactory.generateCharacterHpMarker(characterSpawned)
         boardState.addCharacter(characterSpawned)
         animationActionQueueProvider.addAction(revealActionGenerator.generateRevealActorActionPair(characterSpawned.actor))

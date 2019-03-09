@@ -154,7 +154,7 @@ class SimpleAttackAbility(
         // if there's a damage effect, do that (probably just the number-rising thing)
         if (logicalAbility.damage != null){
             // so, the GBO shouldn't be responsible for handing damage animations, because those will vary based on attack.
-            damageOperator.damageCharacter(targetCharacter!!, logicalAbility.damage!!)
+            damageOperator.damageCharacter(targetCharacter!!, logicalAbility.damage!!, logicalAbilityAndEquipment)
         }
 
         if (sourceCharacter.playerControlled){

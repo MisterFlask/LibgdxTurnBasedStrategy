@@ -25,7 +25,7 @@ object StandardAbilities{
             range = 2,
             description = "Stuns the targeted enemy for the turn.",
             abilityClass = AbilityClass.TARGETED_ABILITY,
-            inflictsStatusAffect = LogicalCharacterAttribute.STUNNED,
+            inflictsStatusAffect = listOf(LogicalCharacterAttribute.STUNNED),
             landingActor = DataDrivenOnePageAnimation.CLAWSLASH,
             projectileActor = null
             )
@@ -38,7 +38,8 @@ object StandardAbilities{
             requiredTargetType = RequiredTargetType.ENEMY_ONLY,
             abilityEffects = listOf(LogicalAbilityEffect.LightsTileOnFire()),
             projectileActor = DataDrivenOnePageAnimation.FIREBALL,
-            landingActor = DataDrivenOnePageAnimation.EXPLODE
+            landingActor = DataDrivenOnePageAnimation.EXPLODE,
+            inflictsStatusAffect = listOf(LogicalCharacterAttribute.ON_FIRE)
     );
     val SpawnUnit = LogicalAbility("Spawn Unit",
             AbilitySpeed.ENDS_TURN,

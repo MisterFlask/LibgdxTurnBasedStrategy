@@ -23,7 +23,7 @@ public class LogicalAbility(val name: String,
                             val landingActor: ProtoActor?,
                             // this is specifically for contextual abilities, like opening doors.
                             val context: ContextualAbilityParams? = null,
-                            val inflictsStatusAffect: LogicalCharacterAttribute? = null){
+                            val inflictsStatusAffect: Collection<LogicalCharacterAttribute> = listOf()){
 
 }
 

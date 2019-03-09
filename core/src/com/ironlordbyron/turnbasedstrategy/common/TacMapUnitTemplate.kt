@@ -16,20 +16,29 @@ import java.util.*
 data class TacMapUnitTemplate(val movesPerTurn: Int,
                               val tiledTexturePath: ProtoActor,
                               val templateName: String = "Peasant",
-                              val abilities: List<LogicalAbility> = listOf(),
-                              val allowedEquipment: Collection<EquipmentClass> = listOf(EquipmentClass.MELEE_WEAPON_LARGE), //TODO
+                              var abilities: List<LogicalAbility> = listOf(),
+                              var allowedEquipment: Collection<EquipmentClass> = listOf(EquipmentClass.MELEE_WEAPON_LARGE), //TODO
                               val walkableTerrainTypes : Collection<TerrainType> = listOf(TerrainType.GRASS),
                               val enemyAiType: EnemyAiType = EnemyAiType.BASIC,
-                              val startingAttributes: Collection<LogicalCharacterAttribute> = listOf(),
+                              var startingAttributes: Collection<LogicalCharacterAttribute> = listOf(),
                               val uuid: UUID = UUID.randomUUID(),
                               var maxActionsLeft: Int = 2,
                               var maxHealth: Int = 2,
                               var healthLeft: Int = maxHealth,
-                              val equipment: ArrayList<LogicalEquipment> = ArrayList(),
-                              val attributes: ArrayList<LogicalCharacterAttribute> = ArrayList(startingAttributes),
+                              var equipment: ArrayList<LogicalEquipment> = ArrayList(),
+                              var attributes: ArrayList<LogicalCharacterAttribute> = ArrayList(startingAttributes),
                               val strength: Int = 0,
                               val dexterity: Int = 0
 ) {
+
+    // defensive copying
+    init{
+        attributes = ArrayList(attributes)
+        equipment = ArrayList(equipment)
+        abilities = ArrayList(abilities)
+        allowedEquipment = ArrayList(allowedEquipment)
+        startingAttributes = ArrayList(startingAttributes)
+    }
     companion object TacMapUnit {
         private val _demonImg = SuperimposedTilemaps(tileSetNames = listOf("Demon0","Demon1"), textureId = "2")
         private val _default_sit = SuperimposedTilemaps(tileSetNames = SuperimposedTilemaps.PLAYER_TILE_SETS,
