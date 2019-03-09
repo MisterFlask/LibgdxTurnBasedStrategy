@@ -2,10 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen
 
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
-import com.ironlordbyron.turnbasedstrategy.common.GameBoardOperator
-import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
-import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
-import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttributeFactory
 import com.ironlordbyron.turnbasedstrategy.common.equipment.StandardEquipment
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
@@ -32,7 +29,7 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
                                             val gameBoardOperator: GameBoardOperator,
                                             val tiledMapInterpreter: TiledMapInterpreter,
                                             val tacmapState: TacticalMapState,
-                                            val functionalCharacterAttributeFactory: FunctionalCharacterAttributeFactory,
+                                            val logicHooks: LogicHooks,
                                             val animationActionQueueProvider: AnimationActionQueueProvider,
                                             val entitySpawner: EntitySpawner){
     fun startBattle(){
@@ -73,10 +70,7 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
         }
 
         for (char in tacmapState.listOfCharacters){
-            val allCharacterFunctionalAttributes = functionalCharacterAttributeFactory.getFunctionalAttributesForCharacter(char)
-            for (func in allCharacterFunctionalAttributes){
-                func.onInitialization(char)
-            }
+            logicHooks.onUnitCreation(char)
         }
 
         animationActionQueueProvider.runThroughActionQueue()

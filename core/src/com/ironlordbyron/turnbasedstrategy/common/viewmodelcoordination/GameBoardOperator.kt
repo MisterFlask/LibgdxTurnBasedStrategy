@@ -49,7 +49,7 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
                                             val characterModificationAnimationGenerator: CharacterModificationAnimationGenerator,
                                             val pathfinderFactory: PathfinderFactory,
                                             val pulseAnimationGenerator: PulseAnimationGenerator,
-                                            val functionalCharacterAttributeFactory: FunctionalCharacterAttributeFactory) : EventListener{
+                                            val logicHooks: LogicHooks) : EventListener{
 
 
     override fun consumeGuiEvent(event: TacticalGuiEvent) {
@@ -61,17 +61,13 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
     }
 
     private fun startPlayerTurn() {
+        logicHooks.onPlayerTurnStart()
         for (unit in boardState.listOfCharacters){
             unit.actionsLeft = unit.maxActionsLeft
             if (!unit.isDead){
                 characterSpriteUtils.brightenSprite(unit)
             }
             eventNotifier.notifyListenersOfGameEvent(TacticalGameEvent.UnitTurnStart(unit))
-
-            val functionalAttributes = unit.attributes.flatMap{functionalCharacterAttributeFactory.getFunctionalAttributesFromLogicalAttribute(it, unit)}
-            for (attr in functionalAttributes){
-                attr.onCharacterTurnStart(unit)
-            }
         }
         // now, run the animations
         animationActionQueueProvider.runThroughActionQueue()

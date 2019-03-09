@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.view.animation.animationlisteners
 
+import com.ironlordbyron.turnbasedstrategy.common.LogicHooks
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttributeFactory
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
@@ -11,7 +12,7 @@ import javax.inject.Inject
 
 public class DeathGameEventListener @Inject constructor(val gameEventNotifier: GameEventNotifier,
                                                         val animationActionQueueProvider: AnimationActionQueueProvider,
-                                                        val functionalCharacterAttributeFactory: FunctionalCharacterAttributeFactory,
+                                                        val logicHooks: LogicHooks,
                                                         val deathAnimationGenerator: DeathAnimationGenerator) : GameEventListener{
     override fun consumeGameEvent(tacticalGameEvent: TacticalGameEvent) {
         when(tacticalGameEvent){
@@ -24,8 +25,7 @@ public class DeathGameEventListener @Inject constructor(val gameEventNotifier: G
         animationActionQueueProvider.addAction(deathAnimationGenerator.turnCharacterSideways(targetCharacter))
 
         // game event
-        functionalCharacterAttributeFactory.getFunctionalAttributesForCharacter(targetCharacter)
-                .forEach{it.onDeath(targetCharacter)}
+        logicHooks.onDeath(targetCharacter)
     }
 
     init{

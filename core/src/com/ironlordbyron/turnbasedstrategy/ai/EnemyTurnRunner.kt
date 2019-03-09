@@ -1,9 +1,11 @@
 package com.ironlordbyron.turnbasedstrategy.ai
 
 import com.ironlordbyron.turnbasedstrategy.common.GameBoardOperator
+import com.ironlordbyron.turnbasedstrategy.common.LogicHooks
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityFactory
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttributeFactory
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.MapHighlighter
@@ -31,7 +33,8 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
                                                  val tacticalMapAlgorithms: TacticalMapAlgorithms,
                                                  val gameBoardOperator: GameBoardOperator,
                                                  val animationActionQueueProvider: AnimationActionQueueProvider,
-                                                 val abilityFactory: AbilityFactory){
+                                                 val abilityFactory: AbilityFactory,
+                                                 val logicHooks: LogicHooks){
 
     public fun endTurn() {
         runEnemyTurn()
@@ -39,10 +42,17 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
 
     public fun runEnemyTurn() {
         animationActionQueueProvider.clearQueue()
+        logicHooks.onEnemyTurnStart()
         for (enemyCharacter in boardState.listOfEnemyCharacters) {
+
+            if (enemyCharacter.endedTurn){
+                continue //characters that have already gone don't get turns
+            }
+
             if (enemyCharacter.isDead){
                 continue //dead characters don't get turns
             }
+
             val ai = enemyAiFactory.getEnemyAi(enemyCharacter.tacMapUnit.enemyAiType)
             val nextActions = ai.getNextActions(enemyCharacter);
             for (action in nextActions){

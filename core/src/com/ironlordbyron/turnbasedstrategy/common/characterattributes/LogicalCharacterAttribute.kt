@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.ExplodesOnDeath
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.OnFireLogicalEffect
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.ShieldsAnotherOrganFunctionalAttribute
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
@@ -25,7 +26,6 @@ import javax.inject.Inject
  */
 public data class LogicalCharacterAttribute(val name: String,
                                             val imageIcon: ProtoActor,
-                                            val explodesOnDeath: LogicalCharacterAttributeTrigger.ExplodesOnDeath? = null,
                                             val shieldsAnotherOrgan: LogicalCharacterAttributeTrigger.ShieldsAnotherOrgan? = null,
                                             val masterOrgan: Boolean = false,
                                             val organ: Boolean = false,
@@ -40,8 +40,8 @@ public data class LogicalCharacterAttribute(val name: String,
         val _painterlyIcon = ImageIcon(ImageIcon.PAINTERLY_FOLDER, "fire-arrows-1.png")
         val EXPLODES_ON_DEATH = LogicalCharacterAttribute("Explodes On Death",
                 _painterlyIcon,
-                LogicalCharacterAttributeTrigger.ExplodesOnDeath(3, 4),
-                description = {"Explodes on death, dealing ${it.explodesOnDeath!!.damage} to everything in a ${it.explodesOnDeath!!.radius} radius"})
+                customEffects = mapOf(ExplodesOnDeath(4, 5).toEntry()),
+                description = {"Explodes on death, dealing 5 damage to everything in a 4-tile radius"})
         val MASTER_ORGAN = LogicalCharacterAttribute("Master Organ",
                 _demonImg.copy(textureId = "3"),
                 masterOrgan= true,
@@ -53,11 +53,6 @@ public data class LogicalCharacterAttribute(val name: String,
         val UPGRADES_TROOPS = LogicalCharacterAttribute("Upgrades Troops",
                 _demonImg.copy(textureId = "5"),
                 description = {"Upgrades a unit each turn."})
-        val ON_FIRE  =LogicalCharacterAttribute("On Fire",
-                _demonImg.copy(textureId = "6"),
-                statusEffect = true,
-                customEffects = mapOf(OnFireLogicalEffect(1).toPair()),
-                description = {"This unit is on fire and will take one damage per turn until it's put out."})
         val STUNNED = LogicalCharacterAttribute("Stunned",
                 _demonImg.copy(textureId = "7"),
                 statusEffect = true,
@@ -73,6 +68,7 @@ public data class DamageType(val name: String, val icon: ProtoActor){
     }
 }
 
+@Deprecated("Use logicHooks instead")
 public class FunctionalCharacterAttributeFactory @Inject constructor (val entitySpawner: EntitySpawner,
                                                                       val tacticalMapState: TacticalMapState,
                                                                       val specialEffectManager: SpecialEffectManager,
@@ -91,22 +87,16 @@ public class FunctionalCharacterAttributeFactory @Inject constructor (val entity
                     transientEntityTracker)
             attrsList.add(funcAttr)
         }
-        if (logicalAttribute.explodesOnDeath != null){
-            val explosionParams = logicalAttribute.explodesOnDeath
-            val funcAttr = ExplodesOnDeathFunctionalAttribute(radius = explosionParams.radius, damage = explosionParams.damage,
-                    entitySpawner = entitySpawner, tacticalMapAlgorithms = tacticalMapAlgorithms, damageOperator = damageOperator,
-                    tacticalMapState = tacticalMapState)
-            attrsList.add(funcAttr)
-        }
         return attrsList
     }
+
 
 }
 
 @Deprecated("Use custom attributes instead")
 public interface LogicalCharacterAttributeTrigger{
     // The below are Organ abilities
-    data class ExplodesOnDeath(val radius: Int, val damage: Int) : LogicalCharacterAttributeTrigger
+
     data class ShieldsAnotherOrgan(var characterShieldedId: UUID? = null,
                                    var _characterShieldActorId: UUID? = null,// transient attribute
                                    var _lineActorId: UUID? = null // transient attribute

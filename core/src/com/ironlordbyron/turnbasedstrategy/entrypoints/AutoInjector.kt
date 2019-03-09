@@ -3,6 +3,7 @@ package com.ironlordbyron.turnbasedstrategy.entrypoints
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalUnitEffect
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
@@ -40,41 +41,6 @@ public class AutoInjector(){
 @Target(AnnotationTarget.CLASS)
 annotation class Autoinjectable
 
-// These are IMMUTABLE OBJECTS
-// mutable params should go in the LogicalAttribute.
-public interface FunctionalUnitEffect<T>{
-    val id: String // maps to the logical attribute given a unit.
-    val clazz: Class<T>
-
-    fun retrieveLogicalAttributesFromAttrMap(map: Map<String, Any>) : T?{
-        val logicalAttribute = map[id] as T
-        return logicalAttribute
-    }
-
-    fun onDeath(logicalAttr: T, thisCharacter: LogicalCharacter){
-
-    }
-
-    fun onStrikingEnemy(logicalAttr: T, thisCharacter: LogicalCharacter, struckCharacter: LogicalCharacter){
-
-    }
-
-    fun onApplication(logicalAttr: T, thisCharacter: LogicalCharacter){
-
-    }
-
-    fun onTurnStart(logicalAttr: T, thisCharacter: LogicalCharacter){
-
-    }
-
-    fun serializeUnitAttribute(attr: T): String? {
-        return ObjectMapper().writeValueAsString(attr)
-    }
-    fun fromString(attr: String): T {
-        return ObjectMapper().readValue(attr, clazz)
-    }
-
-}
 public class AppliesAttributeOnHit(val entitySpawner: EntitySpawner) : FunctionalUnitEffect<AppliesAttributeOnHitLogicalEffect>{
     override val id: String = "APPLIES_ATTRIBUTE_ON_HIT"
     override val clazz = AppliesAttributeOnHitLogicalEffect::class.java
