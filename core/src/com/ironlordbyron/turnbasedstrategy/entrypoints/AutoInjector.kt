@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.entrypoints
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ironlordbyron.turnbasedstrategy.common.LogicHooks
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalUnitEffect
@@ -41,16 +42,20 @@ public class AutoInjector(){
 @Target(AnnotationTarget.CLASS)
 annotation class Autoinjectable
 
-public class AppliesAttributeOnHit(val entitySpawner: EntitySpawner) : FunctionalUnitEffect<AppliesAttributeOnHitLogicalEffect>{
+public class AppliesAttributeOnHit(val entitySpawner: EntitySpawner,
+                                   val logicHooks: LogicHooks) : FunctionalUnitEffect<AppliesAttributeOnHitLogicalEffect>{
     override val id: String = "APPLIES_ATTRIBUTE_ON_HIT"
     override val clazz = AppliesAttributeOnHitLogicalEffect::class.java
 
     override fun onStrikingEnemy(logicalAttr: AppliesAttributeOnHitLogicalEffect,
                                  thisCharacter: LogicalCharacter,
-                                 struckCharacter: LogicalCharacter) {
+                                 struckCharacter: LogicalCharacter,
+                                 logicalCharacterAttribute: LogicalCharacterAttribute) {
         // TODO: Add generic function for showing off the application of status effects to enemy
         // probably in the EntitySpawner (should create better name)
         println("Struck enemy effect applied!")
+
+
     }
 }
 
@@ -68,14 +73,7 @@ public data class AppliesAttributeOnHitLogicalEffect(val logicalAttributeApplied
 // TODO: Migrate this into a separate class
 @Singleton
 @Autoinjectable
-public class FunctionalEffectRegistrar() : GameEventListener{
-    override fun consumeGameEvent(tacticalGameEvent: TacticalGameEvent) {
-        when(tacticalGameEvent){
-            is TacticalGameEvent.UnitTurnStart -> {
-                runTurnStartEffects(tacticalGameEvent.unit)
-            }
-        }
-    }
+public class FunctionalEffectRegistrar() {
 
     val functionalAttributes = ArrayList<FunctionalUnitEffect<*>>()
     fun registerAttribute(functionalUnitAttribute: FunctionalUnitEffect<*>){
@@ -87,37 +85,51 @@ public class FunctionalEffectRegistrar() : GameEventListener{
     }
 
     fun runEffectsOnCharacter(logicalCharacter: LogicalCharacter,
-                              func: (FunctionalUnitEffect<*>, Any) -> Unit){
+                              func: (FunctionalUnitEffect<*>, Any, LogicalCharacterAttribute) -> Unit){
         val attributes = logicalCharacter.attributes
         for (attr in attributes){
 
             for (attrKey in attr.customEffects.keys){
                 val logicalAttributeParams = attr.customEffects[attrKey]
                 val functionalAttribute = getAttributeById(attrKey)
-                func(functionalAttribute, logicalAttributeParams!!)
+                func(functionalAttribute, logicalAttributeParams!!, attr)
             }
         }
     }
 
     fun runTurnStartEffects(logicalCharacter: LogicalCharacter){
         runEffectsOnCharacter(logicalCharacter){
-            funcAttr, logAttrParams ->
+            funcAttr, logAttrParams, logicalCharacterAttribute ->
             val funAttr = funcAttr as FunctionalUnitEffect<Any>
             funAttr.onTurnStart(
                     logicalAttr = logAttrParams,
-                    thisCharacter = logicalCharacter)
+                    thisCharacter = logicalCharacter,
+                    logicalCharacterAttribute = logicalCharacterAttribute)
 
         }
     }
 
     fun runDeathEffects(logicalCharacter: LogicalCharacter){
         runEffectsOnCharacter(logicalCharacter){
-            funcAttr, logAttrParams ->
+            funcAttr, logAttrParams,logicalCharacterAttribute->
             val funAttr = funcAttr as FunctionalUnitEffect<Any>
             funAttr.onDeath(
                         logicalAttr = logAttrParams,
-                        thisCharacter = logicalCharacter)
+                        thisCharacter = logicalCharacter,
+                        logicalCharacterAttribute = logicalCharacterAttribute
+                    )
 
         }
+    }
+
+    fun getMovementModifiers(logicalCharacter: LogicalCharacter) : Int{
+        var movementModifierTotal = 0
+        runEffectsOnCharacter(logicalCharacter){
+            funcAttr, logAttrParams, logicalCharacterAttribute ->
+            val funAttr = funcAttr as FunctionalUnitEffect<Any>
+            val movementMod = funAttr.getMovementModifier(logAttrParams, logicalCharacter, logicalCharacterAttribute)
+            movementModifierTotal += movementMod
+        }
+        return movementModifierTotal
     }
 }

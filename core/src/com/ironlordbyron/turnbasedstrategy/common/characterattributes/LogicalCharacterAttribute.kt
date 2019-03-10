@@ -34,7 +34,9 @@ public data class LogicalCharacterAttribute(val name: String,
                                             // See FunctionalUnitEffect for examples
                                             // The key is an ID corresponding to the effect; the value
                                             // is the parameters to be fed in.
-                                            val customEffects: Map<String, Any> = mapOf()){
+                                            val customEffects: Map<String, Any> = mapOf(),
+                                            val stackable: Boolean = false,
+                                            var stacks: Int = 1){
     companion object {
         val _demonImg = SuperimposedTilemaps(tileSetNames = listOf("Demon0","Demon1"), textureId = "2")
         val _painterlyIcon = ImageIcon(ImageIcon.PAINTERLY_FOLDER, "fire-arrows-1.png")
@@ -65,6 +67,7 @@ public data class LogicalCharacterAttribute(val name: String,
                 description = {"This character is on fire."}
         )
 
+
     }
 }
 
@@ -79,7 +82,6 @@ public class FunctionalCharacterAttributeFactory @Inject constructor (val entity
                                                                       val tacticalMapState: TacticalMapState,
                                                                       val specialEffectManager: SpecialEffectManager,
                                                                       val transientEntityTracker: TransientEntityTracker,
-                                                                      val tacticalMapAlgorithms: TacticalMapAlgorithms,
                                                                       val damageOperator: DamageOperator){
 
     fun getFunctionalAttributesForCharacter(logicalCharacter: LogicalCharacter): List<FunctionalCharacterAttribute> {

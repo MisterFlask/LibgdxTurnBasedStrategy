@@ -45,6 +45,10 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
         }
     }
 
+    public fun calculateAllowedUnitMovement(logicalCharacter: LogicalCharacter) : Int{
+        return logicalCharacter.tacMapUnit.movesPerTurn + functionalEffectRegistrar.getMovementModifiers(logicalCharacter)
+    }
+
     fun onEnemyTurnStart(){
         for (unit in tacticalMapState.listOfEnemyCharacters){
             onCharacterTurnStart(unit)

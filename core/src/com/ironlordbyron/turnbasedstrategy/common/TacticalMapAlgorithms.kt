@@ -51,11 +51,13 @@ public data class ActionResult(val logicalAbilityAndEquipment: LogicalAbilityAnd
 
 @Singleton
 class TacticalMapAlgorithms @Inject constructor(override val logicalTileTracker: LogicalTileTracker,
-                                                override val tacticalMapState: TacticalMapState): CanWalkOnTile(logicalTileTracker,
-        tacticalMapState) {
+                                                override val tacticalMapState: TacticalMapState,
+                                                val logicHooks: LogicHooks)
+    : CanWalkOnTile(logicalTileTracker, tacticalMapState) {
 
     public fun getWhereCharacterCanMoveTo(character: LogicalCharacter): Collection<TileLocation> {
-        val tiles = getWalkableTileLocationsUpToNAway(character.tacMapUnit.movesPerTurn, character.tileLocation, character,
+        val movesLeft = logicHooks.calculateAllowedUnitMovement(character)
+        val tiles = getWalkableTileLocationsUpToNAway(movesLeft, character.tileLocation, character,
                 CanWalkOnTile(logicalTileTracker, tacticalMapState))
         return tiles
     }

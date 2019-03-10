@@ -14,7 +14,8 @@ import javax.inject.Singleton
 public class OnFireFunctionalEffect @Inject constructor (val damageOperator: DamageOperator) : FunctionalUnitEffect<OnFireLogicalEffect> {
     override val id: String = "ON_FIRE"
     override val clazz: Class<OnFireLogicalEffect> = OnFireLogicalEffect::class.java
-    override fun onTurnStart(logicalAttr: OnFireLogicalEffect, thisCharacter: LogicalCharacter) {
+
+    override fun onTurnStart(logicalAttr: OnFireLogicalEffect, thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute) {
         damageOperator.damageCharacter(thisCharacter, damageAmount = logicalAttr.damagePerTurn, abilityAndEquipment = null)
     }
 
