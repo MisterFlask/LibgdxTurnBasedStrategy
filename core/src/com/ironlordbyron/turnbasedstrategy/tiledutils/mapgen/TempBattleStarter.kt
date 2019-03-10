@@ -45,9 +45,7 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
         }
         val enemyTiles = tiledMapInterpreter.getPossibleEnemySpawnPositions(boardProvider.tiledMap)
         for (tile in enemyTiles){
-            entitySpawner.addCharacterToTileFromTemplate(tacMapUnit = TacMapUnitTemplate.DEFAULT_ENEMY_UNIT.copy(
-                        equipment = arrayListOf(StandardEquipment.sword)
-                    ),
+            entitySpawner.addCharacterToTileFromTemplate(tacMapUnit = TacMapUnitTemplate.DEFAULT_ENEMY_UNIT,
                     tileLocation = tile,
                     playerControlled = false)
         }

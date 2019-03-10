@@ -19,6 +19,16 @@ object StandardAbilities{
             landingActor = DataDrivenOnePageAnimation.CLAWSLASH,
             attackSprite = ImageIcon(ImageIcon.PAINTERLY_FOLDER, "slice-acid-1.png")
             );
+    val SlimeStrike = LogicalAbility("Slime strike",
+            AbilitySpeed.ENDS_TURN,
+            damage = 1,
+            range = 2,
+            description = "Slimes the target, reducing speed.",
+            abilityClass = AbilityClass.TARGETED_ABILITY,
+            inflictsStatusAffect = listOf(LogicalCharacterAttribute.SLIMED),
+            landingActor = DataDrivenOnePageAnimation.CLAWSLASH,
+            requiredTargetType = RequiredTargetType.ENEMY_ONLY,
+            projectileActor = null)
     val Beatdown = LogicalAbility("Beatdown",
             AbilitySpeed.ENDS_TURN,
             damage = 1,

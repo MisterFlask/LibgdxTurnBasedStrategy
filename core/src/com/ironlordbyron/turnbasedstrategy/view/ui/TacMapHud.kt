@@ -205,7 +205,7 @@ class TacMapHud(viewPort: Viewport,
         if (boardInputStateProvider.boardInputState is BoardInputState.PlayerIsPlacingUnits){
             label = "Deployment Phase"
         }
-        else{
+        else {
             label = "Combat Phase"
         }
         val titleLabel = textLabelGenerator.generateLabel(label).label

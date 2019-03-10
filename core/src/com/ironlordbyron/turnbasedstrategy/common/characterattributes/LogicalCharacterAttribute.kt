@@ -7,6 +7,7 @@ import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.ExplodesOnDeath
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.OnFireLogicalEffect
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.ShieldsAnotherOrganFunctionalAttribute
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.SlimedUnitLogicalEffect
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.TransientEntityTracker
@@ -65,6 +66,12 @@ public data class LogicalCharacterAttribute(val name: String,
                 statusEffect = true,
                 customEffects = hashMapOf(OnFireLogicalEffect(1).toPair()),
                 description = {"This character is on fire."}
+        )
+        val SLIMED: LogicalCharacterAttribute = LogicalCharacterAttribute("Slimed",
+                _demonImg.copy(textureId = "9"),
+                statusEffect = true,
+                customEffects = hashMapOf(SlimedUnitLogicalEffect(1).toEntry()),
+                description = {"This character is slimed."}
         )
 
 

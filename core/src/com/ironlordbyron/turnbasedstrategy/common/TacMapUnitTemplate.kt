@@ -44,7 +44,8 @@ data class TacMapUnitTemplate(val movesPerTurn: Int,
         private val _default_sit = SuperimposedTilemaps(tileSetNames = SuperimposedTilemaps.PLAYER_TILE_SETS,
             tileMapWithTextureName = SuperimposedTilemaps.COMMON_TILE_MAP, textureId = "7")
         val DEFAULT_UNIT = TacMapUnitTemplate(8, _default_sit.copy(textureId = "6"), templateName = "Friendly")
-        val DEFAULT_ENEMY_UNIT = TacMapUnitTemplate(8, _demonImg.copy(textureId = "7"), templateName = "Enemy")
+        val DEFAULT_ENEMY_UNIT = TacMapUnitTemplate(8, _demonImg.copy(textureId = "7"), templateName = "Enemy",
+                abilities = listOf(StandardAbilities.SlimeStrike))
         val DEFAULT_ENEMY_UNIT_SPAWNER = TacMapUnitTemplate(0, _demonImg.copy(textureId = "8"), templateName = "EnemySpawner",
                 abilities = listOf(StandardAbilities.SpawnUnit),
                 enemyAiType = EnemyAiType.IMMOBILE_UNIT,

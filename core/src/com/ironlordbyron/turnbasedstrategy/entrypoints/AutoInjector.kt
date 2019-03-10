@@ -1,19 +1,16 @@
 package com.ironlordbyron.turnbasedstrategy.entrypoints
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.ironlordbyron.turnbasedstrategy.common.LogicHooks
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalUnitEffect
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
-import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import org.reflections.Reflections
-import javax.inject.Inject
+import java.lang.IllegalArgumentException
 import javax.inject.Singleton
 
 
@@ -81,6 +78,10 @@ public class FunctionalEffectRegistrar() {
     }
 
     fun getAttributeById(id: String): FunctionalUnitEffect<*>{
+        val allAttributeIds = functionalAttributes.map{it.id}
+        if (id !in allAttributeIds){
+            throw IllegalArgumentException("Could not recover attribute with id of $id .  Existing attributes: $allAttributeIds")
+        }
         return functionalAttributes.first{it.id == id}
     }
 
@@ -131,5 +132,19 @@ public class FunctionalEffectRegistrar() {
             movementModifierTotal += movementMod
         }
         return movementModifierTotal
+    }
+
+    /**
+     * Runs the effects that occur on application of the given logical character attribute.
+     */
+    fun runOnApplicationEffects(logicalCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute){
+        runEffectsOnCharacter(logicalCharacter){
+            funcAttr, logAttrParams, logicalCharacterAttribute ->
+            if (logicalCharacterAttribute.name != logicalCharacterAttribute.name){
+                return@runEffectsOnCharacter
+            }
+            val funAttr = funcAttr as FunctionalUnitEffect<Any>
+            funAttr.afterApplication(logAttrParams, logicalCharacter, logicalCharacterAttribute)
+        }
     }
 }

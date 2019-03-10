@@ -34,7 +34,6 @@ class ExplodesOnDeathFunctionalUnitEffect @Inject constructor (val entitySpawner
     override val id: String = "EXPLODES_ON_DEATH"
     override val clazz = ExplodesOnDeath::class.java
     override fun onDeath(logicalAttr: ExplodesOnDeath, thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute) {
-
         val locationsForExplosion = tacticalMapAlgorithms.getWalkableTileLocationsUpToNAway(n = logicalAttr.radius, origin = thisCharacter.tileLocation, tileIsValidAlgorithm = AlwaysValid(),
                 character = thisCharacter)
         val explosions = locationsForExplosion.map{

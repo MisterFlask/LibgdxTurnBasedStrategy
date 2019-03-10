@@ -6,7 +6,6 @@ import com.ironlordbyron.turnbasedstrategy.common.characterattributes.Functional
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttributeFactory
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.entrypoints.FunctionalEffectRegistrar
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 
 /**
  *
@@ -70,5 +69,9 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
         for (character in tacticalMapState.listOfCharacters){
             onUnitCreation(character)
         }
+    }
+
+    fun onApplicationOfAttribute(logicalCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute, stacksToApply: Int) {
+        functionalEffectRegistrar.runOnApplicationEffects(logicalCharacter, logicalCharacterAttribute)//TODO
     }
 }
