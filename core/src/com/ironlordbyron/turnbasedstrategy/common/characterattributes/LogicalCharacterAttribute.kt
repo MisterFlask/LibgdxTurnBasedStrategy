@@ -37,7 +37,8 @@ public data class LogicalCharacterAttribute(val name: String,
                                             // is the parameters to be fed in.
                                             val customEffects: Map<String, Any> = mapOf(),
                                             val stackable: Boolean = false,
-                                            var stacks: Int = 1){
+                                            var stacks: Int = 1,
+                                            val id: String = name){
     companion object {
         val _demonImg = SuperimposedTilemaps(tileSetNames = listOf("Demon0","Demon1"), textureId = "2")
         val _painterlyIcon = ImageIcon(ImageIcon.PAINTERLY_FOLDER, "fire-arrows-1.png")
@@ -71,7 +72,8 @@ public data class LogicalCharacterAttribute(val name: String,
                 _demonImg.copy(textureId = "9"),
                 statusEffect = true,
                 customEffects = hashMapOf(SlimedUnitLogicalEffect(1).toEntry()),
-                description = {"This character is slimed."}
+                description = {"This character is slimed."},
+                stackable = true
         )
 
 

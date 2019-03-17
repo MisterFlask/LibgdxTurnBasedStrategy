@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.ai
 
+import com.google.common.base.Stopwatch
 import com.google.inject.Inject
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
@@ -11,6 +12,7 @@ import org.xguzm.pathfinding.grid.finders.AStarGridFinder
 import org.xguzm.pathfinding.grid.finders.GridFinderOptions
 import java.lang.Exception
 import java.lang.IllegalArgumentException
+import java.util.concurrent.TimeUnit
 
 private val SENTINEL_VALUE = 100000
 
@@ -95,7 +97,17 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
                 .filter{tileTracker.getLogicalTileFromLocation(it) != null}
     }
 
+    private data class OriginDestinationPair(val start : TileLocation, val end: TileLocation, val allowEndingOnLastTile: Boolean)
+
+    // TODO: Pathfinding cache cleansing
+    private val cachePathfinding : HashMap<OriginDestinationPair, Collection<PathfindingTileLocation>?> = HashMap()
+
     override public fun acquireBestPathTo(startCharacter: LogicalCharacter, endLocation: TileLocation, allowEndingOnLastTile: Boolean) : Collection<PathfindingTileLocation>?{
+        val odPair = OriginDestinationPair(startCharacter.tileLocation, endLocation, allowEndingOnLastTile)
+        if (cachePathfinding.containsKey(odPair)){
+            return cachePathfinding[odPair]
+        }
+        val stopwatch = Stopwatch.createStarted()
         try {
             var opt = GridFinderOptions()
             opt.allowDiagonal = false
@@ -103,22 +115,31 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
             // NOTE:  The navigation grid REQUIRES UTTERLY that you reset nodes in between runs.
             navigationGrid.setNodes(convertToNodes())
             val bestPath = finder.findPath(startCharacter.tileLocation.x,
-                    startCharacter.tileLocation.y, endLocation.x,
-                    endLocation.y, this.navigationGrid)
+                    startCharacter.tileLocation.y,
+                    endLocation.x,
+                    endLocation.y,
+                    this.navigationGrid)
 
             println("${if (bestPath == null) "FAILURE" else "SUCCESS"} in finding route between ${startCharacter.tileLocation} and ${endLocation}")
 
             if (!allowEndingOnLastTile) {
                 if (bestPath?.size ?: 0 <= 1) {
+                    cachePathfinding[odPair] = listOf()
                     return listOf()
                 }
-                return bestPath.subList(0, bestPath.size - 1)
+                val answer = bestPath.subList(0, bestPath.size - 1)
+                cachePathfinding[odPair] = answer
+                return answer
             } else {
+                cachePathfinding[odPair] = bestPath
                 return bestPath
             }
         } catch(e: Exception){
             println("ERROR when attempting to go from ${startCharacter.tileLocation} to ${endLocation} with allowEndingOnLastTile=${allowEndingOnLastTile}")
             throw e;
+        } finally{
+            stopwatch.stop()
+            println("Millis elapsed for pathfinding:" + stopwatch.elapsed(TimeUnit.MILLISECONDS))
         }
     }
 }

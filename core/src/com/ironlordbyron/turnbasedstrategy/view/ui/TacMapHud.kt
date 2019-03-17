@@ -166,7 +166,11 @@ class TacMapHud(viewPort: Viewport,
         val table = Table(DEFAULT_SKIN)
         for (item in selectedCharacter.attributes){
             val attrImage = item.imageIcon.toActor(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER.copy(hittable = true))
-            attrImage.addTooltip(RenderingFunction.simple(item.description(item)))
+            var stacksDescription = ""
+            if (item.stacks > 1){
+                stacksDescription = " (${item.stacks } stacks)"
+            }
+            attrImage.addTooltip(RenderingFunction.simple(item.description(item) + stacksDescription))
             table.add(attrImage.actor).width(iconDimensions.width.toFloat()).height(iconDimensions.height.toFloat())
             val label = Label(item.name, DEFAULT_SKIN)
             label.setWrap(true)

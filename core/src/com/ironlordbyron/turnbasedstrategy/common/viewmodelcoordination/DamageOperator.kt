@@ -16,7 +16,8 @@ class DamageOperator @Inject constructor(val characterModificationAnimationGener
                                          val animationActionQueueProvider: AnimationActionQueueProvider,
                                          val visibleCharacterDataFactory: VisibleCharacterDataFactory,
                                          val floatingTextGenerator: FloatingTextGenerator,
-                                         val gameEventNotifier: GameEventNotifier){
+                                         val gameEventNotifier: GameEventNotifier,
+                                         val eventNotifier: GameEventNotifier){
 
     fun damageCharacter(targetCharacter: LogicalCharacter,
                         damageAmount: Int,
@@ -40,9 +41,7 @@ class DamageOperator @Inject constructor(val characterModificationAnimationGener
         }else{
             if (abilityAndEquipment != null){
                 for (effect in abilityAndEquipment.ability.inflictsStatusAffect){
-                    animationActionQueueProvider.addAction(
-                            floatingTextGenerator.getTemporaryAnimationActorActionPair("${effect.name}", targetCharacter.tileLocation))
-                    targetCharacter.tacMapUnit.attributes.add(effect)
+                    eventNotifier.notifyListenersOfGameEvent(ApplyAttributeEvent(targetCharacter, effect, 1))
                 }
             }
         }

@@ -1,10 +1,11 @@
 package com.ironlordbyron.turnbasedstrategy.view.animation
 
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
-import com.ironlordbyron.turnbasedstrategy.controller.EventListener
-import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
-import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
+import com.ironlordbyron.turnbasedstrategy.controller.*
 import com.ironlordbyron.turnbasedstrategy.view.images.FileImageRetriever
 import com.ironlordbyron.turnbasedstrategy.view.images.Icon
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
@@ -12,7 +13,10 @@ import javax.inject.Inject
 
 class TargetingCursorManager @Inject constructor(val tiledMapStageProvider: TacticalTiledMapStageProvider,
                                                  val imageRetriever: FileImageRetriever,
-                                                 val eventNotifier: EventNotifier) : EventListener{
+                                                 val eventNotifier: EventNotifier,
+                                                 val stateProvider: BoardInputStateProvider,
+                                                 val entitySpawner: EntitySpawner,
+                                                 val animationActionQueueProvider: AnimationActionQueueProvider) : EventListener{
     override fun consumeGuiEvent(event: TacticalGuiEvent){
         when(event){
             is TacticalGuiEvent.TileHovered -> hoversOverNewTile(event.location)
@@ -27,7 +31,14 @@ class TargetingCursorManager @Inject constructor(val tiledMapStageProvider: Tact
 
     fun hoversOverNewTile(tileLocation: TileLocation){
         currentCursor?.remove()
-        currentCursor =imageRetriever.retrieveIconImageAsActor(Icon.TARGETING_CURSOR, tileLocation)
-        tiledMapStageProvider.tiledMapStage.addActor(currentCursor)
+        val state = stateProvider.boardInputState
+        if (state is BoardInputState.PlayerIsPlacingUnits){
+            currentCursor = entitySpawner.spawnEntityAtTileInSequence(state.nextUnit()!!.tiledTexturePath, tileLocation)
+            currentCursor!!.addAction(Actions.alpha(.5f))
+            animationActionQueueProvider.runThroughActionQueue()
+        }else{
+            currentCursor = imageRetriever.retrieveIconImageAsActor(Icon.TARGETING_CURSOR, tileLocation)
+            tiledMapStageProvider.tiledMapStage.addActor(currentCursor)
+        }
     }
 }

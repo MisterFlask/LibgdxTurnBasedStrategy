@@ -63,10 +63,13 @@ class BlankMapGenerator @Inject constructor(val fragmentCopier: TiledMapOperatio
     }
 }
 
+data class MobGenerationParams(val numberMobsToGenerate: Int,
+                               val totalDifficultyAllowed: Int)
 
 data class ScenarioParams(val sourceMapName: String,
                           val name: String,
-                          val mapGeneratorType: MapGeneratorType)
+                          val mapGeneratorType: MapGeneratorType,
+                          val mobGenerationParams: MobGenerationParams? = null)
 enum class MapGeneratorType{
     NONE,
     PARTIAL_PROCEDURAL
@@ -84,7 +87,7 @@ public class MapGenerationApplicator @Inject constructor(val tiledMapInterpreter
 
             }
             MapGeneratorType.PARTIAL_PROCEDURAL -> {
-                partiallyProceduralMapGenerator.generateDungeon()
+                partiallyProceduralMapGenerator.generateDungeon(scenarioParams)
             }
         }
     }

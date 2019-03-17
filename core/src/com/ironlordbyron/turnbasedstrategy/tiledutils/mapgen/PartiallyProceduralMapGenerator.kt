@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen
 
 import com.google.inject.Singleton
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 import java.util.*
@@ -44,7 +45,8 @@ data class MapArchitecture(val rooms: Collection<MapRoom>,
 @Singleton
 class PartiallyProceduralMapGenerator @Inject constructor (val tiledMapInterpreter: TiledMapInterpreter,
                                                            val logicalTileTracker: LogicalTileTracker,
-                                                           val tiledMapModifier: TiledMapModifier){
+                                                           val tiledMapModifier: TiledMapModifier,
+                                                           val mobGenerator: MobGenerator){
     // Requires a tilemap filled with rooms (no doors or anything else allowed.)
     // Then partitions them into rooms, and creates a graph of all the rooms that could connect to each other.
     // adds doors between 1/3 of all room adjacencies.  Then: Makes sure all rooms are connected via BFS.
@@ -52,7 +54,7 @@ class PartiallyProceduralMapGenerator @Inject constructor (val tiledMapInterpret
     // REQUIRES logicalTileTracker to have been initialized.
     val roomAdjacencies = ArrayList<RoomAdjacency>()
 
-    fun generateDungeon(){
+    fun generateDungeon(scenarioParams: ScenarioParams){
         val rooms = generateRooms()
         val walls = logicalTileTracker.tiles.filter{isWall(it)}.map{it.location}
         val potentialRoomConnections = getPotentialRoomConnections(rooms, walls)
@@ -65,6 +67,8 @@ class PartiallyProceduralMapGenerator @Inject constructor (val tiledMapInterpret
             }
         }
         // TODO: Add glorious inroads from the outside.
+
+        mobGenerator.populateRooms(rooms, scenarioParams)
     }
 
     private fun insertDoor(tileLocation: TileLocation) {
@@ -122,6 +126,7 @@ class PartiallyProceduralMapGenerator @Inject constructor (val tiledMapInterpret
         }
         return roomAdjacencies
     }
+
 
     private fun isWall(tile: LogicalTile): Boolean {
         return logicalTileTracker.isWall(tile.location)

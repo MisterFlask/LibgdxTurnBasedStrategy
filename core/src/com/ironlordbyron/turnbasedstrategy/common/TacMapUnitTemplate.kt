@@ -7,7 +7,9 @@ import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCha
 import com.ironlordbyron.turnbasedstrategy.common.equipment.EquipmentClass
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
 import com.ironlordbyron.turnbasedstrategy.common.equipment.StandardEquipment
+import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TerrainType
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.register
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 import java.util.*
@@ -28,7 +30,10 @@ data class TacMapUnitTemplate(val movesPerTurn: Int,
                               var equipment: ArrayList<LogicalEquipment> = ArrayList(),
                               var attributes: ArrayList<LogicalCharacterAttribute> = ArrayList(startingAttributes),
                               val strength: Int = 0,
-                              val dexterity: Int = 0
+                              val dexterity: Int = 0,
+
+                              // used in map generation
+                              val difficulty: Int = 1
 ) {
 
     // defensive copying
@@ -77,4 +82,11 @@ object TacMapUnitTemplateKeys{
 
 public fun String.toTacMapUnitTemplate() : TacMapUnitTemplate?{
     return TacMapUnitTemplate.Dict[this]
+}
+
+@Autoinjectable
+private class TemporaryTacMapUnitTemplateRegistration(){
+    init{
+        TacMapUnitTemplate.DEFAULT_ENEMY_UNIT.register()
+    }
 }
