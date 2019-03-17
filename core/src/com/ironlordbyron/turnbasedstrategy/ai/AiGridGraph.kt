@@ -97,23 +97,14 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
                 .filter{tileTracker.getLogicalTileFromLocation(it) != null}
     }
 
-    private data class OriginDestinationPair(val start : TileLocation, val end: TileLocation, val allowEndingOnLastTile: Boolean)
-
-    // TODO: Pathfinding cache cleansing
-    private val cachePathfinding : HashMap<OriginDestinationPair, Collection<PathfindingTileLocation>?> = HashMap()
 
     override public fun acquireBestPathTo(startCharacter: LogicalCharacter, endLocation: TileLocation, allowEndingOnLastTile: Boolean) : Collection<PathfindingTileLocation>?{
-        val odPair = OriginDestinationPair(startCharacter.tileLocation, endLocation, allowEndingOnLastTile)
-        if (cachePathfinding.containsKey(odPair)){
-            return cachePathfinding[odPair]
-        }
+
         val stopwatch = Stopwatch.createStarted()
         try {
             var opt = GridFinderOptions()
             opt.allowDiagonal = false
             var finder = AStarGridFinder(PathfindingTileLocation::class.java, opt)
-            // NOTE:  The navigation grid REQUIRES UTTERLY that you reset nodes in between runs.
-            navigationGrid.setNodes(convertToNodes())
             val bestPath = finder.findPath(startCharacter.tileLocation.x,
                     startCharacter.tileLocation.y,
                     endLocation.x,
@@ -124,14 +115,11 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
 
             if (!allowEndingOnLastTile) {
                 if (bestPath?.size ?: 0 <= 1) {
-                    cachePathfinding[odPair] = listOf()
                     return listOf()
                 }
                 val answer = bestPath.subList(0, bestPath.size - 1)
-                cachePathfinding[odPair] = answer
                 return answer
             } else {
-                cachePathfinding[odPair] = bestPath
                 return bestPath
             }
         } catch(e: Exception){

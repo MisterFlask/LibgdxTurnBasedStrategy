@@ -1,10 +1,12 @@
 package com.ironlordbyron.turnbasedstrategy.controller
 
+import com.google.common.base.Stopwatch
 import com.ironlordbyron.turnbasedstrategy.ai.EnemyTurnRunner
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityClass
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -52,9 +54,13 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
             }
             is TacticalGuiEvent.EndTurnButtonClicked -> {
                 if (playerHasPriority) {
+                    val stopwatch = Stopwatch.createStarted()
                     playerHasPriority = false
                     mapHighlighter.killHighlights()
                     enemyTurnRunner.endTurn()
+                    stopwatch.stop()
+                    println("Ran enemy turn in ${stopwatch.elapsed(TimeUnit.MILLISECONDS)} millis")
+
                 }
             }
             is TacticalGuiEvent.FinishedEnemyTurn -> {
