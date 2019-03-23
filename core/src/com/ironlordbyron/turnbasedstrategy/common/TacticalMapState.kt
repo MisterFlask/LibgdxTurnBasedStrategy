@@ -8,6 +8,9 @@ import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import javax.inject.Singleton
 
+
+public data class TileAlreadyOccupiedException(val tileLocation: TileLocation) : Exception()
+
 /**
  * Responsible for doing tracking what tiles contain what characters.
  */
@@ -43,7 +46,7 @@ class TacticalMapState @Inject constructor(val logicalTileTracker: LogicalTileTr
 
     fun addCharacter(logicalCharacter: LogicalCharacter){
         if (listOfCharacters.any{it.tileLocation == logicalCharacter.tileLocation}){
-            throw IllegalArgumentException("Attempted to add character to a tile with another character already created")
+            throw TileAlreadyOccupiedException(logicalCharacter.tileLocation)
         }
         listOfCharacters.add(logicalCharacter)
     }

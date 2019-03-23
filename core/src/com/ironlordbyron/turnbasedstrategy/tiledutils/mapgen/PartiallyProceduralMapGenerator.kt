@@ -1,7 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen
 
 import com.google.inject.Singleton
-import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
@@ -46,7 +46,10 @@ data class MapArchitecture(val rooms: Collection<MapRoom>,
 class PartiallyProceduralMapGenerator @Inject constructor (val tiledMapInterpreter: TiledMapInterpreter,
                                                            val logicalTileTracker: LogicalTileTracker,
                                                            val tiledMapModifier: TiledMapModifier,
-                                                           val mobGenerator: MobGenerator){
+                                                           val mobGenerator: MobGenerator,
+                                                           val entitySpawner: EntitySpawner,
+                                                           val tacticalMapState: TacticalMapState,
+                                                           val logicHooks: LogicHooks){
     // Requires a tilemap filled with rooms (no doors or anything else allowed.)
     // Then partitions them into rooms, and creates a graph of all the rooms that could connect to each other.
     // adds doors between 1/3 of all room adjacencies.  Then: Makes sure all rooms are connected via BFS.
@@ -69,10 +72,39 @@ class PartiallyProceduralMapGenerator @Inject constructor (val tiledMapInterpret
         // TODO: Add glorious inroads from the outside.
 
         mobGenerator.populateRooms(rooms, scenarioParams)
+        populateRoomsWithOrgans(rooms.toList())
+
+        for (char in tacticalMapState.listOfCharacters){
+            logicHooks.onUnitCreation(char)
+        }
+    }
+
+    private fun populateRoomsWithOrgans(rooms: List<MapRoom>) {
+        val shuffled = rooms.shuffled()
+        val shieldRoom  = shuffled.get(0)
+        val masterRoom = shuffled.get(1)
+        attemptPlacementOfMob(TacMapUnitTemplate.SHIELDING_ORGAN, shieldRoom)
+        attemptPlacementOfMob(TacMapUnitTemplate.MASTER_ORGAN, masterRoom)
+        attemptPlacementOfMob(TacMapUnitTemplate.DEFAULT_ENEMY_UNIT_SPAWNER, shuffled.get(2));
+    }
+
+    fun attemptPlacementOfMob(tacMapUnitTemplate: TacMapUnitTemplate, room: MapRoom){
+        val maxAttempts = 15
+        for (i in 0 .. maxAttempts){
+            try {
+                val tileLocation = room.tiles.randomElement()
+                entitySpawner.addCharacterToTileFromTemplate(tacMapUnitTemplate, tileLocation, false)
+                return
+            }catch(e: TileAlreadyOccupiedException){
+                // try it again!
+            }
+        }
+        throw IllegalStateException("Couldn't find an unoccupied tile even after $maxAttempts tries")
+
     }
 
     private fun insertDoor(tileLocation: TileLocation) {
-        // TODO
+        // TODO: Doesn't actually purge, for some reason
         tiledMapModifier.purgeTile(tileLocation, TileLayer.FEATURE)
         tiledMapModifier.placeDoor(tileLocation)
     }
