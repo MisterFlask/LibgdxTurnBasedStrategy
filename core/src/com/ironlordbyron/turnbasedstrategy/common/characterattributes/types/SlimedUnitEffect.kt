@@ -2,12 +2,14 @@ package com.ironlordbyron.turnbasedstrategy.common.characterattributes.types
 
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
+import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
+import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 @Autoinjectable
-class SlimedUnitFunctionalEffect() : FunctionalUnitEffect<SlimedUnitLogicalEffect>{
+class SlimedUnitFunctionalEffect @Inject constructor(override val eventNotifier: EventNotifier) : FunctionalUnitEffect<SlimedUnitLogicalEffect>{
     override val id: String = "SLIMED"
     override val clazz: Class<SlimedUnitLogicalEffect> = SlimedUnitLogicalEffect::class.java
 

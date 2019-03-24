@@ -9,6 +9,7 @@ import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCha
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttributeTrigger
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
+import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
@@ -28,7 +29,8 @@ data class ExplodesOnDeath(val radius: Int, val damage: Int) : LogicalUnitEffect
 class ExplodesOnDeathFunctionalUnitEffect @Inject constructor (val entitySpawner: EntitySpawner,
                                                                val tacticalMapAlgorithms: TacticalMapAlgorithms,
                                                                val damageOperator: DamageOperator,
-                                                               val tacticalMapState: TacticalMapState) : FunctionalUnitEffect<ExplodesOnDeath>{
+                                                               val tacticalMapState: TacticalMapState,
+                                                               override val eventNotifier: EventNotifier) : FunctionalUnitEffect<ExplodesOnDeath>{
 
     val protoActor: ProtoActor = DataDrivenOnePageAnimation.EXPLODE
     override val id: String = "EXPLODES_ON_DEATH"

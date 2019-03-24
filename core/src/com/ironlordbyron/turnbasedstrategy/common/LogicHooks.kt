@@ -71,6 +71,10 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
         }
     }
 
+    fun canUnitAct(thisCharacter: LogicalCharacter): Boolean {
+        return functionalEffectRegistrar.canUnitAct(thisCharacter)
+    }
+
     fun afterApplicationOfAttribute(logicalCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute, stacksToApply: Int) {
         functionalEffectRegistrar.runOnApplicationEffects(logicalCharacter, logicalCharacterAttribute)//TODO
     }

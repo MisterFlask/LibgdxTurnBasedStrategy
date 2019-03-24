@@ -3,18 +3,28 @@ package com.ironlordbyron.turnbasedstrategy.common.characterattributes.types
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
+import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 
 
 // These are IMMUTABLE OBJECTS
 // mutable params should go in the LogicalAttribute.
 public interface FunctionalUnitEffect<T>{
+    val eventNotifier: EventNotifier
     val id: String // maps to the logical attribute given a unit.
     val clazz: Class<T>
-    val stacks: Int
-        get() = 1
+    val stopsUnitFromActing: Boolean
+        get() = false
 
     fun getMovementModifier(logicalAttr: T, thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute): Int {
         return 0
+    }
+
+    fun onBeingStruck(logicalAttr: SnoozeLogicalUnitEffect,
+                      thisCharacter: LogicalCharacter,
+                      logicalCharacterAttribute: LogicalCharacterAttribute,
+                      characterStriking: LogicalCharacter){
+
     }
 
     /**
@@ -54,5 +64,15 @@ public interface FunctionalUnitEffect<T>{
     fun fromString(attr: String): T {
         return ObjectMapper().readValue(attr, clazz)
     }
+    ////////////////////////////////////////////////////////
+    /// UTILITY FUNCTIONS BELOW THIS LINE //////////////////
+    ////////////////////////////////////////////////////////
 
+    fun removeThisAttribute(logicalAttributeId: String, thisCharacter: LogicalCharacter){
+        val attrRemoved = thisCharacter.tacMapUnit.attributes.filter{it.id == logicalAttributeId }.first()
+        thisCharacter.tacMapUnit.attributes.removeIf { it.id == logicalAttributeId }
+        eventNotifier.notifyListenersOfGuiEvent(LogicalAttributeRemovedEvent(attrRemoved, thisCharacter))
+    }
 }
+
+data class LogicalAttributeRemovedEvent(val attribute: LogicalCharacterAttribute, val thisCharacter: LogicalCharacter) : TacticalGuiEvent()

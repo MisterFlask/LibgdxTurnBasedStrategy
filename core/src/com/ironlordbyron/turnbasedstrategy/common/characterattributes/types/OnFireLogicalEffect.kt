@@ -3,6 +3,7 @@ package com.ironlordbyron.turnbasedstrategy.common.characterattributes.types
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
+import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
 import com.ironlordbyron.turnbasedstrategy.entrypoints.LogicalEffect
 import javax.inject.Inject
@@ -11,7 +12,8 @@ import javax.inject.Singleton
 
 @Autoinjectable
 @Singleton
-public class OnFireFunctionalEffect @Inject constructor (val damageOperator: DamageOperator) : FunctionalUnitEffect<OnFireLogicalEffect> {
+public class OnFireFunctionalEffect @Inject constructor (val damageOperator: DamageOperator,
+                                                         override val eventNotifier: EventNotifier) : FunctionalUnitEffect<OnFireLogicalEffect> {
     override val id: String = "ON_FIRE"
     override val clazz: Class<OnFireLogicalEffect> = OnFireLogicalEffect::class.java
 

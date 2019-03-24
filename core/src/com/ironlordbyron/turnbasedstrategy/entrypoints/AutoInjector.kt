@@ -40,7 +40,8 @@ public class AutoInjector(){
 annotation class Autoinjectable
 
 public class AppliesAttributeOnHit(val entitySpawner: EntitySpawner,
-                                   val logicHooks: LogicHooks) : FunctionalUnitEffect<AppliesAttributeOnHitLogicalEffect>{
+                                   val logicHooks: LogicHooks,
+                                   override val eventNotifier: EventNotifier) : FunctionalUnitEffect<AppliesAttributeOnHitLogicalEffect>{
     override val id: String = "APPLIES_ATTRIBUTE_ON_HIT"
     override val clazz = AppliesAttributeOnHitLogicalEffect::class.java
 
@@ -146,5 +147,16 @@ public class FunctionalEffectRegistrar() {
             val funAttr = funcAttr as FunctionalUnitEffect<Any>
             funAttr.afterApplication(logAttrParams, logicalCharacter, logicalCharacterAttribute)
         }
+    }
+
+    fun canUnitAct(logicalCharacter: LogicalCharacter): Boolean {
+        var stoppedFromActing = false
+        runEffectsOnCharacter(logicalCharacter){
+            funcAttr, _, _ ->
+                if (funcAttr.stopsUnitFromActing){
+                    stoppedFromActing = true
+                }
+        }
+        return !stoppedFromActing
     }
 }
