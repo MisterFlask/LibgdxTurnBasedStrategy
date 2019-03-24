@@ -4,10 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.ExplodesOnDeath
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.OnFireLogicalEffect
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.ShieldsAnotherOrganFunctionalAttribute
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.SlimedUnitLogicalEffect
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.*
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.TransientEntityTracker
@@ -38,7 +35,8 @@ public data class LogicalCharacterAttribute(val name: String,
                                             val customEffects: Map<String, Any> = mapOf(),
                                             val stackable: Boolean = false,
                                             var stacks: Int = 1,
-                                            val id: String = name){
+                                            val id: String = name,
+                                            val tacticalMapProtoActor: ProtoActor? = null){
     companion object {
         val _demonImg = SuperimposedTilemaps(tileSetNames = listOf("Demon0","Demon1"), textureId = "2")
         val _painterlyIcon = ImageIcon(ImageIcon.PAINTERLY_FOLDER, "fire-arrows-1.png")
@@ -71,10 +69,20 @@ public data class LogicalCharacterAttribute(val name: String,
         val SLIMED: LogicalCharacterAttribute = LogicalCharacterAttribute("Slimed",
                 _demonImg.copy(textureId = "9"),
                 statusEffect = true,
-                customEffects = hashMapOf(SlimedUnitLogicalEffect(1).toEntry()),
+                customEffects = hashMapOf(SlimedUnitLogicalEffect().toEntry()),
                 description = {"This character is slimed."},
-                stackable = true
+                stackable = true,
+                stacks = 1
         )
+        val SNOOZING: LogicalCharacterAttribute = LogicalCharacterAttribute("Unaware",
+                _demonImg.copy(textureId="10"),
+                statusEffect = true,
+                customEffects = hashMapOf(SnoozeLogicalUnitEffect().toEntry()),
+                description = {"This character is unaware."},
+                stackable = false,
+                stacks = 1
+                )
+
 
 
     }

@@ -25,7 +25,8 @@ class ImageWrapper(texture: TextureRegion,
     }
 }
 class LogicalCharacterActorGroup(val shadeableActor: ActorWrapper,
-                                 val characterActor: Actor = shadeableActor.actor) : Group(){
+                                 val characterActor: Actor = shadeableActor.actor,
+                                 val attributeActors: HashMap<String, Actor> = HashMap()) : Group(){
     var hpMarker: Label? = null
 
     override fun hit(x: Float, y: Float, touchable: Boolean): Actor? {

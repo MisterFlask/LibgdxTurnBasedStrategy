@@ -89,8 +89,7 @@ public class FunctionalEffectRegistrar() {
     fun runEffectsOnCharacter(logicalCharacter: LogicalCharacter,
                               func: (FunctionalUnitEffect<*>, Any, LogicalCharacterAttribute) -> Unit){
         val attributes = logicalCharacter.attributes
-        for (attr in attributes){
-
+        for (attr in attributes.toList()){
             for (attrKey in attr.customEffects.keys){
                 val logicalAttributeParams = attr.customEffects[attrKey]
                 val functionalAttribute = getAttributeById(attrKey)

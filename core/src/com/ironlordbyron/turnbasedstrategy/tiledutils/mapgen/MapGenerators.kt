@@ -79,8 +79,8 @@ enum class MapGeneratorType{
  * This runs the tiled map interpreter, and the chosen tiled map stage algorithm.
  */
 public class MapGenerationApplicator @Inject constructor(val tiledMapInterpreter: TiledMapInterpreter,
-                                               val partiallyProceduralMapGenerator: PartiallyProceduralMapGenerator,
-                                               val tileMapProvider: TileMapProvider){
+                                                         val partiallyProceduralMapGenerator: PartiallyProceduralDungeonGenerator,
+                                                         val tileMapProvider: TileMapProvider){
     fun generateMapForScenario(scenarioParams: ScenarioParams){
         when(scenarioParams.mapGeneratorType){
              MapGeneratorType.NONE -> {

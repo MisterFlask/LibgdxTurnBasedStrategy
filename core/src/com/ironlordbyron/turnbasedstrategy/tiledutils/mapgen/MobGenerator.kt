@@ -1,22 +1,26 @@
 package com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen
 
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 // Responsible for deciding what monsters to put in a given room
 public class MobGenerator @Inject constructor (val mobRegistrar: MobRegistrar,
-                                               val entitySpawner: EntitySpawner){
+                                               val entitySpawner: EntitySpawner,
+                                               val attributeOperator: AttributeOperator){
     fun populateRooms(rooms : Collection<MapRoom>, scenarioParams: ScenarioParams){
         val mobGenParams = scenarioParams.mobGenerationParams!!
         var difficultyLeft = mobGenParams.totalDifficultyAllowed
-        val mobs = ArrayList<TacMapUnitTemplate>()
+        val mobs = ArrayList<MobGroup>()
         for (i in 0 .. mobGenParams.numberMobsToGenerate){
-            val nextMob = nextMobToGenerate(difficultyLeft / rooms.size)
+            val nextMob = nextMobGroupToGenerate(difficultyLeft / rooms.size)
             mobs.add(nextMob)
         }
         for (room in rooms.shuffled()){
@@ -25,7 +29,7 @@ public class MobGenerator @Inject constructor (val mobRegistrar: MobRegistrar,
             }
             val nextMob = mobs.last()
             mobs.removeAt(mobs.size - 1)
-            populateMobInRoom(nextMob, room)
+            populateMobGroupInRoom(nextMob, room)
         }
     }
 
@@ -34,8 +38,20 @@ public class MobGenerator @Inject constructor (val mobRegistrar: MobRegistrar,
         entitySpawner.addCharacterToTileFromTemplate(nextMob, tile, false)
     }
 
+    private fun populateMobGroupInRoom(nextMobGroup: MobGroup, room: MapRoom){
+        val tilesShuffled = room.tiles.shuffled()
+        nextMobGroup.mobGroupTemplate.units.forEachIndexed { index, tacMapUnitTemplate ->
+            val logicalCharacterReturned = entitySpawner.addCharacterToTileFromTemplate(tacMapUnitTemplate, tilesShuffled[index], false)
+            attributeOperator.applyAttribute(logicalCharacterReturned, LogicalCharacterAttribute.SNOOZING)
+        }
+    }
+
+    fun nextMobGroupToGenerate(targetDifficulty: Int) : MobGroup {
+        return mobRegistrar.getMobGroupWithinDifficultyRange(IntRange(targetDifficulty -5, targetDifficulty + 10))
+    }
+
     fun nextMobToGenerate(targetDifficulty: Int): TacMapUnitTemplate {
-        return mobRegistrar.getMobWithinDifficultyRange(IntRange(targetDifficulty -1 , targetDifficulty + 1))
+        return mobRegistrar.getMobWithinDifficultyRange(IntRange(targetDifficulty -5 , targetDifficulty + 10))
     }
 }
 
@@ -43,7 +59,7 @@ public class MobGenerator @Inject constructor (val mobRegistrar: MobRegistrar,
 @Singleton
 public class MobRegistrar(){
     val listOfTemplatesToCopy = ArrayList<TacMapUnitTemplate>()
-
+    val listOfMobsGroupTemplates = ArrayList<MobGroupTemplate>()
     fun registerTemplate(tacMapUnitTemplate: TacMapUnitTemplate){
         listOfTemplatesToCopy.add(tacMapUnitTemplate)
     }
@@ -51,6 +67,42 @@ public class MobRegistrar(){
     fun getMobWithinDifficultyRange(range: IntRange) : TacMapUnitTemplate{
         listOfTemplatesToCopy.shuffle()
         return listOfTemplatesToCopy.first{it.difficulty in range}.copy()
+    }
+
+    fun getMobGroupWithinDifficultyRange(range: IntRange) : MobGroup {
+        listOfMobsGroupTemplates.shuffle()
+        return listOfMobsGroupTemplates.first{it.difficulty() in range}.toMobGroup()
+    }
+
+    fun registerMobGroupTemplate(mobGroupTemplate: MobGroupTemplate){
+        listOfMobsGroupTemplates.add(mobGroupTemplate)
+    }
+
+    //// Individual mob groups
+
+    val standardMobGroup = MobGroupTemplate(
+            name = "Standard Mob Group",
+            tags = listOf("demo"),
+            units = listOf(
+            TacMapUnitTemplate.DEFAULT_ENEMY_UNIT,
+            TacMapUnitTemplate.DEFAULT_ENEMY_UNIT,
+            TacMapUnitTemplate.DEFAULT_ENEMY_UNIT))
+    init{
+        registerMobGroupTemplate(standardMobGroup)
+    }
+}
+
+data class MobGroup(val mobGroupTemplate : MobGroupTemplate){
+    val id = UUID.randomUUID()
+}
+data class MobGroupTemplate(val name: String,
+                            val tags: Collection<String> = listOf(),
+                            val units: Collection<TacMapUnitTemplate>){
+    fun toMobGroup(): MobGroup {
+        return MobGroup(mobGroupTemplate = this)
+    }
+    fun difficulty() : Int {
+        return units.map{it.difficulty}.sum()
     }
 }
 

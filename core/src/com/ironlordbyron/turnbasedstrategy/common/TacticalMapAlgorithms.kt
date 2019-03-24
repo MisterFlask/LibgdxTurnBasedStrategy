@@ -98,4 +98,11 @@ class TacticalMapAlgorithms @Inject constructor(override val logicalTileTracker:
         }
         return tileIsValidAlgorithm.canWalkOnTile(character, loc)
     }
+
+    fun getCharactersWithinNumberOfTilesOfCharacter(range: Int, originCharacter: LogicalCharacter): Collection<LogicalCharacter> {
+        val locationsWithinNTiles = getWalkableTileLocationsUpToNAway(range, originCharacter.tileLocation, originCharacter, AlwaysValid()).toMutableList()
+        val characters = tacticalMapState.listOfCharacters.toMutableList()
+
+        return characters.filter{it.tileLocation in locationsWithinNTiles}
+    }
 }

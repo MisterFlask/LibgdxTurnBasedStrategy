@@ -21,7 +21,8 @@ data class ApplyAttributeEvent(
 public class AttributeOperator @Inject constructor(val logicHooks: LogicHooks,
                                                    val animationActionQueueProvider: AnimationActionQueueProvider,
                                                    val floatingTextGenerator: FloatingTextGenerator,
-                                                   val eventNotifier: EventNotifier) : GameEventListener{
+                                                   val eventNotifier: EventNotifier,
+                                                   val entitySpawner: EntitySpawner) : GameEventListener{
     override fun consumeGameEvent(tacticalGameEvent: TacticalGameEvent) {
         when(tacticalGameEvent){
             is ApplyAttributeEvent -> this.applyAttribute(tacticalGameEvent.logicalCharacter, tacticalGameEvent.logicalCharacterAttribute,
@@ -37,6 +38,11 @@ public class AttributeOperator @Inject constructor(val logicHooks: LogicHooks,
                        stacksToApply: Int = 1){
         if (hasAttribute(logicalCharacter, logicalCharacterAttribute) and !logicalCharacterAttribute.stackable){
             return
+        }
+
+        if (!logicalCharacter.actor.attributeActors.containsKey(logicalCharacterAttribute.id) && logicalCharacterAttribute.tacticalMapProtoActor != null){
+            val actor = entitySpawner.spawnEntityAtTileInSequence(logicalCharacterAttribute.tacticalMapProtoActor, logicalCharacter.tileLocation)
+            logicalCharacter.actor.attributeActors.put(logicalCharacterAttribute.id, actor)
         }
 
         animationActionQueueProvider.addAction(

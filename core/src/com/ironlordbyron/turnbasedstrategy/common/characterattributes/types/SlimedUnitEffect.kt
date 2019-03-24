@@ -14,12 +14,12 @@ class SlimedUnitFunctionalEffect @Inject constructor(override val eventNotifier:
     override val clazz: Class<SlimedUnitLogicalEffect> = SlimedUnitLogicalEffect::class.java
 
     override fun getMovementModifier(logicalAttr: SlimedUnitLogicalEffect, thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute): Int {
-        return -1 * logicalAttr.stacks
+        return -1 * logicalCharacterAttribute.stacks
     }
 
 }
 
-data class SlimedUnitLogicalEffect(var stacks: Int) : LogicalUnitEffect{
+class SlimedUnitLogicalEffect() : LogicalUnitEffect{
     override fun toEntry(): Pair<String, Any> {
         return "SLIMED" to this
     }
