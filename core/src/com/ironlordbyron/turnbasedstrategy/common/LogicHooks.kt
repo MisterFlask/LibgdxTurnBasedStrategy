@@ -5,6 +5,10 @@ import com.google.inject.Singleton
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttributeFactory
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.UnitWasStruckEvent
+import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
+import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.entrypoints.FunctionalEffectRegistrar
 
 /**
@@ -21,7 +25,17 @@ import com.ironlordbyron.turnbasedstrategy.entrypoints.FunctionalEffectRegistrar
 @Singleton
 class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEffectRegistrar,
                                      val functionalCharacterAttributeFactory: FunctionalCharacterAttributeFactory,
-                                     val tacticalMapState: TacticalMapState){
+                                     val tacticalMapState: TacticalMapState,
+                                     val eventNotifier: EventNotifier) : GameEventListener {
+    override fun consumeGameEvent(tacticalGameEvent: TacticalGameEvent) {
+        when(tacticalGameEvent){
+            is UnitWasStruckEvent -> onCharacterWasStruck(tacticalGameEvent.targetCharacter)
+        }
+    }
+
+    init{
+        eventNotifier.registerGameListener(this)
+    }
 
     fun getAttributes(thisCharacter: LogicalCharacter): List<FunctionalCharacterAttribute> {
         val functions = functionalCharacterAttributeFactory.getFunctionalAttributesForCharacter(thisCharacter)
@@ -77,5 +91,9 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
 
     fun afterApplicationOfAttribute(logicalCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute, stacksToApply: Int) {
         functionalEffectRegistrar.runOnApplicationEffects(logicalCharacter, logicalCharacterAttribute)//TODO
+    }
+
+    fun onCharacterWasStruck(targetCharacter: LogicalCharacter) {
+        functionalEffectRegistrar.runAfterStruckCharacterEffects(targetCharacter)
     }
 }

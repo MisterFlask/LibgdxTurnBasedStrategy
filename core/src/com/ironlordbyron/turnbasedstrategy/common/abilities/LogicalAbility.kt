@@ -1,7 +1,11 @@
 package com.ironlordbyron.turnbasedstrategy.common.abilities
 
+import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
+import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
+import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
+import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 
 public class LogicalAbility(val name: String,
@@ -23,7 +27,30 @@ public class LogicalAbility(val name: String,
                             val landingActor: ProtoActor?,
                             // this is specifically for contextual abilities, like opening doors.
                             val context: ContextualAbilityParams? = null,
-                            val inflictsStatusAffect: Collection<LogicalCharacterAttribute> = listOf()){
+                            val inflictsStatusAffect: Collection<LogicalCharacterAttribute> = listOf(),
+                            val areaOfEffect: AreaOfEffect = AreaOfEffect.One()){
+
+}
+
+interface AreaOfEffect{
+
+    fun getTilesAffected(tileLocationTargeted: TileLocation, characterUsing: LogicalCharacter) : Collection<TileLocation>
+
+
+    // Affects only the tile targeted.
+    public class One() : AreaOfEffect{
+        override fun getTilesAffected(tileLocationTargeted: TileLocation, characterUsing: LogicalCharacter): Collection<TileLocation> {
+            return setOf(tileLocationTargeted);
+        }
+    }
+
+    // Affects tiles in a radius around the target.
+    public class Aoe(val radius : Int) : AreaOfEffect{
+        override fun getTilesAffected(tileLocationTargeted: TileLocation, characterUsing: LogicalCharacter): Collection<TileLocation> {
+            val algorithms = GameModuleInjector.moduleInjector.getInstance(TacticalMapAlgorithms::class.java)
+            return algorithms.getTileLocationsUpToNAway(radius, tileLocationTargeted, characterUsing)
+        }
+    }
 
 }
 

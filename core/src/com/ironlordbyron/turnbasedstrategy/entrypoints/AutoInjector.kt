@@ -4,6 +4,7 @@ import com.ironlordbyron.turnbasedstrategy.common.LogicHooks
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalUnitEffect
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.SnoozeLogicalUnitEffect
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
@@ -157,5 +158,13 @@ public class FunctionalEffectRegistrar() {
                 }
         }
         return !stoppedFromActing
+    }
+
+    fun runAfterStruckCharacterEffects(targetCharacter: LogicalCharacter) {
+        runEffectsOnCharacter(targetCharacter){
+            funcAttr, logAttrParams, logicalCharacterAttribute ->
+            val funAttr = funcAttr as FunctionalUnitEffect<Any>
+            funAttr.onBeingStruck(logAttrParams, targetCharacter, logicalCharacterAttribute)
+        }
     }
 }

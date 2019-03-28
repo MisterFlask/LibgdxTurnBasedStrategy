@@ -62,7 +62,9 @@ class TacticalMapAlgorithms @Inject constructor(override val logicalTileTracker:
         return tiles
     }
 
-
+    fun getTileLocationsUpToNAway(n: Int, origin: TileLocation, character: LogicalCharacter): Collection<TileLocation>{
+        return getWalkableTileLocationsUpToNAway(n, origin, character, AlwaysValid())
+    }
     /**
      * e.g. , getting tiles up to 1 away will always return 4 tiles assuming all are passable.
      * Will not include the origin tile.

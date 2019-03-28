@@ -6,6 +6,7 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.Animatio
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.TemporaryAnimationGenerator
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -24,6 +25,7 @@ public class AbilityFactory @Inject constructor(val gameBoardOperator: GameBoard
         when(logicalAbilityAndEquipment.ability.abilityClass){
             AbilityClass.TARGETED_ABILITY -> return SimpleAttackAbility(logicalAbilityAndEquipment, tacticalMapState, boardAlgorithms, damageOperator, boardAlgorithms,
                     unitSpawner, animationActionQueueProvider, temporaryAnimationGenerator)
+
         }
     }
 
@@ -123,43 +125,55 @@ class SimpleAttackAbility(
     override fun activateAbility(location: TileLocation?, targetCharacter: LogicalCharacter?, sourceCharacter: LogicalCharacter,
                                  equipment: LogicalEquipment?) {
 
+        if (location == null){
+            throw NotImplementedError("Havne't yet implemented non-location abilities")
+        }
 
-        val ability = logicalAbilityAndEquipment.ability
+        val locationsAffected = logicalAbilityAndEquipment.ability.areaOfEffect.getTilesAffected(location, sourceCharacter)
 
-        // if there's a projectile, do it
-        if (ability.projectileActor != null && location != null){
-            val projectile = unitSpawner.animateProjectileForLogicalAbility(logicalAbilityAndEquipment, sourceCharacter.tileLocation, location)
-            if (projectile != null){
-                animationActionQueueProvider.addAction(projectile)
-            }
-        }
-        // if there's an effect, do it
-        if (ability.landingActor != null && location != null){
-            val lander = temporaryAnimationGenerator.getTemporaryAnimationActorActionPair(location, ability.landingActor)
-            animationActionQueueProvider.addAction(lander)
-        }
-        // create the effects
-        for (effect in logicalAbility.abilityEffects){
-            when(effect){
-                is LogicalAbilityEffect.SpawnsUnit -> unitSpawner.addCharacterToTileFromTemplate(effect.unitToBeSpawned.toTacMapUnitTemplate()!!, location!!,
-                        sourceCharacter.playerControlled)
-                is LogicalAbilityEffect.LightsTileOnFire -> {
-                    animationActionQueueProvider.addAction(unitSpawner.generateLightTileOnFireAction(location!!))
-                }
-                is LogicalAbilityEffect.OpensDoor -> {
-                    animationActionQueueProvider.addAction(unitSpawner.openDoorAction(location!!))
-                }
-            }
-        }
-        // if there's a damage effect, do that (probably just the number-rising thing)
-        if (logicalAbility.damage != null){
-            // so, the GBO shouldn't be responsible for handing damage animations, because those will vary based on attack.
-            damageOperator.damageCharacter(targetCharacter!!, logicalAbility.damage!!, logicalAbilityAndEquipment)
+        for (locationInAoe in locationsAffected){
+            runAbilityOnLocation(locationInAoe, sourceCharacter, targetCharacter)
         }
 
         if (sourceCharacter.playerControlled){
             animationActionQueueProvider.runThroughActionQueue(finalAction = {})
             animationActionQueueProvider.clearQueue()
+        }
+    }
+
+    private fun runAbilityOnLocation(location: TileLocation, sourceCharacter: LogicalCharacter, targetCharacter: LogicalCharacter?) {
+        val ability = logicalAbilityAndEquipment.ability
+        val landingActor = ability.landingActor
+        // if there's a projectile, do it
+        if (ability.projectileActor != null) {
+            val projectile = unitSpawner.animateProjectileForLogicalAbility(logicalAbilityAndEquipment, sourceCharacter.tileLocation, location)
+            if (projectile != null) {
+                animationActionQueueProvider.addAction(projectile)
+            }
+        }
+        // if there's an effect, do it
+        if (ability.landingActor != null) {
+            val lander = temporaryAnimationGenerator.getTemporaryAnimationActorActionPair(location, landingActor!!)
+            animationActionQueueProvider.addAction(lander)
+        }
+
+        // create the effects
+        for (effect in logicalAbility.abilityEffects) {
+            when (effect) {
+                is LogicalAbilityEffect.SpawnsUnit -> unitSpawner.addCharacterToTileFromTemplate(effect.unitToBeSpawned.toTacMapUnitTemplate()!!, location!!,
+                        sourceCharacter.playerControlled)
+                is LogicalAbilityEffect.LightsTileOnFire -> {
+                    animationActionQueueProvider.addAction(unitSpawner.generateLightTileOnFireAction(location))
+                }
+                is LogicalAbilityEffect.OpensDoor -> {
+                    animationActionQueueProvider.addAction(unitSpawner.openDoorAction(location))
+                }
+            }
+        }
+        // if there's a damage effect, do that (probably just the number-rising thing)
+        if (logicalAbility.damage != null) {
+            // so, the GBO shouldn't be responsible for handing damage animations, because those will vary based on attack.
+            damageOperator.damageCharacter(targetCharacter!!, logicalAbility.damage!!, logicalAbilityAndEquipment)
         }
     }
 

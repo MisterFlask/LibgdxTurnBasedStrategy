@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination
 
+import com.ironlordbyron.turnbasedstrategy.common.LogicHooks
 import com.ironlordbyron.turnbasedstrategy.common.LogicalAbilityAndEquipment
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttributeFactory
@@ -45,6 +46,8 @@ class DamageOperator @Inject constructor(val characterModificationAnimationGener
                 }
             }
         }
+        eventNotifier.notifyListenersOfGameEvent(UnitWasStruckEvent(targetCharacter, damageAmount, abilityAndEquipment))
     }
-
 }
+
+data class UnitWasStruckEvent(val targetCharacter: LogicalCharacter, val damageAmount: Int, val abilityAndEquipment: LogicalAbilityAndEquipment?) : TacticalGameEvent

@@ -29,6 +29,18 @@ object StandardAbilities{
             landingActor = DataDrivenOnePageAnimation.CLAWSLASH,
             requiredTargetType = RequiredTargetType.ENEMY_ONLY,
             projectileActor = null)
+    val FreeAimingFireball = LogicalAbility("Torch (free aiming)",
+            AbilitySpeed.ENDS_TURN,
+            damage = 1,
+            range = 5,
+            description = "A ranged attack that lights stuff on fire.  Ends the turn.",
+            abilityClass = AbilityClass.TARGETED_ABILITY,
+            requiredTargetType = RequiredTargetType.ANY,
+            abilityEffects = listOf(LogicalAbilityEffect.LightsTileOnFire()),
+            projectileActor = DataDrivenOnePageAnimation.FIREBALL,
+            landingActor = DataDrivenOnePageAnimation.EXPLODE,
+            inflictsStatusAffect = listOf(LogicalCharacterAttribute.ON_FIRE)
+    );
     val Beatdown = LogicalAbility("Beatdown",
             AbilitySpeed.ENDS_TURN,
             damage = 1,

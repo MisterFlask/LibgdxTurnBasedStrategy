@@ -20,10 +20,9 @@ public interface FunctionalUnitEffect<T>{
         return 0
     }
 
-    fun onBeingStruck(logicalAttr: SnoozeLogicalUnitEffect,
+    fun onBeingStruck(logicalAttr: T,
                       thisCharacter: LogicalCharacter,
-                      logicalCharacterAttribute: LogicalCharacterAttribute,
-                      characterStriking: LogicalCharacter){
+                      logicalCharacterAttribute: LogicalCharacterAttribute){
 
     }
 
