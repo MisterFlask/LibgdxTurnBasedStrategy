@@ -39,7 +39,8 @@ object StandardAbilities{
             abilityEffects = listOf(LogicalAbilityEffect.LightsTileOnFire()),
             projectileActor = DataDrivenOnePageAnimation.FIREBALL,
             landingActor = DataDrivenOnePageAnimation.EXPLODE,
-            inflictsStatusAffect = listOf(LogicalCharacterAttribute.ON_FIRE)
+            inflictsStatusAffect = listOf(LogicalCharacterAttribute.ON_FIRE),
+            cooldownTurns = 4
     );
     val Beatdown = LogicalAbility("Beatdown",
             AbilitySpeed.ENDS_TURN,

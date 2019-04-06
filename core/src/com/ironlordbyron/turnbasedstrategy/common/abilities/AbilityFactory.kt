@@ -6,7 +6,6 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.Animatio
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.TemporaryAnimationGenerator
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -129,7 +128,7 @@ class SimpleAttackAbility(
             throw NotImplementedError("Havne't yet implemented non-location abilities")
         }
 
-        val locationsAffected = logicalAbilityAndEquipment.ability.areaOfEffect.getTilesAffected(location, sourceCharacter)
+        val locationsAffected = logicalAbilityAndEquipment.ability.areaOfEffect.getTilesAffected(location, sourceCharacter, this.logicalAbility)
 
         for (locationInAoe in locationsAffected){
             runAbilityOnLocation(locationInAoe, sourceCharacter, targetCharacter)
@@ -141,39 +140,44 @@ class SimpleAttackAbility(
         }
     }
 
-    private fun runAbilityOnLocation(location: TileLocation, sourceCharacter: LogicalCharacter, targetCharacter: LogicalCharacter?) {
+    private fun runAbilityOnLocation(targetedLocation: TileLocation, sourceCharacter: LogicalCharacter, targetCharacter: LogicalCharacter?) {
         val ability = logicalAbilityAndEquipment.ability
         val landingActor = ability.landingActor
         // if there's a projectile, do it
         if (ability.projectileActor != null) {
-            val projectile = unitSpawner.animateProjectileForLogicalAbility(logicalAbilityAndEquipment, sourceCharacter.tileLocation, location)
+            val projectile = unitSpawner.animateProjectileForLogicalAbility(logicalAbilityAndEquipment, sourceCharacter.tileLocation, targetedLocation)
             if (projectile != null) {
                 animationActionQueueProvider.addAction(projectile)
             }
         }
-        // if there's an effect, do it
-        if (ability.landingActor != null) {
-            val lander = temporaryAnimationGenerator.getTemporaryAnimationActorActionPair(location, landingActor!!)
-            animationActionQueueProvider.addAction(lander)
-        }
+        // for each tile in the area of effect
+        val areaOfEffect = this.logicalAbility.areaOfEffect.getTilesAffected(targetedLocation, sourceCharacter, logicalAbility)
+        for (affectedTile in areaOfEffect){
+            // if there's an effect, do it
+            if (ability.landingActor != null) {
+                val lander = temporaryAnimationGenerator.getTemporaryAnimationActorActionPair(affectedTile, landingActor!!)
+                animationActionQueueProvider.addAction(lander)
+            }
 
-        // create the effects
-        for (effect in logicalAbility.abilityEffects) {
-            when (effect) {
-                is LogicalAbilityEffect.SpawnsUnit -> unitSpawner.addCharacterToTileFromTemplate(effect.unitToBeSpawned.toTacMapUnitTemplate()!!, location!!,
-                        sourceCharacter.playerControlled)
-                is LogicalAbilityEffect.LightsTileOnFire -> {
-                    animationActionQueueProvider.addAction(unitSpawner.generateLightTileOnFireAction(location))
-                }
-                is LogicalAbilityEffect.OpensDoor -> {
-                    animationActionQueueProvider.addAction(unitSpawner.openDoorAction(location))
+            // create the effects.  Don't really like this.
+            for (effect in logicalAbility.abilityEffects) {
+                when (effect) {
+                    is LogicalAbilityEffect.SpawnsUnit -> unitSpawner.addCharacterToTileFromTemplate(effect.unitToBeSpawned.toTacMapUnitTemplate()!!, targetedLocation!!,
+                            sourceCharacter.playerControlled)
+                    is LogicalAbilityEffect.LightsTileOnFire -> {
+                        animationActionQueueProvider.addAction(unitSpawner.generateLightTileOnFireAction(affectedTile))
+                    }
+                    is LogicalAbilityEffect.OpensDoor -> {
+                        animationActionQueueProvider.addAction(unitSpawner.openDoorAction(affectedTile))
+                    }
                 }
             }
-        }
-        // if there's a damage effect, do that (probably just the number-rising thing)
-        if (logicalAbility.damage != null) {
-            // so, the GBO shouldn't be responsible for handing damage animations, because those will vary based on attack.
-            damageOperator.damageCharacter(targetCharacter!!, logicalAbility.damage!!, logicalAbilityAndEquipment)
+            // if there's a damage effect, do that (probably just the number-rising thing)
+            if (logicalAbility.damage != null) {
+                // so, the GBO shouldn't be responsible for handing damage animations, because those will vary based on attack.
+                damageOperator.damageCharacter(targetCharacter!!, logicalAbility.damage!!, logicalAbilityAndEquipment)
+            }
+
         }
     }
 
@@ -181,8 +185,7 @@ class SimpleAttackAbility(
         return getTilesInRangeOfAbility(sourceCharacter, logicalAbility, sourceSquare)
     }
     private fun getTilesInRangeOfAbility(character: LogicalCharacter, ability: LogicalAbility, sourceSquare: TileLocation? = null): Collection<TileLocation> {
-        val tiles = boardAlgorithms.getWalkableTileLocationsUpToNAway(ability.range, sourceSquare?:character.tileLocation, character,
-                AlwaysValid())
+        val tiles = ability.rangeStyle.getTargetableTiles(character, ability)
         return tiles
     }
 }

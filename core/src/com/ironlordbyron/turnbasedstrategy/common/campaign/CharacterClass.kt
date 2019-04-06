@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.common.campaign
 
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
+import com.ironlordbyron.turnbasedstrategy.common.abilities.StandardAbilities
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.equipment.EquipmentClass
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
@@ -17,25 +18,27 @@ public data class CharacterClass(val startingHp: Int,
                                  val startingAbilities: Collection<LogicalAbility> = arrayListOf()) {
 
     companion object {
-        val FIGHTER = CharacterClass(startingHp = 4,
+        val FIGHTER = CharacterClass(startingHp = 5,
                 protoActor = SuperimposedTilemaps(tileSetNames = SuperimposedTilemaps.PLAYER_TILE_SETS,
                         textureId = "56"),
                 allowedEquipment = listOf(EquipmentClass.MELEE_WEAPON_LARGE),
                 movesPerTurn = 5,
-                name = "Fighter",
+                name = "Knight",
                 startingAbilities = arrayListOf())
         val ROGUE = CharacterClass(startingHp = 3,
                 protoActor = SuperimposedTilemaps(tileSetNames = SuperimposedTilemaps.PLAYER_TILE_SETS,
                         textureId = "57"),
                 allowedEquipment = listOf(EquipmentClass.MELEE_WEAPON_LARGE),
                 movesPerTurn = 5,
-                name = "Fighter")
+                startingAbilities = listOf(StandardAbilities.FreeAimingFireball),
+                name = "Grenadier")
         val CLERIC = CharacterClass(startingHp  = 4,
                 protoActor = SuperimposedTilemaps(tileSetNames = SuperimposedTilemaps.PLAYER_TILE_SETS,
                         textureId = "58"),
                 allowedEquipment = listOf(EquipmentClass.MELEE_WEAPON_LARGE),
+                startingAbilities = listOf(StandardAbilities.Beatdown),
                 movesPerTurn = 5,
-                name = "Fighter")
+                name = "Cleric")
 
     }
 }

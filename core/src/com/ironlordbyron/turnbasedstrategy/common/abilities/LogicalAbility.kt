@@ -28,25 +28,39 @@ public class LogicalAbility(val name: String,
                             // this is specifically for contextual abilities, like opening doors.
                             val context: ContextualAbilityParams? = null,
                             val inflictsStatusAffect: Collection<LogicalCharacterAttribute> = listOf(),
-                            val areaOfEffect: AreaOfEffect = AreaOfEffect.One()){
+                            val areaOfEffect: AreaOfEffect = AreaOfEffect.One(),
+                            val cooldownTurns: Int? = null,
+                            val rangeStyle: RangeStyle = RangeStyle.Simple(range)){
 
+}
+
+interface RangeStyle{
+    fun getTargetableTiles(characterUsing: LogicalCharacter, logicalAbility: LogicalAbility): Collection<TileLocation>
+
+    public class Simple(val range: Int) : RangeStyle{
+        override fun getTargetableTiles(characterUsing: LogicalCharacter, logicalAbility: LogicalAbility): Collection<TileLocation> {
+            val algorithms = GameModuleInjector.moduleInjector.getInstance(TacticalMapAlgorithms::class.java)
+
+            return algorithms.getTileLocationsUpToNAway(range, characterUsing.tileLocation, characterUsing)
+        }
+
+    }
 }
 
 interface AreaOfEffect{
 
-    fun getTilesAffected(tileLocationTargeted: TileLocation, characterUsing: LogicalCharacter) : Collection<TileLocation>
-
+    fun getTilesAffected(tileLocationTargeted: TileLocation, characterUsing: LogicalCharacter, logicalAbility: LogicalAbility) : Collection<TileLocation>
 
     // Affects only the tile targeted.
     public class One() : AreaOfEffect{
-        override fun getTilesAffected(tileLocationTargeted: TileLocation, characterUsing: LogicalCharacter): Collection<TileLocation> {
+        override fun getTilesAffected(tileLocationTargeted: TileLocation, characterUsing: LogicalCharacter, logicalAbility: LogicalAbility): Collection<TileLocation> {
             return setOf(tileLocationTargeted);
         }
     }
 
     // Affects tiles in a radius around the target.
     public class Aoe(val radius : Int) : AreaOfEffect{
-        override fun getTilesAffected(tileLocationTargeted: TileLocation, characterUsing: LogicalCharacter): Collection<TileLocation> {
+        override fun getTilesAffected(tileLocationTargeted: TileLocation, characterUsing: LogicalCharacter, logicalAbility: LogicalAbility): Collection<TileLocation> {
             val algorithms = GameModuleInjector.moduleInjector.getInstance(TacticalMapAlgorithms::class.java)
             return algorithms.getTileLocationsUpToNAway(radius, tileLocationTargeted, characterUsing)
         }
