@@ -18,7 +18,7 @@ public class OnFireFunctionalEffect @Inject constructor (val damageOperator: Dam
     override val clazz: Class<OnFireLogicalEffect> = OnFireLogicalEffect::class.java
 
     override fun onTurnStart(logicalAttr: OnFireLogicalEffect, thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute) {
-        damageOperator.damageCharacter(thisCharacter, damageAmount = logicalAttr.damagePerTurn, abilityAndEquipment = null)
+        damageOperator.damageCharacter(thisCharacter, damageAmount = logicalAttr.damagePerTurn, abilityAndEquipment = null, sourceCharacter = null)
     }
 
     companion object {

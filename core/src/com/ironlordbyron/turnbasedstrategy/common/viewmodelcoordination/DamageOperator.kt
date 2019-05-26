@@ -1,16 +1,12 @@
 package com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination
 
-import com.ironlordbyron.turnbasedstrategy.common.LogicHooks
+import com.ironlordbyron.turnbasedstrategy.Logging
 import com.ironlordbyron.turnbasedstrategy.common.LogicalAbilityAndEquipment
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttributeFactory
-import com.ironlordbyron.turnbasedstrategy.common.wrappers.ActorWrapper
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.CharacterModificationAnimationGenerator
-import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.DeathAnimationGenerator
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.FloatingTextGenerator
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import javax.inject.Inject
 
 class DamageOperator @Inject constructor(val characterModificationAnimationGenerator: CharacterModificationAnimationGenerator,
@@ -22,7 +18,8 @@ class DamageOperator @Inject constructor(val characterModificationAnimationGener
 
     fun damageCharacter(targetCharacter: LogicalCharacter,
                         damageAmount: Int,
-                        abilityAndEquipment: LogicalAbilityAndEquipment?) {
+                        abilityAndEquipment: LogicalAbilityAndEquipment?,
+                        sourceCharacter: LogicalCharacter?) {
         if (targetCharacter.isDead){
             return // doesn't matter if we're just kicking a dead horse
         }
@@ -46,7 +43,9 @@ class DamageOperator @Inject constructor(val characterModificationAnimationGener
                 }
             }
         }
-        eventNotifier.notifyListenersOfGameEvent(UnitWasStruckEvent(targetCharacter, damageAmount, abilityAndEquipment))
+        Logging.DebugCombatLogic("Attack from " + sourceCharacter?.tileLocation + " to " + targetCharacter.tileLocation + "; attack range = " + abilityAndEquipment?.ability?.range)
+        val struckEvent = UnitWasStruckEvent(targetCharacter, damageAmount, abilityAndEquipment)
+        eventNotifier.notifyListenersOfGameEvent(struckEvent)
     }
 }
 

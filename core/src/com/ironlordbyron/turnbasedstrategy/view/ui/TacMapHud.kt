@@ -299,7 +299,6 @@ class TacMapHud(viewPort: Viewport,
 
         // this.isDebugAll = true
 
-
         val actor =
                 Window("", DEFAULT_SKIN).let {
                     it.width = 440f

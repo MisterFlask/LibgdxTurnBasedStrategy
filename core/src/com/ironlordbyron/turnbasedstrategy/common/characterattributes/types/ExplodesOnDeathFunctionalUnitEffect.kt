@@ -4,9 +4,7 @@ import com.ironlordbyron.turnbasedstrategy.common.AlwaysValid
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttributeTrigger
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
@@ -46,7 +44,7 @@ class ExplodesOnDeathFunctionalUnitEffect @Inject constructor (val entitySpawner
         entitySpawner.spawnEntitiesAtTilesInSequenceForTempAnimation(explosions)
         val charactersAtTiles = tacticalMapState.listOfCharacters.filter{it.tileLocation in locationsForExplosion}
         for (character in charactersAtTiles){
-            damageOperator.damageCharacter(character, logicalAttr.damage, null)
+            damageOperator.damageCharacter(character, logicalAttr.damage, null, thisCharacter)
         }
     }
 
