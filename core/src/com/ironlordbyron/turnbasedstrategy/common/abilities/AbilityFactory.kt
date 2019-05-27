@@ -159,25 +159,14 @@ class SimpleAttackAbility(
                 animationActionQueueProvider.addAction(lander)
             }
 
-            // create the effects.  Don't really like this.
             for (effect in logicalAbility.abilityEffects) {
-                when (effect) {
-                    is LogicalAbilityEffect.SpawnsUnit -> unitSpawner.addCharacterToTileFromTemplate(effect.unitToBeSpawned.toTacMapUnitTemplate()!!, targetedLocation!!,
-                            sourceCharacter.playerControlled)
-                    is LogicalAbilityEffect.LightsTileOnFire -> {
-                        animationActionQueueProvider.addAction(unitSpawner.generateLightTileOnFireAction(affectedTile))
-                    }
-                    is LogicalAbilityEffect.OpensDoor -> {
-                        animationActionQueueProvider.addAction(unitSpawner.openDoorAction(affectedTile))
-                    }
-                }
+                effect.runAction(sourceCharacter, affectedTile)
             }
             // if there's a damage effect, do that (probably just the number-rising thing)
             if (logicalAbility.damage != null) {
                 // so, the GBO shouldn't be responsible for handing damage animations, because those will vary based on attack.
                 damageOperator.damageCharacter(targetCharacter!!, logicalAbility.damage!!, logicalAbilityAndEquipment, sourceCharacter)
             }
-
         }
     }
 

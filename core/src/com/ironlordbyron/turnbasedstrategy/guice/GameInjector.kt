@@ -13,6 +13,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.camera.GameCameraProvi
 import com.ironlordbyron.turnbasedstrategy.view.animation.external.SpecialEffectManager
 import com.ironlordbyron.turnbasedstrategy.view.animation.passive.EagerInitializer
 import com.ironlordbyron.turnbasedstrategy.view.ui.TacMapHudFactory
+import kotlin.reflect.KClass
 
 class GameModule : AbstractModule() {
     override fun configure() {
@@ -28,6 +29,9 @@ class GameModuleInjector {
             moduleInjector.getInstance(EagerInitializer::class.java)
         }
 
+        fun <T> generateInstance(clazz: Class<T>) : T {
+            return moduleInjector.getInstance(clazz)
+        }
 
         fun createTiledMapOperationsHandler(): TiledMapOperationsHandler {
             return moduleInjector.getInstance(TiledMapOperationsHandler::class.java)

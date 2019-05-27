@@ -29,6 +29,19 @@ interface TileEntity {
     }
 }
 
+class PortalEntity(val eventNotifier: EventNotifier,
+                   override val tileLocation: TileLocation,
+                   override var actor: Actor,
+                   override val name: String = "portal") : TileEntity{
+    override fun targetableByAbility(ability: LogicalAbility): Boolean {
+        return false
+    }
+
+    companion object {
+        val portalProtoActor: ProtoActor = SuperimposedTilemaps(tileSetNames = listOf("Door1"), textureId = "0")
+    }
+}
+
 class DoorEntity(val eventNotifier: EventNotifier,
                  override val tileLocation: TileLocation,
                  override var actor: Actor,
@@ -42,6 +55,7 @@ class DoorEntity(val eventNotifier: EventNotifier,
     }
 
     companion object {
+
         val openDoorProtoActor: ProtoActor = SuperimposedTilemaps(tileSetNames = listOf("Door1"), textureId = "0")
         val closedDoorProtoActor: ProtoActor = SuperimposedTilemaps(tileSetNames = listOf("Door0"), textureId = "0")
         val animatedImageParams = AnimatedImageParams(startsVisible = true)

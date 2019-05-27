@@ -61,6 +61,11 @@ class LogicalTileTracker @Inject constructor (val eventNotifier: EventNotifier) 
         // Now, we check the other layers for walls/doors that might overwrite the tile
         return getEntitiesAtTile(location).any{it is DoorEntity}
     }
+
+    fun <T : TileEntity> hasEntityAtLocation(location: TileLocation, clazz: Class<T>): Boolean {
+        return getEntitiesAtTile(location).any{clazz.isInstance(it)}
+    }
+
     fun isWall(location: TileLocation): Boolean{
         // Now, we check the other layers for walls/doors that might overwrite the tile
         return getEntitiesAtTile(location).any{it is WallEntity}

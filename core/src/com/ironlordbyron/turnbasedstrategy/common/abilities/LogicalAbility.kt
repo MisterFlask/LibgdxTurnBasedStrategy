@@ -1,10 +1,9 @@
 package com.ironlordbyron.turnbasedstrategy.common.abilities
 
-import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
-import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
-import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
-import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 
@@ -26,7 +25,7 @@ public class LogicalAbility(val name: String,
                             // a projectileActor is NOT required for this to function.
                             val landingActor: ProtoActor?,
                             // this is specifically for contextual abilities, like opening doors.
-                            val context: ContextualAbilityParams? = null,
+                            val requirement: ContextualAbilityRequirement? = null,
                             val inflictsStatusAffect: Collection<LogicalCharacterAttribute> = listOf(),
                             val areaOfEffect: AreaOfEffect = AreaOfEffect.One(),
                             val cooldownTurns: Int? = null,
@@ -69,9 +68,39 @@ interface AreaOfEffect{
 }
 
 interface LogicalAbilityEffect {
-    public data class SpawnsUnit(val unitToBeSpawned: String): LogicalAbilityEffect
-    public class LightsTileOnFire: LogicalAbilityEffect
-    class OpensDoor: LogicalAbilityEffect
+    fun runAction(characterUsing: LogicalCharacter,
+                  tileLocationTargeted: TileLocation)
+
+    public data class SpawnsUnit(val unitToBeSpawned: String): LogicalAbilityEffect{
+        val unitSpawner = GameModuleInjector.generateInstance(EntitySpawner::class.java)
+        val animationActionQueueProvider = GameModuleInjector.generateInstance(AnimationActionQueueProvider::class.java)
+
+        override fun runAction(characterUsing: LogicalCharacter,
+                               tileLocationTargeted: TileLocation) {
+            unitSpawner.addCharacterToTileFromTemplate(unitToBeSpawned.toTacMapUnitTemplate()!!, tileLocationTargeted!!,
+                    characterUsing.playerControlled)        }
+    }
+
+
+    public class LightsTileOnFire: LogicalAbilityEffect{
+        val unitSpawner = GameModuleInjector.generateInstance(EntitySpawner::class.java)
+        val animationActionQueueProvider = GameModuleInjector.generateInstance(AnimationActionQueueProvider::class.java)
+
+        override fun runAction(characterUsing: LogicalCharacter,
+                               tileLocationTargeted: TileLocation) {
+            animationActionQueueProvider.addAction(unitSpawner.generateLightTileOnFireAction(tileLocationTargeted))
+        }
+    }
+
+    class OpensDoor: LogicalAbilityEffect{
+        val unitSpawner = GameModuleInjector.generateInstance(EntitySpawner::class.java)
+        val animationActionQueueProvider = GameModuleInjector.generateInstance(AnimationActionQueueProvider::class.java)
+
+        override fun runAction(characterUsing: LogicalCharacter,
+                               tileLocationTargeted: TileLocation) {
+            animationActionQueueProvider.addAction(unitSpawner.openDoorAction(tileLocationTargeted))
+        }
+    }
 }
 
 public enum class AbilityClass {
