@@ -173,9 +173,9 @@ public class ActionManager @Inject constructor(
         animationActionQueueProvider.addBareAction(motherActor, {specialEffectManager.destroyLineEffect(uuid)})
     }
 
-    fun risingText(text: String, tileLocation: TileLocation){
+    fun risingText(text: String, tileLocation: TileLocation, scale: Float = 1.0f){
         animationActionQueueProvider.addAction(
-                floatingTextGenerator.getTemporaryAnimationActorActionPair("${text}", tileLocation))
+                floatingTextGenerator.getTemporaryAnimationActorActionPair("${text}", tileLocation, scale))
     }
 
 

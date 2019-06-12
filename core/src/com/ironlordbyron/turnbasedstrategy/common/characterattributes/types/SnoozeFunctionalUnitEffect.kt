@@ -52,7 +52,7 @@ public class SnoozeFunctionalUnitEffect @Inject constructor(
     }
 
     fun onUnapply(logicalAttr: SnoozeLogicalUnitEffect, thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute){
-        actionManager.risingText("!", thisCharacter.tileLocation)
+        actionManager.risingText("!!!", thisCharacter.tileLocation, 2f)
     }
 
     override val stopsUnitFromActing: Boolean

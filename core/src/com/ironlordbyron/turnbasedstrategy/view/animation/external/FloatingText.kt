@@ -7,7 +7,8 @@ import com.ironlordbyron.turnbasedstrategy.font.FontGenerator
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.ActivatableActor
 
 class FloatingText(val text: String,
-                   val animationDurationInMillis: Long) : Actor(), ActivatableActor {
+                   val animationDurationInMillis: Long,
+                   val fontScale: Float = .1f) : Actor(), ActivatableActor {
     var isActivatedAlready: Boolean = false
     init{
         this.isVisible = false
@@ -26,7 +27,7 @@ class FloatingText(val text: String,
     private var deltaX: Float = 0.toFloat()
     private var deltaY: Float = 0.toFloat()
 
-    private val font = FontGenerator.retrieveFont(.1f)
+    private val font = FontGenerator.retrieveFont(fontScale)
 
     fun setDeltaX(deltaX: Float) {
         this.deltaX = deltaX

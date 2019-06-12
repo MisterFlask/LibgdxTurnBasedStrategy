@@ -11,15 +11,16 @@ import javax.inject.Inject
 public class FloatingTextGenerator @Inject constructor (val tileMapProvider: TileMapProvider,
                                                        val tiledMapStageProvider: TacticalTiledMapStageProvider
 ){
-    public fun getTemporaryAnimationActorActionPair(text: String, tileLocation: TileLocation): ActorActionPair {
+    public fun getTemporaryAnimationActorActionPair(text: String, tileLocation: TileLocation, scale: Float = 1.0f): ActorActionPair {
 
-        val floatingText = FloatingText(text, 1000L)
+        val floatingText = FloatingText(text, 1000L, .1f * scale)
         val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
         floatingText.setPosition(boundingBox.x.toFloat(), boundingBox.y.toFloat() + boundingBox.height)
         floatingText.setDeltaY(10f)
-        floatingText.width = boundingBox.width.toFloat()
-        floatingText.height = boundingBox.height.toFloat()
+        floatingText.width = boundingBox.width.toFloat() * scale
+        floatingText.height = boundingBox.height.toFloat() * scale
         floatingText.color = Color.RED
+        floatingText.setScale(scale)
         tiledMapStageProvider.tiledMapStage.addActor(floatingText)
         return ActorActionPair(floatingText,
                 ActorAppearTemporarily(floatingText,
