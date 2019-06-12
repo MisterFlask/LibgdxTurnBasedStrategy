@@ -22,7 +22,7 @@ public class CameraMovementAnimationGenerator @Inject constructor(val cameraProv
         val actor = getCameraFocusTarget(toLookAt)
         val action = CameraMovementAction(CameraConfig.secondsForAutoCameraMove, cameraProvider.camera,
                 getDesiredPositionOfCameraForActionAtLocation(actor))
-        println("Generated camera action")
+        // println("Generated camera action")
         return ActorActionPair(actor, action, name = "CameraMovement")
     }
 

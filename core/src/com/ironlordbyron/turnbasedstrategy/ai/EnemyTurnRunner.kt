@@ -43,10 +43,12 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
     public fun runEnemyTurn() {
         animationActionQueueProvider.clearQueue()
         logicHooks.onEnemyTurnStart()
-        for (enemyCharacter in boardState.listOfEnemyCharacters) {
+        val enemies = boardState.listOfEnemyCharacters
+        for (enemyCharacter in enemies) {
             if (!logicHooks.canUnitAct(enemyCharacter)){
                 continue // characters that can't act don't get turns
             }
+
             if (enemyCharacter.endedTurn){
                 continue //characters that have already gone don't get turns
             }

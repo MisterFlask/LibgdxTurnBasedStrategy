@@ -4,8 +4,7 @@ import com.ironlordbyron.turnbasedstrategy.common.LogicHooks
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalUnitEffect
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.SnoozeLogicalUnitEffect
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
@@ -40,7 +39,7 @@ public class AutoInjector(){
 @Target(AnnotationTarget.CLASS)
 annotation class Autoinjectable
 
-public class AppliesAttributeOnHit(val entitySpawner: EntitySpawner,
+public class AppliesAttributeOnHit(val actionManager: ActionManager,
                                    val logicHooks: LogicHooks,
                                    override val eventNotifier: EventNotifier) : FunctionalUnitEffect<AppliesAttributeOnHitLogicalEffect>{
     override val id: String = "APPLIES_ATTRIBUTE_ON_HIT"
@@ -51,7 +50,7 @@ public class AppliesAttributeOnHit(val entitySpawner: EntitySpawner,
                                  struckCharacter: LogicalCharacter,
                                  logicalCharacterAttribute: LogicalCharacterAttribute) {
         // TODO: Add generic function for showing off the application of status effects to enemy
-        // probably in the EntitySpawner (should create better name)
+        // probably in the ActionManager (should create better name)
         println("Struck enemy effect applied!")
 
 

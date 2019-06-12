@@ -104,6 +104,7 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
         try {
             var opt = GridFinderOptions()
             opt.allowDiagonal = false
+            // navigationGrid.setNodes(convertToNodes())
             var finder = AStarGridFinder(PathfindingTileLocation::class.java, opt)
             val bestPath = finder.findPath(startCharacter.tileLocation.x,
                     startCharacter.tileLocation.y,
@@ -111,7 +112,8 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
                     endLocation.y,
                     this.navigationGrid)
 
-            println("${if (bestPath == null) "FAILURE" else "SUCCESS"} in finding route between ${startCharacter.tileLocation} and ${endLocation}")
+
+            // println("${if (bestPath == null) "FAILURE" else "SUCCESS"} in finding route between ${startCharacter.tileLocation} and ${endLocation}")
 
             if (!allowEndingOnLastTile) {
                 if (bestPath?.size ?: 0 <= 1) {
@@ -127,7 +129,7 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
             throw e;
         } finally{
             stopwatch.stop()
-            println("Millis elapsed for pathfinding:" + stopwatch.elapsed(TimeUnit.MILLISECONDS))
+            // println("Millis elapsed for pathfinding:" + stopwatch.elapsed(TimeUnit.MILLISECONDS))
         }
     }
 }

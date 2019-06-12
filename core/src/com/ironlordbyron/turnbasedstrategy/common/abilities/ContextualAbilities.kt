@@ -36,6 +36,16 @@ public class EnterPortalAbilityRequirement() : ContextualAbilityRequirement{
 
 object ContextualAbilities {
 
+    val OpenPortal = LogicalAbility(
+            name = "Open egress portal",
+            speed = AbilitySpeed.FREE_ACTION,
+            landingActor = null,
+            projectileActor = null,
+            abilityEffects = listOf(LogicalAbilityEffect.CreatePortal()),
+            abilityClass = AbilityClass.TARGETED_ABILITY,
+            range = 0
+    )
+
     val OpenDoor = LogicalAbility(
         name = "Open Door",
         speed = AbilitySpeed.FREE_ACTION,

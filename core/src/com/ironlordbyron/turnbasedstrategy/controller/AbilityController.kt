@@ -16,7 +16,7 @@ class AbilityController @Inject constructor(val tacticalMapState: TacticalMapSta
      */
     fun signalIntentToActOnAbility(characterUsingAbility: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment){
         val ability = abilityFactory.acquireAbility(logicalAbilityAndEquipment)
-        val tilesInRange = ability.getValidAbilityTargetSquares(characterUsingAbility, logicalAbilityAndEquipment.equipment)
+        val tilesInRange = ability.getValidAbilityTargetSquares(characterUsingAbility, logicalAbilityAndEquipment.equipment, characterUsingAbility.tileLocation)
         mapHighlighter.killHighlights()
         mapHighlighter.highlightTiles(tilesInRange, HighlightType.RED_TILE)
     }

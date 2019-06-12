@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.ai
 
+import com.ironlordbyron.turnbasedstrategy.Logging
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
@@ -22,6 +23,9 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
 
     override fun getNextActions(thisCharacter: LogicalCharacter): List<AiPlannedAction> {
         val nextMove = getNextMoveLocation(thisCharacter)
+        if (nextMove != null){
+            Logging.DebugPathfinding("AI's attempted move location: $nextMove")
+        }
         val locationAfterMove = nextMove?:thisCharacter.tileLocation
         var abilityUsage: AiPlannedAction.AbilityUsage? = getNextAbilityUsage(thisCharacter, locationAfterMove)
         val listOfActions = ArrayList<AiPlannedAction>()
@@ -30,6 +34,9 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
         }
         if (abilityUsage != null){
             listOfActions.add(abilityUsage)
+        }
+        if (listOfActions.size == 2){
+            Logging.DebugCombatLogic("Planned actions: $listOfActions, current location = ${thisCharacter.tileLocation}")
         }
         return listOfActions
     }
@@ -43,6 +50,9 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
                 abilityUsage = AiPlannedAction.AbilityUsage(targetableTilesFromThisSquare.first(), logicalAbilityAndEquipment, thisCharacter)
                 // Can make evaluation function later for telling which abilityEquipmentPair to use.
             }
+        }
+        if (abilityUsage != null){
+            println("Ability AI will use: $abilityUsage")
         }
         return abilityUsage
     }
@@ -79,6 +89,7 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
                 allowEndingOnLastTile = true)
 
         if (pathToEnemy == null){
+            println("Could not find path from ${thisCharacter.tileLocation} to ${closestEnemy.tileLocation} for ${thisCharacter.tacMapUnit.templateName}")
             return null
         }
         if (pathToEnemy.isEmpty()){

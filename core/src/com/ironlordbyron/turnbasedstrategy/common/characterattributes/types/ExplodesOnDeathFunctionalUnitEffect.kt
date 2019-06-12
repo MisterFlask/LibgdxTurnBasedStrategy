@@ -6,7 +6,7 @@ import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
@@ -24,7 +24,7 @@ data class ExplodesOnDeath(val radius: Int, val damage: Int) : LogicalUnitEffect
 
 @Autoinjectable
 @Singleton
-class ExplodesOnDeathFunctionalUnitEffect @Inject constructor (val entitySpawner: EntitySpawner,
+class ExplodesOnDeathFunctionalUnitEffect @Inject constructor (val actionManager: ActionManager,
                                                                val tacticalMapAlgorithms: TacticalMapAlgorithms,
                                                                val damageOperator: DamageOperator,
                                                                val tacticalMapState: TacticalMapState,
@@ -37,11 +37,11 @@ class ExplodesOnDeathFunctionalUnitEffect @Inject constructor (val entitySpawner
         val locationsForExplosion = tacticalMapAlgorithms.getWalkableTileLocationsUpToNAway(n = logicalAttr.radius, origin = thisCharacter.tileLocation, tileIsValidAlgorithm = AlwaysValid(),
                 character = thisCharacter)
         val explosions = locationsForExplosion.map{
-            EntitySpawner.SpawnEntityParams(
+            ActionManager.SpawnEntityParams(
                     protoActor,
                     it,
                     AnimatedImageParams.RUN_ONCE_AFTER_DELAY)}
-        entitySpawner.spawnEntitiesAtTilesInSequenceForTempAnimation(explosions)
+        actionManager.spawnEntitiesAtTilesInSequenceForTempAnimation(explosions)
         val charactersAtTiles = tacticalMapState.listOfCharacters.filter{it.tileLocation in locationsForExplosion}
         for (character in charactersAtTiles){
             damageOperator.damageCharacter(character, logicalAttr.damage, null, thisCharacter)

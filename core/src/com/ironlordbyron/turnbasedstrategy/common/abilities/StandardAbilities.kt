@@ -36,7 +36,7 @@ object StandardAbilities{
             description = "A ranged attack that lights stuff on fire.  Ends the turn.",
             abilityClass = AbilityClass.TARGETED_ABILITY,
             requiredTargetType = RequiredTargetType.ANY,
-            abilityEffects = listOf(LogicalAbilityEffect.LightsTileOnFire()),
+            abilityEffects = listOf(),
             projectileActor = DataDrivenOnePageAnimation.FIREBALL,
             landingActor = DataDrivenOnePageAnimation.EXPLODE,
             inflictsStatusAffect = listOf(LogicalCharacterAttribute.ON_FIRE),
@@ -59,7 +59,7 @@ object StandardAbilities{
             description = "A ranged attack that lights stuff on fire.  Ends the turn.",
             abilityClass = AbilityClass.TARGETED_ABILITY,
             requiredTargetType = RequiredTargetType.ENEMY_ONLY,
-            abilityEffects = listOf(LogicalAbilityEffect.LightsTileOnFire()),
+            abilityEffects = listOf(),
             projectileActor = DataDrivenOnePageAnimation.FIREBALL,
             landingActor = DataDrivenOnePageAnimation.EXPLODE,
             inflictsStatusAffect = listOf(LogicalCharacterAttribute.ON_FIRE)

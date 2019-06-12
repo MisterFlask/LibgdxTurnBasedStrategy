@@ -3,7 +3,7 @@ package com.ironlordbyron.turnbasedstrategy.common.abilities
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 
@@ -34,15 +34,14 @@ public class LogicalAbility(val name: String,
 }
 
 interface RangeStyle{
-    fun getTargetableTiles(characterUsing: LogicalCharacter, logicalAbility: LogicalAbility): Collection<TileLocation>
+    fun getTargetableTiles(characterUsing: LogicalCharacter, logicalAbility: LogicalAbility, sourceSquare: TileLocation?): Collection<TileLocation>
 
     public class Simple(val range: Int) : RangeStyle{
-        override fun getTargetableTiles(characterUsing: LogicalCharacter, logicalAbility: LogicalAbility): Collection<TileLocation> {
+        override fun getTargetableTiles(characterUsing: LogicalCharacter, logicalAbility: LogicalAbility, sourceSquare: TileLocation?): Collection<TileLocation> {
             val algorithms = GameModuleInjector.moduleInjector.getInstance(TacticalMapAlgorithms::class.java)
-
-            return algorithms.getTileLocationsUpToNAway(range, characterUsing.tileLocation, characterUsing)
+            sourceSquare!!
+            return algorithms.getTileLocationsUpToNAway(range, sourceSquare, characterUsing)
         }
-
     }
 }
 
@@ -72,7 +71,7 @@ interface LogicalAbilityEffect {
                   tileLocationTargeted: TileLocation)
 
     public data class SpawnsUnit(val unitToBeSpawned: String): LogicalAbilityEffect{
-        val unitSpawner = GameModuleInjector.generateInstance(EntitySpawner::class.java)
+        val unitSpawner = GameModuleInjector.generateInstance(ActionManager::class.java)
         val animationActionQueueProvider = GameModuleInjector.generateInstance(AnimationActionQueueProvider::class.java)
 
         override fun runAction(characterUsing: LogicalCharacter,
@@ -83,7 +82,7 @@ interface LogicalAbilityEffect {
 
 
     public class LightsTileOnFire: LogicalAbilityEffect{
-        val unitSpawner = GameModuleInjector.generateInstance(EntitySpawner::class.java)
+        val unitSpawner = GameModuleInjector.generateInstance(ActionManager::class.java)
         val animationActionQueueProvider = GameModuleInjector.generateInstance(AnimationActionQueueProvider::class.java)
 
         override fun runAction(characterUsing: LogicalCharacter,
@@ -93,13 +92,24 @@ interface LogicalAbilityEffect {
     }
 
     class OpensDoor: LogicalAbilityEffect{
-        val unitSpawner = GameModuleInjector.generateInstance(EntitySpawner::class.java)
+        val unitSpawner = GameModuleInjector.generateInstance(ActionManager::class.java)
         val animationActionQueueProvider = GameModuleInjector.generateInstance(AnimationActionQueueProvider::class.java)
 
         override fun runAction(characterUsing: LogicalCharacter,
                                tileLocationTargeted: TileLocation) {
             animationActionQueueProvider.addAction(unitSpawner.openDoorAction(tileLocationTargeted))
         }
+    }
+
+    class CreatePortal : LogicalAbilityEffect {
+        val unitSpawner = GameModuleInjector.generateInstance(ActionManager::class.java)
+        val animationActionQueueProvider = GameModuleInjector.generateInstance(AnimationActionQueueProvider::class.java)
+
+        override fun runAction(characterUsing: LogicalCharacter, tileLocationTargeted: TileLocation) {
+            // unitSpawner.spawnEntityAtTileInSequence(tileLocationTargeted))
+            // TODO
+        }
+
     }
 }
 

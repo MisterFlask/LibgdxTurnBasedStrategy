@@ -4,7 +4,7 @@ import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.TemporaryAnimationGenerator
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -14,12 +14,12 @@ import javax.inject.Singleton
  */
 @Singleton
 public class AbilityFactory @Inject constructor(val gameBoardOperator: GameBoardOperator,
-                    val boardAlgorithms: TacticalMapAlgorithms,
-                    val tacticalMapState: TacticalMapState,
-                    val unitSpawner: EntitySpawner,
-                    val animationActionQueueProvider: AnimationActionQueueProvider,
-                    val temporaryAnimationGenerator: TemporaryAnimationGenerator,
-                    val damageOperator: DamageOperator){
+                                                val boardAlgorithms: TacticalMapAlgorithms,
+                                                val tacticalMapState: TacticalMapState,
+                                                val unitSpawner: ActionManager,
+                                                val animationActionQueueProvider: AnimationActionQueueProvider,
+                                                val temporaryAnimationGenerator: TemporaryAnimationGenerator,
+                                                val damageOperator: DamageOperator){
     fun acquireAbility(logicalAbilityAndEquipment: LogicalAbilityAndEquipment) : Ability {
         when(logicalAbilityAndEquipment.ability.abilityClass){
             AbilityClass.TARGETED_ABILITY -> return SimpleAttackAbility(logicalAbilityAndEquipment, tacticalMapState, boardAlgorithms, damageOperator, boardAlgorithms,
@@ -113,7 +113,7 @@ class SimpleAttackAbility(
         val boardAlgorithms: TacticalMapAlgorithms,
         val damageOperator: DamageOperator,
         override val tacticalMapAlgorithms: TacticalMapAlgorithms,
-        val unitSpawner: EntitySpawner,
+        val unitSpawner: ActionManager,
         val animationActionQueueProvider: AnimationActionQueueProvider,
         val temporaryAnimationGenerator: TemporaryAnimationGenerator) : Ability {
     override fun isValidTarget(location: TileLocation?, targetCharacter: LogicalCharacter?, sourceCharacter: LogicalCharacter,
@@ -174,7 +174,8 @@ class SimpleAttackAbility(
         return getTilesInRangeOfAbility(sourceCharacter, logicalAbility, sourceSquare)
     }
     private fun getTilesInRangeOfAbility(character: LogicalCharacter, ability: LogicalAbility, sourceSquare: TileLocation? = null): Collection<TileLocation> {
-        val tiles = ability.rangeStyle.getTargetableTiles(character, ability)
+        // BUG:  this SHOULD be referencing sourceSquare.  NOT character.
+        val tiles = ability.rangeStyle.getTargetableTiles(character, ability, sourceSquare)
         return tiles
     }
 }

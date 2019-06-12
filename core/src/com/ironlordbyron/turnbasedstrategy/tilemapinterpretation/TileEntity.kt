@@ -4,11 +4,24 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.ActorSettable
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 
+class PortalProtoEntity(val tileLocation: TileLocation, val actor: ProtoActor) : TileProtoEntity<PortalEntity>{
+    val name: String = "Portal"
+    val eventNotifier = GameModuleInjector.generateInstance(EventNotifier::class.java)
+    override fun toTileEntity(): PortalEntity {
+        return PortalEntity(eventNotifier, tileLocation, actor.toActor().actor)
+    }
+
+}
+
+interface TileProtoEntity <T> {
+    fun toTileEntity() : T
+}
 
 interface TileEntity {
     val tileLocation: TileLocation

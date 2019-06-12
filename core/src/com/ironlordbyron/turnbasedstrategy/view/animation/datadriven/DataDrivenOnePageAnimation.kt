@@ -16,6 +16,9 @@ data class DataDrivenOnePageAnimation(val filePath: String, val rows : Int, val 
     }
 
     companion object {
+        val SNOOZE_ACTOR = DataDrivenOnePageAnimation("animations/snooze_animation.png", 7, 10,
+                scaleFactor = 1f,
+                frameDurationInSeconds = .01f)
         val RED_SHIELD_ACTOR = DataDrivenOnePageAnimation("animations/ring_red.png", 3, 6,
                 scaleFactor = 2f,
                 frameDurationInSeconds = .01f)

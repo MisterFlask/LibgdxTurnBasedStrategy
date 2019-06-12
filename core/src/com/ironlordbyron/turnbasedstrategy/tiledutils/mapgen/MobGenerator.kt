@@ -3,17 +3,16 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeOperator
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 // Responsible for deciding what monsters to put in a given room
 public class MobGenerator @Inject constructor (val mobRegistrar: MobRegistrar,
-                                               val entitySpawner: EntitySpawner,
+                                               val actionManager: ActionManager,
                                                val attributeOperator: AttributeOperator){
     fun populateRooms(rooms : Collection<MapRoom>, scenarioParams: ScenarioParams){
         val mobGenParams = scenarioParams.mobGenerationParams!!
@@ -35,13 +34,13 @@ public class MobGenerator @Inject constructor (val mobRegistrar: MobRegistrar,
 
     private fun populateMobInRoom(nextMob: TacMapUnitTemplate, room: MapRoom) {
         val tile = room.tiles.first()
-        entitySpawner.addCharacterToTileFromTemplate(nextMob, tile, false)
+        actionManager.addCharacterToTileFromTemplate(nextMob, tile, false)
     }
 
     private fun populateMobGroupInRoom(nextMobGroup: MobGroup, room: MapRoom){
         val tilesShuffled = room.tiles.shuffled()
         nextMobGroup.mobGroupTemplate.units.forEachIndexed { index, tacMapUnitTemplate ->
-            val logicalCharacterReturned = entitySpawner.addCharacterToTileFromTemplate(tacMapUnitTemplate, tilesShuffled[index], false)
+            val logicalCharacterReturned = actionManager.addCharacterToTileFromTemplate(tacMapUnitTemplate, tilesShuffled[index], false)
             attributeOperator.applyAttribute(logicalCharacterReturned, LogicalCharacterAttribute.SNOOZING)
         }
     }

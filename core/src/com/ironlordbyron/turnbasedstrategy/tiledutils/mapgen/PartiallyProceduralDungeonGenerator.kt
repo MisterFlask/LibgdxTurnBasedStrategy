@@ -2,7 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen
 
 import com.google.inject.Singleton
 import com.ironlordbyron.turnbasedstrategy.common.*
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 import java.util.*
@@ -47,7 +47,7 @@ class PartiallyProceduralDungeonGenerator @Inject constructor (val tiledMapInter
                                                                val logicalTileTracker: LogicalTileTracker,
                                                                val tiledMapModifier: TiledMapModifier,
                                                                val mobGenerator: MobGenerator,
-                                                               val entitySpawner: EntitySpawner,
+                                                               val actionManager: ActionManager,
                                                                val tacticalMapState: TacticalMapState,
                                                                val logicHooks: LogicHooks){
     // Requires a tilemap filled with rooms (no doors or anything else allowed.)
@@ -93,7 +93,7 @@ class PartiallyProceduralDungeonGenerator @Inject constructor (val tiledMapInter
         for (i in 0 .. maxAttempts){
             try {
                 val tileLocation = room.tiles.randomElement()
-                entitySpawner.addCharacterToTileFromTemplate(tacMapUnitTemplate, tileLocation, false)
+                actionManager.addCharacterToTileFromTemplate(tacMapUnitTemplate, tileLocation, false)
                 return
             }catch(e: TileAlreadyOccupiedException){
                 // try it again!

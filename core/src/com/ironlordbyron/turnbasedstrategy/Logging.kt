@@ -11,7 +11,11 @@ public class Logging{
         }
 
         public fun DebugAnimation(msg: String){
-            println("ANIMATION LOGIC | " + msg)
+            println("ANIMATION LOGIC | "  + msg)
+        }
+
+        public fun DebugPathfinding(msg: String){
+            println("PATHFINDING: " + msg)
         }
     }
 }

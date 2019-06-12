@@ -4,7 +4,7 @@ import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.TransientEntityTracker
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.external.SpecialEffectManager
@@ -15,7 +15,7 @@ import java.util.*
  * NOTE:  This IS NOT allowed to track state directly.  All state must be tracked by the Logical* classes.
  * Functional attributes are ONLY for algorithms.
  */
-public class ShieldsAnotherOrganFunctionalAttribute(val entitySpawner: EntitySpawner,
+public class ShieldsAnotherOrganFunctionalAttribute(val actionManager: ActionManager,
                                                     val tacticalMapState: TacticalMapState,
                                                     val specialEffectManager: SpecialEffectManager,
                                                     val logicalCharacterAttribute: LogicalCharacterAttribute,
@@ -28,10 +28,10 @@ public class ShieldsAnotherOrganFunctionalAttribute(val entitySpawner: EntitySpa
     override fun onDeath(thisCharacter: LogicalCharacter) {
         val shieldActor = this.shieldActor
         if (shieldActor != null) {
-            entitySpawner.despawnEntityInSequence(transientEntityTracker.retrieveActorByUuid(shieldActor)!!)
+            actionManager.despawnEntityInSequence(transientEntityTracker.retrieveActorByUuid(shieldActor)!!)
         }
         if (lineEffect != null) {
-            entitySpawner.destroySpecialEffectInSequence(lineEffect!!, thisCharacter.actor)
+            actionManager.destroySpecialEffectInSequence(lineEffect!!, thisCharacter.actor)
         }
     }
 
@@ -43,7 +43,7 @@ public class ShieldsAnotherOrganFunctionalAttribute(val entitySpawner: EntitySpa
             val characterChosen = masterOrgan.id
             logicalAttr.characterShieldedId = characterChosen
 
-            val shieldActor = entitySpawner.spawnEntityAtTileInSequence(
+            val shieldActor = actionManager.spawnEntityAtTileInSequence(
                     DataDrivenOnePageAnimation.RED_SHIELD_ACTOR,
                     masterOrgan.tileLocation)
             val uuid = transientEntityTracker.insertActor(shieldActor)

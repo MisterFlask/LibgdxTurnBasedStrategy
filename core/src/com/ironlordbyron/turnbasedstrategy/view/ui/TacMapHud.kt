@@ -161,6 +161,7 @@ class TacMapHud(viewPort: Viewport,
     var abilityTextArea: Label = Label("", DEFAULT_SKIN)
     val characterDisplayTable : Table = Table(DEFAULT_SKIN)
     val characterSelectCarousel : Table = Table(DEFAULT_SKIN)
+    val nonUnitActionsDisplay : Table = Table(DEFAULT_SKIN)
 
     fun displayCharacterAttributes(selectedCharacter: LogicalCharacter): Table{
         val table = Table(DEFAULT_SKIN)
@@ -253,12 +254,16 @@ class TacMapHud(viewPort: Viewport,
         // NOTE TO FUTURE SELF: Table controls size of images, DOES NOT RESPECT image preferred size
 
         addActionButtons(selectedCharacter)
+        addNonUnitActionButtons()
         characterDisplayTable.add(Label("", DEFAULT_SKIN)).fillY().expandY()
 
         val entitySelected = entitySelected
         if (entitySelected != null) {
             characterDisplayTable.add(Label(entitySelected.name, DEFAULT_SKIN))
         }
+    }
+
+    private fun addNonUnitActionButtons() {
     }
 
     private fun addActionButtons(selectedCharacter: LogicalCharacter?) {
@@ -285,7 +290,7 @@ class TacMapHud(viewPort: Viewport,
     }
 
     private fun debugTextAreaText(): String {
-        return boardInputStateProvider.boardInputState.name
+        return boardInputStateProvider.boardInputState.name + "\n" + this.selectedCharacter?.tileLocation
     }
 
     private fun backgroundColor(): BackgroundColor {

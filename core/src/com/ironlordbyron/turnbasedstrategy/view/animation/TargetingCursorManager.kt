@@ -4,7 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.controller.*
 import com.ironlordbyron.turnbasedstrategy.view.images.FileImageRetriever
 import com.ironlordbyron.turnbasedstrategy.view.images.Icon
@@ -15,7 +15,7 @@ class TargetingCursorManager @Inject constructor(val tiledMapStageProvider: Tact
                                                  val imageRetriever: FileImageRetriever,
                                                  val eventNotifier: EventNotifier,
                                                  val stateProvider: BoardInputStateProvider,
-                                                 val entitySpawner: EntitySpawner,
+                                                 val actionManager: ActionManager,
                                                  val animationActionQueueProvider: AnimationActionQueueProvider) : EventListener{
     override fun consumeGuiEvent(event: TacticalGuiEvent){
         when(event){
@@ -33,7 +33,7 @@ class TargetingCursorManager @Inject constructor(val tiledMapStageProvider: Tact
         currentCursor?.remove()
         val state = stateProvider.boardInputState
         if (state is BoardInputState.PlayerIsPlacingUnits){
-            currentCursor = entitySpawner.spawnEntityAtTileInSequence(state.nextUnit()!!.tiledTexturePath, tileLocation)
+            currentCursor = actionManager.spawnEntityAtTileInSequence(state.nextUnit()!!.tiledTexturePath, tileLocation)
             currentCursor!!.addAction(Actions.alpha(.5f))
             animationActionQueueProvider.runThroughActionQueue()
         }else{

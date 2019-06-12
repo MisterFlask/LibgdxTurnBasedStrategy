@@ -54,7 +54,7 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
         current.actor.isVisible = true // ASSUMPTION:  All actors should be visible when their animations begin.
         current.actor.addAction(Actions.sequence(current.action, CustomAction {
             if (current.name != null){
-                println("Actor ${current.name} has started processing.")
+                // println("Actor ${current.name} has started processing.")
             }
             runThroughFinalActionQueue(actionQueue, currentIndex + 1, finalAction)
             if (current.murderActorsOnceCompletedAnimation){
@@ -66,7 +66,7 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
                 }
             }
             if (current.name != null){
-                println("Actor ${current.name} has finished processing.")
+                // println("Actor ${current.name} has finished processing.")
             }
             current.actionOnceAnimationCompletes()
         }))

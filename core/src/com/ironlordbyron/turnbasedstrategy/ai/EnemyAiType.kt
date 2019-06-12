@@ -19,5 +19,12 @@ interface EnemyAi{
 
 interface AiPlannedAction{
     data class MoveToTile(val to : TileLocation) : AiPlannedAction
-    data class AbilityUsage(val squareToTarget: TileLocation, val ability: LogicalAbilityAndEquipment, val sourceCharacter: LogicalCharacter): AiPlannedAction
+    data class AbilityUsage(val squareToTarget: TileLocation,
+                            val ability: LogicalAbilityAndEquipment,
+                            val sourceCharacter: LogicalCharacter): AiPlannedAction{
+
+        public override fun toString(): String{
+            return "Ability: $squareToTarget, ${ability.ability.name}"
+        }
+    }
 }

@@ -2,18 +2,18 @@ package com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination
 
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.*
-import com.ironlordbyron.turnbasedstrategy.controller.EventListener
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
-import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
-import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.tiledutils.CharacterImageManager
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.BoundingBoxType
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tiledutils.setBoundingBox
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
+import com.ironlordbyron.turnbasedstrategy.view.animation.LogicalCharacterActorGroup
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.*
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
@@ -25,7 +25,7 @@ import javax.inject.Singleton
 
 
 @Singleton
-public class EntitySpawner @Inject constructor(
+public class ActionManager @Inject constructor(
         val characterImageManager: CharacterImageManager,
         val boardState: TacticalMapState,
         val eventNotifier: EventNotifier,
@@ -41,7 +41,8 @@ public class EntitySpawner @Inject constructor(
         val hideAnimationGenerator: HideAnimationGenerator,
         val visibleCharacterDataFactory: VisibleCharacterDataFactory,
         val specialEffectManager: SpecialEffectManager,
-        val temporaryAnimationGenerator: TemporaryAnimationGenerator
+        val temporaryAnimationGenerator: TemporaryAnimationGenerator,
+        val floatingTextGenerator: FloatingTextGenerator
 )  {
 
     fun addCharacterToTileFromTemplate(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) : LogicalCharacter {
@@ -97,14 +98,46 @@ public class EntitySpawner @Inject constructor(
      */
     fun spawnEntityAtTileInSequence(protoActor: ProtoActor,
                                     tileLocation: TileLocation,
-                                    animatedImageParams: AnimatedImageParams = AnimatedImageParams.RUN_ALWAYS_AND_FOREVER) : Actor{
+                                    animatedImageParams: AnimatedImageParams = AnimatedImageParams.RUN_ALWAYS_AND_FOREVER,
+                                    boundingBoxType: BoundingBoxType = BoundingBoxType.WHOLE_TILE,
+                                    isChildActor: Boolean = false) : Actor{
         val actor = protoActor.toActor(animatedImageParams).actor
-        val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
+        val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation, boundingBoxType)
         actor.setBoundingBox(boundingBox)
         tiledMapStageProvider.tiledMapStage.addActor(actor)
         actor.isVisible = false
         animationActionQueueProvider.addAction(ActorActionPair(actor, revealActionGenerator.generateRevealAction(actor)))
         return actor
+    }
+
+    fun spawnAttributeActorAtTileInSequence(logicalAttribute: LogicalCharacterAttribute,
+                                            logicalCharacter: LogicalCharacter,
+                                            animatedImageParams: AnimatedImageParams =  AnimatedImageParams.RUN_ALWAYS_AND_FOREVER){
+        if (logicalAttribute.tacticalMapProtoActor == null){
+            return
+        }
+        val actor = logicalAttribute.tacticalMapProtoActor.toActor(animatedImageParams).actor
+        actor.isVisible = false
+        animationActionQueueProvider.addAction(ActorActionPair(actor, revealActionGenerator.generateRevealAction(actor)))
+        val actorGroup = logicalCharacter.actor
+        val boundingBox = tileMapProvider.getBoundingBoxOfTile(logicalCharacter.tileLocation)
+                .copy(x = logicalAttribute.tacticalMapProtoActorOffsetX,
+                        y = logicalAttribute.tacticalMapProtoActorOffsetY)
+        actor.setBoundingBox(boundingBox)
+        actorGroup.addActor(actor)
+        if (actorGroup.attributeActors[logicalAttribute.id] != null){
+            throw Exception("Oh no!  Attempted to add attribute actor to same character >1 time: ${logicalAttribute.id}")
+        }
+        actorGroup.attributeActors[logicalAttribute.id] = actor
+    }
+
+    fun despawnAttributeActorAtTileInSequence(logicalAttribute: LogicalCharacterAttribute,
+                                              logicalCharacter: LogicalCharacter){
+        val attrActor = logicalCharacter.actor.attributeActors[logicalAttribute.id]
+        if (attrActor == null){
+            throw Exception("Oh no!  Attempted to remove nonexistent attribute actor ${logicalAttribute.id}")
+        }
+        despawnEntityInSequence(attrActor)
     }
 
     data class SpawnEntityParams(val protoActor: ProtoActor,
@@ -139,6 +172,12 @@ public class EntitySpawner @Inject constructor(
     fun destroySpecialEffectInSequence(uuid: UUID, motherActor: Actor){
         animationActionQueueProvider.addBareAction(motherActor, {specialEffectManager.destroyLineEffect(uuid)})
     }
+
+    fun risingText(text: String, tileLocation: TileLocation){
+        animationActionQueueProvider.addAction(
+                floatingTextGenerator.getTemporaryAnimationActorActionPair("${text}", tileLocation))
+    }
+
 
 
 

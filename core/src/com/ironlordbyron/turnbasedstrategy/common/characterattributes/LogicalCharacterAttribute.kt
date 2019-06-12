@@ -1,19 +1,15 @@
 package com.ironlordbyron.turnbasedstrategy.common.characterattributes
 
-import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
-import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.*
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.TransientEntityTracker
-import com.ironlordbyron.turnbasedstrategy.common.wrappers.ActorWrapper
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
-import com.ironlordbyron.turnbasedstrategy.view.animation.external.LineEffect
 import com.ironlordbyron.turnbasedstrategy.view.animation.external.SpecialEffectManager
 import java.util.*
 import javax.inject.Inject
@@ -36,7 +32,9 @@ public data class LogicalCharacterAttribute(val name: String,
                                             val stackable: Boolean = false,
                                             var stacks: Int = 1,
                                             val id: String = name,
-                                            val tacticalMapProtoActor: ProtoActor? = null){
+                                            val tacticalMapProtoActor: ProtoActor? = null,
+                                            val tacticalMapProtoActorOffsetX: Int = 0,
+                                            val tacticalMapProtoActorOffsetY: Int = 0){
     companion object {
         val _demonImg = SuperimposedTilemaps(tileSetNames = listOf("Demon0","Demon1"), textureId = "2")
         val _painterlyIcon = ImageIcon(ImageIcon.PAINTERLY_FOLDER, "fire-arrows-1.png")
@@ -64,7 +62,8 @@ public data class LogicalCharacterAttribute(val name: String,
                 _demonImg.copy(textureId = "8"),
                 statusEffect = true,
                 customEffects = hashMapOf(OnFireLogicalEffect(1).toPair()),
-                description = {"This character is on fire."}
+                description = {"This character is on fire."},
+                tacticalMapProtoActor = DataDrivenOnePageAnimation.FIRE
         )
         val SLIMED: LogicalCharacterAttribute = LogicalCharacterAttribute("Slimed",
                 _demonImg.copy(textureId = "9"),
@@ -80,7 +79,9 @@ public data class LogicalCharacterAttribute(val name: String,
                 customEffects = hashMapOf(SnoozeLogicalUnitEffect().toEntry()),
                 description = {"This character is unaware."},
                 stackable = false,
-                stacks = 1
+                stacks = 1,
+                tacticalMapProtoActor = DataDrivenOnePageAnimation.SNOOZE_ACTOR,
+                tacticalMapProtoActorOffsetY = 6
                 )
 
 
@@ -95,7 +96,7 @@ public data class DamageType(val name: String, val icon: ProtoActor){
 }
 
 @Deprecated("Use logicHooks instead")
-public class FunctionalCharacterAttributeFactory @Inject constructor (val entitySpawner: EntitySpawner,
+public class FunctionalCharacterAttributeFactory @Inject constructor (val actionManager: ActionManager,
                                                                       val tacticalMapState: TacticalMapState,
                                                                       val specialEffectManager: SpecialEffectManager,
                                                                       val transientEntityTracker: TransientEntityTracker,
@@ -108,7 +109,7 @@ public class FunctionalCharacterAttributeFactory @Inject constructor (val entity
     fun getFunctionalAttributesFromLogicalAttribute(logicalAttribute: LogicalCharacterAttribute, character: LogicalCharacter) : Collection<FunctionalCharacterAttribute>{
         val attrsList = ArrayList<FunctionalCharacterAttribute>()
         if (logicalAttribute.shieldsAnotherOrgan != null){
-            val funcAttr = ShieldsAnotherOrganFunctionalAttribute(entitySpawner, tacticalMapState, specialEffectManager, logicalAttribute,
+            val funcAttr = ShieldsAnotherOrganFunctionalAttribute(actionManager, tacticalMapState, specialEffectManager, logicalAttribute,
                     transientEntityTracker)
             attrsList.add(funcAttr)
         }

@@ -5,7 +5,7 @@ import com.ironlordbyron.turnbasedstrategy.ai.EnemyTurnRunner
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityClass
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.EntitySpawner
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -30,7 +30,7 @@ interface BoardInputState{
 class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoardOperator,
                                                 val eventNotifier: EventNotifier,
                                                 val boardState: TacticalMapState,
-                                                val entitySpawner: EntitySpawner,
+                                                val actionManager: ActionManager,
                                                 val abilityController: AbilityController,
                                                 val mapHighlighter: MapHighlighter,
                                                 val tacticalMapAlgorithms: TacticalMapAlgorithms,
@@ -111,7 +111,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
     }
 
     fun placePlayerUnit(tileLocation: TileLocation, unit: TacMapUnitTemplate){
-        entitySpawner.addCharacterToTileFromTemplate(unit, tileLocation, playerControlled = true)
+        actionManager.addCharacterToTileFromTemplate(unit, tileLocation, playerControlled = true)
         animationActionQueueProvider.runThroughActionQueue()
 
     }
