@@ -85,7 +85,7 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
             // first, show the player where the ai COULD move to
             val tilesToHighlight = tacticalMapAlgorithms.getWhereCharacterCanMoveTo(character)
             val actorActionPairForHighlights = mapHighlighter.getTileHighlightActorActionPairs(tilesToHighlight, HighlightType.RED_TILE)
-            val pulseActionPair = pulseAnimationGenerator.generateActorActionPair(character.actor.characterActor, 1f)
+            val pulseActionPair = pulseAnimationGenerator.generateActorActionPair(character.actor.characterActor, 1f / AnimationSpeedManager.animationSpeedScale)
             actorActionPairForHighlights.secondaryActions += pulseActionPair
             animationActionQueueProvider.addAction(actorActionPairForHighlights)
         }
@@ -114,7 +114,7 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
         val timePerSquare = TIME_TO_MOVE/breadcrumbs.size
         for (breadcrumb in breadcrumbs){
             val libgdxLocation = logicalTileTracker.getLibgdxCoordinatesFromLocation(breadcrumb)
-            var moveAction: Action = Actions.moveTo(libgdxLocation.x.toFloat(), libgdxLocation.y.toFloat(), timePerSquare)
+            var moveAction: Action = Actions.moveTo(libgdxLocation.x.toFloat(), libgdxLocation.y.toFloat(), timePerSquare / AnimationSpeedManager.animationSpeedScale)
             actorActionPairs.add(ActorActionPair(character.actor, moveAction))
         }
         return actorActionPairs

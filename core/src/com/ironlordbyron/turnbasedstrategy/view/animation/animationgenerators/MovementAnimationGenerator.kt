@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
+import com.ironlordbyron.turnbasedstrategy.view.animation.AnimationSpeedManager
 import javax.inject.Inject
 
 class MovementAnimationGenerator @Inject constructor(val logicalTileTracker: LogicalTileTracker
@@ -13,7 +14,7 @@ class MovementAnimationGenerator @Inject constructor(val logicalTileTracker: Log
 
     fun createMoveActorToTileAction(tile: TileLocation) : Action{
         val libgdxLocation = logicalTileTracker.getLibgdxCoordinatesFromLocation(tile)
-        var moveAction : Action = Actions.moveTo(libgdxLocation.x.toFloat(), libgdxLocation.y.toFloat(), .5f)
+        var moveAction : Action = Actions.moveTo(libgdxLocation.x.toFloat(), libgdxLocation.y.toFloat(), .5f / AnimationSpeedManager.animationSpeedScale)
         return moveAction
     }
 

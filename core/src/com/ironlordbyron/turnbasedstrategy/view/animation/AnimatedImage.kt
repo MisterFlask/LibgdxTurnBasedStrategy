@@ -68,7 +68,9 @@ ScaledActor, ActorWrapper {
     companion object {
         fun fromDataDrivenAnimation(dataDrivenOnePageAnimation: DataDrivenOnePageAnimation,
                                     animatedImageParams: AnimatedImageParams): AnimatedImage {
-            return AnimatedImage(SpriteSheetParser.INSTANCE.createAnimation(dataDrivenOnePageAnimation, dataDrivenOnePageAnimation.frameDurationInSeconds),
+            val speedScale = if (animatedImageParams.loops) 1.0f else  AnimationSpeedManager.animationSpeedScale
+            return AnimatedImage(SpriteSheetParser.INSTANCE.createAnimation(dataDrivenOnePageAnimation,
+                    dataDrivenOnePageAnimation.frameDurationInSeconds / speedScale),
                     animatedImageParams,
                     dataDrivenOnePageAnimation.scaleFactor)
         }

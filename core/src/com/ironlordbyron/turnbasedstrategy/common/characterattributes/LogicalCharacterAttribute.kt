@@ -62,14 +62,14 @@ public data class LogicalCharacterAttribute(val name: String,
                 _demonImg.copy(textureId = "8"),
                 statusEffect = true,
                 customEffects = hashMapOf(OnFireLogicalEffect(1).toPair()),
-                description = {"This character is on fire."},
+                description = {"This character is on fire and takes ${it.stacks} damage per turn."},
                 tacticalMapProtoActor = DataDrivenOnePageAnimation.FIRE
         )
         val SLIMED: LogicalCharacterAttribute = LogicalCharacterAttribute("Slimed",
                 _demonImg.copy(textureId = "9"),
                 statusEffect = true,
                 customEffects = hashMapOf(SlimedUnitLogicalEffect().toEntry()),
-                description = {"This character is slimed."},
+                description = {"This character's movement rate is reduced by ${it.stacks}}."},
                 stackable = true,
                 stacks = 1
         )

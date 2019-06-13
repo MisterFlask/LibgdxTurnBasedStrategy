@@ -6,6 +6,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.external.FloatingText
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
+import com.ironlordbyron.turnbasedstrategy.view.animation.AnimationSpeedManager
 import javax.inject.Inject
 
 public class FloatingTextGenerator @Inject constructor (val tileMapProvider: TileMapProvider,
@@ -24,7 +25,7 @@ public class FloatingTextGenerator @Inject constructor (val tileMapProvider: Til
         tiledMapStageProvider.tiledMapStage.addActor(floatingText)
         return ActorActionPair(floatingText,
                 ActorAppearTemporarily(floatingText,
-                        durationSeconds = floatingText.animationDurationInMillis.toFloat() / 1000),
+                        durationSeconds = floatingText.animationDurationInMillis.toFloat() / 1000 / AnimationSpeedManager.animationSpeedScale),
                 murderActorsOnceCompletedAnimation = true,
                 name = "FloatingText")
     }
