@@ -74,10 +74,10 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 }
                 boardInputState = BoardInputState.PlayerIntendsToUseAbility(selectedCharacter,
                         event.abilityEquipmentPair)
-                if (event.abilityEquipmentPair.ability.abilityClass == AbilityClass.TARGETED_ATTACK_ABILITY){
+                if (event.abilityEquipmentPair.ability.requiresTarget){
                     abilityController.signalIntentToActOnAbility(selectedCharacter, event.abilityEquipmentPair)
                 }
-                if (event.abilityEquipmentPair.ability.abilityClass == AbilityClass.UNTARGETED_ABILITY){
+                else{
                     abilityController.useAbility(selectedCharacter, event.abilityEquipmentPair, selectedCharacter, selectedCharacter.tileLocation)
                 }
             }

@@ -2,11 +2,8 @@ package com.ironlordbyron.turnbasedstrategy.controller
 
 import com.google.inject.ImplementedBy
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
-import com.ironlordbyron.turnbasedstrategy.common.TileLocation
-import com.ironlordbyron.turnbasedstrategy.common.abilities.Ability
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
-import tiled.core.Tile
 import javax.inject.Singleton
 
 /**

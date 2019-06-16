@@ -7,6 +7,7 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.Animatio
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
+import sun.rmi.runtime.Log
 
 public class LogicalAbility(val name: String,
                             val speed: AbilitySpeed,
@@ -31,15 +32,17 @@ public class LogicalAbility(val name: String,
                             val areaOfEffect: AreaOfEffect = AreaOfEffect.One(),
                             val cooldownTurns: Int? = null,
                             val rangeStyle: RangeStyle = RangeStyle.Simple(range),
-                            val intentType: IntentType = IntentType.ATTACK){
+                            val intentType: IntentType = IntentType.ATTACK,
+                            val requiresTarget: Boolean = true,
+                            val abilityTargetingParameters: AbilityTargetingParameters = SimpleAttackAbility()){
 
 }
 
 interface RangeStyle{
-    fun getTargetableTiles(characterUsing: LogicalCharacter, logicalAbility: LogicalAbility, sourceSquare: TileLocation?): Collection<TileLocation>
+    fun getTargetableTiles(characterUsing: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment, sourceSquare: TileLocation?): Collection<TileLocation>
 
     public class Simple(val range: Int) : RangeStyle{
-        override fun getTargetableTiles(characterUsing: LogicalCharacter, logicalAbility: LogicalAbility, sourceSquare: TileLocation?): Collection<TileLocation> {
+        override fun getTargetableTiles(characterUsing: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment, sourceSquare: TileLocation?): Collection<TileLocation> {
             val algorithms = GameModuleInjector.moduleInjector.getInstance(TacticalMapAlgorithms::class.java)
             sourceSquare!!
             return algorithms.getTileLocationsUpToNAway(range, sourceSquare, characterUsing)
@@ -49,18 +52,18 @@ interface RangeStyle{
 
 interface AreaOfEffect{
 
-    fun getTilesAffected(tileLocationTargeted: TileLocation, characterUsing: LogicalCharacter, logicalAbility: LogicalAbility) : Collection<TileLocation>
+    fun getTilesAffected(tileLocationTargeted: TileLocation, characterUsing: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment) : Collection<TileLocation>
 
     // Affects only the tile targeted.
     public class One() : AreaOfEffect{
-        override fun getTilesAffected(tileLocationTargeted: TileLocation, characterUsing: LogicalCharacter, logicalAbility: LogicalAbility): Collection<TileLocation> {
+        override fun getTilesAffected(tileLocationTargeted: TileLocation, characterUsing: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment): Collection<TileLocation> {
             return setOf(tileLocationTargeted);
         }
     }
 
     // Affects tiles in a radius around the target.
     public class Aoe(val radius : Int) : AreaOfEffect{
-        override fun getTilesAffected(tileLocationTargeted: TileLocation, characterUsing: LogicalCharacter, logicalAbility: LogicalAbility): Collection<TileLocation> {
+        override fun getTilesAffected(tileLocationTargeted: TileLocation, characterUsing: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment): Collection<TileLocation> {
             val algorithms = GameModuleInjector.moduleInjector.getInstance(TacticalMapAlgorithms::class.java)
             return algorithms.getTileLocationsUpToNAway(radius, tileLocationTargeted, characterUsing)
         }
@@ -115,6 +118,7 @@ interface LogicalAbilityEffect {
     }
 }
 
+@Deprecated("Deprecated feature; we're just using requiresTarget instead.")
 public enum class AbilityClass {
     TARGETED_ATTACK_ABILITY
 }

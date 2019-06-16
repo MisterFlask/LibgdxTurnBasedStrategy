@@ -2,13 +2,11 @@ package com.ironlordbyron.turnbasedstrategy.ai
 
 import com.ironlordbyron.turnbasedstrategy.Logging
 import com.ironlordbyron.turnbasedstrategy.common.*
-import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityFactory
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.randomElement
 import javax.inject.Inject
 
-public class BasicAiDecisions @Inject constructor (val abilityFactory: AbilityFactory,
-                                                   val mapAlgorithms: TacticalMapAlgorithms,
+public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMapAlgorithms,
                                                    val aiGridGraphFactory: AiGridGraphFactory,
                                                    val tacticalMapState: TacticalMapState,
                                                    val pathfinderFactory: PathfinderFactory){
@@ -141,14 +139,14 @@ public class BasicAiDecisions @Inject constructor (val abilityFactory: AbilityFa
 
     public fun getAbilityUsageFromLocation(thisCharacter: LogicalCharacter, fromLocation: TileLocation, logicalAbilityAndEquipment: LogicalAbilityAndEquipment): AiPlannedAction.AbilityUsage? {
         var abilityUsage: AiPlannedAction.AbilityUsage? = null
-        val ability = abilityFactory.acquireAbility(logicalAbilityAndEquipment)
-        val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter, logicalAbilityAndEquipment.equipment, fromLocation)
+        val ability = logicalAbilityAndEquipment.ability.abilityTargetingParameters
+        val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter, logicalAbilityAndEquipment, fromLocation)
         if (!targetableTilesFromThisSquare.isEmpty()) {
             abilityUsage = AiPlannedAction.AbilityUsage(targetableTilesFromThisSquare.first(), logicalAbilityAndEquipment, thisCharacter)
             // Can make evaluation function later for telling which abilityEquipmentPair to use.
         }
         if (abilityUsage != null){
-            println("Ability AI will use: $abilityUsage")
+            println("AbilityTargetingParameters AI will use: $abilityUsage")
         }
         return abilityUsage
     }
@@ -183,8 +181,8 @@ public class BasicAiDecisions @Inject constructor (val abilityFactory: AbilityFa
         val reachableLocations  = mapAlgorithms.getWhereCharacterCanMoveTo(thisCharacter)
         // First: if we can target the enemy from a location we can reach?  GO THERE.
         for (reachableLocation in reachableLocations){
-            val ability = abilityFactory.acquireAbility(logicalAbilityAndEquipment)
-            val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter,logicalAbilityAndEquipment.equipment, reachableLocation)
+            val ability = logicalAbilityAndEquipment.ability.abilityTargetingParameters
+            val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter,logicalAbilityAndEquipment, reachableLocation)
             if (!targetableTilesFromThisSquare.isEmpty()){
                 return reachableLocation
             }

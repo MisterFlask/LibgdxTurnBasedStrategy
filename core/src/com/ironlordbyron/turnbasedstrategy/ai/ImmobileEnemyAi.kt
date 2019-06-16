@@ -2,10 +2,10 @@ package com.ironlordbyron.turnbasedstrategy.ai
 
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
-import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityFactory
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.randomElement
 import javax.inject.Inject
 
-class ImmobileEnemyAi @Inject constructor(val abilityFactory: AbilityFactory) : EnemyAi{
+class ImmobileEnemyAi @Inject constructor() : EnemyAi{
     override fun getNextActions(thisCharacter: LogicalCharacter): List<AiPlannedAction> {
         val targetableSquare = getTargetableSquare(thisCharacter)
         if (targetableSquare == null){
@@ -19,7 +19,8 @@ class ImmobileEnemyAi @Inject constructor(val abilityFactory: AbilityFactory) : 
         if (thisCharacter.abilities.isEmpty()){
             return null
         }
-        val ability = abilityFactory.acquireAbility(thisCharacter.abilities.first())
-        return ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter, thisCharacter.abilities.first().equipment, thisCharacter.tileLocation).firstOrNull()
+        val ability = thisCharacter.abilities.randomElement()
+        return ability.ability.abilityTargetingParameters.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter,
+                ability, thisCharacter.tileLocation).firstOrNull()
     }
 }

@@ -5,29 +5,8 @@ import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
+import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.TemporaryAnimationGenerator
-import javax.inject.Inject
-import javax.inject.Singleton
-
-/**
- * Transmutes the data of "logical abilities" into actual functions that have effects on the board.
- */
-@Singleton
-public class AbilityFactory @Inject constructor(val gameBoardOperator: GameBoardOperator,
-                                                val boardAlgorithms: TacticalMapAlgorithms,
-                                                val tacticalMapState: TacticalMapState,
-                                                val unitSpawner: ActionManager,
-                                                val animationActionQueueProvider: AnimationActionQueueProvider,
-                                                val temporaryAnimationGenerator: TemporaryAnimationGenerator,
-                                                val damageOperator: DamageOperator){
-    fun acquireAbility(logicalAbilityAndEquipment: LogicalAbilityAndEquipment) : Ability {
-        when(logicalAbilityAndEquipment.ability.abilityClass){
-            AbilityClass.TARGETED_ATTACK_ABILITY -> return SimpleAttackAbility(logicalAbilityAndEquipment, tacticalMapState, boardAlgorithms, damageOperator, boardAlgorithms,
-                    unitSpawner, animationActionQueueProvider, temporaryAnimationGenerator)
-        }
-    }
-
-}
 
 enum class RequiredTargetType{
     ENEMY_ONLY, ALLY_ONLY, ANY, NO_CHARACTER_AT_LOCATION,
@@ -35,45 +14,46 @@ enum class RequiredTargetType{
     DOOR
 }
 
-interface Ability{
-    val logicalAbilityAndEquipment: LogicalAbilityAndEquipment
-    val tacticalMapState: TacticalMapState
-    val tacticalMapAlgorithms: TacticalMapAlgorithms
-    val logicalAbility:LogicalAbility
-    get() = logicalAbilityAndEquipment.ability
+abstract class AbilityTargetingParameters{
+    val tacticalMapState: TacticalMapState by lazy{
+        GameModuleInjector.generateInstance(TacticalMapState::class.java)
+    }
+    val tacticalMapAlgorithms: TacticalMapAlgorithms by lazy{
+        GameModuleInjector.generateInstance(TacticalMapAlgorithms::class.java)
+    }
 
     abstract fun isValidTarget(location: TileLocation?, targetCharacter: LogicalCharacter?,
-                               sourceCharacter: LogicalCharacter, equipment: LogicalEquipment?) : Boolean
+                               sourceCharacter: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment) : Boolean
 
     abstract fun activateAbility(location: TileLocation?, targetCharacter: LogicalCharacter?,
-                                 sourceCharacter: LogicalCharacter, equipment: LogicalEquipment?)
+                                 sourceCharacter: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment)
 
-    abstract fun getValidAbilityTargetSquares(sourceCharacter: LogicalCharacter,  equipment: LogicalEquipment?, sourceSquare: TileLocation? = null) : Collection<TileLocation>
+    abstract fun getValidAbilityTargetSquares(sourceCharacter: LogicalCharacter,  logicalAbilityAndEquipment: LogicalAbilityAndEquipment, sourceSquare: TileLocation? = null) : Collection<TileLocation>
 
     // Like getValidAbilityTargetSquares, but takes into account allies vs enemies.
     // Note: SourceSquare is an optional parameter that represents where the logical character WOULD be using the abilityEquipmentPair from.
-    fun getSquaresThatCanActuallyBeTargetedByAbility(sourceCharacter: LogicalCharacter, equipment: LogicalEquipment?, sourceSquare: TileLocation? = null): Collection<TileLocation>{
-        val abilityTargetSquares = getValidAbilityTargetSquares(sourceCharacter, equipment, sourceSquare)
+    fun getSquaresThatCanActuallyBeTargetedByAbility(sourceCharacter: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment, sourceSquare: TileLocation? = null): Collection<TileLocation>{
+        val abilityTargetSquares = getValidAbilityTargetSquares(sourceCharacter, logicalAbilityAndEquipment, sourceSquare)
         val nearbyCharacters = tacticalMapState.listOfCharacters.filter{abilityTargetSquares.contains(it.tileLocation)}
         val possibilities = arrayListOf<LogicalCharacter>()
         for (target in nearbyCharacters){
             var opposingCharacters = target.playerAlly xor sourceCharacter.playerAlly
-            if (logicalAbility.requiredTargetType == RequiredTargetType.ANY){
+            if (logicalAbilityAndEquipment.ability.requiredTargetType == RequiredTargetType.ANY){
                 possibilities.add(target)
             }
-            else if (!opposingCharacters && logicalAbility.requiredTargetType == RequiredTargetType.ALLY_ONLY){
+            else if (!opposingCharacters && logicalAbilityAndEquipment.ability.requiredTargetType == RequiredTargetType.ALLY_ONLY){
                 possibilities.add(target)
             }
-            else if (opposingCharacters && logicalAbility.requiredTargetType == RequiredTargetType.ENEMY_ONLY){
+            else if (opposingCharacters && logicalAbilityAndEquipment.ability.requiredTargetType == RequiredTargetType.ENEMY_ONLY){
                 possibilities.add(target)
             }
         }
-        if (logicalAbility.requiredTargetType == RequiredTargetType.DOOR){
+        if (logicalAbilityAndEquipment.ability.requiredTargetType == RequiredTargetType.DOOR){
             // we're just gonna say we can only hit doors if that's the target type.
             return abilityTargetSquares.filter { tacticalMapState.isDoorAt(it) }
         }
 
-        if (logicalAbility.requiredTargetType == RequiredTargetType.NO_CHARACTER_AT_LOCATION){
+        if (logicalAbilityAndEquipment.ability.requiredTargetType == RequiredTargetType.NO_CHARACTER_AT_LOCATION){
             val nearbyCharacterLocations = nearbyCharacters.map{char -> char.tileLocation}
             return abilityTargetSquares.filter{!nearbyCharacterLocations.contains(it)}
         }
@@ -87,13 +67,13 @@ interface Ability{
      * 1)  The character can move to this location THIS turn, thus satisfying movement ranges.
      * 2)  The character can hit someone with an abilityEquipmentPair that character possesses.
      */
-    public fun getWhereCharacterCanHitSomeoneWithThisAbility(logicalCharacter: LogicalCharacter, equipment: LogicalEquipment?) : ActionResult?{
+    public fun getWhereCharacterCanHitSomeoneWithThisAbility(logicalCharacter: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment) : ActionResult?{
         // for now, we'll just try to get one of the abilities in order.  Can do fancier stuff later.
         val abilities = logicalCharacter.abilities
         val moveableSquares = tacticalMapAlgorithms.getWhereCharacterCanMoveTo(logicalCharacter)
         for (square in moveableSquares){
             for (abilityAndEquipment in abilities){
-                val validTargetSquares = this.getSquaresThatCanActuallyBeTargetedByAbility(logicalCharacter, equipment, square)
+                val validTargetSquares = this.getSquaresThatCanActuallyBeTargetedByAbility(logicalCharacter, logicalAbilityAndEquipment, square)
                 if (!validTargetSquares.isEmpty()){
                     return ActionResult(abilityAndEquipment, logicalCharacter, butFirstMoveHere = square, squaresTargetable =
                     validTargetSquares)
@@ -106,31 +86,40 @@ interface Ability{
 }
 
 
-class SimpleAttackAbility(
-        override val logicalAbilityAndEquipment: LogicalAbilityAndEquipment,
-        override val tacticalMapState: TacticalMapState,
-        val boardAlgorithms: TacticalMapAlgorithms,
-        val damageOperator: DamageOperator,
-        override val tacticalMapAlgorithms: TacticalMapAlgorithms,
-        val unitSpawner: ActionManager,
-        val animationActionQueueProvider: AnimationActionQueueProvider,
-        val temporaryAnimationGenerator: TemporaryAnimationGenerator) : Ability {
+class SimpleAttackAbility() : AbilityTargetingParameters() {
+
+    val boardAlgorithms: TacticalMapAlgorithms by lazy{
+        GameModuleInjector.generateInstance(TacticalMapAlgorithms::class.java)
+    }
+    val damageOperator: DamageOperator by lazy{
+        GameModuleInjector.generateInstance(DamageOperator::class.java)
+    }
+    val unitSpawner: ActionManager by lazy{
+        GameModuleInjector.generateInstance(ActionManager::class.java)
+    }
+    val animationActionQueueProvider: AnimationActionQueueProvider by lazy{
+        GameModuleInjector.generateInstance(AnimationActionQueueProvider::class.java)
+    }
+    val temporaryAnimationGenerator: TemporaryAnimationGenerator by  lazy{
+        GameModuleInjector.generateInstance(TemporaryAnimationGenerator::class.java)
+    }
+
     override fun isValidTarget(location: TileLocation?, targetCharacter: LogicalCharacter?, sourceCharacter: LogicalCharacter,
-                               equipment: LogicalEquipment?) : Boolean{
-        return getValidAbilityTargetSquares(sourceCharacter, equipment).contains(location)
+                               logicalAbilityAndEquipment: LogicalAbilityAndEquipment) : Boolean{
+        return getValidAbilityTargetSquares(sourceCharacter, logicalAbilityAndEquipment).contains(location)
     }
 
     override fun activateAbility(location: TileLocation?, targetCharacter: LogicalCharacter?, sourceCharacter: LogicalCharacter,
-                                 equipment: LogicalEquipment?) {
+                                 logicalAbilityAndEquipment: LogicalAbilityAndEquipment) {
 
         if (location == null){
             throw NotImplementedError("Havne't yet implemented non-location abilities")
         }
 
-        val locationsAffected = logicalAbilityAndEquipment.ability.areaOfEffect.getTilesAffected(location, sourceCharacter, this.logicalAbility)
+        val locationsAffected = logicalAbilityAndEquipment.ability.areaOfEffect.getTilesAffected(location, sourceCharacter, logicalAbilityAndEquipment)
 
         for (locationInAoe in locationsAffected){
-            runAbilityOnLocation(locationInAoe, sourceCharacter, targetCharacter)
+            runAbilityOnLocation(logicalAbilityAndEquipment, locationInAoe, sourceCharacter, targetCharacter)
         }
 
         if (sourceCharacter.playerControlled){
@@ -139,7 +128,7 @@ class SimpleAttackAbility(
         }
     }
 
-    private fun runAbilityOnLocation(targetedLocation: TileLocation, sourceCharacter: LogicalCharacter, targetCharacter: LogicalCharacter?) {
+    private fun runAbilityOnLocation(logicalAbilityAndEquipment: LogicalAbilityAndEquipment, targetedLocation: TileLocation, sourceCharacter: LogicalCharacter, targetCharacter: LogicalCharacter?) {
         val ability = logicalAbilityAndEquipment.ability
         val landingActor = ability.landingActor
         // if there's a projectile, do it
@@ -150,7 +139,8 @@ class SimpleAttackAbility(
             }
         }
         // for each tile in the area of effect
-        val areaOfEffect = this.logicalAbility.areaOfEffect.getTilesAffected(targetedLocation, sourceCharacter, logicalAbility)
+        val areaOfEffect = logicalAbilityAndEquipment.ability.areaOfEffect.getTilesAffected(targetedLocation,
+                sourceCharacter, logicalAbilityAndEquipment)
         for (affectedTile in areaOfEffect){
             // if there's an effect, do it
             if (ability.landingActor != null) {
@@ -158,23 +148,23 @@ class SimpleAttackAbility(
                 animationActionQueueProvider.addAction(lander)
             }
 
-            for (effect in logicalAbility.abilityEffects) {
+            for (effect in logicalAbilityAndEquipment.ability.abilityEffects) {
                 effect.runAction(sourceCharacter, affectedTile)
             }
             // if there's a damage effect, do that (probably just the number-rising thing)
-            if (logicalAbility.damage != null) {
+            if (logicalAbilityAndEquipment.ability.damage != null) {
                 // so, the GBO shouldn't be responsible for handing damage animations, because those will vary based on attack.
-                damageOperator.damageCharacter(targetCharacter!!, logicalAbility.damage!!, logicalAbilityAndEquipment, sourceCharacter)
+                damageOperator.damageCharacter(targetCharacter!!, logicalAbilityAndEquipment.ability.damage!!, logicalAbilityAndEquipment, sourceCharacter)
             }
         }
     }
 
-    override fun getValidAbilityTargetSquares(sourceCharacter: LogicalCharacter, equipment: LogicalEquipment?, sourceSquare: TileLocation?) : Collection<TileLocation>{
-        return getTilesInRangeOfAbility(sourceCharacter, logicalAbility, sourceSquare)
+    override fun getValidAbilityTargetSquares(sourceCharacter: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment, sourceSquare: TileLocation?) : Collection<TileLocation>{
+        return getTilesInRangeOfAbility(sourceCharacter, logicalAbilityAndEquipment, sourceSquare)
     }
-    private fun getTilesInRangeOfAbility(character: LogicalCharacter, ability: LogicalAbility, sourceSquare: TileLocation? = null): Collection<TileLocation> {
+    private fun getTilesInRangeOfAbility(character: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment, sourceSquare: TileLocation? = null): Collection<TileLocation> {
         // BUG:  this SHOULD be referencing sourceSquare.  NOT character.
-        val tiles = ability.rangeStyle.getTargetableTiles(character, ability, sourceSquare)
+        val tiles = logicalAbilityAndEquipment.ability.rangeStyle.getTargetableTiles(character, logicalAbilityAndEquipment, sourceSquare)
         return tiles
     }
 }

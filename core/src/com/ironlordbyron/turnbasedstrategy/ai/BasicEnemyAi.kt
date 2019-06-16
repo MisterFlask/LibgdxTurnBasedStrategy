@@ -5,7 +5,6 @@ import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
-import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityFactory
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TiledMapOperationsHandler
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 
@@ -19,7 +18,6 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
                           val tileMapProvider: TileMapProvider,
                           val aiGridGraphFactory: AiGridGraphFactory,
                           val mapAlgorithms: TacticalMapAlgorithms,
-                          val abilityFactory: AbilityFactory,
                           val basicAiDecisions: BasicAiDecisions) : EnemyAi{
 
     override fun getNextActions(thisCharacter: LogicalCharacter): List<AiPlannedAction> {
@@ -29,7 +27,7 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
     private fun getNextAbilityUsage(thisCharacter: LogicalCharacter, locationAfterMove: TileLocation): AiPlannedAction.AbilityUsage? {
         var abilityUsage: AiPlannedAction.AbilityUsage? = null
         for (logicalAbilityAndEquipment in thisCharacter.abilities) {
-            val ability = abilityFactory.acquireAbility(logicalAbilityAndEquipment)
+            val ability = logicalAbilityAndEquipment.ability.abilityTargetingParameters
             val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter, logicalAbilityAndEquipment.equipment, locationAfterMove)
             if (!targetableTilesFromThisSquare.isEmpty()) {
                 abilityUsage = AiPlannedAction.AbilityUsage(targetableTilesFromThisSquare.first(), logicalAbilityAndEquipment, thisCharacter)
@@ -37,7 +35,7 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
             }
         }
         if (abilityUsage != null){
-            println("Ability AI will use: $abilityUsage")
+            println("AbilityTargetingParameters AI will use: $abilityUsage")
         }
         return abilityUsage
     }
@@ -48,7 +46,7 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
         // First: if we can target the enemy from a location we can reach?  GO THERE.
         for (reachableLocation in reachableLocations){
             for (logicalAbilityAndEquipment in thisCharacter.abilities){
-                val ability = abilityFactory.acquireAbility(logicalAbilityAndEquipment)
+                val ability = logicalAbilityAndEquipment.ability.abilityTargetingParameters
                 val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter,logicalAbilityAndEquipment.equipment, reachableLocation)
                 if (!targetableTilesFromThisSquare.isEmpty()){
                     return reachableLocation

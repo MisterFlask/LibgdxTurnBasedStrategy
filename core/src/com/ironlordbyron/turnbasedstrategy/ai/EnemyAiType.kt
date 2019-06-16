@@ -41,7 +41,7 @@ interface AiPlannedAction{
                             val sourceCharacter: LogicalCharacter): AiPlannedAction{
 
         public override fun toString(): String{
-            return "Ability: $squareToTarget, ${ability.ability.name}"
+            return "AbilityTargetingParameters: $squareToTarget, ${ability.ability.name}"
         }
     }
 }
