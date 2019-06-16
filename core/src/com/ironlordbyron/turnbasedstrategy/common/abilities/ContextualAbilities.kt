@@ -1,10 +1,8 @@
 package com.ironlordbyron.turnbasedstrategy.common.abilities
 
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
-import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
-import javax.naming.Context
 
 public class OpenDoorAbilityRequirement() : ContextualAbilityRequirement{
 
@@ -42,7 +40,7 @@ object ContextualAbilities {
             landingActor = null,
             projectileActor = null,
             abilityEffects = listOf(LogicalAbilityEffect.CreatePortal()),
-            abilityClass = AbilityClass.TARGETED_ABILITY,
+            abilityClass = AbilityClass.TARGETED_ATTACK_ABILITY,
             range = 0
     )
 
@@ -54,7 +52,7 @@ object ContextualAbilities {
         abilityEffects = listOf(LogicalAbilityEffect.OpensDoor()),
         range = 2,
         description = "Opens a door.",
-        abilityClass = AbilityClass.TARGETED_ABILITY,
+        abilityClass = AbilityClass.TARGETED_ATTACK_ABILITY,
         requiredTargetType = RequiredTargetType.DOOR,
             requirement = OpenDoorAbilityRequirement()
     )
@@ -66,7 +64,7 @@ object ContextualAbilities {
             projectileActor = null,
             range = 1,
             description ="Enters portal, causing the character to leave the stage",
-            abilityClass = AbilityClass.TARGETED_ABILITY, //todo
+            abilityClass = AbilityClass.TARGETED_ATTACK_ABILITY, //todo
             requiredTargetType = RequiredTargetType.ANY, //todo
             requirement = EnterPortalAbilityRequirement()
     )

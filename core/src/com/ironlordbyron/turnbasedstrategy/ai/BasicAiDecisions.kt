@@ -42,6 +42,8 @@ public class BasicAiDecisions @Inject constructor (val abilityFactory: AbilityFa
                     val plannedActions = getNecessaryMoveForTargetingCharacterWithAbility(thisCharacter, tacticalMapState.getCharacterFromId(attackIntent.logicalCharacterUuid), thisCharacter.intent.intentType)!!
                     return plannedActions
                 }
+                thisCharacter.intent = formulateIntent(thisCharacter)
+                return executeOnIntent(thisCharacter)
             }
             IntentType.MOVE -> {
                 Logging.DebugCombatLogic("Character ${thisCharacter.tacMapUnit.templateName} is attempting movement")

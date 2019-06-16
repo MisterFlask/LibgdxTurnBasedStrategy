@@ -22,9 +22,8 @@ public class AbilityFactory @Inject constructor(val gameBoardOperator: GameBoard
                                                 val damageOperator: DamageOperator){
     fun acquireAbility(logicalAbilityAndEquipment: LogicalAbilityAndEquipment) : Ability {
         when(logicalAbilityAndEquipment.ability.abilityClass){
-            AbilityClass.TARGETED_ABILITY -> return SimpleAttackAbility(logicalAbilityAndEquipment, tacticalMapState, boardAlgorithms, damageOperator, boardAlgorithms,
+            AbilityClass.TARGETED_ATTACK_ABILITY -> return SimpleAttackAbility(logicalAbilityAndEquipment, tacticalMapState, boardAlgorithms, damageOperator, boardAlgorithms,
                     unitSpawner, animationActionQueueProvider, temporaryAnimationGenerator)
-
         }
     }
 

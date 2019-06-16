@@ -116,5 +116,5 @@ interface LogicalAbilityEffect {
 }
 
 public enum class AbilityClass {
-    TARGETED_ABILITY
+    TARGETED_ATTACK_ABILITY
 }

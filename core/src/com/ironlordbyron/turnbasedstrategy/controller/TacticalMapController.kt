@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.controller
 
 import com.google.common.base.Stopwatch
 import com.ironlordbyron.turnbasedstrategy.ai.EnemyTurnRunner
+import com.ironlordbyron.turnbasedstrategy.ai.Intent
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityClass
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
@@ -73,8 +74,11 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 }
                 boardInputState = BoardInputState.PlayerIntendsToUseAbility(selectedCharacter,
                         event.abilityEquipmentPair)
-                if (event.abilityEquipmentPair.ability.abilityClass == AbilityClass.TARGETED_ABILITY){
+                if (event.abilityEquipmentPair.ability.abilityClass == AbilityClass.TARGETED_ATTACK_ABILITY){
                     abilityController.signalIntentToActOnAbility(selectedCharacter, event.abilityEquipmentPair)
+                }
+                if (event.abilityEquipmentPair.ability.abilityClass == AbilityClass.UNTARGETED_ABILITY){
+                    abilityController.useAbility(selectedCharacter, event.abilityEquipmentPair, selectedCharacter, selectedCharacter.tileLocation)
                 }
             }
             is TacticalGuiEvent.ScenarioStart -> {
@@ -151,9 +155,6 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
             selectCharacterInTacMap(character)
             selectedCharacter = character
             eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.CharacterSelected(character))
-            if (character.playerControlled){
-                //highlightAllEnemiesIntendingToAttackPlayer()
-            }
         }else{
             val currentBoardInputState = boardInputState
             when(currentBoardInputState){
@@ -165,14 +166,17 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
         }
     }
 
-
-
     private fun selectCharacterInTacMap(character: LogicalCharacter) {
         boardInputState = BoardInputState.UnitSelected(character)
         if (character.playerControlled){
             val tilesToHighlight = tacticalMapAlgorithms.getWhereCharacterCanMoveTo(character)
             mapHighlighter.highlightTiles(tilesToHighlight, HighlightType.GREEN_TILE)
         }
+        val enemiesTargetingPlayer = boardState.listOfEnemyCharacters
+                .filter{it.intent is Intent.Attack}
+                .filter{(it.intent as Intent.Attack).logicalCharacterUuid == character.id}
+                .map{it.tileLocation}
+        mapHighlighter.highlightTiles(enemiesTargetingPlayer, HighlightType.RED_TILE)
     }
 
     fun canUnitMoveTo(location: TileLocation, unit: LogicalCharacter): Boolean {
