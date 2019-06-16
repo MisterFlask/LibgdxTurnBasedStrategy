@@ -28,7 +28,7 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
         var abilityUsage: AiPlannedAction.AbilityUsage? = null
         for (logicalAbilityAndEquipment in thisCharacter.abilities) {
             val ability = logicalAbilityAndEquipment.ability.abilityTargetingParameters
-            val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter, logicalAbilityAndEquipment.equipment, locationAfterMove)
+            val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter, logicalAbilityAndEquipment, locationAfterMove)
             if (!targetableTilesFromThisSquare.isEmpty()) {
                 abilityUsage = AiPlannedAction.AbilityUsage(targetableTilesFromThisSquare.first(), logicalAbilityAndEquipment, thisCharacter)
                 // Can make evaluation function later for telling which abilityEquipmentPair to use.
@@ -47,7 +47,7 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
         for (reachableLocation in reachableLocations){
             for (logicalAbilityAndEquipment in thisCharacter.abilities){
                 val ability = logicalAbilityAndEquipment.ability.abilityTargetingParameters
-                val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter,logicalAbilityAndEquipment.equipment, reachableLocation)
+                val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter,logicalAbilityAndEquipment, reachableLocation)
                 if (!targetableTilesFromThisSquare.isEmpty()){
                     return reachableLocation
                 }

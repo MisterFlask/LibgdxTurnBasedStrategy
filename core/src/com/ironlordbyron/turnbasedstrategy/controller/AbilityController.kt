@@ -1,22 +1,20 @@
 package com.ironlordbyron.turnbasedstrategy.controller
 
 import com.ironlordbyron.turnbasedstrategy.common.*
-import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityFactory
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class AbilityController @Inject constructor(val tacticalMapState: TacticalMapState,
                                             val mapHighlighter: MapHighlighter,
-                                            val mapAlgorithms: TacticalMapAlgorithms,
-                                            val abilityFactory: AbilityFactory) {
+                                            val mapAlgorithms: TacticalMapAlgorithms) {
 
     /**
      * Represents a person clicking on an abilityEquipmentPair usage button (which then requires additional parameters.)
      */
     fun signalIntentToActOnAbility(characterUsingAbility: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment){
-        val ability = abilityFactory.acquireAbility(logicalAbilityAndEquipment)
-        val tilesInRange = ability.getValidAbilityTargetSquares(characterUsingAbility, logicalAbilityAndEquipment.equipment, characterUsingAbility.tileLocation)
+        val ability = logicalAbilityAndEquipment.ability.abilityTargetingParameters
+        val tilesInRange = ability.getValidAbilityTargetSquares(characterUsingAbility, logicalAbilityAndEquipment, characterUsingAbility.tileLocation)
         mapHighlighter.killHighlights()
         mapHighlighter.highlightTiles(tilesInRange, HighlightType.RED_TILE)
     }
@@ -25,8 +23,8 @@ class AbilityController @Inject constructor(val tacticalMapState: TacticalMapSta
                                   logicalAbilityAndEquipment: LogicalAbilityAndEquipment,
                                   targetCharacter: LogicalCharacter?,
                                   location: TileLocation) : Boolean{
-        val ability = abilityFactory.acquireAbility(logicalAbilityAndEquipment)
-        val isValid = ability.isValidTarget(location, targetCharacter, characterUsingAbility, logicalAbilityAndEquipment.equipment)
+        val ability = logicalAbilityAndEquipment.ability.abilityTargetingParameters
+        val isValid = ability.isValidTarget(location, targetCharacter, characterUsingAbility, logicalAbilityAndEquipment)
         return isValid
     }
 
@@ -35,9 +33,9 @@ class AbilityController @Inject constructor(val tacticalMapState: TacticalMapSta
                               logicalAbilityAndEquipment: LogicalAbilityAndEquipment,
                               targetCharacter: LogicalCharacter?,
                               location: TileLocation) : Boolean{
-        val ability = abilityFactory.acquireAbility(logicalAbilityAndEquipment)
+        val ability = logicalAbilityAndEquipment.ability.abilityTargetingParameters
         val isValid = ability.getSquaresThatCanActuallyBeTargetedByAbility(characterUsingAbility, sourceSquare = characterUsingAbility.tileLocation,
-                equipment = logicalAbilityAndEquipment.equipment)
+                logicalAbilityAndEquipment = logicalAbilityAndEquipment)
                 .contains(location)
         return isValid
     }
@@ -45,7 +43,7 @@ class AbilityController @Inject constructor(val tacticalMapState: TacticalMapSta
                    logicalAbilityAndEquipment: LogicalAbilityAndEquipment,
                    targetCharacter: LogicalCharacter?,
                    location: TileLocation){
-        val ability = abilityFactory.acquireAbility(logicalAbilityAndEquipment)
-        ability.activateAbility(location, targetCharacter, characterUsingAbility, logicalAbilityAndEquipment.equipment)
+        val ability = logicalAbilityAndEquipment.ability.abilityTargetingParameters
+        ability.activateAbility(location, targetCharacter, characterUsingAbility, logicalAbilityAndEquipment)
     }
 }

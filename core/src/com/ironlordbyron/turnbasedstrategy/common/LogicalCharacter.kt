@@ -71,6 +71,6 @@ data class LogicalAbilityAndEquipment(val ability: LogicalAbility, val equipment
     }
 
     fun getSquaresInRangeOfAbility(sourceSquare: TileLocation, logicalCharacter: LogicalCharacter): Collection<TileLocation> {
-        return ability.rangeStyle.getTargetableTiles(logicalCharacter, ability, sourceSquare)
+        return ability.rangeStyle.getTargetableTiles(logicalCharacter, this, sourceSquare)
     }
 }

@@ -4,7 +4,6 @@ import com.ironlordbyron.turnbasedstrategy.common.GameBoardOperator
 import com.ironlordbyron.turnbasedstrategy.common.LogicHooks
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
-import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityFactory
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttributeFactory
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
@@ -33,7 +32,6 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
                                                  val tacticalMapAlgorithms: TacticalMapAlgorithms,
                                                  val gameBoardOperator: GameBoardOperator,
                                                  val animationActionQueueProvider: AnimationActionQueueProvider,
-                                                 val abilityFactory: AbilityFactory,
                                                  val logicHooks: LogicHooks){
 
     public fun endTurn() {
@@ -67,8 +65,8 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
                             wasPlayerInitiated = false)
                     is AiPlannedAction.AbilityUsage ->  {
                         val charToTarget = boardState.characterAt(action.squareToTarget)
-                        val ability = abilityFactory.acquireAbility(action.ability)
-                        ability.activateAbility(action.squareToTarget, charToTarget, action.sourceCharacter, equipment = action.ability.equipment)
+                        val ability = action.ability.ability.abilityTargetingParameters
+                        ability.activateAbility(action.squareToTarget, charToTarget, action.sourceCharacter, action.ability)
                     }
                 }
             }

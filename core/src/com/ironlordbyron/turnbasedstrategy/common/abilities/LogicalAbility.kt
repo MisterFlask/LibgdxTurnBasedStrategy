@@ -7,7 +7,6 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.Animatio
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
-import sun.rmi.runtime.Log
 
 public class LogicalAbility(val name: String,
                             val speed: AbilitySpeed,
