@@ -2,9 +2,13 @@ package com.ironlordbyron.turnbasedstrategy.common
 
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Group
+import com.ironlordbyron.turnbasedstrategy.ai.Intent
+import com.ironlordbyron.turnbasedstrategy.ai.IntentType
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
+import com.ironlordbyron.turnbasedstrategy.common.abilities.RangeStyle
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
+import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.animation.LogicalCharacterActorGroup
 import java.util.*
 
@@ -18,12 +22,16 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
                             val playerControlled: Boolean,
                             var endedTurn: Boolean = false,
                             var actionsLeft: Int = 2,
-                            val id: UUID = UUID.randomUUID()) {
+                            val id: UUID = UUID.randomUUID(),
+                            var intent: Intent = Intent.None()) {
 
     val attributes: Collection<LogicalCharacterAttribute>
         get() = tacMapUnit.attributes
     val abilities: Collection<LogicalAbilityAndEquipment>
         get() = acquireAbilities()
+    fun abilitiesForIntent(intent: IntentType): List<LogicalAbilityAndEquipment> {
+        return acquireAbilities().filter{it.ability.intentType == intent}
+    }
     val healthLeft: Int
         get() = tacMapUnit.healthLeft
     val maxActionsLeft: Int
@@ -51,4 +59,18 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
 }
 
 
-data class LogicalAbilityAndEquipment(val ability: LogicalAbility, val equipment: LogicalEquipment?)
+data class LogicalAbilityAndEquipment(val ability: LogicalAbility, val equipment: LogicalEquipment?){
+    companion object {
+        val mapAlgorithms:TacticalMapAlgorithms by lazy {
+            GameModuleInjector.generateInstance(TacticalMapAlgorithms::class.java)
+        }
+    }
+
+    override fun toString() : String{
+        return ability.name
+    }
+
+    fun getSquaresInRangeOfAbility(sourceSquare: TileLocation, logicalCharacter: LogicalCharacter): Collection<TileLocation> {
+        return ability.rangeStyle.getTargetableTiles(logicalCharacter, ability, sourceSquare)
+    }
+}

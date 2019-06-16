@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
 import com.ironlordbyron.turnbasedstrategy.ai.EnemyAiType
+import com.ironlordbyron.turnbasedstrategy.ai.IntentType
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.common.abilities.StandardAbilities
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
@@ -33,7 +34,8 @@ data class TacMapUnitTemplate(val movesPerTurn: Int,
                               val dexterity: Int = 0,
 
                               // used in map generation
-                              val difficulty: Int = 1
+                              val difficulty: Int = 1,
+                              val possibleRandomizedIntents: List<IntentType> = listOf(IntentType.ATTACK, IntentType.MOVE)
 ) {
 
     // defensive copying

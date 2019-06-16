@@ -151,6 +151,9 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
             selectCharacterInTacMap(character)
             selectedCharacter = character
             eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.CharacterSelected(character))
+            if (character.playerControlled){
+                //highlightAllEnemiesIntendingToAttackPlayer()
+            }
         }else{
             val currentBoardInputState = boardInputState
             when(currentBoardInputState){

@@ -25,7 +25,7 @@ class SpecialEffectManager @Inject constructor(val stageProvider: TacticalTiledM
     val lines = ArrayList<LineEffect>()
     val spriteBatch: SpriteBatch = SpriteBatch()
 
-    fun generateLineEffect(actor1 : Actor, actor2: Actor) : LineEffect{
+    fun generateLaserEffect(actor1 : Actor, actor2: Actor) : LineEffect{
         // TODO
         /*
         val laser = LaserEffect(

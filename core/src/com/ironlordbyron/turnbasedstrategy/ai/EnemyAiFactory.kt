@@ -12,7 +12,8 @@ public class EnemyAiFactory @Inject constructor(val tiledMapOperationsHandler: T
                                                 val aiGridGraphFactory: AiGridGraphFactory,
                                                 val tacticalMapState: TacticalMapState,
                                                 val tacticalMapAlgorithms: TacticalMapAlgorithms,
-                                                val abilityFactory: AbilityFactory){
+                                                val abilityFactory: AbilityFactory,
+                                                val basicAiDecisions: BasicAiDecisions){
 
     public fun getEnemyAi(enemyAiType: EnemyAiType) : EnemyAi{
         when(enemyAiType){
@@ -22,7 +23,8 @@ public class EnemyAiFactory @Inject constructor(val tiledMapOperationsHandler: T
                     tileMapProvider,
                     aiGridGraphFactory,
                     mapAlgorithms = tacticalMapAlgorithms,
-                    abilityFactory = abilityFactory);
+                    abilityFactory = abilityFactory,
+                    basicAiDecisions = basicAiDecisions);
             EnemyAiType.IMMOBILE_UNIT -> return ImmobileEnemyAi(
                     abilityFactory
             )

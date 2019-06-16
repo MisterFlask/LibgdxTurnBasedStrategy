@@ -29,7 +29,4 @@ public class TiledMapModifier  @Inject constructor (val logicalTileTracker: Logi
         logicalTileTracker.removeWallAtTile(tileLocation)
         logicalTileTracker.tileEntities.add(doorEntity)
     }
-
-
-
 }

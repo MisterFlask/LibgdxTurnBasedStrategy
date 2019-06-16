@@ -19,26 +19,11 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
                           val tileMapProvider: TileMapProvider,
                           val aiGridGraphFactory: AiGridGraphFactory,
                           val mapAlgorithms: TacticalMapAlgorithms,
-                          val abilityFactory: AbilityFactory) : EnemyAi{
+                          val abilityFactory: AbilityFactory,
+                          val basicAiDecisions: BasicAiDecisions) : EnemyAi{
 
     override fun getNextActions(thisCharacter: LogicalCharacter): List<AiPlannedAction> {
-        val nextMove = getNextMoveLocation(thisCharacter)
-        if (nextMove != null){
-            Logging.DebugPathfinding("AI's attempted move location: $nextMove")
-        }
-        val locationAfterMove = nextMove?:thisCharacter.tileLocation
-        var abilityUsage: AiPlannedAction.AbilityUsage? = getNextAbilityUsage(thisCharacter, locationAfterMove)
-        val listOfActions = ArrayList<AiPlannedAction>()
-        if (nextMove != null){
-            listOfActions.add(AiPlannedAction.MoveToTile(nextMove))
-        }
-        if (abilityUsage != null){
-            listOfActions.add(abilityUsage)
-        }
-        if (listOfActions.size == 2){
-            Logging.DebugCombatLogic("Planned actions: $listOfActions, current location = ${thisCharacter.tileLocation}")
-        }
-        return listOfActions
+        return basicAiDecisions.executeOnIntent(thisCharacter)
     }
 
     private fun getNextAbilityUsage(thisCharacter: LogicalCharacter, locationAfterMove: TileLocation): AiPlannedAction.AbilityUsage? {

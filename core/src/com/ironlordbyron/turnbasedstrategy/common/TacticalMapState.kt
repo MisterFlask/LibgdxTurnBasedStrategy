@@ -6,6 +6,7 @@ import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
+import java.util.*
 import javax.inject.Singleton
 
 
@@ -31,8 +32,15 @@ class TacticalMapState @Inject constructor(val logicalTileTracker: LogicalTileTr
         eventNotifier.registerGameListener(this)
     }
 
+    fun getCharacterFromId(uuid: UUID): LogicalCharacter {
+        return this.listOfCharacters.first{it.id == uuid}
+    }
+
     private val locations = HashMap<TileLocation, TacticalMapTileState>()
     val listOfCharacters = ArrayList<LogicalCharacter>()
+
+    val listOfPlayerCharacters: List<LogicalCharacter>
+        get() = listOfCharacters.filter{it.playerControlled}
 
     val listOfEnemyCharacters: List<LogicalCharacter>
     get() = listOfCharacters.filter{!it.playerControlled}

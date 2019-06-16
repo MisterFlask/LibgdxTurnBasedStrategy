@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.common.abilities
 
+import com.ironlordbyron.turnbasedstrategy.ai.IntentType
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
@@ -29,7 +30,8 @@ public class LogicalAbility(val name: String,
                             val inflictsStatusAffect: Collection<LogicalCharacterAttribute> = listOf(),
                             val areaOfEffect: AreaOfEffect = AreaOfEffect.One(),
                             val cooldownTurns: Int? = null,
-                            val rangeStyle: RangeStyle = RangeStyle.Simple(range)){
+                            val rangeStyle: RangeStyle = RangeStyle.Simple(range),
+                            val intentType: IntentType = IntentType.ATTACK){
 
 }
 

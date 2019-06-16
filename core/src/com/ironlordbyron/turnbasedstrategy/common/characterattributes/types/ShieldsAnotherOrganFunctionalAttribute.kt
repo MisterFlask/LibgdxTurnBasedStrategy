@@ -49,7 +49,7 @@ public class ShieldsAnotherOrganFunctionalAttribute(val actionManager: ActionMan
             val uuid = transientEntityTracker.insertActor(shieldActor)
 
             logicalAttr._characterShieldActorId = uuid
-            val line = specialEffectManager.generateLineEffect(thisCharacter.actor,
+            val line = specialEffectManager.generateLaserEffect(thisCharacter.actor,
                     masterOrgan.actor)
             logicalAttr._lineActorId = line.guid
             transientEntityTracker.insertLine(line)
