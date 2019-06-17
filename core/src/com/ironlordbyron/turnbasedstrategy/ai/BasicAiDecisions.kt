@@ -22,7 +22,14 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
                 return getAttackIntentForThisTurn(thisCharacter) is Intent.Attack
             }
             else -> {
-                return true
+                val abilitiesByIntent = thisCharacter.abilitiesForIntent(thisCharacter.intent.intentType)
+                for (ability in abilitiesByIntent){
+                    if (ability.ability.customAbilityAi == null){
+                        throw IllegalStateException("Could not find custom AI for non-attack ability: ${ability.ability.name}")
+                    }
+                }
+                val canUseAtLeastOneAbility = abilitiesByIntent.any{it.ability.customAbilityAi!!.canUseAbility(thisCharacter)}
+                return canUseAtLeastOneAbility
             }
         }
     }

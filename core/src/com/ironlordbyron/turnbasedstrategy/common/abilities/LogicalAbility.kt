@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.common.abilities
 
+import com.ironlordbyron.turnbasedstrategy.ai.AiPlannedAction
 import com.ironlordbyron.turnbasedstrategy.ai.IntentType
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
@@ -33,8 +34,16 @@ public class LogicalAbility(val name: String,
                             val rangeStyle: RangeStyle = RangeStyle.Simple(range),
                             val intentType: IntentType = IntentType.ATTACK,
                             val requiresTarget: Boolean = true,
-                            val abilityTargetingParameters: AbilityTargetingParameters = SimpleAttackAbility()){
+                            val abilityTargetingParameters: AbilityTargetingParameters = SimpleAttackAbility(),
+                            val customAbilityAi: CustomAbilityAi? = null){
 
+}
+
+interface CustomAbilityAi {
+    fun abilityDesireabilityToUse(sourceCharacter: LogicalCharacter) : Int
+    fun getActionsForAbilityUse(sourceCharacter: LogicalCharacter) : List<AiPlannedAction>
+    fun canUseAbility(sourceCharacter: LogicalCharacter): Boolean
+    fun getMovementGoal(sourceCharacter: LogicalCharacter) : TileLocation
 }
 
 interface RangeStyle{
