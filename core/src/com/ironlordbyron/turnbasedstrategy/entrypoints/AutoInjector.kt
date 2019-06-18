@@ -3,14 +3,13 @@ package com.ironlordbyron.turnbasedstrategy.entrypoints
 import com.ironlordbyron.turnbasedstrategy.common.LogicHooks
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalUnitEffect
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalAttributeEffect
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import org.reflections.Reflections
-import java.lang.IllegalArgumentException
 import javax.inject.Singleton
 
 
@@ -23,7 +22,7 @@ public class AutoInjector(){
         val effectRegistrar = GameModuleInjector.generateInstance(FunctionalEffectRegistrar::class.java)
         for (item in annotated){
             val instance = GameModuleInjector.generateInstance(item)
-            if (instance is FunctionalUnitEffect){
+            if (instance is FunctionalAttributeEffect){
                 effectRegistrar.registerAttribute(instance)
             }
             if (instance is EventListener){
@@ -38,7 +37,7 @@ public class AutoInjector(){
 
 @Target(AnnotationTarget.CLASS)
 annotation class Autoinjectable
-public class AppliesAttributeOnHit() : FunctionalUnitEffect() {
+public class AppliesAttributeOnHit() : FunctionalAttributeEffect() {
     val actionManager: ActionManager by lazy{
         GameModuleInjector.generateInstance(ActionManager::class.java)
     }
@@ -63,13 +62,13 @@ public class AppliesAttributeOnHit() : FunctionalUnitEffect() {
 @Autoinjectable
 public class FunctionalEffectRegistrar() {
 
-    val functionalAttributes = ArrayList<FunctionalUnitEffect>()
-    fun registerAttribute(functionalUnitAttribute: FunctionalUnitEffect){
+    val functionalAttributes = ArrayList<FunctionalAttributeEffect>()
+    fun registerAttribute(functionalUnitAttribute: FunctionalAttributeEffect){
         functionalAttributes.add(functionalUnitAttribute)
     }
 
     fun runEffectsOnCharacter(logicalCharacter: LogicalCharacter,
-                              func: (FunctionalUnitEffect, LogicalCharacterAttribute) -> Unit){
+                              func: (FunctionalAttributeEffect, LogicalCharacterAttribute) -> Unit){
         val attributes = logicalCharacter.attributes
         for (attr in attributes.toList()){
             for (effect in attr.customEffects){

@@ -1,13 +1,10 @@
 package com.ironlordbyron.turnbasedstrategy.common.characterattributes.types
 
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
-import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
-import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.UnapplyAttributeEvent
-import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import javax.inject.Inject
@@ -20,7 +17,7 @@ import javax.inject.Singleton
 @Autoinjectable
 @Singleton
 public class SnoozeFunctionalUnitEffect @Inject constructor()
-    : FunctionalUnitEffect(){
+    : FunctionalAttributeEffect(){
 
     val tacMapAlgorithms: TacticalMapAlgorithms by lazy {
         GameModuleInjector.generateInstance(TacticalMapAlgorithms::class.java)

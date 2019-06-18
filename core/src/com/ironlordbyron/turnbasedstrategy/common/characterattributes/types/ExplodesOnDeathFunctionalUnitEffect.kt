@@ -7,19 +7,15 @@ import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
-import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
-import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import javax.inject.Inject
-import javax.inject.Singleton
-
 
 
 class ExplodesOnDeathFunctionalUnitEffect @Inject constructor (val radius: Int, val damage: Int
-) : FunctionalUnitEffect(){
+) : FunctionalAttributeEffect(){
     val actionManager: ActionManager by lazy{
         GameModuleInjector.generateInstance(ActionManager::class.java)
     }

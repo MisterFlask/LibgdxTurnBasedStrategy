@@ -25,10 +25,10 @@ public open class LogicalCharacterAttribute(val name: String,
                                             val organ: Boolean = false,
                                             val description: (LogicalCharacterAttribute) -> String,
                                             val statusEffect: Boolean = false,
-                                            // See FunctionalUnitEffect for examples
+                                            // See FunctionalAttributeEffect for examples
                                             // The key is an ID corresponding to the effect; the value
                                             // is the parameters to be fed in.
-                                            val customEffects: Collection<FunctionalUnitEffect> = listOf(),
+                                            val customEffects: Collection<FunctionalAttributeEffect> = listOf(),
                                             val stackable: Boolean = false,
                                             var stacks: Int = 1,
                                             val id: String = name,

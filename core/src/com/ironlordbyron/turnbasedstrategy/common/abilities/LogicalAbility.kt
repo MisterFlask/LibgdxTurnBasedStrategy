@@ -131,23 +131,8 @@ interface LogicalAbilityEffect {
 
     }
 
-    class GuardAction: LogicalAbilityEffect {
-        val actionManager = GameModuleInjector.generateInstance(ActionManager::class.java)
-        val attributeOperator = GameModuleInjector.generateInstance(AttributeOperator::class.java)
-        override fun runAction(characterUsing: LogicalCharacter, tileLocationTargeted: TileLocation) {
-            attributeOperator.applyAttribute(tileLocationTargeted.getCharacter()!!, GuardedAttribute(characterUsing.id))
-        }
-    }
 }
 
-class GuardedAttribute(val guardedByCharacter: UUID): LogicalCharacterAttribute(
-        "Guarded",
-        imageIcon = SuperimposedTilemaps.toDefaultProtoActor(),
-        id = "GUARDED",
-        description = {"This character is guarded by ${guardedByCharacter.toCharacter().tacMapUnit.templateName}"},
-        customEffects = listOf() // TODO
-        ) {
-}
 
 @Deprecated("Deprecated feature; we're just using requiresTarget instead.")
 public enum class AbilityClass {

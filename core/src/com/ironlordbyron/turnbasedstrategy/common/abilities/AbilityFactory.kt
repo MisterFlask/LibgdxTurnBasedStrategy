@@ -103,6 +103,9 @@ class SimpleAttackAbility() : AbilityTargetingParameters() {
     val temporaryAnimationGenerator: TemporaryAnimationGenerator by  lazy{
         GameModuleInjector.generateInstance(TemporaryAnimationGenerator::class.java)
     }
+    val logicHooks: LogicHooks by lazy{
+        GameModuleInjector.generateInstance(LogicHooks::class.java)
+    }
 
     override fun isValidTarget(location: TileLocation?, targetCharacter: LogicalCharacter?, sourceCharacter: LogicalCharacter,
                                logicalAbilityAndEquipment: LogicalAbilityAndEquipment) : Boolean{
@@ -153,6 +156,7 @@ class SimpleAttackAbility() : AbilityTargetingParameters() {
             }
             // if there's a damage effect, do that (probably just the number-rising thing)
             if (logicalAbilityAndEquipment.ability.damage != null) {
+                val logicHooksAttemptToDamageResult = logicHooks.attemptToDamage()
                 // so, the GBO shouldn't be responsible for handing damage animations, because those will vary based on attack.
                 damageOperator.damageCharacter(targetCharacter!!, logicalAbilityAndEquipment.ability.damage!!, logicalAbilityAndEquipment, sourceCharacter)
             }

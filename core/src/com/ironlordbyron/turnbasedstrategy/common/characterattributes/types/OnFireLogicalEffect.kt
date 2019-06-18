@@ -3,14 +3,10 @@ package com.ironlordbyron.turnbasedstrategy.common.characterattributes.types
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
-import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
-import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
-import javax.inject.Inject
-import javax.inject.Singleton
 
 
-public class OnFireFunctionalEffect (val damagePerTurn: Int) : FunctionalUnitEffect() {
+public class OnFireFunctionalEffect (val damagePerTurn: Int) : FunctionalAttributeEffect() {
     val damageOperator: DamageOperator by lazy{
         GameModuleInjector.generateInstance(DamageOperator::class.java)
     }

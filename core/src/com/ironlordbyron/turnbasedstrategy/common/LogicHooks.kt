@@ -2,6 +2,8 @@ package com.ironlordbyron.turnbasedstrategy.common
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.DamageType
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttributeFactory
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
@@ -96,4 +98,21 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
     fun onCharacterWasStruck(targetCharacter: LogicalCharacter) {
         functionalEffectRegistrar.runAfterStruckCharacterEffects(targetCharacter)
     }
+
+    fun attemptToDamage(sourceCharacter: LogicalCharacter,
+                        targetCharacter: LogicalCharacter,
+                        sourceAbility: LogicalAbilityAndEquipment,
+                        damage:Int,
+                        damageType: DamageType): DamageAttemptResult {
+        var damageAttemptResult = DamageAttemptResult(damage, targetCharacter, targetCharacter, damage)
+        val effectsToRun = sourceCharacter.attributes.flatMap{it.customEffects}
+        for (effect in effectsToRun){
+            damageAttemptResult = effect.attemptToDamage(damageAttemptResult.originalTarget, sourceAbility, damageType, damage)
+        }
+        return damageAttemptResult
+    }
 }
+public data class DamageAttemptResult(val originalDamageDealt: Int,
+                                      val originalTarget: LogicalCharacter,
+                                      val newTarget: LogicalCharacter? = null,
+                                      val finalDamageDealt: Int)
