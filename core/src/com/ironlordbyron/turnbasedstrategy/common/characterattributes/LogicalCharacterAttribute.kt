@@ -18,7 +18,7 @@ import javax.inject.Inject
  * So, here's how this works: Each attribute corresponds to a visible icon for the player to interact with.
  * it may have ANY of the provided attributes, and new attributes should be added by .
  */
-public data class LogicalCharacterAttribute(val name: String,
+public open class LogicalCharacterAttribute(val name: String,
                                             val imageIcon: ProtoActor,
                                             val shieldsAnotherOrgan: LogicalCharacterAttributeTrigger.ShieldsAnotherOrgan? = null,
                                             val masterOrgan: Boolean = false,

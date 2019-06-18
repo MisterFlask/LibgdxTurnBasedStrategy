@@ -26,23 +26,23 @@ import javax.inject.Singleton
 
 @Singleton
 public class ActionManager @Inject constructor(
-        val characterImageManager: CharacterImageManager,
-        val boardState: TacticalMapState,
-        val eventNotifier: EventNotifier,
-        val persistentActorGenerator: PersistentActorGenerator,
-        val stageProvider: TacticalTiledMapStageProvider,
-        val tileMapProvider: TileMapProvider,
-        val movementAnimationGenerator: MovementAnimationGenerator,
-        val revealActionGenerator: RevealActionGenerator,
-        val logicalTileTracker: LogicalTileTracker,
-        val actorSwapGenerator: ActorSwapAnimationGenerator,
-        val tiledMapStageProvider: TacticalTiledMapStageProvider,
-        val animationActionQueueProvider: AnimationActionQueueProvider,
-        val hideAnimationGenerator: HideAnimationGenerator,
-        val visibleCharacterDataFactory: VisibleCharacterDataFactory,
-        val specialEffectManager: SpecialEffectManager,
-        val temporaryAnimationGenerator: TemporaryAnimationGenerator,
-        val floatingTextGenerator: FloatingTextGenerator
+        private val characterImageManager: CharacterImageManager,
+        private val boardState: TacticalMapState,
+        private val eventNotifier: EventNotifier,
+        private  val persistentActorGenerator: PersistentActorGenerator,
+        private  val stageProvider: TacticalTiledMapStageProvider,
+        private val tileMapProvider: TileMapProvider,
+        private  val movementAnimationGenerator: MovementAnimationGenerator,
+        private  val revealActionGenerator: RevealActionGenerator,
+        private   val logicalTileTracker: LogicalTileTracker,
+        private   val actorSwapGenerator: ActorSwapAnimationGenerator,
+        private    val tiledMapStageProvider: TacticalTiledMapStageProvider,
+        private   val animationActionQueueProvider: AnimationActionQueueProvider,
+        private    val hideAnimationGenerator: HideAnimationGenerator,
+        private    val visibleCharacterDataFactory: VisibleCharacterDataFactory,
+        private  val specialEffectManager: SpecialEffectManager,
+        private  val temporaryAnimationGenerator: TemporaryAnimationGenerator,
+        private   val floatingTextGenerator: FloatingTextGenerator
 )  {
 
     fun addCharacterToTileFromTemplate(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) : LogicalCharacter {

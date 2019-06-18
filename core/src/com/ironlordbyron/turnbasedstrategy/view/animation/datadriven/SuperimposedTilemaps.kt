@@ -23,5 +23,11 @@ data class SuperimposedTilemaps(val tileMapWithTextureName: String = COMMON_TILE
     companion object {
         val PLAYER_TILE_SETS = listOf("Player0", "Player1")
         val COMMON_TILE_MAP = "tilesets/Player0Characters.tmx"
+
+        public fun toDefaultProtoActor(): ProtoActor {
+            return SuperimposedTilemaps(
+                    tileSetNames = PLAYER_TILE_SETS,
+                    textureId = "8")
+        }
     }
 }

@@ -6,8 +6,14 @@ import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeOperator
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.toCharacter
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
+import java.util.*
 
 public class LogicalAbility(val name: String,
                             val speed: AbilitySpeed,
@@ -124,6 +130,23 @@ interface LogicalAbilityEffect {
         }
 
     }
+
+    class GuardAction: LogicalAbilityEffect {
+        val actionManager = GameModuleInjector.generateInstance(ActionManager::class.java)
+        val attributeOperator = GameModuleInjector.generateInstance(AttributeOperator::class.java)
+        override fun runAction(characterUsing: LogicalCharacter, tileLocationTargeted: TileLocation) {
+            attributeOperator.applyAttribute(tileLocationTargeted.getCharacter()!!, GuardedAttribute(characterUsing.id))
+        }
+    }
+}
+
+class GuardedAttribute(val guardedByCharacter: UUID): LogicalCharacterAttribute(
+        "Guarded",
+        imageIcon = SuperimposedTilemaps.toDefaultProtoActor(),
+        id = "GUARDED",
+        description = {"This character is guarded by ${guardedByCharacter.toCharacter().tacMapUnit.templateName}"},
+        customEffects = mapOf() // TODO
+        ) {
 }
 
 @Deprecated("Deprecated feature; we're just using requiresTarget instead.")
