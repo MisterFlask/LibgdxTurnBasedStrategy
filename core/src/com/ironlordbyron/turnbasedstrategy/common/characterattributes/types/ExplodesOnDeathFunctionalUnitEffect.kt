@@ -9,6 +9,7 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOp
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
+import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
@@ -16,25 +17,28 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 
-data class ExplodesOnDeath(val radius: Int, val damage: Int) : LogicalUnitEffect{
-    override fun toEntry() : Pair<String, Any>{
-        return "EXPLODES_ON_DEATH" to this
-    }
-}
 
 @Autoinjectable
 @Singleton
-class ExplodesOnDeathFunctionalUnitEffect @Inject constructor (val actionManager: ActionManager,
-                                                               val tacticalMapAlgorithms: TacticalMapAlgorithms,
-                                                               val damageOperator: DamageOperator,
-                                                               val tacticalMapState: TacticalMapState,
-                                                               override val eventNotifier: EventNotifier) : FunctionalUnitEffect<ExplodesOnDeath>{
+class ExplodesOnDeathFunctionalUnitEffect @Inject constructor (val radius: Int, val damage: Int
+) : FunctionalUnitEffect(){
+    val actionManager: ActionManager by lazy{
+        GameModuleInjector.generateInstance(ActionManager::class.java)
+    }
+    val tacticalMapAlgorithms: TacticalMapAlgorithms by lazy{
+        GameModuleInjector.generateInstance(TacticalMapAlgorithms::class.java)
+    }
+    val damageOperator: DamageOperator by lazy{
+        GameModuleInjector.generateInstance(DamageOperator::class.java)
+    }
+    val tacticalMapState: TacticalMapState by lazy{
+        GameModuleInjector.generateInstance(TacticalMapState::class.java)
+    }
 
     val protoActor: ProtoActor = DataDrivenOnePageAnimation.EXPLODE
-    override val id: String = "EXPLODES_ON_DEATH"
-    override val clazz = ExplodesOnDeath::class.java
-    override fun onDeath(logicalAttr: ExplodesOnDeath, thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute) {
-        val locationsForExplosion = tacticalMapAlgorithms.getWalkableTileLocationsUpToNAway(n = logicalAttr.radius, origin = thisCharacter.tileLocation, tileIsValidAlgorithm = AlwaysValid(),
+
+    override fun onDeath(thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute) {
+        val locationsForExplosion = tacticalMapAlgorithms.getWalkableTileLocationsUpToNAway(n = this.radius, origin = thisCharacter.tileLocation, tileIsValidAlgorithm = AlwaysValid(),
                 character = thisCharacter)
         val explosions = locationsForExplosion.map{
             ActionManager.SpawnEntityParams(
@@ -44,7 +48,7 @@ class ExplodesOnDeathFunctionalUnitEffect @Inject constructor (val actionManager
         actionManager.spawnEntitiesAtTilesInSequenceForTempAnimation(explosions)
         val charactersAtTiles = tacticalMapState.listOfCharacters.filter{it.tileLocation in locationsForExplosion}
         for (character in charactersAtTiles){
-            damageOperator.damageCharacter(character, logicalAttr.damage, null, thisCharacter)
+            damageOperator.damageCharacter(character, this.damage, null, thisCharacter)
         }
     }
 

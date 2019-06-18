@@ -9,18 +9,8 @@ import javax.inject.Singleton
 
 @Singleton
 @Autoinjectable
-class SlimedUnitFunctionalEffect @Inject constructor(override val eventNotifier: EventNotifier) : FunctionalUnitEffect<SlimedUnitLogicalEffect>{
-    override val id: String = "SLIMED"
-    override val clazz: Class<SlimedUnitLogicalEffect> = SlimedUnitLogicalEffect::class.java
-
-    override fun getMovementModifier(logicalAttr: SlimedUnitLogicalEffect, thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute): Int {
+class SlimedUnitFunctionalEffect @Inject constructor() : FunctionalUnitEffect() {
+    override fun getMovementModifier(thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute): Int {
         return -1 * logicalCharacterAttribute.stacks
-    }
-
-}
-
-class SlimedUnitLogicalEffect() : LogicalUnitEffect{
-    override fun toEntry(): Pair<String, Any> {
-        return "SLIMED" to this
     }
 }

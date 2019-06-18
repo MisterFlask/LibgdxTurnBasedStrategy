@@ -57,7 +57,7 @@ interface RangeStyle{
 
     public class Simple(val range: Int) : RangeStyle{
         override fun getTargetableTiles(characterUsing: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment, sourceSquare: TileLocation?): Collection<TileLocation> {
-            val algorithms = GameModuleInjector.moduleInjector.getInstance(TacticalMapAlgorithms::class.java)
+            val algorithms = GameModuleInjector.generateInstance(TacticalMapAlgorithms::class.java)
             sourceSquare!!
             return algorithms.getTileLocationsUpToNAway(range, sourceSquare, characterUsing)
         }
@@ -78,7 +78,7 @@ interface AreaOfEffect{
     // Affects tiles in a radius around the target.
     public class Aoe(val radius : Int) : AreaOfEffect{
         override fun getTilesAffected(tileLocationTargeted: TileLocation, characterUsing: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment): Collection<TileLocation> {
-            val algorithms = GameModuleInjector.moduleInjector.getInstance(TacticalMapAlgorithms::class.java)
+            val algorithms = GameModuleInjector.generateInstance(TacticalMapAlgorithms::class.java)
             return algorithms.getTileLocationsUpToNAway(radius, tileLocationTargeted, characterUsing)
         }
     }
@@ -145,7 +145,7 @@ class GuardedAttribute(val guardedByCharacter: UUID): LogicalCharacterAttribute(
         imageIcon = SuperimposedTilemaps.toDefaultProtoActor(),
         id = "GUARDED",
         description = {"This character is guarded by ${guardedByCharacter.toCharacter().tacMapUnit.templateName}"},
-        customEffects = mapOf() // TODO
+        customEffects = listOf() // TODO
         ) {
 }
 

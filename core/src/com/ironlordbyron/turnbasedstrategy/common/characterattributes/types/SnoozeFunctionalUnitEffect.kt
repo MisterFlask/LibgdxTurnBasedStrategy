@@ -9,14 +9,9 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionMa
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.UnapplyAttributeEvent
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
+import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import javax.inject.Inject
 import javax.inject.Singleton
-
-public data class SnoozeLogicalUnitEffect(val alertness: Int = 10) : LogicalUnitEffect{
-    override fun toEntry(): Pair<String, Any> {
-        return "SNOOZING" to this
-    }
-}
 
 /**
  * This is the attribute applied to enemy units that are "snoozing" at the beginning of the mission.
@@ -24,34 +19,35 @@ public data class SnoozeLogicalUnitEffect(val alertness: Int = 10) : LogicalUnit
  */
 @Autoinjectable
 @Singleton
-public class SnoozeFunctionalUnitEffect @Inject constructor(
-                                                            override val eventNotifier: EventNotifier,
-                                                            val tacMapAlgorithms: TacticalMapAlgorithms,
-                                                            val actionManager: ActionManager)
-    : FunctionalUnitEffect<SnoozeLogicalUnitEffect>{
-    override val id: String = "SNOOZING"
-    override val clazz: Class<SnoozeLogicalUnitEffect>
-            = SnoozeLogicalUnitEffect::class.java
+public class SnoozeFunctionalUnitEffect @Inject constructor()
+    : FunctionalUnitEffect(){
+
+    val tacMapAlgorithms: TacticalMapAlgorithms by lazy {
+        GameModuleInjector.generateInstance(TacticalMapAlgorithms::class.java)
+    }
+    val actionManager: ActionManager by lazy {
+        GameModuleInjector.generateInstance(ActionManager::class.java)
+    }
     // We remove this class when a character moves too close, OR this unit gets struck
 
-    override fun onBeingStruck(logicalAttr: SnoozeLogicalUnitEffect, thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute) {
+    override fun onBeingStruck(thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute) {
         eventNotifier.notifyListenersOfGameEvent(UnapplyAttributeEvent(thisCharacter, logicalCharacterAttribute))
-        onUnapply(logicalAttr, thisCharacter, logicalCharacterAttribute)
+        onUnapply(thisCharacter, logicalCharacterAttribute)
     }
 
-    override fun onTurnStart(logicalAttr: SnoozeLogicalUnitEffect, thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute) {
-        val charactersInNTiles = tacMapAlgorithms.getCharactersWithinNumberOfTilesOfCharacter(logicalAttr.alertness + logicalCharacterAttribute.stacks, thisCharacter)
+    override fun onTurnStart(thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute) {
+        val charactersInNTiles = tacMapAlgorithms.getCharactersWithinNumberOfTilesOfCharacter(logicalCharacterAttribute.stacks + 10, thisCharacter)
         if (charactersInNTiles.filter{it.playerAlly}.isNotEmpty()){
             println("Removing snoozing attribute")
             eventNotifier.notifyListenersOfGameEvent(UnapplyAttributeEvent(thisCharacter, logicalCharacterAttribute))
-            onUnapply(logicalAttr, thisCharacter, logicalCharacterAttribute)
+            onUnapply(thisCharacter, logicalCharacterAttribute)
         }else{
             // alertness increases every turn!
             logicalCharacterAttribute.stacks ++
         }
     }
 
-    fun onUnapply(logicalAttr: SnoozeLogicalUnitEffect, thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute){
+    fun onUnapply(thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute){
         actionManager.risingText("!!!", thisCharacter.tileLocation, 2f)
     }
 

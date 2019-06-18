@@ -28,7 +28,7 @@ public open class LogicalCharacterAttribute(val name: String,
                                             // See FunctionalUnitEffect for examples
                                             // The key is an ID corresponding to the effect; the value
                                             // is the parameters to be fed in.
-                                            val customEffects: Map<String, Any> = mapOf(),
+                                            val customEffects: Collection<FunctionalUnitEffect> = listOf(),
                                             val stackable: Boolean = false,
                                             var stacks: Int = 1,
                                             val id: String = name,
@@ -40,7 +40,7 @@ public open class LogicalCharacterAttribute(val name: String,
         val _painterlyIcon = ImageIcon(ImageIcon.PAINTERLY_FOLDER, "fire-arrows-1.png")
         val EXPLODES_ON_DEATH = LogicalCharacterAttribute("Explodes On Death",
                 _painterlyIcon,
-                customEffects = mapOf(ExplodesOnDeath(4, 5).toEntry()),
+                customEffects = listOf(ExplodesOnDeathFunctionalUnitEffect(4, 5)),
                 description = {"Explodes on death, dealing 5 damage to everything in a 4-tile radius"})
         val MASTER_ORGAN = LogicalCharacterAttribute("Master Organ",
                 _demonImg.copy(textureId = "3"),
@@ -56,19 +56,19 @@ public open class LogicalCharacterAttribute(val name: String,
         val STUNNED = LogicalCharacterAttribute("Stunned",
                 _demonImg.copy(textureId = "7"),
                 statusEffect = true,
-                customEffects = mapOf(),
+                customEffects = listOf(), //todo
                 description = {"This unit is stunned for the round."})
         val ON_FIRE = LogicalCharacterAttribute("On Fire",
                 _demonImg.copy(textureId = "8"),
                 statusEffect = true,
-                customEffects = hashMapOf(OnFireLogicalEffect(1).toPair()),
+                customEffects = listOf(OnFireFunctionalEffect(1)),
                 description = {"This character is on fire and takes ${it.stacks} damage per turn."},
                 tacticalMapProtoActor = DataDrivenOnePageAnimation.FIRE
         )
         val SLIMED: LogicalCharacterAttribute = LogicalCharacterAttribute("Slimed",
                 _demonImg.copy(textureId = "9"),
                 statusEffect = true,
-                customEffects = hashMapOf(SlimedUnitLogicalEffect().toEntry()),
+                customEffects = listOf(SlimedUnitFunctionalEffect()),
                 description = {"This character's movement rate is reduced by ${it.stacks}}."},
                 stackable = true,
                 stacks = 1
@@ -76,7 +76,7 @@ public open class LogicalCharacterAttribute(val name: String,
         val SNOOZING: LogicalCharacterAttribute = LogicalCharacterAttribute("Unaware",
                 _demonImg.copy(textureId="10"),
                 statusEffect = true,
-                customEffects = hashMapOf(SnoozeLogicalUnitEffect().toEntry()),
+                customEffects = listOf(SnoozeFunctionalUnitEffect()),
                 description = {"This character is unaware."},
                 stackable = false,
                 stacks = 1,

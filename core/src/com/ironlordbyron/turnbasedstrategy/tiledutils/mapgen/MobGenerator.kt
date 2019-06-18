@@ -106,7 +106,7 @@ data class MobGroupTemplate(val name: String,
 }
 
 fun TacMapUnitTemplate.register() : TacMapUnitTemplate{
-    val registrar = GameModuleInjector.moduleInjector.getInstance(MobRegistrar::class.java)
+    val registrar = GameModuleInjector.generateInstance(MobRegistrar::class.java)
     registrar.registerTemplate(this)
     return this
 }

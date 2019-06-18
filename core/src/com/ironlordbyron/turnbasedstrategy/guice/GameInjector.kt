@@ -22,7 +22,7 @@ class GameModule : AbstractModule() {
 
 class GameModuleInjector {
     companion object {
-        public val moduleInjector = Guice.createInjector(GameModule())
+        private val moduleInjector = Guice.createInjector(GameModule())
 
         init{
             moduleInjector.getInstance(TargetingCursorManager::class.java)
