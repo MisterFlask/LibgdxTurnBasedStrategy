@@ -18,8 +18,6 @@ import javax.inject.Singleton
 
 
 
-@Autoinjectable
-@Singleton
 class ExplodesOnDeathFunctionalUnitEffect @Inject constructor (val radius: Int, val damage: Int
 ) : FunctionalUnitEffect(){
     val actionManager: ActionManager by lazy{

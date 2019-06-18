@@ -6,7 +6,11 @@ import com.ironlordbyron.turnbasedstrategy.entrypoints.GdxGameMain;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new GdxGameMain(), config);
+		try {
+			LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+			new LwjglApplication(new GdxGameMain(), config);
+		} catch (Exception e){
+			e.printStackTrace();
+		}
 	}
 }

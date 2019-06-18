@@ -25,8 +25,13 @@ class GameModuleInjector {
         private val moduleInjector = Guice.createInjector(GameModule())
 
         init{
-            moduleInjector.getInstance(TargetingCursorManager::class.java)
-            moduleInjector.getInstance(EagerInitializer::class.java)
+            try {
+                moduleInjector.getInstance(TargetingCursorManager::class.java)
+                moduleInjector.getInstance(EagerInitializer::class.java)
+            }catch(e: Exception){
+                e.printStackTrace()
+                throw e
+            }
         }
 
         fun <T> generateInstance(clazz: Class<T>) : T {
