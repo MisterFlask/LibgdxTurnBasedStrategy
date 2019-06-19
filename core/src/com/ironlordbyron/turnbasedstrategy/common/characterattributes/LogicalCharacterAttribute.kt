@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.common.characterattributes
 
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
+import com.ironlordbyron.turnbasedstrategy.common.abilities.specific.SnoozeFunctionalUnitEffect
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.*
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
@@ -23,14 +24,13 @@ public open class LogicalCharacterAttribute(val name: String,
                                             val shieldsAnotherOrgan: LogicalCharacterAttributeTrigger.ShieldsAnotherOrgan? = null,
                                             val masterOrgan: Boolean = false,
                                             val organ: Boolean = false,
-                                            val description: (LogicalCharacterAttribute) -> String,
+                                            val description: (Int) -> String,
                                             val statusEffect: Boolean = false,
                                             // See FunctionalAttributeEffect for examples
                                             // The key is an ID corresponding to the effect; the value
                                             // is the parameters to be fed in.
                                             val customEffects: Collection<FunctionalAttributeEffect> = listOf(),
                                             val stackable: Boolean = false,
-                                            var stacks: Int = 1,
                                             val id: String = name,
                                             val tacticalMapProtoActor: ProtoActor? = null,
                                             val tacticalMapProtoActorOffsetX: Int = 0,
@@ -62,28 +62,16 @@ public open class LogicalCharacterAttribute(val name: String,
                 _demonImg.copy(textureId = "8"),
                 statusEffect = true,
                 customEffects = listOf(OnFireFunctionalEffect(1)),
-                description = {"This character is on fire and takes ${it.stacks} damage per turn."},
+                description = {stacks -> "This character is on fire and takes ${stacks} damage per turn."},
                 tacticalMapProtoActor = DataDrivenOnePageAnimation.FIRE
         )
         val SLIMED: LogicalCharacterAttribute = LogicalCharacterAttribute("Slimed",
                 _demonImg.copy(textureId = "9"),
                 statusEffect = true,
                 customEffects = listOf(SlimedUnitFunctionalEffect()),
-                description = {"This character's movement rate is reduced by ${it.stacks}}."},
-                stackable = true,
-                stacks = 1
+                description = {stacks -> "This character's movement rate is reduced by ${stacks}}."},
+                stackable = true
         )
-        val SNOOZING: LogicalCharacterAttribute = LogicalCharacterAttribute("Unaware",
-                _demonImg.copy(textureId="10"),
-                statusEffect = true,
-                customEffects = listOf(SnoozeFunctionalUnitEffect()),
-                description = {"This character is unaware."},
-                stackable = false,
-                stacks = 1,
-                tacticalMapProtoActor = DataDrivenOnePageAnimation.SNOOZE_ACTOR,
-                tacticalMapProtoActorOffsetY = 6
-                )
-
 
 
     }
@@ -103,7 +91,7 @@ public class FunctionalCharacterAttributeFactory @Inject constructor (val action
                                                                       val damageOperator: DamageOperator){
 
     fun getFunctionalAttributesForCharacter(logicalCharacter: LogicalCharacter): List<FunctionalCharacterAttribute> {
-        return logicalCharacter.attributes.flatMap{getFunctionalAttributesFromLogicalAttribute(it, logicalCharacter)}
+        return logicalCharacter.getAttributes().flatMap{getFunctionalAttributesFromLogicalAttribute(it.logicalAttribute, logicalCharacter)}
     }
 
     fun getFunctionalAttributesFromLogicalAttribute(logicalAttribute: LogicalCharacterAttribute, character: LogicalCharacter) : Collection<FunctionalCharacterAttribute>{

@@ -60,7 +60,7 @@ public class ShieldsAnotherOrganFunctionalAttribute(val actionManager: ActionMan
     private fun getCharacterWithMasterAttribute(): LogicalCharacter? {
         return tacticalMapState
                 .listOfCharacters
-                .filter { character -> character.attributes.any { it.masterOrgan } }
+                .filter { character -> character.getAttributes().any { it.logicalAttribute.masterOrgan } }
                 .firstOrNull()
     }
 }

@@ -20,5 +20,5 @@ public fun LogicalCharacter.isAdjacentTo(other: LogicalCharacter) : Boolean{
 }
 
 public fun <T: LogicalCharacterAttribute> LogicalCharacter.getAttribute(clazz: KClass<T>) : T{
-    return this.attributes.find { clazz.isInstance(it)} as T
+    return this.getAttributes().find { clazz.isInstance(it.logicalAttribute)}!!.logicalAttribute as T
 }

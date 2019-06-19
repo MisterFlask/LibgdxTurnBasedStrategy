@@ -25,8 +25,6 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
                             val id: UUID = UUID.randomUUID(),
                             var intent: Intent = Intent.None()) {
 
-    val attributes: Collection<LogicalCharacterAttribute>
-        get() = tacMapUnit.attributes
     val abilities: Collection<LogicalAbilityAndEquipment>
         get() = acquireAbilities()
     fun abilitiesForIntent(intent: IntentType): List<LogicalAbilityAndEquipment> {
@@ -46,6 +44,8 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
     val isDead: Boolean
     get() = tacMapUnit.healthLeft < 1
 
+    public data class StacksOfAttribute(val stacks: Int, val logicalAttribute: LogicalCharacterAttribute)
+
     private fun acquireAbilities(): Collection<LogicalAbilityAndEquipment> {
         val abilitiesSansEquipment = tacMapUnit.abilities.map{LogicalAbilityAndEquipment(it, null)}
         val abilitiesWithEquipment = ArrayList<LogicalAbilityAndEquipment>()
@@ -55,6 +55,19 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
             }
         }
         return abilitiesSansEquipment + abilitiesWithEquipment
+    }
+
+    fun getAttributes() : Collection<LogicalCharacter.StacksOfAttribute> {
+        return tacMapUnit.getAttributes()
+    }
+    fun getStacks(logicalAttribute: LogicalCharacterAttribute) : StacksOfAttribute {
+        return tacMapUnit.getAttributes().find{it.logicalAttribute.id == logicalAttribute.id}!!
+    }
+
+
+
+    fun incrementAttribute(logicalAttribute: LogicalCharacterAttribute, stacks: Int){
+        tacMapUnit.incrementAttribute(logicalAttribute, stacks)
     }
 }
 

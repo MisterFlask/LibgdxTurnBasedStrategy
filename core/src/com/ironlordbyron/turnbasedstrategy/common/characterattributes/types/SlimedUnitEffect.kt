@@ -9,7 +9,7 @@ import javax.inject.Singleton
 @Singleton
 @Autoinjectable
 class SlimedUnitFunctionalEffect @Inject constructor() : FunctionalAttributeEffect() {
-    override fun getMovementModifier(thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute): Int {
-        return -1 * logicalCharacterAttribute.stacks
+    override fun getMovementModifier(params: FunctionalEffectParameters): Int {
+        return -1 * params.stacks
     }
 }

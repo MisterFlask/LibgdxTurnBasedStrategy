@@ -4,6 +4,7 @@ import com.ironlordbyron.turnbasedstrategy.common.LogicHooks
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalAttributeEffect
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalEffectParameters
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
@@ -22,9 +23,6 @@ public class AutoInjector(){
         val effectRegistrar = GameModuleInjector.generateInstance(FunctionalEffectRegistrar::class.java)
         for (item in annotated){
             val instance = GameModuleInjector.generateInstance(item)
-            if (instance is FunctionalAttributeEffect){
-                effectRegistrar.registerAttribute(instance)
-            }
             if (instance is EventListener){
                 eventNotifier.registerGuiListener(instance)
             }
@@ -46,9 +44,7 @@ public class AppliesAttributeOnHit() : FunctionalAttributeEffect() {
     }
 
     override fun onStrikingEnemy(
-                                 thisCharacter: LogicalCharacter,
-                                 struckCharacter: LogicalCharacter,
-                                 logicalCharacterAttribute: LogicalCharacterAttribute) {
+                                 params: FunctionalEffectParameters) {
         // TODO: Add generic function for showing off the application of status effects to enemy
         // probably in the ActionManager (should create better name)
         println("Struck enemy effect applied!")
@@ -62,77 +58,64 @@ public class AppliesAttributeOnHit() : FunctionalAttributeEffect() {
 @Autoinjectable
 public class FunctionalEffectRegistrar() {
 
-    val functionalAttributes = ArrayList<FunctionalAttributeEffect>()
-    fun registerAttribute(functionalUnitAttribute: FunctionalAttributeEffect){
-        functionalAttributes.add(functionalUnitAttribute)
-    }
-
-    fun runEffectsOnCharacter(logicalCharacter: LogicalCharacter,
-                              func: (FunctionalAttributeEffect, LogicalCharacterAttribute) -> Unit){
-        val attributes = logicalCharacter.attributes
-        for (attr in attributes.toList()){
-            for (effect in attr.customEffects){
-                func(effect, attr)
+    fun runTurnStartEffects(logicalCharacter: LogicalCharacter){
+        val attributes = logicalCharacter.getAttributes()
+        for (attr in attributes){
+            for (effect in attr.logicalAttribute.customEffects){
+                effect.onTurnStart(FunctionalEffectParameters(logicalCharacter, attr.logicalAttribute, attr.stacks))
             }
         }
     }
 
-    fun runTurnStartEffects(logicalCharacter: LogicalCharacter){
-        runEffectsOnCharacter(logicalCharacter){
-            funcAttr, logicalCharacterAttribute ->
-            funcAttr.onTurnStart(
-                    thisCharacter = logicalCharacter,
-                    logicalCharacterAttribute = logicalCharacterAttribute)
-
-        }
-    }
-
     fun runDeathEffects(logicalCharacter: LogicalCharacter){
-        runEffectsOnCharacter(logicalCharacter){
-            funcAttr,logicalCharacterAttribute->
-            funcAttr.onDeath(
-                        thisCharacter = logicalCharacter,
-                        logicalCharacterAttribute = logicalCharacterAttribute
-                    )
-
+        val attributes = logicalCharacter.getAttributes()
+        for (attr in attributes){
+            for (effect in attr.logicalAttribute.customEffects){
+                effect.onDeath(FunctionalEffectParameters(logicalCharacter, attr.logicalAttribute, attr.stacks))
+            }
         }
     }
 
     fun getMovementModifiers(logicalCharacter: LogicalCharacter) : Int{
-        var movementModifierTotal = 0
-        runEffectsOnCharacter(logicalCharacter){
-            funcAttr, logicalCharacterAttribute ->
-            val movementMod = funcAttr.getMovementModifier(logicalCharacter, logicalCharacterAttribute)
-            movementModifierTotal += movementMod
+        val attributes = logicalCharacter.getAttributes()
+        var movemod = 0
+        for (attr in attributes){
+            for (effect in attr.logicalAttribute.customEffects){
+                movemod+=effect.getMovementModifier(FunctionalEffectParameters(logicalCharacter, attr.logicalAttribute, attr.stacks))
+            }
         }
-        return movementModifierTotal
+        return movemod
     }
 
     /**
      * Runs the effects that occur on application of the given logical character attribute.
      */
     fun runOnApplicationEffects(logicalCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute){
-        runEffectsOnCharacter(logicalCharacter){
-            funcAttr, logicalCharacterAttribute ->
-            funcAttr.afterApplication( logicalCharacter, logicalCharacterAttribute)
+        val attributes = logicalCharacter.getAttributes()
+        for (attr in attributes){
+            for (effect in attr.logicalAttribute.customEffects){
+                effect.afterApplication(FunctionalEffectParameters(logicalCharacter, attr.logicalAttribute, attr.stacks))
+            }
         }
     }
 
     fun canUnitAct(logicalCharacter: LogicalCharacter): Boolean {
-        var stoppedFromActing = false
-        runEffectsOnCharacter(logicalCharacter){
-            funcAttr,  _ ->
-                if (funcAttr.stopsUnitFromActing){
-                    stoppedFromActing = true
-                }
+        val attributes = logicalCharacter.getAttributes()
+        var canUnitAct = true
+        for (attr in attributes){
+            for (effect in attr.logicalAttribute.customEffects){
+                canUnitAct = canUnitAct && !effect.stopsUnitFromActing
+            }
         }
-        return !stoppedFromActing
+        return canUnitAct
     }
 
     fun runAfterStruckCharacterEffects(targetCharacter: LogicalCharacter) {
-        runEffectsOnCharacter(targetCharacter){
-            funcAttr, logicalCharacterAttribute ->
-            funcAttr.onBeingStruck(targetCharacter, logicalCharacterAttribute)
+        val attributes = targetCharacter.getAttributes()
+        for (attr in attributes){
+            for (effect in attr.logicalAttribute.customEffects){
+                effect.onBeingStruck(FunctionalEffectParameters(targetCharacter, attr.logicalAttribute, attr.stacks))
+            }
         }
     }
 }

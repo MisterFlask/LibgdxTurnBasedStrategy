@@ -31,9 +31,9 @@ class ExplodesOnDeathFunctionalUnitEffect @Inject constructor (val radius: Int, 
 
     val protoActor: ProtoActor = DataDrivenOnePageAnimation.EXPLODE
 
-    override fun onDeath(thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute) {
-        val locationsForExplosion = tacticalMapAlgorithms.getWalkableTileLocationsUpToNAway(n = this.radius, origin = thisCharacter.tileLocation, tileIsValidAlgorithm = AlwaysValid(),
-                character = thisCharacter)
+    override fun onDeath(functionalEffectParameters: FunctionalEffectParameters) {
+        val locationsForExplosion = tacticalMapAlgorithms.getWalkableTileLocationsUpToNAway(n = this.radius, origin = functionalEffectParameters.thisCharacter.tileLocation, tileIsValidAlgorithm = AlwaysValid(),
+                character = functionalEffectParameters.thisCharacter)
         val explosions = locationsForExplosion.map{
             ActionManager.SpawnEntityParams(
                     protoActor,
@@ -42,7 +42,7 @@ class ExplodesOnDeathFunctionalUnitEffect @Inject constructor (val radius: Int, 
         actionManager.spawnEntitiesAtTilesInSequenceForTempAnimation(explosions)
         val charactersAtTiles = tacticalMapState.listOfCharacters.filter{it.tileLocation in locationsForExplosion}
         for (character in charactersAtTiles){
-            damageOperator.damageCharacter(character, this.damage, null, thisCharacter)
+            damageOperator.damageCharacter(character, this.damage, null, functionalEffectParameters.thisCharacter)
         }
     }
 

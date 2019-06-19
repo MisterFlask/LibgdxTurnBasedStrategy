@@ -4,6 +4,7 @@ import com.ironlordbyron.turnbasedstrategy.ai.EnemyAiType
 import com.ironlordbyron.turnbasedstrategy.ai.IntentType
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.common.abilities.StandardAbilities
+import com.ironlordbyron.turnbasedstrategy.common.abilities.specific.GuardAbility
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.equipment.EquipmentClass
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
@@ -38,6 +39,35 @@ data class TacMapUnitTemplate(val movesPerTurn: Int,
                               val possibleRandomizedIntents: List<IntentType> = listOf(IntentType.ATTACK, IntentType.MOVE)
 ) {
 
+    private val stacksOfAttribute: HashMap<String, Int> = hashMapOf()
+
+
+    init{
+        for (attribute in attributes){
+            stacksOfAttribute[attribute.id] = 1
+        }
+    }
+    fun getAttributes() : Collection<LogicalCharacter.StacksOfAttribute> {
+        val ret = ArrayList<LogicalCharacter.StacksOfAttribute>()
+        for (attribute in attributes){
+            if (!stacksOfAttribute.containsKey(attribute.id)){
+                stacksOfAttribute[attribute.id] = 1
+            }
+            ret.add(LogicalCharacter.StacksOfAttribute(stacksOfAttribute[attribute.id]!!, attribute))
+        }
+        return ret
+    }
+
+
+    fun incrementAttribute(logicalAttribute: LogicalCharacterAttribute, stacks: Int){
+        if (stacksOfAttribute.containsKey(logicalAttribute.id)){
+            stacksOfAttribute[logicalAttribute.id] =  (stacksOfAttribute[logicalAttribute.id]!! + stacks)
+        } else{
+            attributes.add(logicalAttribute)
+            stacksOfAttribute[logicalAttribute.id] = stacks
+        }
+    }
+
     // defensive copying
     init{
         attributes = ArrayList(attributes)
@@ -50,7 +80,8 @@ data class TacMapUnitTemplate(val movesPerTurn: Int,
         private val _demonImg = SuperimposedTilemaps(tileSetNames = listOf("Demon0","Demon1"), textureId = "2")
         private val _default_sit = SuperimposedTilemaps(tileSetNames = SuperimposedTilemaps.PLAYER_TILE_SETS,
             tileMapWithTextureName = SuperimposedTilemaps.COMMON_TILE_MAP, textureId = "7")
-        val DEFAULT_UNIT = TacMapUnitTemplate(8, _default_sit.copy(textureId = "6"), templateName = "Friendly")
+        val DEFAULT_UNIT = TacMapUnitTemplate(8, _default_sit.copy(textureId = "6"), templateName = "Friendly",
+                abilities = listOf(GuardAbility))
         val DEFAULT_ENEMY_UNIT = TacMapUnitTemplate(8, _demonImg.copy(textureId = "7"), templateName = "Enemy",
                 abilities = listOf(StandardAbilities.SlimeStrike))
         val DEFAULT_ENEMY_UNIT_SPAWNER = TacMapUnitTemplate(0, _demonImg.copy(textureId = "8"), templateName = "EnemySpawner",

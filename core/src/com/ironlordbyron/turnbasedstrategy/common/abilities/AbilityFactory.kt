@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.common.abilities
 
 import com.ironlordbyron.turnbasedstrategy.common.*
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.DamageType
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
@@ -154,11 +155,20 @@ class SimpleAttackAbility() : AbilityTargetingParameters() {
             for (effect in logicalAbilityAndEquipment.ability.abilityEffects) {
                 effect.runAction(sourceCharacter, affectedTile)
             }
+            val damage = logicalAbilityAndEquipment.ability.damage
             // if there's a damage effect, do that (probably just the number-rising thing)
-            if (logicalAbilityAndEquipment.ability.damage != null) {
-                val logicHooksAttemptToDamageResult = logicHooks.attemptToDamage()
+            if (damage != null) {
+                val logicHooksAttemptToDamageResult = logicHooks.attemptToDamage(DamageAttemptInput(
+                        sourceCharacter,
+                        targetCharacter!!,
+                        logicalAbilityAndEquipment,
+                        damage,
+                        DamageType.FIRE //todo
+                ))
                 // so, the GBO shouldn't be responsible for handing damage animations, because those will vary based on attack.
-                damageOperator.damageCharacter(targetCharacter!!, logicalAbilityAndEquipment.ability.damage!!, logicalAbilityAndEquipment, sourceCharacter)
+                damageOperator.damageCharacter(logicHooksAttemptToDamageResult.targetCharacter,
+                        logicHooksAttemptToDamageResult.damage, logicalAbilityAndEquipment,
+                        logicHooksAttemptToDamageResult.sourceCharacter)
             }
         }
     }

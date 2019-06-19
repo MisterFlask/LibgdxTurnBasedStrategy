@@ -2,7 +2,6 @@ package com.ironlordbyron.turnbasedstrategy.common
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.DamageType
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttributeFactory
@@ -99,20 +98,19 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
         functionalEffectRegistrar.runAfterStruckCharacterEffects(targetCharacter)
     }
 
-    fun attemptToDamage(sourceCharacter: LogicalCharacter,
-                        targetCharacter: LogicalCharacter,
-                        sourceAbility: LogicalAbilityAndEquipment,
-                        damage:Int,
-                        damageType: DamageType): DamageAttemptResult {
-        var damageAttemptResult = DamageAttemptResult(damage, targetCharacter, targetCharacter, damage)
-        val effectsToRun = sourceCharacter.attributes.flatMap{it.customEffects}
-        for (effect in effectsToRun){
-            damageAttemptResult = effect.attemptToDamage(damageAttemptResult.originalTarget, sourceAbility, damageType, damage)
+    fun attemptToDamage(damageAttemptInput: DamageAttemptInput): DamageAttemptInput {
+        var damageAttemptResult = damageAttemptInput
+        val victimEffectsToRun = damageAttemptInput.targetCharacter.getAttributes().flatMap{
+            it.logicalAttribute.customEffects}
+        for (effect in victimEffectsToRun){
+            damageAttemptResult = effect.attemptToDamage(damageAttemptResult)
         }
         return damageAttemptResult
     }
 }
-public data class DamageAttemptResult(val originalDamageDealt: Int,
-                                      val originalTarget: LogicalCharacter,
-                                      val newTarget: LogicalCharacter? = null,
-                                      val finalDamageDealt: Int)
+
+public data class DamageAttemptInput(val sourceCharacter: LogicalCharacter,
+                                     val targetCharacter: LogicalCharacter,
+                                     val sourceAbility: LogicalAbilityAndEquipment,
+                                     val damage:Int,
+                                     val damageType: DamageType)

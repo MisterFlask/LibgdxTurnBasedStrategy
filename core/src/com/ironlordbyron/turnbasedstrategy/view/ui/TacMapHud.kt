@@ -165,14 +165,14 @@ class TacMapHud(viewPort: Viewport,
 
     fun displayCharacterAttributes(selectedCharacter: LogicalCharacter): Table{
         val table = Table(DEFAULT_SKIN)
-        for (item in selectedCharacter.attributes){
-            val attrImage = item.imageIcon.toActor(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER.copy(hittable = true))
-            attrImage.addTooltip(RenderingFunction.simple(item.description(item)))
+        for (item in selectedCharacter.getAttributes()){
+            val attrImage = item.logicalAttribute.imageIcon.toActor(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER.copy(hittable = true))
+            attrImage.addTooltip(RenderingFunction.simple(item.logicalAttribute.description(item.stacks)))
             table.add(attrImage.actor).width(iconDimensions.width.toFloat()).height(iconDimensions.height.toFloat())
             if (item.stacks > 1) {
                 table.add(textLabelGenerator.generateLabel("[${item.stacks}]").label)
             }
-            val label = Label(item.name, DEFAULT_SKIN)
+            val label = Label(item.logicalAttribute.name, DEFAULT_SKIN)
             label.setWrap(true)
             table.add(label).width(250f)
             table.row()

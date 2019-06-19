@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen
 
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
+import com.ironlordbyron.turnbasedstrategy.common.abilities.specific.SNOOZING
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
@@ -41,7 +42,7 @@ public class MobGenerator @Inject constructor (val mobRegistrar: MobRegistrar,
         val tilesShuffled = room.tiles.shuffled()
         nextMobGroup.mobGroupTemplate.units.forEachIndexed { index, tacMapUnitTemplate ->
             val logicalCharacterReturned = actionManager.addCharacterToTileFromTemplate(tacMapUnitTemplate, tilesShuffled[index], false)
-            attributeOperator.applyAttribute(logicalCharacterReturned, LogicalCharacterAttribute.SNOOZING)
+            attributeOperator.applyAttribute(logicalCharacterReturned, SNOOZING)
         }
     }
 

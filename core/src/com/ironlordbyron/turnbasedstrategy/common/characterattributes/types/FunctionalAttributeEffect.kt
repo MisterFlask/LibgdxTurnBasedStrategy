@@ -1,7 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.common.characterattributes.types
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ironlordbyron.turnbasedstrategy.common.DamageAttemptResult
+import com.ironlordbyron.turnbasedstrategy.common.DamageAttemptInput
 import com.ironlordbyron.turnbasedstrategy.common.LogicalAbilityAndEquipment
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.DamageType
@@ -17,52 +17,43 @@ public abstract class FunctionalAttributeEffect{
     open val stopsUnitFromActing: Boolean
         get() = false
 
-    open fun getMovementModifier( thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute): Int {
+    open fun getMovementModifier( params: FunctionalEffectParameters): Int {
         return 0
     }
 
-    open fun onBeingStruck(
-                      thisCharacter: LogicalCharacter,
-                      logicalCharacterAttribute: LogicalCharacterAttribute){
+    open fun onBeingStruck(params: FunctionalEffectParameters){
 
     }
 
     /**
      * Function gets run when the unit effect is added (just before, so it won't appear on the character).
      */
-    open fun beforeApplication(thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute){
+    open fun beforeApplication(params: FunctionalEffectParameters){
 
     }
 
     /**
      * Function gets run just after the unit effect is added.
      */
-    open fun afterApplication(thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute){
+    open fun afterApplication(params: FunctionalEffectParameters){
 
     }
 
 
-    open fun onDeath(thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute){
+    open fun onDeath(params: FunctionalEffectParameters){
 
     }
 
-    open fun onStrikingEnemy(thisCharacter: LogicalCharacter, struckCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute){
+    open fun onStrikingEnemy(params: FunctionalEffectParameters){
 
     }
 
-    open fun onTurnStart(thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute){
+    open fun onTurnStart(params: FunctionalEffectParameters){
 
     }
 
-    open fun serializeUnitAttribute(attr: LogicalCharacterAttribute): String? {
-        return ObjectMapper().writeValueAsString(attr)
-    }
-
-    open fun attemptToDamage(thisCharacter: LogicalCharacter,
-                             logicalAbilityAndEquipment: LogicalAbilityAndEquipment,
-                             damageType: DamageType,
-                             damage: Int): DamageAttemptResult{
-        return DamageAttemptResult(damage, thisCharacter, thisCharacter, damage)
+    open fun attemptToDamage(damageAttemptInput: DamageAttemptInput): DamageAttemptInput{
+        return damageAttemptInput
     }
 
     ////////////////////////////////////////////////////////
@@ -76,4 +67,8 @@ public abstract class FunctionalAttributeEffect{
     }
 }
 
+
+data class FunctionalEffectParameters(val thisCharacter: LogicalCharacter,
+                                 val logicalCharacterAttribute: LogicalCharacterAttribute,
+                                 val stacks :Int)
 data class LogicalAttributeRemovedEvent(val attribute: LogicalCharacterAttribute, val thisCharacter: LogicalCharacter) : TacticalGuiEvent()

@@ -43,7 +43,7 @@ public class AttributeOperator @Inject constructor(val logicHooks: LogicHooks,
     }
 
     private fun hasAttribute(logicalCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute): Boolean {
-        return logicalCharacter.attributes.any{it.id == logicalCharacterAttribute.id}
+        return logicalCharacter.getAttributes().any{it.logicalAttribute.id == logicalCharacterAttribute.id}
     }
 
     fun applyAttribute(logicalCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute,
@@ -62,10 +62,12 @@ public class AttributeOperator @Inject constructor(val logicHooks: LogicHooks,
                 floatingTextGenerator.getTemporaryAnimationActorActionPair("${logicalCharacterAttribute.name}", logicalCharacter.tileLocation))
 
         if (hasAttribute(logicalCharacter, logicalCharacterAttribute) and logicalCharacterAttribute.stackable){
-            logicalCharacterAttribute.stacks += 1
+            logicalCharacter.incrementAttribute(logicalCharacterAttribute, stacksToApply)
         }
-        if (!hasAttribute(logicalCharacter,logicalCharacterAttribute)){
+        else if (!hasAttribute(logicalCharacter,logicalCharacterAttribute)){
             logicalCharacter.tacMapUnit.attributes.add(logicalCharacterAttribute)
+        } else{
+            return
         }
         logicHooks.afterApplicationOfAttribute(logicalCharacter, logicalCharacterAttribute,
                 stacksToApply)

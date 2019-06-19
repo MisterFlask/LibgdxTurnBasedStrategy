@@ -3,6 +3,7 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.ironlordbyron.turnbasedstrategy.common.*
+import com.ironlordbyron.turnbasedstrategy.common.abilities.specific.SNOOZING
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.equipment.StandardEquipment
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
@@ -89,7 +90,7 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
             logicHooks.onUnitCreation(char)
         }
         for (char in tacmapState.listOfEnemyCharacters){
-            attributeOperator.applyAttribute(char, LogicalCharacterAttribute.SNOOZING)
+            attributeOperator.applyAttribute(char, SNOOZING)
         }
 
         animationActionQueueProvider.runThroughActionQueue()
