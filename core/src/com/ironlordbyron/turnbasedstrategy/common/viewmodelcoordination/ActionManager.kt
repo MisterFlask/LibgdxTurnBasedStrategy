@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination
 
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.ironlordbyron.turnbasedstrategy.ai.BasicAiDecisions
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
@@ -42,7 +43,9 @@ public class ActionManager @Inject constructor(
         private    val visibleCharacterDataFactory: VisibleCharacterDataFactory,
         private  val specialEffectManager: SpecialEffectManager,
         private  val temporaryAnimationGenerator: TemporaryAnimationGenerator,
-        private   val floatingTextGenerator: FloatingTextGenerator
+        private   val floatingTextGenerator: FloatingTextGenerator,
+        private val basicAiDecisions: BasicAiDecisions
+
 )  {
 
     fun addCharacterToTileFromTemplate(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) : LogicalCharacter {
@@ -177,8 +180,6 @@ public class ActionManager @Inject constructor(
         animationActionQueueProvider.addAction(
                 floatingTextGenerator.getTemporaryAnimationActorActionPair("${text}", tileLocation, scale))
     }
-
-
 
 
 }

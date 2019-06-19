@@ -79,6 +79,7 @@ class GuardedFunctionalEffect(val guardedByCharacter: UUID) : FunctionalAttribut
         if (newTarget.isAdjacentTo(damageAttemptInput.targetCharacter)){
             // TODO: This will result in bugs if there are damage modifiers on original character
             activatedThisTurn = true
+            actionManager.risingText("Damage redirected!", damageAttemptInput.targetCharacter.tileLocation)
             return damageAttemptInput.copy(targetCharacter = newTarget)
         }else{
             return super.attemptToDamage(damageAttemptInput)

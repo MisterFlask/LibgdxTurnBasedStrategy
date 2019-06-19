@@ -1,12 +1,9 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
 import com.badlogic.gdx.scenes.scene2d.Action
-import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.ironlordbyron.turnbasedstrategy.ai.PathfinderFactory
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttributeFactory
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.TransientEntityTracker
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.VisibleCharacterDataFactory
 import com.ironlordbyron.turnbasedstrategy.controller.*
 import com.ironlordbyron.turnbasedstrategy.view.CharacterSpriteUtils
@@ -93,6 +90,11 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
         val result = getCharacterMovementActorActionPair(toTile, character)
         boardState.moveCharacterToTile(character, toTile)
         animationActionQueueProvider.addActions(result)
+
+        if (wasPlayerInitiated){
+            logicHooks.playerMovedCharacter(character)
+        }
+
         if (character.endedTurn){
             animationActionQueueProvider.addAction(SpriteColorActorAction.build(character, SpriteColorActorAction.DIM_COLOR))
         }

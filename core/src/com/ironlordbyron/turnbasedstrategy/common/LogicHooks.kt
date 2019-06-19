@@ -2,10 +2,14 @@ package com.ironlordbyron.turnbasedstrategy.common
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import com.ironlordbyron.turnbasedstrategy.ai.BasicAiDecisions
+import com.ironlordbyron.turnbasedstrategy.ai.Intent
+import com.ironlordbyron.turnbasedstrategy.ai.IntentType
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.DamageType
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttributeFactory
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.UnitWasStruckEvent
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
@@ -27,7 +31,9 @@ import com.ironlordbyron.turnbasedstrategy.entrypoints.FunctionalEffectRegistrar
 class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEffectRegistrar,
                                      val functionalCharacterAttributeFactory: FunctionalCharacterAttributeFactory,
                                      val tacticalMapState: TacticalMapState,
-                                     val eventNotifier: EventNotifier) : GameEventListener {
+                                     val eventNotifier: EventNotifier,
+                                     val basicAiDecisions: BasicAiDecisions,
+                                     val actionManager: ActionManager) : GameEventListener {
     override fun consumeGameEvent(tacticalGameEvent: TacticalGameEvent) {
         when(tacticalGameEvent){
             is UnitWasStruckEvent -> onCharacterWasStruck(tacticalGameEvent.targetCharacter)
@@ -106,6 +112,19 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
             damageAttemptResult = effect.attemptToDamage(damageAttemptResult)
         }
         return damageAttemptResult
+    }
+
+    fun playerMovedCharacter(playerCharacter: LogicalCharacter){
+        for (character in tacticalMapState.listOfEnemyCharacters){
+            val intent = character.intent
+            if (intent is Intent.Attack && intent.logicalCharacterUuid == playerCharacter.id){
+                if(!basicAiDecisions.isIntentStillPossible(character)){
+                    actionManager.risingText("?!?", character.tileLocation)
+                    val newIntent = basicAiDecisions.formulateIntent(character)
+                    character.intent = newIntent
+                }
+            }
+        }
     }
 }
 

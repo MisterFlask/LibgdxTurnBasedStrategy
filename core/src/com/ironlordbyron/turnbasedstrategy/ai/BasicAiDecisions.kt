@@ -4,6 +4,7 @@ import com.ironlordbyron.turnbasedstrategy.Logging
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.randomElement
+import com.ironlordbyron.turnbasedstrategy.toCharacter
 import javax.inject.Inject
 
 public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMapAlgorithms,
@@ -13,13 +14,20 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
 
 
     public fun formulateIntent(thisCharacter: LogicalCharacter) : Intent{
-         return getAttackIntentForThisTurn(thisCharacter)
+        if (thisCharacter.tacMapUnit.enemyAiType == EnemyAiType.BASIC){
+            return getAttackIntentForThisTurn(thisCharacter)
+        }
+        return Intent.Other()
     }
 
     public fun isIntentStillPossible(thisCharacter: LogicalCharacter) : Boolean{
-        when(thisCharacter.intent){
+        val intent = thisCharacter.intent
+        when(intent){
             is Intent.Attack -> {
-                return getAttackIntentForThisTurn(thisCharacter) is Intent.Attack
+                return canTargetCharacterWithAbility(
+                        thisCharacter,
+                        intent.logicalCharacterUuid.toCharacter(),
+                        intent.intentType)
             }
             else -> {
                 val abilitiesByIntent = thisCharacter.abilitiesForIntent(thisCharacter.intent.intentType)
@@ -123,6 +131,9 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
             val plannedAction = getAbilityUsagePairedWithRequiredMove(thisCharacter, abilityAndEquipment)
                     .first{it is AiPlannedAction.AbilityUsage} as AiPlannedAction.AbilityUsage
             val targetedCharacter = tacticalMapState.characterAt(plannedAction.squareToTarget)
+            if (targetedCharacter == null){
+                throw Exception("Attempted to perform $plannedAction but could not find character at ${plannedAction.squareToTarget}")
+            }
             return Intent.Attack(targetedCharacter!!.id)
         }
         val first = thisCharacter.abilitiesForIntent(IntentType.ATTACK).firstOrNull()

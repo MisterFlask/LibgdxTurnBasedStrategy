@@ -64,8 +64,6 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
         return tacMapUnit.getAttributes().find{it.logicalAttribute.id == logicalAttribute.id}!!
     }
 
-
-
     fun incrementAttribute(logicalAttribute: LogicalCharacterAttribute, stacks: Int){
         tacMapUnit.incrementAttribute(logicalAttribute, stacks)
     }

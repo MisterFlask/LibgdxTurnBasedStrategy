@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
+import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
 import tiled.core.Tile
@@ -51,9 +52,12 @@ public data class ActionResult(val logicalAbilityAndEquipment: LogicalAbilityAnd
 
 @Singleton
 class TacticalMapAlgorithms @Inject constructor(override val logicalTileTracker: LogicalTileTracker,
-                                                override val tacticalMapState: TacticalMapState,
-                                                val logicHooks: LogicHooks)
+                                                override val tacticalMapState: TacticalMapState)
     : CanWalkOnTile(logicalTileTracker, tacticalMapState) {
+
+    val logicHooks: LogicHooks by lazy{
+        GameModuleInjector.generateInstance(LogicHooks::class.java)
+    }
 
     public fun getWhereCharacterCanMoveTo(character: LogicalCharacter): Collection<TileLocation> {
         val movesLeft = logicHooks.calculateAllowedUnitMovement(character)
