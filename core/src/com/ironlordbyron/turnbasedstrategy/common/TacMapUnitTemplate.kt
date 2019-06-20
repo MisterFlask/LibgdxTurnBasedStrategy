@@ -8,7 +8,6 @@ import com.ironlordbyron.turnbasedstrategy.common.abilities.specific.GuardAbilit
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.equipment.EquipmentClass
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
-import com.ironlordbyron.turnbasedstrategy.common.equipment.StandardEquipment
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TerrainType
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.register
@@ -100,7 +99,8 @@ data class TacMapUnitTemplate(val movesPerTurn: Int,
                 enemyAiType = EnemyAiType.IMMOBILE_UNIT,
                 startingAttributes = listOf(LogicalCharacterAttribute.SHIELDS_ANOTHER_ORGAN,
                         LogicalCharacterAttribute.EXPLODES_ON_DEATH))
-
+        val RANGED_ENEMY = TacMapUnitTemplate(3, _demonImg.copy(textureId = "7"), templateName = "Enemy",
+                abilities = listOf(StandardAbilities.RangedAttack))
         val Dict = mapOf(TacMapUnitTemplateKeys.DEFAULT_UNIT to DEFAULT_UNIT,
                 TacMapUnitTemplateKeys.DEFAULT_ENEMY_UNIT to DEFAULT_ENEMY_UNIT,
                 TacMapUnitTemplateKeys.DEFAULT_ENEMY_UNIT_SPAWNER to DEFAULT_ENEMY_UNIT_SPAWNER)

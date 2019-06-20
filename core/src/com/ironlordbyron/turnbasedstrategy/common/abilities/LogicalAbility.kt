@@ -6,14 +6,8 @@ import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeOperator
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
-import com.ironlordbyron.turnbasedstrategy.toCharacter
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
-import java.util.*
 
 public class LogicalAbility(val name: String,
                             val speed: AbilitySpeed,
@@ -55,11 +49,12 @@ interface CustomAbilityAi {
 interface RangeStyle{
     fun getTargetableTiles(characterUsing: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment, sourceSquare: TileLocation?): Collection<TileLocation>
 
-    public class Simple(val range: Int) : RangeStyle{
+    public class Simple(val maxRange: Int, val minRange: Int = 1) : RangeStyle{
         override fun getTargetableTiles(characterUsing: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment, sourceSquare: TileLocation?): Collection<TileLocation> {
             val algorithms = GameModuleInjector.generateInstance(TacticalMapAlgorithms::class.java)
             sourceSquare!!
-            return algorithms.getTileLocationsUpToNAway(range, sourceSquare, characterUsing)
+            return algorithms.getTileLocationsUpToNAway(maxRange, sourceSquare, characterUsing)
+                    .filter{it.distanceTo(characterUsing.tileLocation) >= minRange}
         }
     }
 }

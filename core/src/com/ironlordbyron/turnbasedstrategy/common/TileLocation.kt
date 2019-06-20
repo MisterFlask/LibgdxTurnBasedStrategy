@@ -16,3 +16,7 @@ private val gameState: TacticalMapState by lazy {
 public fun TileLocation.getCharacter() : LogicalCharacter? {
     return gameState.characterAt(this)
 }
+
+public fun TileLocation.distanceTo(tileLocation: TileLocation): Int {
+    return Math.abs(this.x - tileLocation.x) + Math.abs(this.y - tileLocation.y)
+}

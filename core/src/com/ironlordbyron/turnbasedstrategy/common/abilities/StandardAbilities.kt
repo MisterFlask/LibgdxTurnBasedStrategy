@@ -51,10 +51,11 @@ object StandardAbilities{
             landingActor = DataDrivenOnePageAnimation.CLAWSLASH,
             projectileActor = null
             )
-    val RangedAttackThatLightsStuffOnFire = LogicalAbility("Torch",
+    val RangedAttack = LogicalAbility("Torch",
             AbilitySpeed.ENDS_TURN,
             damage = 1,
             range = 5,
+            rangeStyle = RangeStyle.Simple(5, 2),
             description = "A ranged attack that lights stuff on fire.  Ends the turn.",
             abilityClass = AbilityClass.TARGETED_ATTACK_ABILITY,
             requiredTargetType = RequiredTargetType.ENEMY_ONLY,

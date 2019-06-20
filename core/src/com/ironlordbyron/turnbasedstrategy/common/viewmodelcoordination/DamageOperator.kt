@@ -43,7 +43,7 @@ class DamageOperator @Inject constructor(val characterModificationAnimationGener
                 }
             }
         }
-        Logging.DebugCombatLogic("Attack from " + sourceCharacter?.tileLocation + " to " + targetCharacter.tileLocation + "; attack range = " + abilityAndEquipment?.ability?.range)
+        Logging.DebugCombatLogic("Attack from " + sourceCharacter?.tileLocation + " to " + targetCharacter.tileLocation + "; attack maxRange = " + abilityAndEquipment?.ability?.range)
         val struckEvent = UnitWasStruckEvent(targetCharacter, damageAmount, abilityAndEquipment)
         eventNotifier.notifyListenersOfGameEvent(struckEvent)
     }
