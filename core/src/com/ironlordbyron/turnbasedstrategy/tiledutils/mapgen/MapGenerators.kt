@@ -72,7 +72,8 @@ data class ScenarioParams(val sourceMapName: String,
                           val mobGenerationParams: MobGenerationParams? = null)
 enum class MapGeneratorType{
     NONE,
-    PARTIAL_PROCEDURAL
+    PARTIAL_PROCEDURAL,
+    OUTDOORS_LARGE
 }
 
 /**
@@ -80,7 +81,8 @@ enum class MapGeneratorType{
  */
 public class MapGenerationApplicator @Inject constructor(val tiledMapInterpreter: TiledMapInterpreter,
                                                          val partiallyProceduralMapGenerator: PartiallyProceduralDungeonGenerator,
-                                                         val tileMapProvider: TileMapProvider){
+                                                         val tileMapProvider: TileMapProvider,
+                                                         val outdoorMapGenerator: OutdoorsMapGenerator){
     fun generateMapForScenario(scenarioParams: ScenarioParams){
         when(scenarioParams.mapGeneratorType){
              MapGeneratorType.NONE -> {
@@ -89,6 +91,19 @@ public class MapGenerationApplicator @Inject constructor(val tiledMapInterpreter
             MapGeneratorType.PARTIAL_PROCEDURAL -> {
                 partiallyProceduralMapGenerator.generateDungeon(scenarioParams)
             }
+            MapGeneratorType.OUTDOORS_LARGE -> {
+                outdoorMapGenerator.generateMap(scenarioParams)
+            }
+        }
+    }
+}
+
+class OutdoorsMapGenerator @Inject constructor(val tiledMapInterpreter: TiledMapInterpreter,
+                                               val tileMapProvider: TileMapProvider) {
+    fun generateMap(scenarioParams: ScenarioParams){
+
+        for (i in 0 .. 10){
+
         }
     }
 }

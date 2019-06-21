@@ -11,7 +11,6 @@ import com.google.inject.assistedinject.Assisted
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
-import com.ironlordbyron.turnbasedstrategy.controller.TacticalMapController
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TempBattleStarter
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter

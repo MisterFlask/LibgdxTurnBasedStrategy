@@ -18,17 +18,17 @@ import javax.inject.Singleton
 
 @Singleton
 class TiledMapStage(
-                    val tileMapClickListenerActorFactory: TileMapClickListenerActorFactory,
-                    val tileMapClickListenerFactory: TileMapClickListenerFactory,
-                    @Assisted val orthographicCamera: OrthographicCamera,
-                    val logicalTileTracker: LogicalTileTracker,
-                    val battleStarter: TempBattleStarter,
-                    val spriteActorFactory: SpriteActorFactory,
-                    val tileMapProvider: TileMapProvider,
-                    val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider,
-                    val tiledMapInterpreter: TiledMapInterpreter,
-                    val tiledMapProvider: TileMapProvider,
-                    val eventNotifier: EventNotifier) : Stage(), InputProcessor {
+        val tileMapClickListenerActorFactory: TileMapClickListenerActorFactory,
+        val tileMapClickListenerFactory: TileMapClickListenerFactory,
+        @Assisted val orthographicCamera: OrthographicCamera,
+        val logicalTileTracker: LogicalTileTracker,
+        val battleStarter: TempBattleStarter,
+        val spriteActorFactory: SpriteActorFactory,
+        val tileMapProvider: TileMapProvider,
+        val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider,
+        val tiledMapInterpreter: TiledMapInterpreter,
+        val tiledMapProvider: TileMapProvider,
+        val eventNotifier: EventNotifier) : Stage(), InputProcessor {
     init {
         tacticalTiledMapStageProvider.tiledMapStage = this
     }

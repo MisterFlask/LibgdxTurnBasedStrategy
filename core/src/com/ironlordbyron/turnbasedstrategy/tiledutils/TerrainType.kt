@@ -5,5 +5,7 @@ enum class TerrainType{
     MOUNTAIN,
     GRASS,
     WALL,
-    DOOR
+    DOOR,
+    WATER,
+    FOREST
 }

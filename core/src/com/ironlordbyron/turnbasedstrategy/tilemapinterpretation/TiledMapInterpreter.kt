@@ -15,7 +15,6 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
                                                      val tileMapProvider: TileMapProvider){
 
 
-
     fun getPossiblePlayerSpawnPositions(map: TiledMap): Collection<TileLocation> {
         return map.getTilesInObjectByType("PLAYER_SPAWN", false).flatMap{it -> it}
     }
@@ -57,19 +56,32 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
         logicalTileTracker.tileEntities.addAll(entities)
     }
 
+    private fun isWater(tileMap: TiledMap, tileLocation: TileLocation): Boolean {
+        val layersAtLocation = getAllTilesAtXY(tileMap, tileLocation)
+        if (layersAtLocation.getCellByLayer(TileLayer.BASE)?.tiledCell?.tile == null){
+            return true
+        }
+        return false
+    }
+
     private fun hasProp(cell: TiledMapTileLayer.Cell, doorStr: String) =
             cell?.tile?.properties?.get(doorStr) != null
 
     fun retrieveTerrainType(tileMap: TiledMap, tileLocation: TileLocation) : TerrainType{
         val layersAtLocation = getAllTilesAtXY(tileMap, tileLocation)
         val atLayer = layersAtLocation.getCellByLayer(TileLayer.FEATURE)
+        if (isWater(tileMap, tileLocation)){
+            return TerrainType.WATER
+        }
         if (atLayer != null){
             val isMountain = atLayer.tiledCell.tile.properties["mountain"] as Boolean
             if (isMountain){
                 return TerrainType.MOUNTAIN
             }
             val isTrees = atLayer.tiledCell.tile.properties["trees"] as Boolean
-
+            if (isTrees){
+                return TerrainType.FOREST
+            }
         }
         return TerrainType.GRASS
     }

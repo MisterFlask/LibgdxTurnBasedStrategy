@@ -10,32 +10,32 @@ import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 
 public class LogicalAbility(val name: String,
-                            val speed: AbilitySpeed,
-                            val range: Int,
-                            val attackSprite: ProtoActor? = null,
-                            val missionLimit: Int? = null,
-                            val damage: Int? = null,
-                            val description: String? = null,
-                            val abilityClass: AbilityClass,
-                            val allowsTargetingSelf: Boolean = false,
-                            val requiredTargetType: RequiredTargetType = RequiredTargetType.ANY,
-                            val abilityEffects: Collection<LogicalAbilityEffect> = listOf(),
+                                 val speed: AbilitySpeed,
+                                 val range: Int,
+                                 val attackSprite: ProtoActor? = null,
+                                 val missionLimit: Int? = null,
+                                 val damage: Int? = null,
+                                 val description: String? = null,
+                                 val abilityClass: AbilityClass,
+                                 val allowsTargetingSelf: Boolean = false,
+                                 val requiredTargetType: RequiredTargetType = RequiredTargetType.ANY,
+                                 val abilityEffects: Collection<LogicalAbilityEffect> = listOf(),
                             // if this is non-null, there will be a projectile animation.
-                            val projectileActor: ProtoActor?,
+                                 val projectileActor: ProtoActor?,
                             // this is the actor that is spawned when the projectile lands. (Like: a fireball projectile
                             // could result in a langingActor being an explosion.
                             // a projectileActor is NOT required for this to function.
-                            val landingActor: ProtoActor?,
+                                 val landingActor: ProtoActor?,
                             // this is specifically for contextual abilities, like opening doors.
-                            val requirement: ContextualAbilityRequirement? = null,
-                            val inflictsStatusAffect: Collection<LogicalCharacterAttribute> = listOf(),
-                            val areaOfEffect: AreaOfEffect = AreaOfEffect.One(),
-                            val cooldownTurns: Int? = null,
-                            val rangeStyle: RangeStyle = RangeStyle.Simple(range),
-                            val intentType: IntentType = IntentType.ATTACK,
-                            val requiresTarget: Boolean = true,
-                            val abilityTargetingParameters: AbilityTargetingParameters = SimpleAttackAbility(),
-                            val customAbilityAi: CustomAbilityAi? = null){
+                                 val requirement: ContextualAbilityRequirement? = null,
+                                 val inflictsStatusAffect: Collection<LogicalCharacterAttribute> = listOf(),
+                                 val areaOfEffect: AreaOfEffect = AreaOfEffect.One(),
+                                 val cooldownTurns: Int? = null,
+                                 val rangeStyle: RangeStyle = RangeStyle.Simple(range),
+                                 val intentType: IntentType = IntentType.ATTACK,
+                                 val requiresTarget: Boolean = true,
+                                 val abilityTargetingParameters: AbilityTargetingParameters = SimpleAttackAbility(),
+                                 val customAbilityAi: CustomAbilityAi? = null){
 
 }
 
