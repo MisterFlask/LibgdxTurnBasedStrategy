@@ -13,6 +13,7 @@ fun MasterOrgan() : TacMapUnitTemplate{
             startingAttributes = listOf(LogicalCharacterAttribute.MASTER_ORGAN,
                     LogicalCharacterAttribute.EXPLODES_ON_DEATH))
 }
+
 fun ExplodesOnDeath(): LogicalCharacterAttribute {
     return LogicalCharacterAttribute("Explodes On Death",
             LogicalCharacterAttribute._painterlyIcon,

@@ -65,6 +65,10 @@ public abstract class FunctionalAttributeEffect{
         thisCharacter.tacMapUnit.attributes.removeIf { it.id == logicalAttributeId }
         eventNotifier.notifyListenersOfGuiEvent(LogicalAttributeRemovedEvent(attrRemoved, thisCharacter))
     }
+
+    open fun onInitialization(params: FunctionalEffectParameters){
+
+    }
 }
 
 

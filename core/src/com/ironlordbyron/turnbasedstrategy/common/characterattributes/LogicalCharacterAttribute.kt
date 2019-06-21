@@ -7,6 +7,7 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOp
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.TransientEntityTracker
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.ExplodesOnDeathFunctionalUnitEffect
+import com.ironlordbyron.turnbasedstrategy.tacmapunits.ShieldsAnotherOrganFunctionalAttribute
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
@@ -21,7 +22,6 @@ import javax.inject.Inject
  */
 public open class LogicalCharacterAttribute(val name: String,
                                             val imageIcon: ProtoActor,
-                                            val shieldsAnotherOrgan: LogicalCharacterAttributeTrigger.ShieldsAnotherOrgan? = null,
                                             val masterOrgan: Boolean = false,
                                             val organ: Boolean = false,
                                             val description: (Int) -> String,
@@ -48,7 +48,7 @@ public open class LogicalCharacterAttribute(val name: String,
                 description = {"Master organ.  When destroyed, the fortress will begin sinking back into Hell."})
         val SHIELDS_ANOTHER_ORGAN = LogicalCharacterAttribute("Shields Organ",
                 _demonImg.copy(textureId = "4"),
-                shieldsAnotherOrgan = LogicalCharacterAttributeTrigger.ShieldsAnotherOrgan(),
+                customEffects = listOf(ShieldsAnotherOrganFunctionalAttribute()),
                 description = {"Shields an organ from all damage."})
         val UPGRADES_TROOPS = LogicalCharacterAttribute("Upgrades Troops",
                 _demonImg.copy(textureId = "5"),
@@ -82,43 +82,6 @@ public data class DamageType(val name: String, val icon: ProtoActor){
         val FIRE = DamageType("fire", DataDrivenOnePageAnimation.EXPLODE)
     }
 }
-
-@Deprecated("Use logicHooks instead")
-public class FunctionalCharacterAttributeFactory @Inject constructor (val actionManager: ActionManager,
-                                                                      val tacticalMapState: TacticalMapState,
-                                                                      val specialEffectManager: SpecialEffectManager,
-                                                                      val transientEntityTracker: TransientEntityTracker,
-                                                                      val damageOperator: DamageOperator){
-
-    fun getFunctionalAttributesForCharacter(logicalCharacter: LogicalCharacter): List<FunctionalCharacterAttribute> {
-        return logicalCharacter.getAttributes().flatMap{getFunctionalAttributesFromLogicalAttribute(it.logicalAttribute, logicalCharacter)}
-    }
-
-    fun getFunctionalAttributesFromLogicalAttribute(logicalAttribute: LogicalCharacterAttribute, character: LogicalCharacter) : Collection<FunctionalCharacterAttribute>{
-        val attrsList = ArrayList<FunctionalCharacterAttribute>()
-        if (logicalAttribute.shieldsAnotherOrgan != null){
-            val funcAttr = ShieldsAnotherOrganFunctionalAttribute(actionManager, tacticalMapState, specialEffectManager, logicalAttribute,
-                    transientEntityTracker)
-            attrsList.add(funcAttr)
-        }
-        return attrsList
-    }
-
-
-}
-
-@Deprecated("Use custom attributes instead")
-public interface LogicalCharacterAttributeTrigger{
-    // The below are Organ abilities
-
-    data class ShieldsAnotherOrgan(var characterShieldedId: UUID? = null,
-                                   var _characterShieldActorId: UUID? = null,// transient attribute
-                                   var _lineActorId: UUID? = null // transient attribute
-    ): LogicalCharacterAttributeTrigger
-    class MasterOrgan: LogicalCharacterAttributeTrigger
-    class Organ: LogicalCharacterAttributeTrigger
-}
-
 
 
 

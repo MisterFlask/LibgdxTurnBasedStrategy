@@ -6,9 +6,8 @@ import com.ironlordbyron.turnbasedstrategy.ai.BasicAiDecisions
 import com.ironlordbyron.turnbasedstrategy.ai.Intent
 import com.ironlordbyron.turnbasedstrategy.ai.IntentType
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.DamageType
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttribute
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttributeFactory
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalEffectParameters
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.UnitWasStruckEvent
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
@@ -29,7 +28,6 @@ import com.ironlordbyron.turnbasedstrategy.entrypoints.FunctionalEffectRegistrar
  */
 @Singleton
 class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEffectRegistrar,
-                                     val functionalCharacterAttributeFactory: FunctionalCharacterAttributeFactory,
                                      val tacticalMapState: TacticalMapState,
                                      val eventNotifier: EventNotifier,
                                      val basicAiDecisions: BasicAiDecisions,
@@ -44,15 +42,8 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
         eventNotifier.registerGameListener(this)
     }
 
-    fun getAttributes(thisCharacter: LogicalCharacter): List<FunctionalCharacterAttribute> {
-        val functions = functionalCharacterAttributeFactory.getFunctionalAttributesForCharacter(thisCharacter)
-        return functions
-    }
-
     fun onDeath(thisCharacter: LogicalCharacter){
         functionalEffectRegistrar.runDeathEffects(thisCharacter)
-        val attrs = getAttributes(thisCharacter)
-        attrs.forEach{it.onDeath(thisCharacter)}
     }
 
 
@@ -77,13 +68,16 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
 
     fun onCharacterTurnStart(thisCharacter: LogicalCharacter){
         functionalEffectRegistrar.runTurnStartEffects(thisCharacter)
-        val attrs = getAttributes(thisCharacter)
-        attrs.forEach{it.onCharacterTurnStart(thisCharacter)}
     }
 
     fun onUnitCreation(thisCharacter: LogicalCharacter){
-        val attrs = getAttributes(thisCharacter)
-        attrs.forEach{it.onInitialization(thisCharacter)}
+        thisCharacter.getAttributes().forEach {
+            logicalAttribute -> logicalAttribute.logicalAttribute.customEffects.forEach{
+                customEffect -> customEffect.onInitialization(FunctionalEffectParameters(thisCharacter,
+                logicalAttribute.logicalAttribute,
+                logicalAttribute.stacks))
+            }
+        }
     }
 
     fun onTacMapInitialization(){
