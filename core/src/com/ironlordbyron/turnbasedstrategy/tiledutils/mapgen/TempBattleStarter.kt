@@ -10,7 +10,9 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.Attribut
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.WeakMinionSpawner
 import com.ironlordbyron.turnbasedstrategy.tiledutils.BoundingRectangle
+import com.ironlordbyron.turnbasedstrategy.tiledutils.TileLayer
 import com.ironlordbyron.turnbasedstrategy.tiledutils.getBoundsOfTile
+import com.ironlordbyron.turnbasedstrategy.tiledutils.getTileLayer
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -23,6 +25,13 @@ public enum class BoundingBoxType{
 @Singleton
 class TileMapProvider {
     lateinit var tiledMap: TiledMap
+
+    fun getWidth(): Int{
+        return tiledMap.getTileLayer(TileLayer.BASE).width
+    }
+    fun getHeight():Int{
+        return tiledMap.getTileLayer(TileLayer.BASE).height
+    }
 
     fun getBoundingBoxOfTile(tileLocation: TileLocation, boundingBoxType: BoundingBoxType = BoundingBoxType.WHOLE_TILE): BoundingRectangle {
         val boundingRectangle = (tiledMap.layers[0] as TiledMapTileLayer).getBoundsOfTile(tileLocation)

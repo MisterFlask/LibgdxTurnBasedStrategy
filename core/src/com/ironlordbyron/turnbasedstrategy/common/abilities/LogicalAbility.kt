@@ -7,6 +7,9 @@ import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCha
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTile
+import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 
 public class LogicalAbility(val name: String,
@@ -48,6 +51,31 @@ interface CustomAbilityAi {
 
 interface RangeStyle{
     fun getTargetableTiles(characterUsing: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment, sourceSquare: TileLocation?): Collection<TileLocation>
+
+    public class Linear(val maxRange: Int?) : RangeStyle{
+        val tacticalMapState: TacticalMapState by lazy{
+            GameModuleInjector.generateInstance(TacticalMapState::class.java)
+        }
+        val tileMapProvider: TileMapProvider by lazy{
+            GameModuleInjector.generateInstance(TileMapProvider::class.java)
+        }
+        override fun getTargetableTiles(characterUsing: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment, sourceSquare: TileLocation?): Collection<TileLocation> {
+            val tiles = ArrayList<TileLocation>()
+            for (x in 0 .. tileMapProvider.getWidth()){
+                for (y in 0 .. tileMapProvider.getHeight()){
+                    val location = TileLocation(x,y)
+                    if (maxRange == null){
+                        tiles.add(location)
+                    } else{
+                        if (maxRange < location.distanceTo(characterUsing.tileLocation)){
+                            tiles.add(location)
+                        }
+                    }
+                }
+            }
+            return tiles
+        }
+    }
 
     public class Simple(val maxRange: Int, val minRange: Int = 1) : RangeStyle{
         override fun getTargetableTiles(characterUsing: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment, sourceSquare: TileLocation?): Collection<TileLocation> {
