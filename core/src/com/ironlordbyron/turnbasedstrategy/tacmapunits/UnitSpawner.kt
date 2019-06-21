@@ -5,10 +5,12 @@ import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.abilities.*
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
+import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 
 
+@SpawnableUnitTemplate("WEAK_MINION_SPAWNER")
 public fun WeakMinionSpawner()
     : TacMapUnitTemplate
 {

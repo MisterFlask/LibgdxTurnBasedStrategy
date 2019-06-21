@@ -4,10 +4,12 @@ import com.ironlordbyron.turnbasedstrategy.ai.EnemyAiType
 import com.ironlordbyron.turnbasedstrategy.ai.IntentType
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.abilities.*
+import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 
 
+@SpawnableUnitTemplate("PRISM_FLOWER")
 public fun PrismFlower(): TacMapUnitTemplate{
     return TacMapUnitTemplate(
             0,

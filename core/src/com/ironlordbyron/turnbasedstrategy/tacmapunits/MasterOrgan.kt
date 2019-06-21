@@ -3,8 +3,9 @@ package com.ironlordbyron.turnbasedstrategy.tacmapunits
 import com.ironlordbyron.turnbasedstrategy.ai.EnemyAiType
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
+import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplate
 
-
+@SpawnableUnitTemplate("MASTER_ORGAN")
 fun MasterOrgan() : TacMapUnitTemplate{
     return TacMapUnitTemplate(0,
             TacMapUnitTemplate._demonImg.copy(textureId = "9"),

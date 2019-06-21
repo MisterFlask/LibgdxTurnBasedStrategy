@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.entrypoints
 
+import com.ironlordbyron.turnbasedstrategy.Logging
 import com.ironlordbyron.turnbasedstrategy.common.LogicHooks
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
@@ -12,6 +13,9 @@ import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import org.reflections.Reflections
+import org.reflections.scanners.MethodAnnotationsScanner
+import org.reflections.util.ClasspathHelper
+import org.reflections.util.ConfigurationBuilder
 import java.lang.reflect.Method
 import javax.inject.Singleton
 
@@ -57,9 +61,9 @@ public class AppliesAttributeOnHit() : FunctionalAttributeEffect() {
 
 annotation class SpawnableUnitTemplate(val id: String)
 
-data class UnitTemplateSpawner(val obj: Any, val method: Method, val id: String){
+data class UnitTemplateSpawner(val obj: Any?, val method: Method, val id: String){
     fun spawn() : TacMapUnitTemplate{
-        return method.invoke(obj) as TacMapUnitTemplate
+        return method.invoke(null) as TacMapUnitTemplate
     }
 }
 
@@ -72,9 +76,16 @@ public class UnitTemplateRegistrar(){
         return unitTemplates.find{it.id == id}?.spawn()
     }
 
-    fun registerUnitTemplates(){
+    init{
+        registerUnitTemplates()
+    }
 
-        val reflections = Reflections("com.ironlordbyron")
+    fun registerUnitTemplates(){
+        Logging.DebugGeneral("Registering unit templates!")
+
+        val reflections = Reflections(ConfigurationBuilder()
+                .addScanners(MethodAnnotationsScanner())
+                .addUrls(ClasspathHelper.forPackage("com.ironlordbyron")))
         val annotated = reflections.getMethodsAnnotatedWith(SpawnableUnitTemplate::class.java)
         val eventNotifier = GameModuleInjector.generateInstance(EventNotifier::class.java)
         val effectRegistrar = GameModuleInjector.generateInstance(FunctionalEffectRegistrar::class.java)
@@ -87,11 +98,11 @@ public class UnitTemplateRegistrar(){
                 throw Exception("${item.name} should have no parameters.")
             }
             val annotation = item.getAnnotation(SpawnableUnitTemplate::class.java)
-            val clazz = item.declaringClass
-            val obj = clazz.newInstance()
-            val tacMapUnitTemplate = item.invoke(obj)
-            unitTemplates.add(UnitTemplateSpawner(obj, item, annotation.id))
+            val tacMapUnitTemplate = item.invoke(null)
+            unitTemplates.add(UnitTemplateSpawner(null, item, annotation.id))
         }
+
+        Logging.DebugGeneral("Registered ${unitTemplates.size} unit templates!")
     }
 }
 
