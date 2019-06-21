@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.entrypoints
 
 import com.ironlordbyron.turnbasedstrategy.common.LogicHooks
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
+import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalAttributeEffect
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalEffectParameters
@@ -11,6 +12,7 @@ import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import org.reflections.Reflections
+import java.lang.reflect.Method
 import javax.inject.Singleton
 
 
@@ -50,6 +52,46 @@ public class AppliesAttributeOnHit() : FunctionalAttributeEffect() {
         println("Struck enemy effect applied!")
 
 
+    }
+}
+
+annotation class SpawnableUnitTemplate(val id: String)
+
+data class UnitTemplateSpawner(val obj: Any, val method: Method, val id: String){
+    fun spawn() : TacMapUnitTemplate{
+        return method.invoke(obj) as TacMapUnitTemplate
+    }
+}
+
+@Singleton
+@Autoinjectable
+public class UnitTemplateRegistrar(){
+    val unitTemplates = ArrayList<UnitTemplateSpawner>()
+
+    fun getTacMapUnitById(id: String): TacMapUnitTemplate? {
+        return unitTemplates.find{it.id == id}?.spawn()
+    }
+
+    fun registerUnitTemplates(){
+
+        val reflections = Reflections("com.ironlordbyron")
+        val annotated = reflections.getMethodsAnnotatedWith(SpawnableUnitTemplate::class.java)
+        val eventNotifier = GameModuleInjector.generateInstance(EventNotifier::class.java)
+        val effectRegistrar = GameModuleInjector.generateInstance(FunctionalEffectRegistrar::class.java)
+        for (item in annotated){
+
+            if (item.returnType.canonicalName != TacMapUnitTemplate::class.java.canonicalName){
+                throw Exception("${item.name} should have a return type TacMapUnitTemplate, but does not")
+            }
+            if (item.parameterCount != 0){
+                throw Exception("${item.name} should have no parameters.")
+            }
+            val annotation = item.getAnnotation(SpawnableUnitTemplate::class.java)
+            val clazz = item.declaringClass
+            val obj = clazz.newInstance()
+            val tacMapUnitTemplate = item.invoke(obj)
+            unitTemplates.add(UnitTemplateSpawner(obj, item, annotation.id))
+        }
     }
 }
 

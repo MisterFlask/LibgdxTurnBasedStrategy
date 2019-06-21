@@ -33,10 +33,10 @@ data class TacMapUnitTemplate(val movesPerTurn: Int,
                               var attributes: ArrayList<LogicalCharacterAttribute> = ArrayList(startingAttributes),
                               val strength: Int = 0,
                               val dexterity: Int = 0,
-
                               // used in map generation
                               val difficulty: Int = 1,
-                              val possibleRandomizedIntents: List<IntentType> = listOf(IntentType.ATTACK, IntentType.MOVE)
+                              val possibleRandomizedIntents: List<IntentType> = listOf(IntentType.ATTACK, IntentType.MOVE),
+                              val templateId: String = templateName
 ) {
 
     private val stacksOfAttribute: HashMap<String, Int> = hashMapOf()
