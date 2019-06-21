@@ -8,6 +8,7 @@ import com.ironlordbyron.turnbasedstrategy.common.equipment.StandardEquipment
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
+import com.ironlordbyron.turnbasedstrategy.tacmapunits.WeakMinionSpawner
 import com.ironlordbyron.turnbasedstrategy.tiledutils.BoundingRectangle
 import com.ironlordbyron.turnbasedstrategy.tiledutils.getBoundsOfTile
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
@@ -69,7 +70,7 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
         }
         val spawners = tiledMapInterpreter.getSpawners(boardProvider.tiledMap)
         for (tile in spawners){
-            actionManager.addCharacterToTileFromTemplate(tacMapUnit = TacMapUnitTemplate.DEFAULT_ENEMY_UNIT_SPAWNER, tileLocation = tile,
+            actionManager.addCharacterToTileFromTemplate(tacMapUnit = WeakMinionSpawner(), tileLocation = tile,
                     playerControlled = false)
         }
         val masterOrgans = tiledMapInterpreter.getMasterOrgan(boardProvider.tiledMap)

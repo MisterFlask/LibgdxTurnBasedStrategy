@@ -2,11 +2,11 @@ package com.ironlordbyron.turnbasedstrategy.common.characterattributes
 
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
-import com.ironlordbyron.turnbasedstrategy.common.abilities.specific.SnoozeFunctionalUnitEffect
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.*
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.TransientEntityTracker
+import com.ironlordbyron.turnbasedstrategy.tacmapunits.ExplodesOnDeathFunctionalUnitEffect
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
