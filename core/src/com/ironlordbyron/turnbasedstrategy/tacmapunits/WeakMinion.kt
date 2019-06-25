@@ -5,10 +5,18 @@ import com.ironlordbyron.turnbasedstrategy.common.abilities.StandardAbilities
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplate
 
 
-@SpawnableUnitTemplate("WEAK_MINION")
-fun WeakMinion() : TacMapUnitTemplate{
+@SpawnableUnitTemplate("WEAK_SLIME")
+fun WeakSlime() : TacMapUnitTemplate{
     return TacMapUnitTemplate(8,
             TacMapUnitTemplate._demonImg.copy(textureId = "7"),
-            templateName = "Enemy",
+            templateName = "Weak Slime",
             abilities = listOf(StandardAbilities.SlimeStrike))
+}
+
+@SpawnableUnitTemplate("SIMPLE_RANGED_ENEMY")
+fun SimpleRangedEnemy() : TacMapUnitTemplate{
+    return TacMapUnitTemplate(3,
+            TacMapUnitTemplate._demonImg.copy(textureId = "7"),
+            templateName = "Firespitter",
+            abilities = listOf(StandardAbilities.RangedAttack))
 }

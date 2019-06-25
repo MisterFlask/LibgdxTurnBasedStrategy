@@ -8,6 +8,8 @@ import com.ironlordbyron.turnbasedstrategy.common.equipment.StandardEquipment
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
+import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
+import com.ironlordbyron.turnbasedstrategy.tacmapunits.ShieldingOrgan
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.WeakMinionSpawner
 import com.ironlordbyron.turnbasedstrategy.tiledutils.BoundingRectangle
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TileLayer
@@ -59,11 +61,12 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
                                             val logicHooks: LogicHooks,
                                             val animationActionQueueProvider: AnimationActionQueueProvider,
                                             val actionManager: ActionManager,
-                                            val attributeOperator: AttributeOperator){
+                                            val attributeOperator: AttributeOperator,
+                                            val unitTemplateRegistrar: UnitTemplateRegistrar){
     fun startBattle(){
         println("Starting battle")
-        val legitTiles = tiledMapInterpreter.getPossiblePlayerSpawnPositions(boardProvider.tiledMap)
-        for (tile in legitTiles){
+        val playerSpawns = tiledMapInterpreter.getPossiblePlayerSpawnPositions(boardProvider.tiledMap)
+        for (tile in playerSpawns){
             actionManager.addCharacterToTileFromTemplate(tacMapUnit = TacMapUnitTemplate.DEFAULT_UNIT.copy(
 
                     equipment = arrayListOf(StandardEquipment.sword, StandardEquipment.flamethrower)
@@ -85,13 +88,22 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
         val masterOrgans = tiledMapInterpreter.getMasterOrgan(boardProvider.tiledMap)
         for (tile in masterOrgans){
             actionManager.addCharacterToTileFromTemplate(tacMapUnit = TacMapUnitTemplate.MASTER_ORGAN, tileLocation = tile,
-                    playerControlled = false).let{
-            }
+                    playerControlled = false)
         }
         val shieldingOrgans = tiledMapInterpreter.getShieldingOrgan(boardProvider.tiledMap)
         for (tile in shieldingOrgans){
-            actionManager.addCharacterToTileFromTemplate(tacMapUnit = TacMapUnitTemplate.SHIELDING_ORGAN, tileLocation = tile,
-                    playerControlled = false).let{
+            actionManager.addCharacterToTileFromTemplate(tacMapUnit = ShieldingOrgan(),
+                    tileLocation = tile,
+                    playerControlled = false)
+        }
+
+        for (spawner in unitTemplateRegistrar.unitTemplates){
+            val unitId = spawner.id
+            val qualifyingTiles = tiledMapInterpreter.getSpawnedTacMapUnit(boardProvider.tiledMap, unitId)
+            for (tile in qualifyingTiles){
+                actionManager.addCharacterToTileFromTemplate(tacMapUnit = spawner.spawn(),
+                        tileLocation = tile,
+                        playerControlled = false)
             }
         }
 

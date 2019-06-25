@@ -78,7 +78,7 @@ data class TacMapUnitTemplate(val movesPerTurn: Int,
     }
     companion object TacMapUnit {
         val _demonImg = SuperimposedTilemaps(tileSetNames = listOf("Demon0","Demon1"), textureId = "2")
-        private val _default_sit = SuperimposedTilemaps(tileSetNames = SuperimposedTilemaps.PLAYER_TILE_SETS,
+        internal val _default_sit = SuperimposedTilemaps(tileSetNames = SuperimposedTilemaps.PLAYER_TILE_SETS,
             tileMapWithTextureName = SuperimposedTilemaps.COMMON_TILE_MAP, textureId = "7")
         val DEFAULT_UNIT = TacMapUnitTemplate(8, _default_sit.copy(textureId = "6"), templateName = "Friendly",
                 abilities = listOf(GuardAbility))
@@ -89,12 +89,6 @@ data class TacMapUnitTemplate(val movesPerTurn: Int,
                 templateName = "Master Organ",
                 enemyAiType = EnemyAiType.IMMOBILE_UNIT,
                 startingAttributes = listOf(LogicalCharacterAttribute.MASTER_ORGAN,
-                        LogicalCharacterAttribute.EXPLODES_ON_DEATH))
-        val SHIELDING_ORGAN = TacMapUnitTemplate(0,
-                _demonImg.copy(textureId = "10"),
-                templateName = "Shielding Organ",
-                enemyAiType = EnemyAiType.IMMOBILE_UNIT,
-                startingAttributes = listOf(LogicalCharacterAttribute.SHIELDS_ANOTHER_ORGAN,
                         LogicalCharacterAttribute.EXPLODES_ON_DEATH))
         val RANGED_ENEMY = TacMapUnitTemplate(3, _demonImg.copy(textureId = "7"), templateName = "Enemy",
                 abilities = listOf(StandardAbilities.RangedAttack))

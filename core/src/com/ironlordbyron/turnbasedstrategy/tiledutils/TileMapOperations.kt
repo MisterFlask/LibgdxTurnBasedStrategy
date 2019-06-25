@@ -135,16 +135,15 @@ const val TILE_SIZE = 16
 
 data class TiledObjectIdentifier(val boundingRectangle: BoundingRectangle, val properties : Map<String, String>)
 
+data class TileKeyValuePair(val key: String, val value: String)
 
-fun TiledMap.getTilesInObjectByType(type: String, required: Boolean = true): Collection<Collection<TileLocation>> {
+fun TiledMap.getTilesByKeyValuePairs(kvs: List<TileKeyValuePair>): List<TileLocation> {
     val objectLayerRectangles = this.getObjectLayerRectangles()
-    if (!objectLayerRectangles.any{it.properties["type"] == type}){
-        if (!required){
-            return ArrayList()
-        }
-        throw IllegalArgumentException("unable to find tiles matching type of " + type)
+    var recs = objectLayerRectangles
+    for (kv in kvs){
+        recs = recs.filter { it.properties[kv.key] == kv.value }
     }
-    val recs = objectLayerRectangles.filter { it.properties["type"] == type }
+
     val objects = ArrayList<Collection<TileLocation>>()
     for (rec in recs){
         val tiles = ArrayList<TileLocation>()
@@ -155,7 +154,12 @@ fun TiledMap.getTilesInObjectByType(type: String, required: Boolean = true): Col
         }
         objects.add(tiles)
     }
-    return objects
+    return objects.flatten()
+}
+
+@Deprecated("You'll probably find getTilesByKeyValuePairs to be more flexible")
+fun TiledMap.getTilesInObjectByType(type: String, required: Boolean = true): Collection<TileLocation> {
+    return getTilesByKeyValuePairs(listOf(TileKeyValuePair("type", type)))
 }
 
 data class LogicalTiledObject(val x: Int, val y: Int, val width: Int, val height: Int, val name: String,

@@ -12,6 +12,8 @@ public class Scenarios
         val PARTIAL_PROCEDURAL_SCENARIO = ScenarioParams(sourceMapName = "LargerBlankGrass.tmx",
                 name = "Partially Procedural", mapGeneratorType = MapGeneratorType.PARTIAL_PROCEDURAL,
                 mobGenerationParams = MobGenerationParams(numberMobsToGenerate = 10, totalDifficultyAllowed = 10))
-        val SCENARIO_LIST = listOf(DEFAULT_SCENARIO, PARTIAL_PROCEDURAL_SCENARIO)
+        val OVERWORLD_SCENARIO = ScenarioParams(sourceMapName = "OutdoorCombatDemo.tmx",
+                name = "Overworld Combat", mapGeneratorType = MapGeneratorType.NONE)
+        val SCENARIO_LIST = listOf(DEFAULT_SCENARIO, PARTIAL_PROCEDURAL_SCENARIO, OVERWORLD_SCENARIO)
     }
 }

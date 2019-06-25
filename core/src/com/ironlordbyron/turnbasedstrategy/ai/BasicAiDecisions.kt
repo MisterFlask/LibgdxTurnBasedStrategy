@@ -4,20 +4,59 @@ import com.ironlordbyron.turnbasedstrategy.Logging
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.randomElement
+import com.ironlordbyron.turnbasedstrategy.tileentity.CityTileEntity
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
 import com.ironlordbyron.turnbasedstrategy.toCharacter
 import javax.inject.Inject
 
+
+val MIN_ATTACK_DISTANCE = 10
 public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMapAlgorithms,
                                                    val aiGridGraphFactory: AiGridGraphFactory,
                                                    val tacticalMapState: TacticalMapState,
-                                                   val pathfinderFactory: PathfinderFactory){
+                                                   val pathfinderFactory: PathfinderFactory,
+                                                   val logicalTileTracker: LogicalTileTracker){
 
 
     public fun formulateIntent(thisCharacter: LogicalCharacter) : Intent{
         if (thisCharacter.tacMapUnit.enemyAiType == EnemyAiType.BASIC){
-            return getAttackIntentForThisTurn(thisCharacter)
+            val shouldFindEnemyToAttack = shouldAttackClosestEnemy(thisCharacter)
+            if (shouldFindEnemyToAttack) {
+                return getAttackIntentForThisTurn(thisCharacter)
+            } else{
+                return Intent.Move()
+            }
+
         }
         return Intent.Other()
+    }
+
+    private fun shouldAttackClosestEnemy(thisCharacter: LogicalCharacter): Boolean {
+        val closestEnemy = tacticalMapState.closestPlayerControlledCharacterTo(thisCharacter)
+        val shouldFindEnemyToAttack = closestEnemy != null && closestEnemy.tileLocation.distanceTo(thisCharacter.tileLocation) < MIN_ATTACK_DISTANCE
+        return shouldFindEnemyToAttack
+    }
+
+    public fun beelineTowardNearestCity(thisCharacter: LogicalCharacter) : List<AiPlannedAction>{
+        val closestCity = getClosestMatchingEntity(thisCharacter){
+            it is CityTileEntity
+        }
+        if (closestCity == null){
+            return listOf()
+        }
+        val aiGridGraph = aiGridGraphFactory.createGridGraph(thisCharacter)
+        val pathToCity = aiGridGraph.acquireBestPathTo(thisCharacter, closestCity.tileLocation, allowEndingOnLastTile = true)
+        if (pathToCity == null){
+            throw Exception("No path to closest city: $closestCity")
+        }
+        return listOf(AiPlannedAction.MoveToTile(getFurthestAllowedSpotOnPath(thisCharacter, pathToCity)))
+    }
+
+    public fun getClosestMatchingEntity(thisCharacter: LogicalCharacter, predicate: (TileEntity) -> Boolean): TileEntity? {
+        val entities = logicalTileTracker.tileEntities
+                .filter{predicate.invoke(it)}
+        val closest = entities.minBy{it.tileLocation.distanceTo(thisCharacter.tileLocation)}
+        return closest
     }
 
     public fun isIntentStillPossible(thisCharacter: LogicalCharacter) : Boolean{
@@ -59,7 +98,11 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
                 return executeOnIntent(thisCharacter)
             }
             IntentType.MOVE -> {
+                if (!shouldAttackClosestEnemy(thisCharacter)){
+                    return beelineTowardNearestCity(thisCharacter)
+                }
                 Logging.DebugCombatLogic("Character ${thisCharacter.tacMapUnit.templateName} is attempting movement")
+
                 val bestPathToClosestPlayerUnit = pathfindToClosestPlayerUnit(thisCharacter)
                 if (bestPathToClosestPlayerUnit == null){
                     println("Could not find best path to tile ")
@@ -76,7 +119,6 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
                 return listOf()
             }
         }
-        throw IllegalStateException("${thisCharacter.intent.intentType} not supported; fell through decision block")
     }
 
     public fun pathfindToClosestPlayerUnit(thisCharacter: LogicalCharacter) : Collection<PathfindingTileLocation>?{
@@ -231,13 +273,17 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
             return null
         }
 
+        return getFurthestAllowedSpotOnPath(thisCharacter, pathToEnemy)
+        // TODO: Ensure tile isn't occupied by enemy (if it is, stop one short)
+    }
+
+    private fun getFurthestAllowedSpotOnPath(thisCharacter: LogicalCharacter, pathToEnemy: Collection<PathfindingTileLocation>): TileLocation {
         val moverate = thisCharacter.tacMapUnit.movesPerTurn
-        if (pathToEnemy.size > moverate - 2){
+        if (pathToEnemy.size > moverate - 2) {
             return pathToEnemy.toList()[moverate - 2].location
         }
 
         return pathToEnemy.last().location
-        // TODO: Ensure tile isn't occupied by enemy (if it is, stop one short)
     }
 
 }

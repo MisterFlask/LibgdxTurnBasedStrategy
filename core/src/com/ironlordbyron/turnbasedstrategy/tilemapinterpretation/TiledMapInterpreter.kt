@@ -16,20 +16,28 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
 
 
     fun getPossiblePlayerSpawnPositions(map: TiledMap): Collection<TileLocation> {
-        return map.getTilesInObjectByType("PLAYER_SPAWN", false).flatMap{it -> it}
+        return map.getTilesInObjectByType("PLAYER_SPAWN", false)
     }
 
     fun getPossibleEnemySpawnPositions(map: TiledMap) : Collection<TileLocation> {
-        return map.getTilesInObjectByType("ENEMY_SPAWN", false).flatMap{it -> it}
+        return map.getTilesInObjectByType("ENEMY_SPAWN", false)
     }
     fun getSpawners(map: TiledMap) : Collection<TileLocation> {
-        return map.getTilesInObjectByType("SPAWNER", false).flatMap{it -> it}
+        return map.getTilesInObjectByType("SPAWNER", false)
     }
     fun getMasterOrgan(map: TiledMap) : Collection<TileLocation> {
-        return map.getTilesInObjectByType("MASTER_ORGAN", false).flatMap { it }
+        return map.getTilesInObjectByType("MASTER_ORGAN", false)
     }
     fun getShieldingOrgan(map: TiledMap)  : Collection<TileLocation> {
-        return map.getTilesInObjectByType("SHIELDING_ORGAN", false).flatMap { it }
+        return map.getTilesInObjectByType("SHIELDING_ORGAN", false)
+    }
+
+    fun getSpawnedTacMapUnit(map: TiledMap, id: String): List<TileLocation> {
+        return map.getTilesByKeyValuePairs(listOf(
+                TileKeyValuePair("type", "UNIT_SPAWN_POINT"),
+                TileKeyValuePair("unit_id", id)
+        )
+        )
     }
 
     fun initializeTileEntities(tileMap: TiledMap, tileLocation: TileLocation){
@@ -50,6 +58,13 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
                 val actor = ActorFromTiledTextureRegion(cell).imageActor;
                 tiledMapStageProvider.tiledMapStage.addActor(actor)
                 entities.add(tileEntityFactory.createWall(tileLocation, actor))
+                actor.setBoundingBox(boundingBox)
+            }
+            val townStr = "town"
+            if (hasProp(cell, townStr)){
+                val actor = ActorFromTiledTextureRegion(cell).imageActor;
+                tiledMapStageProvider.tiledMapStage.addActor(actor)
+                entities.add(tileEntityFactory.createCity(tileLocation, actor))
                 actor.setBoundingBox(boundingBox)
             }
         }

@@ -32,7 +32,7 @@ public fun SpawnWeakMinionAbility() : LogicalAbility
             description = "Spawns a weak minion.  1-turn cooldown.",
             abilityClass = AbilityClass.TARGETED_ATTACK_ABILITY,
             requiredTargetType = RequiredTargetType.NO_CHARACTER_AT_LOCATION,
-            abilityEffects = listOf(SpawnUnitDynamicallyEffect({WeakMinion()}, 2)),
+            abilityEffects = listOf(SpawnUnitDynamicallyEffect({WeakSlime()}, 2)),
             projectileActor = null,
             landingActor = DataDrivenOnePageAnimation.EXPLODE)
 }

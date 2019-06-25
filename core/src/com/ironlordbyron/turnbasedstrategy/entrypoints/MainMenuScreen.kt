@@ -47,6 +47,11 @@ public class MainMenuScreen @Inject constructor(val tacticalMapScreen: TacticalM
                 TacticalGuiEvent.SwapToTacticsScreen(),
                 buttonName = "Partially-procedurally-generated",
                 scenarioParams = Scenarios.PARTIAL_PROCEDURAL_SCENARIO))
+        table.row()
+        table.add(playScenarioButton(eventNotifier,
+                TacticalGuiEvent.SwapToTacticsScreen(),
+                buttonName = "Overworld Tactics Scenario",
+                scenarioParams = Scenarios.OVERWORLD_SCENARIO))
         table.setPosition(Gdx.graphics.width / 2 - table.getWidth() / 2, Gdx.graphics.height / 2 - table.getHeight() / 2, Alignment.CENTER.alignment)
         stage.addActor(table)
     }

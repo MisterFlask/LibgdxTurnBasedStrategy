@@ -4,6 +4,7 @@ import com.google.inject.Singleton
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.MasterOrgan
+import com.ironlordbyron.turnbasedstrategy.tacmapunits.ShieldingOrgan
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.WeakMinionSpawner
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
@@ -85,7 +86,7 @@ class PartiallyProceduralDungeonGenerator @Inject constructor (val tiledMapInter
         val shuffled = rooms.shuffled()
         val shieldRoom  = shuffled.get(0)
         val masterRoom = shuffled.get(1)
-        attemptPlacementOfMob(TacMapUnitTemplate.SHIELDING_ORGAN, shieldRoom)
+        attemptPlacementOfMob(ShieldingOrgan(), shieldRoom)
         attemptPlacementOfMob(MasterOrgan(), masterRoom)
         attemptPlacementOfMob(WeakMinionSpawner(), shuffled.get(2));
     }

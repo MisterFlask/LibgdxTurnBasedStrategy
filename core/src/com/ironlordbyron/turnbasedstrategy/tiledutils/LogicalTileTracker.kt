@@ -12,7 +12,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.reflect.KClass
 
-
 @Singleton
 class LogicalTileTracker @Inject constructor (val eventNotifier: EventNotifier) : GameEventListener {
 
@@ -31,6 +30,12 @@ class LogicalTileTracker @Inject constructor (val eventNotifier: EventNotifier) 
     val tileEntities = ArrayList<TileEntity>()
 
     val tiles = ArrayList<LogicalTile>()
+
+
+
+    fun <T: TileEntity> getEntitiesOfType(clazz: Class<T>): List<TileEntity> {
+        return tileEntities.filter{clazz.isInstance(it)}
+    }
 
     fun addTile(logicalTile: LogicalTile) {
         tiles.add(logicalTile)
@@ -74,6 +79,7 @@ class LogicalTileTracker @Inject constructor (val eventNotifier: EventNotifier) 
     fun getEntitiesAtTile(location: TileLocation): List<TileEntity> {
         return tileEntities.filter{it -> it.tileLocation == location}
     }
+
     fun removeWallAtTile(location: TileLocation){
         val wall=  tileEntities.first{it is WallEntity && it.tileLocation == location}
         wall.actor.remove()
