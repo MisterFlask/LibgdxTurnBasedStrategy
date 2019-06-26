@@ -38,18 +38,22 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
     }
 
     public fun beelineTowardNearestCity(thisCharacter: LogicalCharacter) : List<AiPlannedAction>{
+        Logging.DebugPathfinding("Attempting to beeline toward nearest city")
         val closestCity = getClosestMatchingEntity(thisCharacter){
             it is CityTileEntity
         }
-        if (closestCity == null){
+        if (closestCity == null || closestCity.tileLocation == thisCharacter.tileLocation){
+            Logging.DebugPathfinding("Could not find city to beeline toward!")
             return listOf()
         }
         val aiGridGraph = aiGridGraphFactory.createGridGraph(thisCharacter)
         val pathToCity = aiGridGraph.acquireBestPathTo(thisCharacter, closestCity.tileLocation, allowEndingOnLastTile = true)
         if (pathToCity == null){
-            throw Exception("No path to closest city: $closestCity")
+            return listOf()
         }
-        return listOf(AiPlannedAction.MoveToTile(getFurthestAllowedSpotOnPath(thisCharacter, pathToCity)))
+        val targetLocation = getFurthestAllowedSpotOnPath(thisCharacter, pathToCity)
+        Logging.DebugPathfinding("Beelining toward nearest city at $targetLocation")
+        return listOf(AiPlannedAction.MoveToTile(targetLocation))
     }
 
     public fun getClosestMatchingEntity(thisCharacter: LogicalCharacter, predicate: (TileEntity) -> Boolean): TileEntity? {

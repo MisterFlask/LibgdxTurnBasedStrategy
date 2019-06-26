@@ -16,7 +16,11 @@ public data class CityTileEntity(
         return false
     }
 
-    override val name: String = "city"
+    companion object{
+        val name = "town"
+    }
+
+    override val name: String = CityTileEntity.name
 
     fun conquerByDemonAction(){
         this.actor.color = DIM_RED_COLOR

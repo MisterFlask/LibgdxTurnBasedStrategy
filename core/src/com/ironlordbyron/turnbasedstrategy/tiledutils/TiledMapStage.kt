@@ -46,7 +46,7 @@ class TiledMapStage(
     }
 
 
-    data class TiledCellAgglomerate(val tiledCell: TiledMapTileLayer.Cell, val tileLayer: TileLayer){
+    data class TiledCellAgglomerate(val tiledCell: TiledMapTileLayer.Cell, val tileLayer: TileLayer?){
         fun getPropertyInALayerAsString(property: String) : String{
             return tiledCell.tile?.properties?.get(property) as String
         }
@@ -68,6 +68,7 @@ class TiledMapStage(
                 logicalTileTracker.addTile(LogicalTile(cell.tile, location, actor,
                         tiledMapInterpreter.getAllTilesAtXY(tiledMap, TileLocation(x, y))))
                 addActor(actor)
+                tiledMapInterpreter.validateTileMap(tiledMap)
                 tiledMapInterpreter.initializeTileEntities(tiledMap, location)
                 val eventListener = tileMapClickListenerFactory.create(actor)
                 actor.addListener(eventListener)

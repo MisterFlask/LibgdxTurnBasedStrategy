@@ -5,6 +5,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
+import com.ironlordbyron.turnbasedstrategy.tileentity.CityTileEntity
 import javax.inject.Inject
 
 /// Responsible for figuring out which of the Tiled tiles need to become actors
@@ -60,7 +61,7 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
                 entities.add(tileEntityFactory.createWall(tileLocation, actor))
                 actor.setBoundingBox(boundingBox)
             }
-            val townStr = "town"
+            val townStr = CityTileEntity.name
             if (hasProp(cell, townStr)){
                 val actor = ActorFromTiledTextureRegion(cell).imageActor;
                 tiledMapStageProvider.tiledMapStage.addActor(actor)
@@ -101,15 +102,28 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
         return TerrainType.GRASS
     }
 
+    fun validateTileMap(tileMap: TiledMap){
+
+        val layers = tileMap.layers
+                .filter { it is TiledMapTileLayer }
+                .map { it as TiledMapTileLayer }
+        val featuresLayer = layers.filter{it.name == TileLayer.BASE.layerName}
+        val baseLayer = layers.filter{it.name == TileLayer.BASE.layerName}
+        if (featuresLayer.isEmpty()){
+            throw IllegalStateException("Tile layer lacks Features Layer")
+        }
+        if (baseLayer.isEmpty()){
+            throw java.lang.IllegalStateException("Tile layer lacks Base Layer")
+        }
+    }
+
     fun getAllTilesAtXY(tileMap: TiledMap, tileLocation: TileLocation): List<TiledMapStage.TiledCellAgglomerate> {
         val layers = tileMap.layers
                 .filter { it is TiledMapTileLayer }
                 .map { it as TiledMapTileLayer }
         val withCellHere = layers.filter { it.getCell(tileLocation.x, tileLocation.y) != null }
-        val withAppropriateNames = withCellHere
-                .filter { TileLayer.getTileLayerFromName(it.name) != null }
-        val toAggloms = withAppropriateNames
-                .map { TiledMapStage.TiledCellAgglomerate(it.getCell(tileLocation.x, tileLocation.y), TileLayer.getTileLayerFromName(it.name)!!) }
+        val toAggloms = withCellHere
+                .map { TiledMapStage.TiledCellAgglomerate(it.getCell(tileLocation.x, tileLocation.y), TileLayer.getTileLayerFromName(it.name)) }
         return toAggloms
     }
 }
