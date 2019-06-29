@@ -61,15 +61,25 @@ interface RangeStyle{
         }
         override fun getTargetableTiles(characterUsing: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment, sourceSquare: TileLocation?): Collection<TileLocation> {
             val tiles = ArrayList<TileLocation>()
-            for (x in 0 .. tileMapProvider.getWidth()){
-                for (y in 0 .. tileMapProvider.getHeight()){
-                    val location = TileLocation(x,y)
-                    if (maxRange == null){
+            val y1 = characterUsing.tileLocation.y
+            for (x1 in 0 .. tileMapProvider.getWidth()){
+                val location = TileLocation(x1,y1)
+                if (maxRange == null){
+                    tiles.add(location)
+                } else{
+                    if (maxRange < location.distanceTo(characterUsing.tileLocation)){
                         tiles.add(location)
-                    } else{
-                        if (maxRange < location.distanceTo(characterUsing.tileLocation)){
-                            tiles.add(location)
-                        }
+                    }
+                }
+            }
+            val x2 = characterUsing.tileLocation.x
+            for (y2 in 0 .. tileMapProvider.getHeight()){
+                val location = TileLocation(x2,y2)
+                if (maxRange == null){
+                    tiles.add(location)
+                } else{
+                    if (maxRange < location.distanceTo(characterUsing.tileLocation)){
+                        tiles.add(location)
                     }
                 }
             }

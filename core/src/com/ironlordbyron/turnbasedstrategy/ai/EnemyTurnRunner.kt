@@ -1,9 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.ai
 
-import com.ironlordbyron.turnbasedstrategy.common.GameBoardOperator
-import com.ironlordbyron.turnbasedstrategy.common.LogicHooks
-import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
-import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
+import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.MapHighlighter
@@ -15,6 +12,8 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActorFactory
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TiledMapOperationsHandler
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
+import com.ironlordbyron.turnbasedstrategy.view.animation.AnimationSpeedManager
+import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.PulseAnimationGenerator
 import javax.inject.Inject
 
 public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: TiledMapOperationsHandler,
@@ -31,7 +30,8 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
                                                  val tacticalMapAlgorithms: TacticalMapAlgorithms,
                                                  val gameBoardOperator: GameBoardOperator,
                                                  val animationActionQueueProvider: AnimationActionQueueProvider,
-                                                 val logicHooks: LogicHooks){
+                                                 val logicHooks: LogicHooks,
+                                                 val pulseAnimationGenerator: PulseAnimationGenerator){
 
     public fun endTurn() {
         runEnemyTurn()
@@ -65,6 +65,7 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
                     is AiPlannedAction.AbilityUsage ->  {
                         val charToTarget = boardState.characterAt(action.squareToTarget)
                         val ability = action.ability.ability.abilityTargetingParameters
+                        performTileHighlightAnimationForAction(enemyCharacter, action)
                         ability.activateAbility(action.squareToTarget, charToTarget, action.sourceCharacter, action.ability)
                     }
                 }
@@ -74,5 +75,13 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
             eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.FinishedEnemyTurn())
         })
         animationActionQueueProvider.clearQueue()
+    }
+
+    private fun performTileHighlightAnimationForAction(enemyCharacter: LogicalCharacter, action: AiPlannedAction.AbilityUsage) {
+        val tilesThatActionCanTarget = action.ability.getSquaresInRangeOfAbility(enemyCharacter.tileLocation, enemyCharacter)
+        val actorActionPairForHighlights = mapHighlighter.getTileHighlightActorActionPairs(tilesThatActionCanTarget, HighlightType.ENEMY_ATTACK_TILE, enemyCharacter.actor.characterActor)
+        val pulseActionPair = pulseAnimationGenerator.generateActorActionPair(enemyCharacter.actor.characterActor, 1f / AnimationSpeedManager.animationSpeedScale)
+        actorActionPairForHighlights.secondaryActions += pulseActionPair
+        animationActionQueueProvider.addAction(actorActionPairForHighlights)
     }
 }

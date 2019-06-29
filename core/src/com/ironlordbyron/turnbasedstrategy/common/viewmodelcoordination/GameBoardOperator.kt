@@ -81,7 +81,7 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
         if (!wasPlayerInitiated) {
             // first, show the player where the ai COULD move to
             val tilesToHighlight = tacticalMapAlgorithms.getWhereCharacterCanMoveTo(character)
-            val actorActionPairForHighlights = mapHighlighter.getTileHighlightActorActionPairs(tilesToHighlight, HighlightType.RED_TILE)
+            val actorActionPairForHighlights = mapHighlighter.getTileHighlightActorActionPairs(tilesToHighlight, HighlightType.ENEMY_MOVE_TILE)
             val pulseActionPair = pulseAnimationGenerator.generateActorActionPair(character.actor.characterActor, 1f / AnimationSpeedManager.animationSpeedScale)
             actorActionPairForHighlights.secondaryActions += pulseActionPair
             animationActionQueueProvider.addAction(actorActionPairForHighlights)

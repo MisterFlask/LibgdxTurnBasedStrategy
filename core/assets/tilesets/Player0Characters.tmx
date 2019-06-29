@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.1" orientation="orthogonal" renderorder="right-down" width="3" height="3" tilewidth="16" tileheight="16" infinite="0" nextlayerid="2" nextobjectid="1">
+<map version="1.2" tiledversion="1.2.2" orientation="orthogonal" renderorder="right-down" width="3" height="3" tilewidth="16" tileheight="16" infinite="0" nextlayerid="2" nextobjectid="1">
  <tileset firstgid="1" source="Player0.tsx"/>
  <tileset firstgid="121" source="mountains.tsx"/>
  <tileset firstgid="241" source="Player1.tsx"/>
@@ -11,9 +11,10 @@
  <tileset firstgid="460" source="Slime0.tsx"/>
  <tileset firstgid="500" source="Demon0.tsx"/>
  <tileset firstgid="572" source="Demon1.tsx"/>
+ <tileset firstgid="644" source="white_tile.tsx"/>
  <layer id="1" name="Tile Layer 1" width="3" height="3">
   <data encoding="csv">
-244,6,246,
+244,6,644,
 252,511,583,
 31,28,460
 </data>

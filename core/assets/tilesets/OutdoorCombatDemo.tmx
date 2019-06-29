@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.2" tiledversion="1.2.2" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="9">
+<map version="1.2" tiledversion="1.2.2" orientation="orthogonal" renderorder="right-down" width="60" height="60" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="12">
  <tileset firstgid="1" source="Wall.tsx"/>
  <tileset firstgid="1021" source="wonderdot_tileset/Extras/OverworldTileset.tsx"/>
  <layer id="11" name="Underlayer" width="60" height="60">
@@ -130,7 +130,7 @@
 1101,1066,1102,1102,1107,1102,1106,1102,1102,1102,1102,1067,1107,1102,1102,1067,1066,1102,1103,1481,1482,1485,1523,1101,1102,1102,1105,1142,1104,1102,1067,1105,1104,1067,1102,1066,1102,1102,1102,1065,1063,1022,1101,1103,1021,1141,1104,1066,1102,1102,1102,1106,1105,1104,1067,1105,1143,1023,1101,1102
 </data>
  </layer>
- <layer id="10" name="FeaturesLayer" width="60" height="60">
+ <layer id="10" name="TerrainFeatures" width="60" height="60">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1591,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -207,10 +207,28 @@
     <property name="unit_id" value="PRISM_FLOWER"/>
    </properties>
   </object>
-  <object id="8" name="MasterOrgan" x="256" y="512" width="32" height="32">
+  <object id="8" name="MasterOrgan" x="272" y="512" width="16" height="16">
    <properties>
     <property name="type" value="UNIT_SPAWN_POINT"/>
     <property name="unit_id" value="MASTER_ORGAN"/>
+   </properties>
+  </object>
+  <object id="9" name="CityConquerer" x="768" y="224" width="16" height="16">
+   <properties>
+    <property name="type" value="UNIT_SPAWN_POINT"/>
+    <property name="unit_id" value="SIMPLE_CITY_CONQUERER"/>
+   </properties>
+  </object>
+  <object id="10" name="CityConquerer" x="432" y="160" width="16" height="16">
+   <properties>
+    <property name="type" value="UNIT_SPAWN_POINT"/>
+    <property name="unit_id" value="SIMPLE_CITY_CONQUERER"/>
+   </properties>
+  </object>
+  <object id="11" name="ShieldingOrgan" x="656" y="208" width="16" height="16">
+   <properties>
+    <property name="type" value="UNIT_SPAWN_POINT"/>
+    <property name="unit_id" value="SHIELDING_ORGAN"/>
    </properties>
   </object>
  </objectgroup>

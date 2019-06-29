@@ -10,32 +10,11 @@ import com.ironlordbyron.turnbasedstrategy.toCharacter
 import javax.inject.Inject
 
 
-val MIN_ATTACK_DISTANCE = 10
 public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMapAlgorithms,
                                                    val aiGridGraphFactory: AiGridGraphFactory,
                                                    val tacticalMapState: TacticalMapState,
                                                    val pathfinderFactory: PathfinderFactory,
                                                    val logicalTileTracker: LogicalTileTracker){
-
-
-    public fun formulateIntent(thisCharacter: LogicalCharacter) : Intent{
-        if (thisCharacter.tacMapUnit.enemyAiType == EnemyAiType.BASIC){
-            val shouldFindEnemyToAttack = shouldAttackClosestEnemy(thisCharacter)
-            if (shouldFindEnemyToAttack) {
-                return getAttackIntentForThisTurn(thisCharacter)
-            } else{
-                return Intent.Move()
-            }
-
-        }
-        return Intent.Other()
-    }
-
-    private fun shouldAttackClosestEnemy(thisCharacter: LogicalCharacter): Boolean {
-        val closestEnemy = tacticalMapState.closestPlayerControlledCharacterTo(thisCharacter)
-        val shouldFindEnemyToAttack = closestEnemy != null && closestEnemy.tileLocation.distanceTo(thisCharacter.tileLocation) < MIN_ATTACK_DISTANCE
-        return shouldFindEnemyToAttack
-    }
 
     public fun beelineTowardNearestCity(thisCharacter: LogicalCharacter) : List<AiPlannedAction>{
         Logging.DebugPathfinding("Attempting to beeline toward nearest city")
@@ -85,45 +64,6 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
         }
     }
 
-
-    public fun executeOnIntent(thisCharacter: LogicalCharacter): List<AiPlannedAction>{
-        if (thisCharacter.intent is Intent.None || thisCharacter.intent is Intent.Move){
-            thisCharacter.intent = formulateIntent(thisCharacter)
-        }
-        when(thisCharacter.intent.intentType){
-            IntentType.ATTACK -> {
-                Logging.DebugCombatLogic("Character ${thisCharacter.tacMapUnit.templateName} is attempting attack")
-                val attackIntent = thisCharacter.intent as Intent.Attack
-                if (canTargetCharacterWithAbility(thisCharacter, tacticalMapState.getCharacterFromId(attackIntent.logicalCharacterUuid), thisCharacter.intent.intentType)){
-                    val plannedActions = getNecessaryMoveForTargetingCharacterWithAbility(thisCharacter, tacticalMapState.getCharacterFromId(attackIntent.logicalCharacterUuid), thisCharacter.intent.intentType)!!
-                    return plannedActions
-                }
-                thisCharacter.intent = formulateIntent(thisCharacter)
-                return executeOnIntent(thisCharacter)
-            }
-            IntentType.MOVE -> {
-                if (!shouldAttackClosestEnemy(thisCharacter)){
-                    return beelineTowardNearestCity(thisCharacter)
-                }
-                Logging.DebugCombatLogic("Character ${thisCharacter.tacMapUnit.templateName} is attempting movement")
-
-                val bestPathToClosestPlayerUnit = pathfindToClosestPlayerUnit(thisCharacter)
-                if (bestPathToClosestPlayerUnit == null){
-                    println("Could not find best path to tile ")
-                    return listOf()
-                }
-                if (bestPathToClosestPlayerUnit.size == 0){
-                    return listOf()
-                }
-                val nextMove = AiPlannedAction.MoveToTile(bestPathToClosestPlayerUnit.last().location)
-                return listOf(nextMove)
-            }
-            IntentType.NONE, IntentType.DEFEND, IntentType.OTHER  -> {
-                println("Not supported: ${thisCharacter.intent.intentType}" )
-                return listOf()
-            }
-        }
-    }
 
     public fun pathfindToClosestPlayerUnit(thisCharacter: LogicalCharacter) : Collection<PathfindingTileLocation>?{
         val pathfinder = pathfinderFactory.createGridGraph(thisCharacter)

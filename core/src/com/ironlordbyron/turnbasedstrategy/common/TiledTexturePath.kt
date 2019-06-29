@@ -27,5 +27,6 @@ data class TiledTexturePath(
         val RED_TILE = TiledTexturePath("0", "red_tile")
         val BLUE_TILE = TiledTexturePath("0", "blue_tile")
         val GREEN_TILE = TiledTexturePath("0", "green_tile")
+        val WHITE_TILE=  TiledTexturePath("0", "white_tile")
     }
 }

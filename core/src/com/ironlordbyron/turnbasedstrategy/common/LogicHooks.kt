@@ -114,7 +114,7 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
             if (intent is Intent.Attack && intent.logicalCharacterUuid == playerCharacter.id){
                 if(!basicAiDecisions.isIntentStillPossible(character)){
                     actionManager.risingText("?!?", character.tileLocation)
-                    val newIntent = basicAiDecisions.formulateIntent(character)
+                    val newIntent = character.goal!!.formulateIntent(character)
                     character.intent = newIntent
                 }
             }

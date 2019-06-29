@@ -22,15 +22,15 @@ public class MapHighlighter @Inject constructor(val tiledMapOperationsHandler: T
     public fun highlightTiles(tiles: Collection<TileLocation>,
                        highlightType: HighlightType,
                        actionGenerator: ActionGeneratorType = ActionGeneratorType.HIGHLIGHT_UNTIL_FURTHER_NOTICE) {
-        val texture = tiledMapOperationsHandler.pullGenericTexture(
-                highlightType.tiledTexturePath.spriteId,
-                highlightType.tiledTexturePath.tileSetName)
         for (location in tiles) {
             val actionToApply = when(actionGenerator){
                 ActionGeneratorType.HIGHLIGHT_UNTIL_FURTHER_NOTICE -> foreverHighlightBlinking()
             }
-            val actor = imageActorFactory.createSpriteActorForTile(tileMapProvider.tiledMap, location, texture,
+            val actor = imageActorFactory.createSpriteActorForTile(tileMapProvider.tiledMap, location, highlightType.toTexture(),
                     alpha = .5f)
+            if (highlightType.color != null){
+                actor.color = highlightType.color
+            }
             actor.addAction(actionToApply)
             listOfHighlights.add(actor)
         }
@@ -42,7 +42,8 @@ public class MapHighlighter @Inject constructor(val tiledMapOperationsHandler: T
     }
 
     fun getTileHighlightActorActionPairs(tiles: Collection<TileLocation>,
-                                         highlightType: HighlightType) : ActorActionPair {
+                                         highlightType: HighlightType,
+                                         cameraFocusActor: Actor? = null) : ActorActionPair {
         val actorActionPairList = ArrayList<ActorActionPair>()
         val texture = tiledMapOperationsHandler.pullGenericTexture(
                 highlightType.tiledTexturePath.spriteId,
@@ -57,7 +58,9 @@ public class MapHighlighter @Inject constructor(val tiledMapOperationsHandler: T
                 action = actorActionPairList[0].action,
                 secondaryActions = actorActionPairList.subList(1, actorActionPairList.size),
                 murderActorsOnceCompletedAnimation = true,
-                name="temporaryHighlights")
+                name="temporaryHighlights",
+                cameraTrigger=true,
+                cameraFocusActor = cameraFocusActor)
 
         return actorActionPair
     }

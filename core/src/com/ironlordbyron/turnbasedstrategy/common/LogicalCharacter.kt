@@ -4,6 +4,8 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.ironlordbyron.turnbasedstrategy.ai.Intent
 import com.ironlordbyron.turnbasedstrategy.ai.IntentType
+import com.ironlordbyron.turnbasedstrategy.ai.goals.AttackGoal
+import com.ironlordbyron.turnbasedstrategy.ai.goals.Goal
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.common.abilities.RangeStyle
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
@@ -23,7 +25,8 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
                             var endedTurn: Boolean = false,
                             var actionsLeft: Int = 2,
                             val id: UUID = UUID.randomUUID(),
-                            var intent: Intent = Intent.None()) {
+                            var intent: Intent = Intent.None(),
+                            var goal: Goal? = null) {
 
     val abilities: Collection<LogicalAbilityAndEquipment>
         get() = acquireAbilities()

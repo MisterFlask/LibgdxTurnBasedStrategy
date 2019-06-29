@@ -32,7 +32,11 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
     private fun interleaveActionQueueWithCameraMovements(actionQueue: List<ActorActionPair>): List<ActorActionPair> {
         val finalActionQueue = ArrayList<ActorActionPair>()
         for (i in 0 .. actionQueue.size - 1){
-            finalActionQueue.add(cameraMovementAnimationGenerator.generateCameraMovementActionToLookAt(actionQueue[i].actor))
+            if (actionQueue[i].cameraTrigger){
+                val action = actionQueue[i]
+                val actorToLookAt = action.cameraFocusActor ?: action.actor
+                finalActionQueue.add(cameraMovementAnimationGenerator.generateCameraMovementActionToLookAt(actorToLookAt))
+            }
             finalActionQueue.add(actionQueue[i])
         }
         return finalActionQueue

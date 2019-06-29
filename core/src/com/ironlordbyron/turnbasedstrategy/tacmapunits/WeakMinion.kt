@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.tacmapunits
 
+import com.ironlordbyron.turnbasedstrategy.ai.goals.ConquerCityMetagoal
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.abilities.StandardAbilities
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplate
@@ -19,4 +20,12 @@ fun SimpleRangedEnemy() : TacMapUnitTemplate{
             TacMapUnitTemplate._demonImg.copy(textureId = "7"),
             templateName = "Firespitter",
             abilities = listOf(StandardAbilities.RangedAttack))
+}
+@SpawnableUnitTemplate("SIMPLE_CITY_CONQUERER")
+fun SimpleCityConquerer() : TacMapUnitTemplate{
+    return TacMapUnitTemplate(3,
+            TacMapUnitTemplate._demonImg.copy(textureId = "7"),
+            templateName = "Firespitter",
+            abilities = listOf(StandardAbilities.RangedAttack),
+            metagoal = ConquerCityMetagoal())
 }

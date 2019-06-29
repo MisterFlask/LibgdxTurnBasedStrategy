@@ -1,6 +1,5 @@
 package com.ironlordbyron.turnbasedstrategy.ai
 
-import com.ironlordbyron.turnbasedstrategy.Logging
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
@@ -21,7 +20,10 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
                           val basicAiDecisions: BasicAiDecisions) : EnemyAi{
 
     override fun getNextActions(thisCharacter: LogicalCharacter): List<AiPlannedAction> {
-        return basicAiDecisions.executeOnIntent(thisCharacter)
+        if (thisCharacter.goal == null || thisCharacter.goal!!.shouldChangeGoal()){
+            thisCharacter.goal = thisCharacter.tacMapUnit.metagoal.formulateNewGoal(thisCharacter)
+        }
+        return thisCharacter.goal!!.executeOnIntent(thisCharacter)
     }
 
     private fun getNextAbilityUsage(thisCharacter: LogicalCharacter, locationAfterMove: TileLocation): AiPlannedAction.AbilityUsage? {

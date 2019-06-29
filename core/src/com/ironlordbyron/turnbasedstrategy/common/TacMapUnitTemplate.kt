@@ -2,6 +2,8 @@ package com.ironlordbyron.turnbasedstrategy.common
 
 import com.ironlordbyron.turnbasedstrategy.ai.EnemyAiType
 import com.ironlordbyron.turnbasedstrategy.ai.IntentType
+import com.ironlordbyron.turnbasedstrategy.ai.goals.AttackMetaGoal
+import com.ironlordbyron.turnbasedstrategy.ai.goals.Metagoal
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.common.abilities.StandardAbilities
 import com.ironlordbyron.turnbasedstrategy.common.abilities.specific.GuardAbility
@@ -36,7 +38,8 @@ data class TacMapUnitTemplate(val movesPerTurn: Int,
                               // used in map generation
                               val difficulty: Int = 1,
                               val possibleRandomizedIntents: List<IntentType> = listOf(IntentType.ATTACK, IntentType.MOVE),
-                              val templateId: String = templateName
+                              val templateId: String = templateName,
+                              val metagoal: Metagoal = AttackMetaGoal()
 ) {
 
     private val stacksOfAttribute: HashMap<String, Int> = hashMapOf()
