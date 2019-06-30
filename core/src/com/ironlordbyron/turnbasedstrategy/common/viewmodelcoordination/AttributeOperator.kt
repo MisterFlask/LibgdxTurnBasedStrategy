@@ -35,20 +35,24 @@ public class AttributeOperator @Inject constructor(val logicHooks: LogicHooks,
         }
     }
 
-    private fun unapplyAttribute(logicalCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute) {
+    public fun unapplyAttribute(logicalCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute) {
         if (logicalCharacterAttribute.tacticalMapProtoActor != null){
             actionManager.despawnAttributeActorAtTileInSequence(logicalCharacterAttribute, logicalCharacter)
         }
-        logicalCharacter.tacMapUnit.attributes.removeIf { it.id == logicalCharacterAttribute.id }
+        logicalCharacter.tacMapUnit.removeAttribute(logicalCharacterAttribute)
     }
 
     private fun hasAttribute(logicalCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute): Boolean {
         return logicalCharacter.getAttributes().any{it.logicalAttribute.id == logicalCharacterAttribute.id}
     }
 
+
     fun applyAttribute(logicalCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute,
                        stacksToApply: Int = 1){
         if (hasAttribute(logicalCharacter, logicalCharacterAttribute) and !logicalCharacterAttribute.stackable){
+            return
+        }
+        if (stacksToApply == 0){
             return
         }
 
@@ -63,13 +67,15 @@ public class AttributeOperator @Inject constructor(val logicHooks: LogicHooks,
 
         if (hasAttribute(logicalCharacter, logicalCharacterAttribute) and logicalCharacterAttribute.stackable){
             logicalCharacter.incrementAttribute(logicalCharacterAttribute, stacksToApply)
+            logicHooks.afterApplicationOfAttribute(logicalCharacter, logicalCharacterAttribute,
+                    stacksToApply)
         }
         else if (!hasAttribute(logicalCharacter,logicalCharacterAttribute)){
-            logicalCharacter.tacMapUnit.attributes.add(logicalCharacterAttribute)
+            logicalCharacter.incrementAttribute(logicalCharacterAttribute, stacksToApply)
+            logicHooks.afterApplicationOfAttribute(logicalCharacter, logicalCharacterAttribute,
+                    stacksToApply)
         } else{
             return
         }
-        logicHooks.afterApplicationOfAttribute(logicalCharacter, logicalCharacterAttribute,
-                stacksToApply)
     }
 }

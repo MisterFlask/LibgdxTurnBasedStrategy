@@ -11,6 +11,7 @@ import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCha
 import com.ironlordbyron.turnbasedstrategy.common.equipment.EquipmentClass
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
+import com.ironlordbyron.turnbasedstrategy.tacmapunits.TurnStartAction
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.WeakMinionSpawner
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TerrainType
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.register
@@ -19,7 +20,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.Superimpose
 import java.util.*
 
 
-data class TacMapUnitTemplate(val movesPerTurn: Int,
+class TacMapUnitTemplate(val movesPerTurn: Int,
                               val tiledTexturePath: ProtoActor,
                               val templateName: String = "Peasant",
                               var abilities: List<LogicalAbility> = listOf(),
@@ -32,27 +33,29 @@ data class TacMapUnitTemplate(val movesPerTurn: Int,
                               var maxHealth: Int = 3,
                               var healthLeft: Int = maxHealth,
                               var equipment: ArrayList<LogicalEquipment> = ArrayList(),
-                              var attributes: ArrayList<LogicalCharacterAttribute> = ArrayList(startingAttributes),
+                              attributes: ArrayList<LogicalCharacterAttribute> = ArrayList(startingAttributes),
                               val strength: Int = 0,
                               val dexterity: Int = 0,
                               // used in map generation
                               val difficulty: Int = 1,
                               val possibleRandomizedIntents: List<IntentType> = listOf(IntentType.ATTACK, IntentType.MOVE),
                               val templateId: String = templateName,
-                              val metagoal: Metagoal = AttackMetaGoal()
+                              val metagoal: Metagoal = AttackMetaGoal(),
+                              val turnStartAction: TurnStartAction? = null
 ) {
 
     private val stacksOfAttribute: HashMap<String, Int> = hashMapOf()
-
+    private val _attributes = attributes
 
     init{
         for (attribute in attributes){
             stacksOfAttribute[attribute.id] = 1
         }
     }
+
     fun getAttributes() : Collection<LogicalCharacter.StacksOfAttribute> {
         val ret = ArrayList<LogicalCharacter.StacksOfAttribute>()
-        for (attribute in attributes){
+        for (attribute in _attributes){
             if (!stacksOfAttribute.containsKey(attribute.id)){
                 stacksOfAttribute[attribute.id] = 1
             }
@@ -66,14 +69,25 @@ data class TacMapUnitTemplate(val movesPerTurn: Int,
         if (stacksOfAttribute.containsKey(logicalAttribute.id)){
             stacksOfAttribute[logicalAttribute.id] =  (stacksOfAttribute[logicalAttribute.id]!! + stacks)
         } else{
-            attributes.add(logicalAttribute)
+            _attributes.add(logicalAttribute)
             stacksOfAttribute[logicalAttribute.id] = stacks
         }
+    }
+    fun removeAttributeById(id: String){
+        if (stacksOfAttribute.containsKey(id)){
+            stacksOfAttribute.remove(id)
+        }
+        _attributes.removeIf{it.id == id}
+    }
+    fun removeAttribute(logicalAttribute: LogicalCharacterAttribute){
+        if (stacksOfAttribute.containsKey(logicalAttribute.id)){
+            stacksOfAttribute.remove(logicalAttribute.id)
+        }
+        _attributes.remove(logicalAttribute)
     }
 
     // defensive copying
     init{
-        attributes = ArrayList(attributes)
         equipment = ArrayList(equipment)
         abilities = ArrayList(abilities)
         allowedEquipment = ArrayList(allowedEquipment)

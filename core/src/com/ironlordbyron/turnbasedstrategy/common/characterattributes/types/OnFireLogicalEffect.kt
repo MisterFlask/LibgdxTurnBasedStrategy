@@ -11,8 +11,8 @@ public class OnFireFunctionalEffect (val damagePerTurn: Int) : FunctionalAttribu
         GameModuleInjector.generateInstance(DamageOperator::class.java)
     }
 
-    override fun onTurnStart(functionalEffectParameters: FunctionalEffectParameters) {
-        damageOperator.damageCharacter(functionalEffectParameters.thisCharacter,
+    override fun onTurnStart(params: FunctionalEffectParameters) {
+        damageOperator.damageCharacter(params.thisCharacter,
                 damageAmount = damagePerTurn, abilityAndEquipment = null, sourceCharacter = null)
     }
 

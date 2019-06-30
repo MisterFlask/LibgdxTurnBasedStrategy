@@ -100,10 +100,12 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
 
     fun attemptToDamage(damageAttemptInput: DamageAttemptInput): DamageAttemptInput {
         var damageAttemptResult = damageAttemptInput
-        val victimEffectsToRun = damageAttemptInput.targetCharacter.getAttributes().flatMap{
-            it.logicalAttribute.customEffects}
-        for (effect in victimEffectsToRun){
-            damageAttemptResult = effect.attemptToDamage(damageAttemptResult)
+        val logicalAttributes = damageAttemptInput.targetCharacter.getAttributes()
+        for (attr in logicalAttributes){
+            val victimEffectsToRun = attr.logicalAttribute.customEffects
+            for (effect in victimEffectsToRun){
+                damageAttemptResult = effect.attemptToDamage(damageAttemptResult, FunctionalEffectParameters(damageAttemptInput.targetCharacter, attr.logicalAttribute, attr.stacks))
+            }
         }
         return damageAttemptResult
     }

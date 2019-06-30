@@ -50,7 +50,7 @@ public class ActionManager @Inject constructor(
 
     fun addCharacterToTileFromTemplate(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) : LogicalCharacter {
 
-        val tacMapUnitTemplate = tacMapUnit.copy()
+        val tacMapUnitTemplate = tacMapUnit
         println("Adding character to tile: ${tacMapUnit.templateName} at ${tileLocation}")
         val group = characterImageManager.placeCharacterActor(tileLocation,tacMapUnitTemplate.tiledTexturePath)
         val characterSpawned = LogicalCharacter(group, tileLocation, tacMapUnitTemplate, playerControlled)

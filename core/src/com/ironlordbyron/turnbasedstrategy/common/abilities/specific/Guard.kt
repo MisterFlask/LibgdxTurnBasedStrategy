@@ -6,6 +6,7 @@ import com.ironlordbyron.turnbasedstrategy.common.abilities.*
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.DamageType
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalAttributeEffect
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalEffectParameters
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeOperator
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
@@ -71,7 +72,7 @@ class GuardedFunctionalEffect(val guardedByCharacter: UUID) : FunctionalAttribut
             is TacticalGameEvent.UnitTurnStart -> activatedThisTurn = false
         }
     }
-    override fun attemptToDamage(damageAttemptInput: DamageAttemptInput): DamageAttemptInput {
+    override fun attemptToDamage(damageAttemptInput: DamageAttemptInput, params: FunctionalEffectParameters): DamageAttemptInput {
         if (activatedThisTurn){
             return damageAttemptInput
         }
@@ -82,7 +83,7 @@ class GuardedFunctionalEffect(val guardedByCharacter: UUID) : FunctionalAttribut
             actionManager.risingText("Damage redirected!", damageAttemptInput.targetCharacter.tileLocation)
             return damageAttemptInput.copy(targetCharacter = newTarget)
         }else{
-            return super.attemptToDamage(damageAttemptInput)
+            return damageAttemptInput
         }
     }
 }

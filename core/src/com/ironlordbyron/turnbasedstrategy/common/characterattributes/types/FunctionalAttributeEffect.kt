@@ -10,7 +10,7 @@ import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 
-public abstract class FunctionalAttributeEffect{
+public abstract class FunctionalAttributeEffect(){
     val eventNotifier: EventNotifier by lazy {
         GameModuleInjector.generateInstance(EventNotifier::class.java)
     }
@@ -52,7 +52,7 @@ public abstract class FunctionalAttributeEffect{
 
     }
 
-    open fun attemptToDamage(damageAttemptInput: DamageAttemptInput): DamageAttemptInput{
+    open fun attemptToDamage(damageAttemptInput: DamageAttemptInput, params: FunctionalEffectParameters): DamageAttemptInput{
         return damageAttemptInput
     }
 
@@ -61,8 +61,9 @@ public abstract class FunctionalAttributeEffect{
     ////////////////////////////////////////////////////////
 
     fun removeThisAttribute(logicalAttributeId: String, thisCharacter: LogicalCharacter){
-        val attrRemoved = thisCharacter.tacMapUnit.attributes.filter{it.id == logicalAttributeId }.first()
-        thisCharacter.tacMapUnit.attributes.removeIf { it.id == logicalAttributeId }
+        val attrRemoved = thisCharacter.tacMapUnit.getAttributes()
+                .filter{it.logicalAttribute.id == logicalAttributeId }.first().logicalAttribute
+        thisCharacter.tacMapUnit.removeAttributeById(logicalAttributeId)
         eventNotifier.notifyListenersOfGuiEvent(LogicalAttributeRemovedEvent(attrRemoved, thisCharacter))
     }
 

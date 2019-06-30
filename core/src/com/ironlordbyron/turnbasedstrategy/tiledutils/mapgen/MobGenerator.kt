@@ -66,7 +66,7 @@ public class MobRegistrar(){
 
     fun getMobWithinDifficultyRange(range: IntRange) : TacMapUnitTemplate{
         listOfTemplatesToCopy.shuffle()
-        return listOfTemplatesToCopy.first{it.difficulty in range}.copy()
+        return listOfTemplatesToCopy.first{it.difficulty in range}
     }
 
     fun getMobGroupWithinDifficultyRange(range: IntRange) : MobGroup {

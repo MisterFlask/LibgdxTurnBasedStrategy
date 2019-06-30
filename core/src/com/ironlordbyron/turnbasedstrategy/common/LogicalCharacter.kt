@@ -60,7 +60,7 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
         return abilitiesSansEquipment + abilitiesWithEquipment
     }
 
-    fun getAttributes() : Collection<LogicalCharacter.StacksOfAttribute> {
+    fun getAttributes() : Collection<StacksOfAttribute> {
         return tacMapUnit.getAttributes()
     }
     fun getStacks(logicalAttribute: LogicalCharacterAttribute) : StacksOfAttribute {
