@@ -52,7 +52,7 @@ public abstract class FunctionalAttributeEffect(){
 
     }
 
-    open fun attemptToDamage(damageAttemptInput: DamageAttemptInput, params: FunctionalEffectParameters): DamageAttemptInput{
+    open fun applyDamageMods(damageAttemptInput: DamageAttemptInput, params: FunctionalEffectParameters): DamageAttemptInput{
         return damageAttemptInput
     }
 

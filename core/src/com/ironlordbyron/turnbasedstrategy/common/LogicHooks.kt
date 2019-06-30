@@ -4,7 +4,6 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import com.ironlordbyron.turnbasedstrategy.ai.BasicAiDecisions
 import com.ironlordbyron.turnbasedstrategy.ai.Intent
-import com.ironlordbyron.turnbasedstrategy.ai.IntentType
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.DamageType
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalEffectParameters
@@ -104,7 +103,7 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
         for (attr in logicalAttributes){
             val victimEffectsToRun = attr.logicalAttribute.customEffects
             for (effect in victimEffectsToRun){
-                damageAttemptResult = effect.attemptToDamage(damageAttemptResult, FunctionalEffectParameters(damageAttemptInput.targetCharacter, attr.logicalAttribute, attr.stacks))
+                damageAttemptResult = effect.applyDamageMods(damageAttemptResult, FunctionalEffectParameters(damageAttemptInput.targetCharacter, attr.logicalAttribute, attr.stacks))
             }
         }
         return damageAttemptResult

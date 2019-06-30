@@ -9,7 +9,7 @@ class TemporaryHpAttributeEffect : FunctionalAttributeEffect() {
         GameModuleInjector.generateInstance(AttributeOperator::class.java)
     }
 
-    override fun attemptToDamage(damageAttemptInput: DamageAttemptInput, params: FunctionalEffectParameters): DamageAttemptInput {
+    override fun applyDamageMods(damageAttemptInput: DamageAttemptInput, params: FunctionalEffectParameters): DamageAttemptInput {
         if (params.stacks > damageAttemptInput.damage){
             attributeOperator.applyAttribute(params.thisCharacter, params.logicalCharacterAttribute, -1 * damageAttemptInput.damage)
             return damageAttemptInput.copy(damage = 0)
