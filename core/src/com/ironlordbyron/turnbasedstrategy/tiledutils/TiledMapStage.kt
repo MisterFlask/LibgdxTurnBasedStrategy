@@ -28,7 +28,8 @@ class TiledMapStage(
         val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider,
         val tiledMapInterpreter: TiledMapInterpreter,
         val tiledMapProvider: TileMapProvider,
-        val eventNotifier: EventNotifier) : Stage(), InputProcessor {
+        val eventNotifier: EventNotifier,
+        val tiledMapInitializer: TiledMapInitializer) : Stage(), InputProcessor {
     init {
         tacticalTiledMapStageProvider.tiledMapStage = this
     }
@@ -38,6 +39,7 @@ class TiledMapStage(
         val layer = tiledMap.getTileLayer(TileLayer.BASE)
         createActorsAndLocationsForLayer(layer, tiledMap)
         createFactoriesForStage()
+        tiledMapInitializer.initializeFromTilemap(tiledMap)
         battleStarter.startBattle()
     }
 

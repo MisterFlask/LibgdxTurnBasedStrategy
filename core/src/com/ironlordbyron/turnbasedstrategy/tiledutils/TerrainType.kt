@@ -7,5 +7,6 @@ enum class TerrainType{
     WALL,
     DOOR,
     WATER,
-    FOREST
+    FOREST,
+    UNINITIALIZED
 }

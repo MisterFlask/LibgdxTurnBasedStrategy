@@ -5,6 +5,7 @@ import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
+import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.WallEntity
@@ -110,4 +111,11 @@ class LogicalTileTracker @Inject constructor (val eventNotifier: EventNotifier) 
     fun removeEntity(tileEntity: WallEntity) {
         throw NotImplementedError()
     }
+}
+
+val logicalTileTracker: LogicalTileTracker by lazy{
+    GameModuleInjector.generateInstance(LogicalTileTracker::class.java)
+}
+fun TileLocation.toLibgdxCoordinates() : LibgdxLocation{
+    return logicalTileTracker.getLibgdxCoordinatesFromLocation(this)
 }

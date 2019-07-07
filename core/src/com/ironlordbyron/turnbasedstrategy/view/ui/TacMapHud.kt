@@ -69,6 +69,7 @@ class TacMapHud(viewPort: Viewport,
     var selectedCharacter: LogicalCharacter? = null
     var hoveredAbility: LogicalAbility? = null
     var entitySelected: TileEntity? = null
+    var tileSelected: TileLocation? = null
 
     override fun consumeGuiEvent(event: TacticalGuiEvent) {
         when (event) {
@@ -89,6 +90,7 @@ class TacMapHud(viewPort: Viewport,
             is TacticalGuiEvent.TileClicked -> {
                 val tileEntities = logicalTileTracker.getEntitiesAtTile(event.tileLocation)
                 entitySelected = tileEntities.firstOrNull() // TODO:  Not great
+                tileSelected = event.tileLocation
                 regenerateTable()
             }
             is TacticalGuiEvent.PlayerIsPlacingUnit -> {
@@ -170,11 +172,11 @@ class TacMapHud(viewPort: Viewport,
             attrImage.addTooltip(RenderingFunction.simple(item.logicalAttribute.description(item.stacks)))
             table.add(attrImage.actor).width(iconDimensions.width.toFloat()).height(iconDimensions.height.toFloat())
             if (item.stacks > 1) {
-                table.add(textLabelGenerator.generateLabel("[${item.stacks}]").label)
+                table.add(Label("[${item.stacks.toString()}]", DEFAULT_SKIN))
             }
             val label = Label(item.logicalAttribute.name, DEFAULT_SKIN)
             label.setWrap(true)
-            table.add(label).width(250f)
+            table.add(label)
             table.row()
         }
         return table
@@ -289,7 +291,14 @@ class TacMapHud(viewPort: Viewport,
     }
 
     private fun debugTextAreaText(): String {
-        return boardInputStateProvider.boardInputState.name + "\n" + this.selectedCharacter?.tileLocation
+        if (selectedCharacter != null){
+            return (boardInputStateProvider.boardInputState.name
+                    + "\n" + this.selectedCharacter?.tileLocation
+                    + "\n" + this.selectedCharacter?.intent
+                    + "\n" + this.selectedCharacter?.tacMapUnit?.metagoal)
+        } else{
+            return tileSelected?.terrainType().toString()
+        }
     }
 
     private fun backgroundColor(): BackgroundColor {

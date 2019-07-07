@@ -23,7 +23,8 @@ open class CanWalkOnTile(open val logicalTileTracker: LogicalTileTracker,
     override fun canWalkOnTile(logicalCharacter: LogicalCharacter, tileLocation: TileLocation): Boolean {
         val terrain = logicalTileTracker.getLogicalTileFromLocation(tileLocation)!!.terrainType
 
-        return logicalCharacter.tacMapUnit.walkableTerrainTypes.contains(terrain) && isTileUnoccupied(tileLocation)
+        return logicalCharacter.tacMapUnit.walkableTerrainTypes.contains(terrain)
+                && isTileUnoccupied(tileLocation)
     }
 
     fun getCharacterAtLocation(tileLocation: TileLocation): LogicalCharacter? {

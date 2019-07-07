@@ -7,6 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.LabelWrapper
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.LabelWrapperImpl
+import com.ironlordbyron.turnbasedstrategy.view.images.Dimensions
+import java.awt.Dimension
 
 object FontGenerator{
     fun retrieveFont(fontScale: Float? = null): BitmapFont{
@@ -21,12 +23,15 @@ object FontGenerator{
 }
 
 class TextLabelGenerator{
-    fun generateLabel(text: String): LabelWrapper{
+    fun generateLabel(text: String, dimensions: Dimensions? = null): LabelWrapper{
         val font = FontGenerator.retrieveFont()
         val labelStyle = Label.LabelStyle()
         labelStyle.font = font
 
         val label = LabelWrapperImpl(text, labelStyle)
+        if (dimensions != null){
+            label.label.setSize(dimensions.width.toFloat(), dimensions.height.toFloat())
+        }
         return label
     }
 }

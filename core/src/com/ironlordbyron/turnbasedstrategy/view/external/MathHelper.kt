@@ -1,9 +1,9 @@
-package com.megacrit.cardcrawl.helpers
+package com.ironlordbyron.turnbasedstrategy.view.external
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Graphics
 import com.badlogic.gdx.math.MathUtils
-import com.megacrit.cardcrawl.core.Settings
+import com.ironlordbyron.turnbasedstrategy.view.external.Settings
 
 object MathHelper {
     fun cardLerpSnap(startX: Float, targetX: Float): Float {

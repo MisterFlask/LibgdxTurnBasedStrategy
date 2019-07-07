@@ -3,6 +3,7 @@ package com.ironlordbyron.turnbasedstrategy.view.external
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Graphics
 import com.badlogic.gdx.graphics.Color
+import com.megacrit.cardcrawl.core.DisplayConfig
 import org.apache.logging.log4j.LogManager.getLogger
 import java.util.ArrayList
 import org.apache.logging.log4j.Logger
@@ -187,11 +188,11 @@ object Settings {
 
     private fun initializeDisplay() {
         logger.info("Initializing display settings...")
-        //val displayConf = DisplayConfig.readConfig()
+        val displayConf = DisplayConfig.readConfig()
         M_W = Gdx.graphics.width
         M_H = Gdx.graphics.height
-        //WIDTH = displayConf.getWidth()
-        //HEIGHT = displayConf.getHeight()
+        WIDTH = displayConf.height
+        HEIGHT = displayConf.width
 
         val ratio = (WIDTH / HEIGHT).toFloat()
         if (ratio < 1.59f) {
@@ -201,12 +202,12 @@ object Settings {
             WIDTH = (HEIGHT * 1.7777778f).toInt()
             VERT_LETTERBOX_AMT = (M_W - WIDTH) / 2
         }
-        //MAX_FPS = displayConf.getMaxFPS()
+        MAX_FPS = displayConf.maxFPS
         SAVED_WIDTH = WIDTH
         SAVED_HEIGHT = HEIGHT
-        //IS_FULLSCREEN = displayConf.getIsFullscreen()
-        //IS_W_FULLSCREEN = displayConf.getWFS()
-        //IS_V_SYNC = displayConf.getIsVsync()
+        IS_FULLSCREEN = displayConf.isFullscreen
+        IS_W_FULLSCREEN = displayConf.wfs
+        IS_V_SYNC = displayConf.isVsync
         if (WIDTH / HEIGHT < 1.7f) {
             isSixteenByTen = true
         }

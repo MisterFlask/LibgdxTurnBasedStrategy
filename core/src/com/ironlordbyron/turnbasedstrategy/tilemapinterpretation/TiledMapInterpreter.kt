@@ -74,10 +74,10 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
 
     private fun isWater(tileMap: TiledMap, tileLocation: TileLocation): Boolean {
         val layersAtLocation = getAllTilesAtXY(tileMap, tileLocation)
-        if (layersAtLocation.getCellByLayer(TileLayer.BASE)?.tiledCell?.tile == null){
-            return true
+        if (layersAtLocation.getCellByLayer(TileLayer.BASE)?.tiledCell?.tile?.properties?.containsKey("ground")?:false){
+            return false
         }
-        return false
+        return true
     }
 
     private fun hasProp(cell: TiledMapTileLayer.Cell, doorStr: String) =
@@ -85,17 +85,18 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
 
     fun retrieveTerrainType(tileMap: TiledMap, tileLocation: TileLocation) : TerrainType{
         val layersAtLocation = getAllTilesAtXY(tileMap, tileLocation)
-        val atLayer = layersAtLocation.getCellByLayer(TileLayer.FEATURE)
+        val atFeatureLayer = layersAtLocation.getCellByLayer(TileLayer.FEATURE)
         if (isWater(tileMap, tileLocation)){
             return TerrainType.WATER
         }
-        if (atLayer != null){
-            val isMountain = atLayer.tiledCell.tile.properties["mountain"] as Boolean
-            if (isMountain){
+        if (atFeatureLayer != null
+                && atFeatureLayer.tiledCell.tile != null){
+            val isMountain = atFeatureLayer.tiledCell.tile.properties["mountain"]
+            if (isMountain != null){
                 return TerrainType.MOUNTAIN
             }
-            val isTrees = atLayer.tiledCell.tile.properties["trees"] as Boolean
-            if (isTrees){
+            val isTrees = atFeatureLayer.tiledCell.tile.properties["forest"]
+            if (isTrees != null){
                 return TerrainType.FOREST
             }
         }

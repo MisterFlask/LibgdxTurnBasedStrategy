@@ -2,15 +2,11 @@ package com.ironlordbyron.turnbasedstrategy.view.external
 
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Graphics
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.BitmapFont
-import com.badlogic.gdx.graphics.g2d.BitmapFont.BitmapFontData
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.MathUtils
-import com.megacrit.cardcrawl.core.Settings
-import com.megacrit.cardcrawl.helpers.MathHelper
 
 class DialogWord(private val font: BitmapFont, var word: String, a_effect: AppearEffect, private val effect: WordEffect, private val wColor: WordColor, private var x: Float, private var target_y: Float, line: Int) {
     var line = 0

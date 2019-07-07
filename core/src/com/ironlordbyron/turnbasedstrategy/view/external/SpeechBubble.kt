@@ -6,7 +6,10 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Interpolation
 import com.badlogic.gdx.math.MathUtils
-import com.megacrit.cardcrawl.core.Settings
+import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.common.logicalTileTracker
+import com.ironlordbyron.turnbasedstrategy.tiledutils.toLibgdxCoordinates
+
 class SpeechBubble(x: Float, y: Float, duration: Float, msg: String, isPlayer: Boolean) : AbstractGameEffect() {
     private var shadow_offset = 0.0f
     private var x: Float = 0.toFloat()
@@ -19,6 +22,14 @@ class SpeechBubble(x: Float, y: Float, duration: Float, msg: String, isPlayer: B
     private val facingRight: Boolean
 
     constructor(x: Float, y: Float, msg: String, isPlayer: Boolean) : this(x, y, 2.0f, msg, isPlayer) {}
+
+    constructor(msg: String, tileLocation: TileLocation) : this(
+        x = tileLocation.toLibgdxCoordinates().x.toFloat(),
+        y = tileLocation.toLibgdxCoordinates().y.toFloat(),
+        duration =  2.0f,
+        msg = msg,
+        isPlayer = true)
+
 
     init {
         var effect_x = -170.0f * Settings.scale

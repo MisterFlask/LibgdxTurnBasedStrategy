@@ -23,6 +23,10 @@ enum class Icon(val imagePath: String, val imageFolder: String){
     BREADCRUMB("breadcrumb.png", "icons")
 }
 
+public fun String.fromFileToTexture() : Texture{
+    return Texture(Gdx.files.internal(this))
+}
+
 public class FileImageRetriever @Inject constructor(val tileMapProvider: TileMapProvider){
 
     public fun retrieveIconImage(icon: Icon): Texture {

@@ -7,8 +7,6 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Disposable;
-import com.megacrit.cardcrawl.core.Settings;
-import com.megacrit.cardcrawl.helpers.MathHelper;
 
 public class SpeechWord
         implements Disposable
