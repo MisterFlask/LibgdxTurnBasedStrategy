@@ -11,6 +11,7 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvi
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.BoundingBoxType
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tiledutils.setBoundingBox
+import com.ironlordbyron.turnbasedstrategy.tileentity.CityTileEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
@@ -179,6 +180,19 @@ public class ActionManager @Inject constructor(
     fun risingText(text: String, tileLocation: TileLocation, scale: Float = 1.0f){
         animationActionQueueProvider.addAction(
                 floatingTextGenerator.getTemporaryAnimationActorActionPair("${text}", tileLocation, scale))
+    }
+
+    fun conquerCityAction(text:String, cityTileEntity: CityTileEntity){
+        risingText(text, cityTileEntity.tileLocation)
+
+        animationActionQueueProvider.addAction(
+            customAction(cityTileEntity.actor){
+                cityTileEntity.conquerByDemonAction()
+        })
+    }
+
+    private fun customAction(actor: Actor, customAction: ()->Unit): ActorActionPair{
+        return ActorActionPair(actor, AnimationActionQueueProvider.CustomAction(customAction))
     }
 
 

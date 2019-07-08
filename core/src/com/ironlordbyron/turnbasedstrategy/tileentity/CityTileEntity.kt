@@ -10,7 +10,8 @@ private val DIM_RED_COLOR = Color(1f,.5f,.5f, 1f)
 public data class CityTileEntity(
         val cityName: String,
         override val tileLocation: TileLocation,
-        override val actor: Actor) : TileEntity{
+        override val actor: Actor,
+        var ownedByDemon: Boolean = false) : TileEntity{
 
     override fun targetableByAbility(ability: LogicalAbility): Boolean {
         return false
@@ -24,6 +25,7 @@ public data class CityTileEntity(
 
     fun conquerByDemonAction(){
         this.actor.color = DIM_RED_COLOR
+        ownedByDemon = true
     }
 }
 

@@ -6,6 +6,7 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTile
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TerrainType
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 
 
@@ -43,4 +44,8 @@ val logicalTileTracker: LogicalTileTracker by lazy{
 
 public fun TileLocation.logicalTile() : LogicalTile? {
     return logicalTileTracker.getLogicalTileFromLocation(this)
+}
+
+public fun TileLocation.entity(): TileEntity?{
+    return logicalTileTracker.getEntitiesAtTile(this).firstOrNull()
 }

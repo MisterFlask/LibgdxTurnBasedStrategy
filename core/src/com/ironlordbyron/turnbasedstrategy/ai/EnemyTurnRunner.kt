@@ -1,10 +1,12 @@
 package com.ironlordbyron.turnbasedstrategy.ai
 
 import com.ironlordbyron.turnbasedstrategy.common.*
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.MapHighlighter
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
+import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.CharacterSpriteUtils
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActionRunner
 import com.ironlordbyron.turnbasedstrategy.tiledutils.CharacterImageManager
@@ -12,6 +14,7 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActorFactory
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TiledMapOperationsHandler
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
+import com.ironlordbyron.turnbasedstrategy.tileentity.CityTileEntity
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimationSpeedManager
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.PulseAnimationGenerator
 import javax.inject.Inject
@@ -32,6 +35,10 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
                                                  val animationActionQueueProvider: AnimationActionQueueProvider,
                                                  val logicHooks: LogicHooks,
                                                  val pulseAnimationGenerator: PulseAnimationGenerator){
+
+    val actionManager: ActionManager by lazy{
+        GameModuleInjector.generateInstance(ActionManager::class.java)
+    }
 
     public fun endTurn() {
         runEnemyTurn()
@@ -70,11 +77,19 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
                     }
                 }
             }
+            conquerCitiesStep(enemyCharacter)
         }
         animationActionQueueProvider.runThroughActionQueue(finalAction = {
             eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.FinishedEnemyTurn())
         })
         animationActionQueueProvider.clearQueue()
+    }
+
+    public fun conquerCitiesStep(enemyCharacter: LogicalCharacter){
+        val tileEntityAtLocation = enemyCharacter.tileLocation.entity()
+        if (tileEntityAtLocation != null && tileEntityAtLocation is CityTileEntity){
+            actionManager.conquerCityAction("City conquered", tileEntityAtLocation)
+        }
     }
 
     private fun performTileHighlightAnimationForAction(enemyCharacter: LogicalCharacter, action: AiPlannedAction.AbilityUsage) {

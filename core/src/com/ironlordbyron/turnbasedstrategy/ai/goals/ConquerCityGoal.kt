@@ -16,12 +16,16 @@ class ConquerCityGoal(): Goal{
         GameModuleInjector.generateInstance(TacticalMapState::class.java)
     }
 
-
     override fun formulateIntent(thisCharacter: LogicalCharacter) : Intent{
         if (thisCharacter.tacMapUnit.enemyAiType == EnemyAiType.BASIC){
             val shouldFindEnemyToAttack = shouldAttackClosestEnemy(thisCharacter)
             if (shouldFindEnemyToAttack) {
-                return basicAiDecisions.getAttackIntentForThisTurn(thisCharacter)
+                val attackOption = basicAiDecisions.getAttackIntentForThisTurn(thisCharacter)
+                if (attackOption is Intent.Attack){
+                    return attackOption
+                } else{
+                    return Intent.Move()
+                }
             } else{
                 return Intent.Move()
             }
@@ -53,7 +57,7 @@ class ConquerCityGoal(): Goal{
                 return executeOnIntent(thisCharacter)
             }
             IntentType.MOVE -> {
-                return basicAiDecisions.beelineTowardNearestCity(thisCharacter)
+                return basicAiDecisions.beelineTowardNearestUnownedCity(thisCharacter)
             }
             IntentType.NONE, IntentType.DEFEND, IntentType.OTHER  -> {
                 println("Not supported: ${thisCharacter.intent.intentType}" )

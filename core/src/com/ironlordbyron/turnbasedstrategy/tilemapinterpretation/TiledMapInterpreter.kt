@@ -81,7 +81,7 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
     }
 
     private fun hasProp(cell: TiledMapTileLayer.Cell, doorStr: String) =
-            cell?.tile?.properties?.get(doorStr) != null
+            cell.tile?.properties?.get(doorStr) != null
 
     fun retrieveTerrainType(tileMap: TiledMap, tileLocation: TileLocation) : TerrainType{
         val layersAtLocation = getAllTilesAtXY(tileMap, tileLocation)
@@ -131,13 +131,6 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
 
 public fun List<TiledMapStage.TiledCellAgglomerate>.getCellByLayer(tileLayer: TileLayer): TiledMapStage.TiledCellAgglomerate? {
     return this.filter{it.tileLayer == tileLayer}.firstOrNull()
-}
-
-public class KnownObjectFactory(){
-    fun build(knownObjectType: KnownObjectType){
-
-    }
-
 }
 
 public enum class KnownObjectType{

@@ -16,10 +16,10 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
                                                    val pathfinderFactory: PathfinderFactory,
                                                    val logicalTileTracker: LogicalTileTracker){
 
-    public fun beelineTowardNearestCity(thisCharacter: LogicalCharacter) : List<AiPlannedAction>{
+    public fun beelineTowardNearestUnownedCity(thisCharacter: LogicalCharacter) : List<AiPlannedAction>{
         Logging.DebugPathfinding("Attempting to beeline toward nearest city")
         val closestCity = getClosestMatchingEntity(thisCharacter){
-            it is CityTileEntity
+            it is CityTileEntity && !it.ownedByDemon
         }
         if (closestCity == null || closestCity.tileLocation == thisCharacter.tileLocation){
             Logging.DebugPathfinding("Could not find city to beeline toward!")
