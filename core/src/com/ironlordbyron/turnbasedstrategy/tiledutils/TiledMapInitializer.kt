@@ -1,9 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.tiledutils
 
 import com.badlogic.gdx.maps.tiled.TiledMap
-import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
-import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.WallEntity
 import java.lang.IllegalStateException
 import javax.inject.Inject
 

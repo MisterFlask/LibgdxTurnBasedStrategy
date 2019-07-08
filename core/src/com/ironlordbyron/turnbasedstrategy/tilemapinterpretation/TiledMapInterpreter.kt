@@ -85,6 +85,14 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
 
     fun retrieveTerrainType(tileMap: TiledMap, tileLocation: TileLocation) : TerrainType{
         val layersAtLocation = getAllTilesAtXY(tileMap, tileLocation)
+        val atBaseLayer = layersAtLocation.getCellByLayer(TileLayer.BASE)
+        if (atBaseLayer != null && atBaseLayer.tiledCell.tile != null){
+            val isMountain = atBaseLayer.tiledCell.tile.properties["mountain"]
+            if (isMountain != null){
+                return TerrainType.MOUNTAIN
+            }
+        }
+
         val atFeatureLayer = layersAtLocation.getCellByLayer(TileLayer.FEATURE)
         if (isWater(tileMap, tileLocation)){
             return TerrainType.WATER
