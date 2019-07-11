@@ -1,17 +1,17 @@
-package com.ironlordbyron.turnbasedstrategy.view.external
+package com.ironlordbyron.turnbasedstrategy.view.external_deprecated
 
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Graphics
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.GlyphLayout
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.ironlordbyron.turnbasedstrategy.font.FontGenerator
-import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import java.util.ArrayList
 import java.util.Scanner
 
-class SpeechTextEffect(private val x: Float, private val y: Float, duration: Float, msg: String, private val a_effect: DialogWord.AppearEffect) : AbstractGameEffect() {
+class SpeechTextEffect(private val x: Float, private val y: Float,
+                       duration: Float,
+                       msg: String, private val a_effect: DialogWord.AppearEffect) : AbstractGameEffect() {
     private val font: BitmapFont
     private var wordTimer = 0.0f
     private var textDone = false
@@ -20,16 +20,13 @@ class SpeechTextEffect(private val x: Float, private val y: Float, duration: Flo
     private val s: Scanner
     private var curLineWidth = 0.0f
 
-    val fontGenerator: FontGenerator by lazy{
-        GameModuleInjector.generateInstance(FontGenerator::class.java)
-    }
 
     init {
         if (gl == null) {
             gl = GlyphLayout()
         }
         this.duration = duration
-        this.font = fontGenerator.retrieveFont() //TODO: FontHelper.speech_font
+        this.font = FontGenerator.retrieveFont() //TODO: FontHelper.speech_font
         this.s = Scanner(msg)
     }
 

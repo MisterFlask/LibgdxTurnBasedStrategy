@@ -1,15 +1,9 @@
-package com.ironlordbyron.turnbasedstrategy.view.external
+package com.ironlordbyron.turnbasedstrategy.view.external_deprecated
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Graphics
 import com.badlogic.gdx.graphics.Color
 import com.megacrit.cardcrawl.core.DisplayConfig
 import org.apache.logging.log4j.LogManager.getLogger
-import java.util.ArrayList
-import org.apache.logging.log4j.Logger
-import sun.util.logging.resources.logging
-
-import java.awt.SystemColor.info
 
 object Settings {
     private val logger = getLogger(Settings::class)
@@ -53,7 +47,7 @@ object Settings {
     var HORIZ_LETTERBOX_AMT = 0
     var VERT_LETTERBOX_AMT = 0
     var displayIndex = 0
-    var scale: Float = 0.toFloat()
+    var scale: Float = 1.toFloat()
     var seed: Long? = null
     var seedSet = false
     var seedSourceTimestamp: Long = 0

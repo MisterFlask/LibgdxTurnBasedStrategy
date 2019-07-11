@@ -14,9 +14,11 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 
 public class LogicalAbility(val name: String,
                                  val speed: AbilitySpeed,
+                                @Deprecated("use rangeStyle instead")
                                  val range: Int,
                                  val attackSprite: ProtoActor? = null,
                                  val missionLimit: Int? = null,
+                            @Deprecated("use damageStyle instead")
                                  val damage: Int? = null,
                                  val description: String? = null,
                                  val abilityClass: AbilityClass,
@@ -35,6 +37,7 @@ public class LogicalAbility(val name: String,
                                  val areaOfEffect: AreaOfEffect = AreaOfEffect.One(),
                                  val cooldownTurns: Int? = null,
                                  val rangeStyle: RangeStyle = RangeStyle.Simple(range),
+                                 val damageStyle: DamageStyle = SimpleDamageStyle(damage?:0),
                                  val intentType: IntentType = IntentType.ATTACK,
                                  val requiresTarget: Boolean = true,
                                  val abilityTargetingParameters: AbilityTargetingParameters = SimpleAttackAbility(),
@@ -47,6 +50,21 @@ interface CustomAbilityAi {
     fun getActionsForAbilityUse(sourceCharacter: LogicalCharacter) : List<AiPlannedAction>
     fun canUseAbility(sourceCharacter: LogicalCharacter): Boolean
     fun getMovementGoal(sourceCharacter: LogicalCharacter) : TileLocation
+}
+
+interface DamageStyle{
+    fun getDamageAmount(characterUsing: LogicalCharacter,
+                        logicalAbilityAndEquipment: LogicalAbilityAndEquipment,
+                        targetCharacter: LogicalCharacter): Int
+}
+
+class SimpleDamageStyle(val amount: Int): DamageStyle{
+    override fun getDamageAmount(characterUsing: LogicalCharacter,
+                                 logicalAbilityAndEquipment: LogicalAbilityAndEquipment,
+                                 targetCharacter: LogicalCharacter): Int {
+        return amount
+    }
+
 }
 
 interface RangeStyle{

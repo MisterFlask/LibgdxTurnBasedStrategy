@@ -1,9 +1,7 @@
-package com.ironlordbyron.turnbasedstrategy.view.external
+package com.ironlordbyron.turnbasedstrategy.view.external_deprecated
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Graphics
 import com.badlogic.gdx.math.MathUtils
-import com.ironlordbyron.turnbasedstrategy.view.external.Settings
 
 object MathHelper {
     fun cardLerpSnap(startX: Float, targetX: Float): Float {

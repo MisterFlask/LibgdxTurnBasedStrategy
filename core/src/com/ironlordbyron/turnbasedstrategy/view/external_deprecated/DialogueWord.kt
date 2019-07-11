@@ -1,4 +1,4 @@
-package com.ironlordbyron.turnbasedstrategy.view.external
+package com.ironlordbyron.turnbasedstrategy.view.external_deprecated
 
 
 import com.badlogic.gdx.Gdx

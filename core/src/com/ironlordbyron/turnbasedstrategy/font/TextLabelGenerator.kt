@@ -23,12 +23,15 @@ object FontGenerator{
 }
 
 class TextLabelGenerator{
-    fun generateLabel(text: String, dimensions: Dimensions? = null): LabelWrapper{
-        val font = FontGenerator.retrieveFont()
+    fun generateLabel(text: String,
+                      dimensions: Dimensions? = null,
+                      scale: Float?= null,
+                      hittable: Boolean = true): LabelWrapper{
+        val font = FontGenerator.retrieveFont(scale)
         val labelStyle = Label.LabelStyle()
         labelStyle.font = font
 
-        val label = LabelWrapperImpl(text, labelStyle)
+        val label = LabelWrapperImpl(text, labelStyle, hittable)
         if (dimensions != null){
             label.label.setSize(dimensions.width.toFloat(), dimensions.height.toFloat())
         }

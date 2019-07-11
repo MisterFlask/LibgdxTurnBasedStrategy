@@ -177,6 +177,10 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 .filter{(it.intent as Intent.Attack).logicalCharacterUuid == character.id}
                 .map{it.tileLocation}
         mapHighlighter.highlightTiles(enemiesTargetingPlayer, HighlightType.RED_TILE)
+
+        actionManager.createSpeechBubble(character, "'Allo!")
+        animationActionQueueProvider.runThroughActionQueue()
+
     }
 
     fun canUnitMoveTo(location: TileLocation, unit: LogicalCharacter): Boolean {

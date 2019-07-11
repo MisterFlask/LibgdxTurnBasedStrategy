@@ -5,6 +5,7 @@ import com.ironlordbyron.turnbasedstrategy.ai.BasicAiDecisions
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.tiledutils.CharacterImageManager
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
@@ -15,12 +16,12 @@ import com.ironlordbyron.turnbasedstrategy.tileentity.CityTileEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
-import com.ironlordbyron.turnbasedstrategy.view.animation.LogicalCharacterActorGroup
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.*
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.external.SpecialEffectManager
 import java.lang.IllegalArgumentException
+import java.time.Duration
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -195,6 +196,21 @@ public class ActionManager @Inject constructor(
         return ActorActionPair(actor, AnimationActionQueueProvider.CustomAction(customAction))
     }
 
+    val speechBubbleAnimation: SpeechBubbleAnimation by lazy {
+        GameModuleInjector.generateInstance(SpeechBubbleAnimation::class.java)
+    }
+
+    fun createSpeechBubble(logicalCharacter: LogicalCharacter, text: String){
+        animationActionQueueProvider.addAction(
+                customAction(logicalCharacter.actor){
+                   tiledMapStageProvider.tiledMapStage.addActor(
+                           speechBubbleAnimation.createSpeechBubbleFromTile(text, logicalCharacter.tileLocation,
+                                   existsFor = Duration.ofSeconds(1))
+                   )
+                }
+        )
+
+    }
 
 }
 // TODO: Data driven character generation

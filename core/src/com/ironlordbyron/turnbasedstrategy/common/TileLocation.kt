@@ -28,6 +28,14 @@ public fun TileLocation.distanceTo(tileLocation: TileLocation): Int {
     return Math.abs(this.x - tileLocation.x) + Math.abs(this.y - tileLocation.y)
 }
 
+public operator fun TileLocation.minus(tileLocation: TileLocation): TileLocation{
+    return TileLocation(x = this.x - tileLocation.x, y = this.y - tileLocation.y)
+}
+
+public operator fun TileLocation.plus(tileLocation: TileLocation) : TileLocation{
+    return TileLocation(this.x + tileLocation.x, this.y + tileLocation.y)
+}
+
 val tiledMapInterpreter: TiledMapInterpreter by lazy{
     GameModuleInjector.generateInstance(TiledMapInterpreter::class.java)
 }

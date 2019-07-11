@@ -1,14 +1,13 @@
-package com.ironlordbyron.turnbasedstrategy.view.external
+package com.ironlordbyron.turnbasedstrategy.view.external_deprecated
 
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.Graphics
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.utils.Disposable
 
 abstract class AbstractGameEffect : Disposable {
-    var duration: Float = 0.toFloat()
+    var duration: Float = 1.toFloat()
     var startingDuration: Float = 0.toFloat()
     protected var color: Color? = null
     var isDone = false

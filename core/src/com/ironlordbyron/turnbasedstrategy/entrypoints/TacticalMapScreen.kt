@@ -2,15 +2,12 @@ package com.ironlordbyron.turnbasedstrategy.entrypoints
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
-import com.badlogic.gdx.Screen
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer
-import com.badlogic.gdx.scenes.scene2d.Event
-import com.badlogic.gdx.scenes.scene2d.EventListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
@@ -18,9 +15,10 @@ import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
-import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.BlankMapGenerator
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.MapGenerationApplicator
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.ScenarioParams
+import com.ironlordbyron.turnbasedstrategy.view.external_deprecated.TacMapEffectsList
+import com.ironlordbyron.turnbasedstrategy.view.ui.TacMapTopStatusDisplay
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -35,8 +33,8 @@ public class  TacticalMapScreen @Inject constructor(val eventNotifier: EventNoti
     val h get() = Gdx.graphics.height.toFloat()
     var TILEMAP_SCALING_FACTOR: Float = 1.0f // TODO: This super doesn't work, don't change it
 
-    private val WINDOW_WIDTH = 1100
-    private val WINDOW_HEIGHT = 600
+    private val WINDOW_WIDTH = 1400
+    private val WINDOW_HEIGHT = 900
 
 
      internal lateinit var tiledMap: TiledMap
@@ -45,7 +43,7 @@ public class  TacticalMapScreen @Inject constructor(val eventNotifier: EventNoti
     internal lateinit var tiledMapStage: Stage
     internal lateinit var hudStage: Stage
     internal lateinit var hudCamera: OrthographicCamera
-
+    lateinit var tacMapTopStatusDisplay : TacMapTopStatusDisplay
 
     init{
 
@@ -73,6 +71,8 @@ public class  TacticalMapScreen @Inject constructor(val eventNotifier: EventNoti
 
         val tacMapHudFactory = GameModuleInjector.createTacMapHudFactory()
         hudStage = tacMapHudFactory.create(FitViewport(w, h, hudCamera))
+
+        tacMapTopStatusDisplay = TacMapTopStatusDisplay(FitViewport(w, h, hudCamera))
         hudCamera.update()
 
         initializeControls()
@@ -94,6 +94,7 @@ public class  TacticalMapScreen @Inject constructor(val eventNotifier: EventNoti
         val multiplexer = InputMultiplexer()
         multiplexer.addProcessor(hudStage)
         multiplexer.addProcessor(tiledMapStage)
+        multiplexer.addProcessor(tacMapTopStatusDisplay)
         Gdx.input.inputProcessor = multiplexer
     }
 
@@ -121,17 +122,23 @@ public class  TacticalMapScreen @Inject constructor(val eventNotifier: EventNoti
         tiledMapStage.draw()
         hudStage.draw()
         hudStage.act()
+
+        tacMapTopStatusDisplay.draw()
+        tacMapTopStatusDisplay.act()
+        TacMapEffectsList.update()
     }
 
     override fun resize(width: Int, height: Int) {
         tiledMapStage.viewport.update(width, height)
         hudStage.viewport.update(width, height)
+        tacMapTopStatusDisplay.viewPort.update(width, height)
     }
 
     override fun dispose() {
         super.dispose()
         hudStage.dispose()
         tiledMapStage.dispose()
+        tacMapTopStatusDisplay.dispose()
     }
 
 }
