@@ -33,8 +33,8 @@ public class  TacticalMapScreen @Inject constructor(val eventNotifier: EventNoti
     val h get() = Gdx.graphics.height.toFloat()
     var TILEMAP_SCALING_FACTOR: Float = 1.0f // TODO: This super doesn't work, don't change it
 
-    private val WINDOW_WIDTH = 1400
-    private val WINDOW_HEIGHT = 900
+    private val WINDOW_WIDTH = w
+    private val WINDOW_HEIGHT = h
 
 
      internal lateinit var tiledMap: TiledMap
@@ -47,7 +47,7 @@ public class  TacticalMapScreen @Inject constructor(val eventNotifier: EventNoti
 
     init{
 
-        Gdx.graphics.setWindowedMode(WINDOW_WIDTH, WINDOW_HEIGHT)
+        Gdx.graphics.setWindowedMode(WINDOW_WIDTH.toInt(), WINDOW_HEIGHT.toInt())
 
         tacMapCamera = OrthographicCamera()
         tacMapCamera.setToOrtho(false, w, h)
@@ -105,7 +105,7 @@ public class  TacticalMapScreen @Inject constructor(val eventNotifier: EventNoti
         // This is really stupid and I don't know why it is, but I have to call resize in order for input events to process
         // after switching screens.
         // HACK
-        this.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
+        this.resize(WINDOW_WIDTH.toInt(), WINDOW_HEIGHT.toInt())
     }
 
     override fun render(delta: Float) {
@@ -132,6 +132,7 @@ public class  TacticalMapScreen @Inject constructor(val eventNotifier: EventNoti
         tiledMapStage.viewport.update(width, height)
         hudStage.viewport.update(width, height)
         tacMapTopStatusDisplay.viewPort.update(width, height)
+        tacMapTopStatusDisplay.regenerateTable()
     }
 
     override fun dispose() {

@@ -1,10 +1,14 @@
 package com.ironlordbyron.turnbasedstrategy.entrypoints
 
 import com.badlogic.gdx.Game
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import netscape.javascript.JSObject.getWindow
+
+
 
 class GdxGameMain : Game(), EventListener {
     var mainMenuScreen: Screen? = null

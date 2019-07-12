@@ -17,11 +17,9 @@ public class TacMapTopStatusDisplay(val viewPort: Viewport) : Stage(viewPort), E
         GameModuleInjector.generateInstance(TextLabelGenerator::class.java)
     }
 
+
     init{
         this.addActor(overallTable)
-        overallTable.setRelativeHeight(1/5f)
-        overallTable.clampToTop()
-
         regenerateTable()
     }
 
@@ -33,13 +31,15 @@ public class TacMapTopStatusDisplay(val viewPort: Viewport) : Stage(viewPort), E
     }
 
     fun regenerateTable(){
+        overallTable.setRelativeHeight(1/5f)
+        overallTable.clampToTop(1/4f)
         val backgroundColor = backgroundColor()
         overallTable.setBackground(backgroundColor)
+        overallTable.debug = true
 
         overallTable.clear()
         overallTable.add(labelGenerator.generateLabel("Test Label", scale = .2f).label)
     }
-
 }
 
 
@@ -51,13 +51,26 @@ fun Actor.clampToRightSide(){
     this.y=  0f
 }
 
-fun Actor.clampToTop(){
+fun Actor.clampToTop(rightExclusion: Float?){
+    rightExclusion.shouldBeFractional()
     val screenwidth  = Gdx.graphics.width.toFloat()
     val screenheight  = Gdx.graphics.height.toFloat()
     this.y = screenheight- this.height
     this.width = screenwidth
     this.x=0f
+    if (rightExclusion != null){
+        // we're excluding the fraction % of the screen corresponding to rightExclusion
+        this.width = screenwidth * (1 - rightExclusion)
+    }
+}
 
+private fun Float?.shouldBeFractional() {
+    if (this == null){
+        throw IllegalArgumentException("Must be a fraction, but was null")
+    }
+    if (this < 0 || this > 1){
+        throw IllegalArgumentException("Must be a fraction, but was $this")
+    }
 }
 
 fun Actor.setRelativeHeight(ratio: Float){
@@ -67,4 +80,13 @@ fun Actor.setRelativeHeight(ratio: Float){
 
     val screenheight  = Gdx.graphics.height.toFloat()
     this.height = screenheight * ratio
+}
+
+fun Actor.setRelativeWidth(ratio: Float){
+    if (ratio > 1){
+        throw IllegalArgumentException("Relative height must be between 0 and 1")
+    }
+
+    val screenWidth  = Gdx.graphics.width.toFloat()
+    this.width = screenWidth * ratio
 }

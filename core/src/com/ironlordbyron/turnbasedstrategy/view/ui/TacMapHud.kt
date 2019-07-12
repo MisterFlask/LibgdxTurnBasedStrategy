@@ -71,6 +71,7 @@ class TacMapHud(viewPort: Viewport,
     var entitySelected: TileEntity? = null
     var tileSelected: TileLocation? = null
 
+
     override fun consumeGuiEvent(event: TacticalGuiEvent) {
         when (event) {
             is TacticalGuiEvent.CharacterSelected -> {
@@ -314,8 +315,6 @@ class TacMapHud(viewPort: Viewport,
 
         val actor =
                 Window("", DEFAULT_SKIN).let {
-                    it.width = 440f
-                    it.height = 600f
 
                     it.add(combatPhaseLabel).fill().expand()
                     it.row()
@@ -332,9 +331,8 @@ class TacMapHud(viewPort: Viewport,
         window.addActor(background)
         background.toBack()
 
-        actor.x = 650f
-        actor.y = 500f
-
+        actor.setRelativeWidth(1/4f)
+        actor.clampToRightSide()
 
         this.addActor(actor)
     }
