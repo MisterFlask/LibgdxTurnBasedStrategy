@@ -5,10 +5,10 @@ import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTile
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TerrainType
+import com.ironlordbyron.turnbasedstrategy.tiledutils.getTilesByKeyValuePairs
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
-
 
 data class TileLocation(val x: Int, val y: Int){
 
@@ -16,6 +16,7 @@ data class TileLocation(val x: Int, val y: Int){
         return "[$x,$y]"
     }
 }
+
 
 private val gameState: TacticalMapState by lazy {
     GameModuleInjector.generateInstance(TacticalMapState::class.java)

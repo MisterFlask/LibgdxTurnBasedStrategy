@@ -12,7 +12,9 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.UnitWasS
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
+import com.ironlordbyron.turnbasedstrategy.entrypoints.CadenceEffectsRegistrar
 import com.ironlordbyron.turnbasedstrategy.entrypoints.FunctionalEffectRegistrar
+import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 
 /**
  *
@@ -46,7 +48,12 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
     }
 
 
+    val cadenceEffectsRegistrar: CadenceEffectsRegistrar by lazy{
+        GameModuleInjector.generateInstance(CadenceEffectsRegistrar::class.java)
+    }
     fun onPlayerTurnStart(){
+        cadenceEffectsRegistrar.turnStartEffects.forEach{it.handleTurnStartEvent()}
+        eventNotifier.notifyListenersOfGameEvent(TacticalGameEvent.PlayerTurnStartEvent())
         for (unit in tacticalMapState.listOfCharacters.filter{it.playerControlled}){
             if (unit.isDead){
                 continue // we're ignoring dead units

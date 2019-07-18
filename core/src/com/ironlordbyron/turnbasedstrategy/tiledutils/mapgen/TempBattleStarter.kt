@@ -8,13 +8,12 @@ import com.ironlordbyron.turnbasedstrategy.common.equipment.StandardEquipment
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
+import com.ironlordbyron.turnbasedstrategy.entrypoints.CadenceEffectsRegistrar
 import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
+import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.ShieldingOrgan
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.WeakMinionSpawner
-import com.ironlordbyron.turnbasedstrategy.tiledutils.BoundingRectangle
-import com.ironlordbyron.turnbasedstrategy.tiledutils.TileLayer
-import com.ironlordbyron.turnbasedstrategy.tiledutils.getBoundsOfTile
-import com.ironlordbyron.turnbasedstrategy.tiledutils.getTileLayer
+import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -50,6 +49,13 @@ class TileMapProvider {
         }
     }
 
+    fun getTilesByKeyValuePairs(kvs: List<TileKeyValuePair>): List<TileLocation> {
+        return tiledMap.getTilesByKeyValuePairs(kvs)
+    }
+
+    fun getSpawnableTilemapTiles(): List<TileLocation> {
+        return tiledMap.getSpawnableTilemapTiles()
+    }
 }
 
 
@@ -63,8 +69,13 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
                                             val actionManager: ActionManager,
                                             val attributeOperator: AttributeOperator,
                                             val unitTemplateRegistrar: UnitTemplateRegistrar){
+    val cadenceEffectsRegistrar: CadenceEffectsRegistrar by lazy {
+        GameModuleInjector.generateInstance(CadenceEffectsRegistrar::class.java)
+    }
+
     fun startBattle(){
         println("Starting battle")
+        cadenceEffectsRegistrar.turnStartEffects.forEach{it.handleTurnStartEvent()}
         val playerSpawns = tiledMapInterpreter.getPossiblePlayerSpawnPositions(boardProvider.tiledMap)
         for (tile in playerSpawns){
             actionManager.addCharacterToTileFromTemplate(tacMapUnit = TacMapUnitTemplate.DEFAULT_UNIT, tileLocation = tile,

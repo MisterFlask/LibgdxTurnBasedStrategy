@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.tilemapinterpretation
 
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
@@ -9,6 +10,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.ActorSettable
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
+import com.ironlordbyron.turnbasedstrategy.view.ui.addLabel
 
 class PortalProtoEntity(val tileLocation: TileLocation, val actor: ProtoActor) : TileProtoEntity<PortalEntity>{
     val name: String = "Portal"
@@ -40,6 +42,9 @@ interface TileEntity {
     fun runOnDeath(){
 
     }
+
+    fun buildUiDisplay(parentTable: Table) {
+    }
 }
 
 class PortalEntity(val eventNotifier: EventNotifier,
@@ -52,6 +57,24 @@ class PortalEntity(val eventNotifier: EventNotifier,
 
     companion object {
         val portalProtoActor: ProtoActor = SuperimposedTilemaps(tileSetNames = listOf("Door1"), textureId = "0")
+    }
+}
+
+class FortressEntity(var durability: Int,
+                     override val tileLocation: TileLocation,
+                     override val actor: Actor,
+                     override val name: String = "Fortress") : TileEntity{
+    override fun targetableByAbility(ability: LogicalAbility): Boolean {
+        return false
+    }
+
+    fun conquer(){
+        durability --
+    }
+
+    override fun buildUiDisplay(parentTable: Table) {
+        parentTable.addLabel("Fortress")
+        parentTable.addLabel("Turns until surrender: ${durability}")
     }
 }
 

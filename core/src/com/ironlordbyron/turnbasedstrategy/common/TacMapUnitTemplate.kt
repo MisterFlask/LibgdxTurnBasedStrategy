@@ -25,7 +25,7 @@ class TacMapUnitTemplate(val movesPerTurn: Int,
                               val templateName: String = "Peasant",
                               var abilities: List<LogicalAbility> = listOf(),
                               var allowedEquipment: Collection<EquipmentClass> = listOf(EquipmentClass.MELEE_WEAPON_LARGE), //TODO
-                              val walkableTerrainTypes : Collection<TerrainType> = listOf(TerrainType.GRASS),
+                              val walkableTerrainTypes : Collection<TerrainType> = listOf(TerrainType.GRASS, TerrainType.FOREST),
                               val enemyAiType: EnemyAiType = EnemyAiType.BASIC,
                               var startingAttributes: Collection<LogicalCharacterAttribute> = listOf(),
                               val uuid: UUID = UUID.randomUUID(),

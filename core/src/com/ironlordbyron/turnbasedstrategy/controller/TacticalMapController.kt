@@ -178,7 +178,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 .map{it.tileLocation}
         mapHighlighter.highlightTiles(enemiesTargetingPlayer, HighlightType.RED_TILE)
 
-        actionManager.createSpeechBubble(character, "'Allo!")
+        // actionManager.createSpeechBubble(character, "'Allo!")
         animationActionQueueProvider.runThroughActionQueue()
 
     }

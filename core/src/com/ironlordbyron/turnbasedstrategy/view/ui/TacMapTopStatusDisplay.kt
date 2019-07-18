@@ -5,12 +5,34 @@ import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.viewport.Viewport
+import com.ironlordbyron.turnbasedstrategy.common.GlobalTacMapState
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
+import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
+import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.font.TextLabelGenerator
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.view.ui.external.BackgroundColor
 
-public class TacMapTopStatusDisplay(val viewPort: Viewport) : Stage(viewPort), EventListener {
+public class TacMapTopStatusDisplay(val viewPort: Viewport) : Stage(viewPort),
+        GameEventListener {
+    fun handleTurnStartEvent() {
+        regenerateTable()
+    }
+    val eventNotifier: EventNotifier by LazyInject(EventNotifier::class.java)
+
+    init {
+        eventNotifier.registerGameListener(this)
+    }
+
+    override fun consumeGameEvent(tacticalGameEvent: TacticalGameEvent) {
+        when(tacticalGameEvent){
+            is TacticalGameEvent.PlayerTurnStartEvent -> {
+                handleTurnStartEvent()
+            }
+        }
+    }
 
     val overallTable = Table()
     val labelGenerator: TextLabelGenerator by lazy {
@@ -20,7 +42,6 @@ public class TacMapTopStatusDisplay(val viewPort: Viewport) : Stage(viewPort), E
 
     init{
         this.addActor(overallTable)
-        regenerateTable()
     }
 
 
@@ -30,7 +51,12 @@ public class TacMapTopStatusDisplay(val viewPort: Viewport) : Stage(viewPort), E
         return backgroundColor
     }
 
+    val tacMapGlobalState: GlobalTacMapState by lazy {
+        GameModuleInjector.generateInstance(GlobalTacMapState::class.java)
+    }
+
     fun regenerateTable(){
+
         overallTable.setRelativeHeight(1/5f)
         overallTable.clampToTop(1/4f)
         val backgroundColor = backgroundColor()
@@ -39,7 +65,19 @@ public class TacMapTopStatusDisplay(val viewPort: Viewport) : Stage(viewPort), E
 
         overallTable.clear()
         overallTable.add(labelGenerator.generateLabel("Test Label", scale = .2f).label)
+        val nextEvent = tacMapGlobalState.nextEvent()
+        overallTable.addLabel("Alertness: ${tacMapGlobalState.alertness}", .2f)
+        overallTable.addLabel("Next event: ${nextEvent.eventName} at ${nextEvent.atAlertness}", .2f)
+
     }
+}
+
+val textLabelGenerator: TextLabelGenerator by lazy{
+    GameModuleInjector.generateInstance(TextLabelGenerator::class.java)
+}
+
+fun Table.addLabel(text: String, scale: Float= .2f){
+    this.add(textLabelGenerator.generateLabel(text,  scale = scale).label)
 }
 
 

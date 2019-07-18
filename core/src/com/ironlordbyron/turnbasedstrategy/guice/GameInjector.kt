@@ -13,7 +13,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.camera.GameCameraProvi
 import com.ironlordbyron.turnbasedstrategy.view.animation.external.SpecialEffectManager
 import com.ironlordbyron.turnbasedstrategy.view.animation.passive.EagerInitializer
 import com.ironlordbyron.turnbasedstrategy.view.ui.TacMapHudFactory
-import kotlin.reflect.KClass
+import kotlin.reflect.KProperty
 
 class GameModule : AbstractModule() {
     override fun configure() {
@@ -78,5 +78,16 @@ class GameModuleInjector {
         fun getEventNotifier(): EventNotifier {
             return moduleInjector.getInstance(EventNotifier::class.java)
         }
+    }
+}
+val eventNotifier: EventNotifier by LazyInject(EventNotifier::class.java)
+
+class LazyInject <T>(val clazz: Class<T>) {
+    val cached : T by lazy<T>{
+        GameModuleInjector.generateInstance(clazz)
+    }
+
+    operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
+        return cached
     }
 }

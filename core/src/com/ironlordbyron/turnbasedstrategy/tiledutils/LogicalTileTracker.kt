@@ -32,8 +32,6 @@ class LogicalTileTracker @Inject constructor (val eventNotifier: EventNotifier) 
 
     val tiles = ArrayList<LogicalTile>()
 
-
-
     fun <T: TileEntity> getEntitiesOfType(clazz: Class<T>): List<TileEntity> {
         return tileEntities.filter{clazz.isInstance(it)}
     }

@@ -4,7 +4,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.maps.MapProperties
 import com.badlogic.gdx.maps.objects.RectangleMapObject
 import com.badlogic.gdx.maps.tiled.*
+import com.badlogic.gdx.utils.Logger
 import com.google.inject.Singleton
+import com.ironlordbyron.turnbasedstrategy.Logging
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.tiledutils.xml.TilemapXmlProcessor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
@@ -113,18 +115,22 @@ enum class TileLayer(val layerName: String) {
 }
 
 
-fun TiledMap.getObjectLayerRectangles(): List<LogicalTiledObject> {
-    val layer = this.layers["ObjectLayer"]
+fun TiledMap.getObjectLayerRectangles(layerName: String = "ObjectLayer"): List<LogicalTiledObject> {
+    val layer = this.layers[layerName]
+    if (layer == null){
+        return listOf()
+    }
     val rectangles = layer.objects.getByType(RectangleMapObject::class.java)
     val logicalobjects = ArrayList<LogicalTiledObject>()
     for (rec in rectangles) {
-
         val logicalTiledObject = LogicalTiledObject(
                 Math.round(rec.rectangle.x),
                 Math.round(rec.rectangle.y),
                 Math.round(rec.rectangle.width),
                 Math.round(rec.rectangle.height),
-                rec.name, rec.properties, rec.properties["type"] as String)
+                rec.name,
+                rec.properties,
+                rec.properties["type"] as String?)
         logicalobjects.add(logicalTiledObject)
     }
     return logicalobjects
@@ -137,6 +143,15 @@ data class TiledObjectIdentifier(val boundingRectangle: BoundingRectangle, val p
 
 data class TileKeyValuePair(val key: String, val value: String)
 
+fun TiledMap.getSpawnableTilemapTiles(): List<TileLocation> {
+    val recs = this.getObjectLayerRectangles("SpawnLayer")
+    if (recs.isEmpty()){
+        Logging.DebugGeneral("Could not find spawn layer, assuming none exists")
+        return listOf()
+    }
+    return transformTiledObjectsToTileLocations(recs)
+}
+
 fun TiledMap.getTilesByKeyValuePairs(kvs: List<TileKeyValuePair>): List<TileLocation> {
     val objectLayerRectangles = this.getObjectLayerRectangles()
     var recs = objectLayerRectangles
@@ -144,8 +159,12 @@ fun TiledMap.getTilesByKeyValuePairs(kvs: List<TileKeyValuePair>): List<TileLoca
         recs = recs.filter { it.properties[kv.key] == kv.value }
     }
 
+    return transformTiledObjectsToTileLocations(recs)
+}
+
+private fun transformTiledObjectsToTileLocations(recs: List<LogicalTiledObject>): List<TileLocation> {
     val objects = ArrayList<Collection<TileLocation>>()
-    for (rec in recs){
+    for (rec in recs) {
         val tiles = ArrayList<TileLocation>()
         for (x in (rec.x / TILE_SIZE) until (rec.x + rec.width) / TILE_SIZE) {
             for (y in (rec.y / TILE_SIZE) until (rec.y + rec.height) / TILE_SIZE) {
@@ -162,8 +181,8 @@ fun TiledMap.getTilesInObjectByType(type: String, required: Boolean = true): Col
     return getTilesByKeyValuePairs(listOf(TileKeyValuePair("type", type)))
 }
 
-data class LogicalTiledObject(val x: Int, val y: Int, val width: Int, val height: Int, val name: String,
-                              val properties: MapProperties, val type: String)
+data class LogicalTiledObject(val x: Int, val y: Int, val width: Int, val height: Int, val name: String?,
+                              val properties: MapProperties, val type: String?)
 
 fun TiledMap.getTileLayer(layer: TileLayer): TiledMapTileLayer {
 

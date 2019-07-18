@@ -68,4 +68,5 @@ public interface TacticalGameEvent{
     data class EntityDamage(val tileEntity: TileEntity, val ability: LogicalAbility) : TacticalGameEvent
     data class UnitTurnStart(val unit: LogicalCharacter) : TacticalGameEvent
     class INITIALIZE : TacticalGameEvent
+    class PlayerTurnStartEvent() : TacticalGameEvent
 }

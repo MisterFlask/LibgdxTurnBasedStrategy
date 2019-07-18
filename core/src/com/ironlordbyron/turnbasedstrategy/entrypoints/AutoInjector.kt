@@ -1,9 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.entrypoints
 
 import com.ironlordbyron.turnbasedstrategy.Logging
-import com.ironlordbyron.turnbasedstrategy.common.LogicHooks
-import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
-import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
+import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalAttributeEffect
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalEffectParameters
@@ -27,6 +25,7 @@ public class AutoInjector(){
         val annotated = reflections.getTypesAnnotatedWith(Autoinjectable::class.java)
         val eventNotifier = GameModuleInjector.generateInstance(EventNotifier::class.java)
         val effectRegistrar = GameModuleInjector.generateInstance(FunctionalEffectRegistrar::class.java)
+        val cadenceEffectRegistrar = GameModuleInjector.generateInstance(CadenceEffectsRegistrar::class.java)
         for (item in annotated){
             val instance = GameModuleInjector.generateInstance(item)
             if (instance is EventListener){
@@ -34,6 +33,12 @@ public class AutoInjector(){
             }
             if (instance is GameEventListener){
                 eventNotifier.registerGameListener(instance)
+            }
+            if (instance is TurnStartListener){
+                cadenceEffectRegistrar.turnStartEffects.add(instance)
+            }
+            if (instance is BattleStartListener){
+                cadenceEffectRegistrar.battleStartEffects.add(instance)
             }
         }
     }
@@ -105,6 +110,16 @@ public class UnitTemplateRegistrar(){
         Logging.DebugGeneral("Registered ${unitTemplates.size} unit templates!")
     }
 }
+
+@Singleton
+@Autoinjectable
+public class CadenceEffectsRegistrar(){
+    val turnStartEffects: ArrayList<TurnStartListener> = arrayListOf()
+    val battleStartEffects: ArrayList<BattleStartListener> = arrayListOf()
+
+
+}
+
 
 // TODO: Migrate this into a separate class
 @Singleton

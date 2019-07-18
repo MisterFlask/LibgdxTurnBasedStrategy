@@ -4,13 +4,13 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.KnownObjectType
 
-
 data class LogicalTile(val terrainTile: TiledMapTile,
                        val location: TileLocation,
                        val actor: TileMapActor,
                        val allTilesAtThisSquare: List<TiledMapStage.TiledCellAgglomerate>,
                        var terrainType: TerrainType = TerrainType.UNINITIALIZED,
                        val markers: List<KnownObjectType> = listOf()) {
+
 
     fun tileHasProperty(property: String) : Boolean{
         // basically, if ANY cell has a property on this tile we return true regardless of what layer it's in.
