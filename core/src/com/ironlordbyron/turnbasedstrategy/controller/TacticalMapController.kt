@@ -122,6 +122,9 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
 
     fun playerClickedOnTile(location: TileLocation){
         if (boardInputState is BoardInputState.PlayerIsPlacingUnits){
+            if (location.getCharacter() != null){
+                return
+            }
             val boardInputState = boardInputState as BoardInputState.PlayerIsPlacingUnits
             val characterToPlace = boardInputState.unitsToPlace.first()
             boardInputState.unitsToPlace.removeAt(0)
