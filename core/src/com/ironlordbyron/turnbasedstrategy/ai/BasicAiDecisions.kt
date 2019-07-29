@@ -20,7 +20,7 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
         Logging.DebugPathfinding("Attempting to beeline toward nearest city")
         val closestCity = getClosestMatchingEntity(thisCharacter){
             it is CityTileEntity && !it.ownedByDemon
-        }
+        } as CityTileEntity?
         if (closestCity == null || closestCity.tileLocation == thisCharacter.tileLocation){
             Logging.DebugPathfinding("Could not find city to beeline toward!")
             return listOf()
@@ -38,7 +38,7 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
     public fun getClosestMatchingEntity(thisCharacter: LogicalCharacter, predicate: (TileEntity) -> Boolean): TileEntity? {
         val entities = logicalTileTracker.tileEntities
                 .filter{predicate.invoke(it)}
-        val closest = entities.minBy{it.tileLocation.distanceTo(thisCharacter.tileLocation)}
+        val closest = entities.minBy{it.tileLocations.first().distanceTo(thisCharacter.tileLocation)}
         return closest
     }
 

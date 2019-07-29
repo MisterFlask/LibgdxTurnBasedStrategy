@@ -40,4 +40,5 @@ data class LogicalTile(val terrainTile: TiledMapTile,
             return true
         }
     }
+
 }

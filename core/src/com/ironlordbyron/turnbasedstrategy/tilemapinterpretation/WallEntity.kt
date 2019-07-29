@@ -11,9 +11,11 @@ import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
  */
 class WallEntity(
         val eventNotifier: EventNotifier,
-        override val tileLocation: TileLocation,
+        val tileLocation: TileLocation,
         override val actor: Actor,
         override val name: String = "wall") : TileEntity {
+    override val tileLocations: Collection<TileLocation>
+        get() = listOf(tileLocation)
 
     override fun targetableByAbility(logicalAbility: LogicalAbility): Boolean {
         return false

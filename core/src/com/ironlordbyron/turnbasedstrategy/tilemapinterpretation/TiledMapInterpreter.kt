@@ -2,7 +2,9 @@ package com.ironlordbyron.turnbasedstrategy.tilemapinterpretation
 
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
+import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tileentity.CityTileEntity
@@ -41,34 +43,29 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
         )
     }
 
-    fun initializeTileEntities(tileMap: TiledMap, tileLocation: TileLocation){
+    fun getTerrainPropertiesAtTileLocation(tileMap: TiledMap, tileLocation: TileLocation): List<TiledCellData> {
         val layersAtLocation = getAllTilesAtXY(tileMap, tileLocation)
         val cells = layersAtLocation.map{it?.tiledCell}
-        val entities = ArrayList<TileEntity>()
+        val cellData = arrayListOf<TiledCellData>()
         for (cell in cells){
-            val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
-            val doorStr = "door"
-            if (hasProp(cell, doorStr)){
-                val actor = ActorFromTiledTextureRegion(cell).imageActor;
-                tiledMapStageProvider.tiledMapStage.addActor(actor)
-                actor.setBoundingBox(boundingBox)
-                entities.add(tileEntityFactory.createDoor(tileLocation, actor))
-            }
-            val wallStr = "wall"
-            if (hasProp(cell, wallStr)){
-                val actor = ActorFromTiledTextureRegion(cell).imageActor;
-                tiledMapStageProvider.tiledMapStage.addActor(actor)
-                entities.add(tileEntityFactory.createWall(tileLocation, actor))
-                actor.setBoundingBox(boundingBox)
-            }
-            val townStr = CityTileEntity.name
-            if (hasProp(cell, townStr)){
-                val actor = ActorFromTiledTextureRegion(cell).imageActor;
-                tiledMapStageProvider.tiledMapStage.addActor(actor)
-                entities.add(tileEntityFactory.createCity(tileLocation, actor))
-                actor.setBoundingBox(boundingBox)
-            }
+            val iterator = cell.tile?.properties?.keys
+            val properties = iterator?.asSequence()?.asIterable()?:listOf()
+            cellData.add(TiledCellData(properties = properties.toList(), tileLocation = tileLocation,
+                    cell = cell))
         }
+        return cellData
+    }
+
+    val tileEntityRegistrar: TileEntityRegistrar by LazyInject(TileEntityRegistrar::class.java)
+    val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider by LazyInject(TacticalTiledMapStageProvider::class.java)
+    fun initializeTileEntities(tileMap: TiledMap, tileLocation: TileLocation){
+        val entities = ArrayList<TileEntity>()
+        val entity = tileEntityRegistrar.registerEntity(tileLocation)
+        if (entity != null) {
+            tacticalTiledMapStageProvider.tiledMapStage.addActor(entity.actor)
+            entities.add(entity)
+        }
+
         logicalTileTracker.tileEntities.addAll(entities)
     }
 
@@ -134,6 +131,18 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
         val toAggloms = withCellHere
                 .map { TiledMapStage.TiledCellAgglomerate(it.getCell(tileLocation.x, tileLocation.y), TileLayer.getTileLayerFromName(it.name)) }
         return toAggloms
+    }
+}
+val tiledMapStageProvider: TacticalTiledMapStageProvider by LazyInject(TacticalTiledMapStageProvider::class.java)
+val tileMapProvider: TileMapProvider by LazyInject(TileMapProvider::class.java)
+data class TiledCellData(val properties: Collection<String>,
+                         val cell: TiledMapTileLayer.Cell,
+                         val tileLocation: TileLocation){
+    fun getActor(): Image {
+        val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
+        val actor = ActorFromTiledTextureRegion(cell).imageActor;
+        actor.setBoundingBox(boundingBox)
+        return actor
     }
 }
 

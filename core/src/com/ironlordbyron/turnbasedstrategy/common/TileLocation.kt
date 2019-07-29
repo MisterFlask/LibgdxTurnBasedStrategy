@@ -2,12 +2,14 @@ package com.ironlordbyron.turnbasedstrategy.common
 
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTile
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TerrainType
 import com.ironlordbyron.turnbasedstrategy.tiledutils.getTilesByKeyValuePairs
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledCellData
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 
 data class TileLocation(val x: Int, val y: Int){
@@ -57,4 +59,18 @@ public fun TileLocation.logicalTile() : LogicalTile? {
 
 public fun TileLocation.entity(): TileEntity?{
     return logicalTileTracker.getEntitiesAtTile(this).firstOrNull()
+}
+
+public fun TileLocation.neighbors() : List<TileLocation>{
+    return logicalTileTracker.getNeighbors(this)
+}
+
+public fun TileLocation.terrainProperties() : Collection<TiledCellData>{
+    return tiledMapInterpreter.getTerrainPropertiesAtTileLocation(tiledMapProvider.tiledMap, this)
+}
+
+val tacticalMapAlgorithms: TacticalMapAlgorithms by LazyInject(TacticalMapAlgorithms::class.java)
+
+public fun TileLocation.floodFill(pred: (TileLocation)->Boolean): ArrayList<TileLocation> {
+    return tacticalMapAlgorithms.floodFindTilesMatchingPredicate(this, pred)
 }

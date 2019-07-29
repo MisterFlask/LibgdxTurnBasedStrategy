@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.view.animation
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.graphics.glutils.ShaderProgram
@@ -33,6 +34,15 @@ class LogicalCharacterActorGroup(val shadeableActor: ActorWrapper,
         super.hit(x, y, touchable)
         return null
     }
+}
 
 
+fun Actor.setTrueColor(color: Color){
+    if (this is Group){
+        for (child in this.children){
+            child.color = color
+        }
+    }else{
+        this.color = color
+    }
 }

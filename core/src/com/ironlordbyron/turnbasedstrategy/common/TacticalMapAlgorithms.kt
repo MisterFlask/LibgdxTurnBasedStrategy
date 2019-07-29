@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.common
 
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTile
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
 import tiled.core.Tile
@@ -112,4 +113,31 @@ class TacticalMapAlgorithms @Inject constructor(override val logicalTileTracker:
 
         return characters.filter{it.tileLocation in locationsWithinNTiles}
     }
+
+    fun floodFindTilesMatchingPredicate(origin: TileLocation, pred: (TileLocation)->Boolean): ArrayList<TileLocation> {
+        val toProcess = ArrayList<TileLocation>()
+        val alreadyProcessed = ArrayList<TileLocation>()
+        val results = ArrayList<TileLocation>()
+        toProcess.add(origin)
+
+        while(toProcess.isNotEmpty()){
+            val next = toProcess.pop()
+            results.add(next)
+            val neighbors = next.neighbors()
+            val matchingNeighbors = neighbors.filter{pred.invoke(next)}
+                    .filter{!alreadyProcessed.contains(it)}
+                    .filter{!toProcess.contains(it)}
+            toProcess.addAll(matchingNeighbors)
+
+            alreadyProcessed.add(next)
+        }
+        return results
+
+    }
+}
+
+private fun <E> java.util.ArrayList<E>.pop(): E {
+    val last = this.last()
+    this.removeAt(this.size - 1)
+    return last
 }

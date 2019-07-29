@@ -76,7 +76,7 @@ class LogicalTileTracker @Inject constructor (val eventNotifier: EventNotifier) 
     }
 
     fun getEntitiesAtTile(location: TileLocation): List<TileEntity> {
-        return tileEntities.filter{it -> it.tileLocation == location}
+        return tileEntities.filter{it -> it.tileLocations.contains(location)}
     }
 
     fun removeWallAtTile(location: TileLocation){

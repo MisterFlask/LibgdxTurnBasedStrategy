@@ -10,6 +10,8 @@ import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntityGenerator
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntityRegistrar
 import org.reflections.Reflections
 import org.reflections.scanners.MethodAnnotationsScanner
 import org.reflections.util.ClasspathHelper
@@ -24,12 +26,17 @@ public class AutoInjector(){
         val reflections = Reflections("com.ironlordbyron")
         val annotated = reflections.getTypesAnnotatedWith(Autoinjectable::class.java)
         val eventNotifier = GameModuleInjector.generateInstance(EventNotifier::class.java)
+        val tileEntityRegistrar = GameModuleInjector.generateInstance(TileEntityRegistrar::class.java)
+
         val effectRegistrar = GameModuleInjector.generateInstance(FunctionalEffectRegistrar::class.java)
         val cadenceEffectRegistrar = GameModuleInjector.generateInstance(CadenceEffectsRegistrar::class.java)
         for (item in annotated){
             val instance = GameModuleInjector.generateInstance(item)
             if (instance is EventListener){
                 eventNotifier.registerGuiListener(instance)
+            }
+            if (instance is TileEntityGenerator){
+                tileEntityRegistrar.registerGenerator(instance)
             }
             if (instance is GameEventListener){
                 eventNotifier.registerGameListener(instance)
