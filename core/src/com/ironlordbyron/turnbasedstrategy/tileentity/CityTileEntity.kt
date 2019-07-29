@@ -2,10 +2,12 @@ package com.ironlordbyron.turnbasedstrategy.tileentity
 
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
 import com.ironlordbyron.turnbasedstrategy.view.animation.setTrueColor
+import com.ironlordbyron.turnbasedstrategy.view.ui.addLabel
 
 private val DIM_RED_COLOR = Color(1f,.5f,.5f, 1f)
 public data class CityTileEntity(
@@ -25,6 +27,10 @@ public data class CityTileEntity(
     }
 
     override val name: String = CityTileEntity.name
+
+    override fun buildUiDisplay(parentTable: Table) {
+        parentTable.addLabel("City name: $cityName")
+    }
 
     fun conquerByDemonAction(){
         this.actor.setTrueColor( DIM_RED_COLOR)

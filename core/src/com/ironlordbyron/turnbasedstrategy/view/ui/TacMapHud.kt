@@ -183,6 +183,7 @@ class TacMapHud(viewPort: Viewport,
         return table
     }
     private fun regenerateTable(){
+        characterDisplayTable.debug()
         abilityTextArea = Label("", DEFAULT_SKIN)
         val backgroundColor = backgroundColor()
         characterDisplayTable.setBackground(backgroundColor)
@@ -193,7 +194,7 @@ class TacMapHud(viewPort: Viewport,
 
         debugTextArea.setText(debugTextAreaText())
         debugTextArea.setWrap(true)
-        debugTextArea.setAlignment(Alignment.CENTER.alignment)
+        debugTextArea.setAlignment(Alignment.LEFT.alignment)
 
         characterDisplayTable.row()
         characterDisplayTable.add(endTurnButton())
@@ -244,6 +245,7 @@ class TacMapHud(viewPort: Viewport,
     private fun regenerateCharacterDisplayTable(selectedCharacter: LogicalCharacter?) {
         characterDisplayTable.clearChildren()
         if (selectedCharacter != null) {
+            characterDisplayTable.align(Alignment.LEFT.alignment)
             characterDisplayTable.add(Label(selectedCharacter.tacMapUnit.templateName, DEFAULT_SKIN, "title"))
             characterDisplayTable.row()
             characterDisplayTable.add(characterImageManager.retrieveCharacterImage(selectedCharacter).actor)
@@ -251,7 +253,7 @@ class TacMapHud(viewPort: Viewport,
             characterDisplayTable.row()
             characterDisplayTable.add(displayCharacterHp(selectedCharacter))
             characterDisplayTable.row()
-            characterDisplayTable.add(displayCharacterAttributes(selectedCharacter))
+            characterDisplayTable.add(displayCharacterAttributes(selectedCharacter)).left()
         }
         // NOTE TO FUTURE SELF: Table controls size of images, DOES NOT RESPECT image preferred size
 
@@ -261,7 +263,7 @@ class TacMapHud(viewPort: Viewport,
 
         val entitySelected = entitySelected
         if (entitySelected != null) {
-            characterDisplayTable.add(Label(entitySelected.name, DEFAULT_SKIN))
+            entitySelected.buildUiDisplay(this.characterDisplayTable)
         }
     }
 

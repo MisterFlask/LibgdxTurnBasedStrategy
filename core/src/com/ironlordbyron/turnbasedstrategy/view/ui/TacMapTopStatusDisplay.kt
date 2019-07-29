@@ -77,6 +77,7 @@ val textLabelGenerator: TextLabelGenerator by lazy{
 }
 
 fun Table.addLabel(text: String, scale: Float= .2f){
+    this.row()
     this.add(textLabelGenerator.generateLabel(text,  scale = scale).label)
 }
 

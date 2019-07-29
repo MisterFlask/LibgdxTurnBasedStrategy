@@ -111,7 +111,6 @@ public class FortressTileEntityGenerator() : TileEntityGenerator{
     override fun applicableToTile(tileLocation: TileLocation): Boolean {
         return tileLocation.terrainProperties().any{it.properties.contains("castle")}
     }
-
 }
 
 @Autoinjectable
