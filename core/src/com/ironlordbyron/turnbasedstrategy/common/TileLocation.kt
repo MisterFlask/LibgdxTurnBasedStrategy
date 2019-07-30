@@ -11,6 +11,8 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledCellData
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
+import java.util.*
+import kotlin.collections.ArrayList
 
 data class TileLocation(val x: Int, val y: Int){
 
@@ -73,4 +75,21 @@ val tacticalMapAlgorithms: TacticalMapAlgorithms by LazyInject(TacticalMapAlgori
 
 public fun TileLocation.floodFill(pred: (TileLocation)->Boolean): ArrayList<TileLocation> {
     return tacticalMapAlgorithms.floodFindTilesMatchingPredicate(this, pred)
+}
+
+public fun TileLocation.nearestUnoccupiedSquares(squaresNeeded: Int): Collection<TileLocation>{
+    val squaresFound = ArrayList<TileLocation>()
+    val squaresToProcess = ArrayDeque<TileLocation>()
+    squaresToProcess.add(this)
+    while(squaresFound.size < squaresNeeded){
+        val current = squaresToProcess.remove()
+        val neighbors = current.neighbors()
+        val eligible =
+                neighbors.filter{it.getCharacter() == null}
+                .filter{!squaresFound.contains(it)}
+        squaresFound.addAll(eligible)
+        squaresToProcess.addAll(neighbors)
+    }
+    return squaresFound.subList(0, squaresNeeded)
+
 }

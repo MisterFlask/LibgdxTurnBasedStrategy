@@ -203,6 +203,7 @@ class TacMapHud(viewPort: Viewport,
 
         characterDisplayTable.row()
         characterDisplayTable.add(debugTextArea).width(300f)
+
     }
 
     val combatPhaseLabel = Table()
@@ -254,6 +255,13 @@ class TacMapHud(viewPort: Viewport,
             characterDisplayTable.add(displayCharacterHp(selectedCharacter))
             characterDisplayTable.row()
             characterDisplayTable.add(displayCharacterAttributes(selectedCharacter)).left()
+            characterDisplayTable.row()
+            val turnStartAction = selectedCharacter.tacMapUnit.turnStartAction
+            if (turnStartAction != null){
+                characterDisplayTable.addLabel("AT TURN START")
+                characterDisplayTable.row()
+                characterDisplayTable.addLabel(turnStartAction.displayName, tooltip = turnStartAction.extendedDescription)
+            }
         }
         // NOTE TO FUTURE SELF: Table controls size of images, DOES NOT RESPECT image preferred size
 

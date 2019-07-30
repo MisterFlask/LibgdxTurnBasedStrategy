@@ -50,7 +50,10 @@ public class ActionManager @Inject constructor(
 
 )  {
 
-    fun addCharacterToTileFromTemplate(tacMapUnit: TacMapUnitTemplate, tileLocation: TileLocation, playerControlled: Boolean) : LogicalCharacter {
+    fun addCharacterToTileFromTemplate(tacMapUnit: TacMapUnitTemplate,
+                                       tileLocation: TileLocation,
+                                       playerControlled: Boolean,
+                                       popup: String? = null) : LogicalCharacter {
 
         val tacMapUnitTemplate = tacMapUnit
         println("Adding character to tile: ${tacMapUnit.templateName} at ${tileLocation}")
@@ -59,6 +62,9 @@ public class ActionManager @Inject constructor(
         visibleCharacterDataFactory.generateCharacterHpMarker(characterSpawned)
         boardState.addCharacter(characterSpawned)
         animationActionQueueProvider.addAction(revealActionGenerator.generateRevealActorActionPair(characterSpawned.actor))
+        if (popup!=null){
+            this.risingText(popup, tileLocation)
+        }
         return characterSpawned
     }
 

@@ -1,17 +1,16 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
-import com.badlogic.gdx.scenes.scene2d.Actor
-import com.badlogic.gdx.scenes.scene2d.Group
 import com.ironlordbyron.turnbasedstrategy.ai.Intent
 import com.ironlordbyron.turnbasedstrategy.ai.IntentType
-import com.ironlordbyron.turnbasedstrategy.ai.goals.AttackGoal
 import com.ironlordbyron.turnbasedstrategy.ai.goals.Goal
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
-import com.ironlordbyron.turnbasedstrategy.common.abilities.RangeStyle
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.view.animation.LogicalCharacterActorGroup
+import com.ironlordbyron.turnbasedstrategy.view.animation.animationlisteners.DeathGameEventHandler
 import java.util.*
 
 /**
@@ -30,9 +29,11 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
 
     val abilities: Collection<LogicalAbilityAndEquipment>
         get() = acquireAbilities()
+
     fun abilitiesForIntent(intent: IntentType): List<LogicalAbilityAndEquipment> {
-        return acquireAbilities().filter{it.ability.intentType == intent}
+        return acquireAbilities().filter { it.ability.intentType == intent }
     }
+
     val healthLeft: Int
         get() = tacMapUnit.healthLeft
     val maxActionsLeft: Int
@@ -43,37 +44,47 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
         get() = tacMapUnit.maxHealth
 
     val playerAlly: Boolean
-    get() = playerControlled //TODO: Differentiate if necessary
+        get() = playerControlled //TODO: Differentiate if necessary
     val isDead: Boolean
-    get() = tacMapUnit.healthLeft < 1
+        get() = tacMapUnit.healthLeft < 1
 
     public data class StacksOfAttribute(val stacks: Int, val logicalAttribute: LogicalCharacterAttribute)
 
     private fun acquireAbilities(): Collection<LogicalAbilityAndEquipment> {
-        val abilitiesSansEquipment = tacMapUnit.abilities.map{LogicalAbilityAndEquipment(it, null)}
+        val abilitiesSansEquipment = tacMapUnit.abilities.map { LogicalAbilityAndEquipment(it, null) }
         val abilitiesWithEquipment = ArrayList<LogicalAbilityAndEquipment>()
-        for (equip in tacMapUnit.equipment){
-            for (ability in equip.abilityEnabled){
+        for (equip in tacMapUnit.equipment) {
+            for (ability in equip.abilityEnabled) {
                 abilitiesWithEquipment.add(LogicalAbilityAndEquipment(ability, equip))
             }
         }
         return abilitiesSansEquipment + abilitiesWithEquipment
     }
 
-    fun getAttributes() : Collection<StacksOfAttribute> {
+    fun getAttributes(): Collection<StacksOfAttribute> {
         return tacMapUnit.getAttributes()
     }
-    fun getStacks(logicalAttribute: LogicalCharacterAttribute) : StacksOfAttribute {
-        return tacMapUnit.getAttributes().find{it.logicalAttribute.id == logicalAttribute.id}!!
+
+    fun getStacks(logicalAttribute: LogicalCharacterAttribute): StacksOfAttribute {
+        return tacMapUnit.getAttributes().find { it.logicalAttribute.id == logicalAttribute.id }!!
     }
 
-    fun incrementAttribute(logicalAttribute: LogicalCharacterAttribute, stacks: Int){
+    fun incrementAttribute(logicalAttribute: LogicalCharacterAttribute, stacks: Int) {
         tacMapUnit.incrementAttribute(logicalAttribute, stacks)
+    }
+
+    val actionManager: ActionManager by LazyInject(ActionManager::class.java)
+    val deathGameEventHandler: DeathGameEventHandler by LazyInject(DeathGameEventHandler::class.java)
+
+    fun killAndDespawn() {
+        this.tacMapUnit.healthLeft = 0
+        deathGameEventHandler.handleUnitKilledEvent(this)
+        actionManager.despawnEntityInSequence(this.actor)
     }
 }
 
 
-data class LogicalAbilityAndEquipment(val ability: LogicalAbility, val equipment: LogicalEquipment?){
+    data class LogicalAbilityAndEquipment(val ability: LogicalAbility, val equipment: LogicalEquipment?){
     companion object {
         val mapAlgorithms:TacticalMapAlgorithms by lazy {
             GameModuleInjector.generateInstance(TacticalMapAlgorithms::class.java)

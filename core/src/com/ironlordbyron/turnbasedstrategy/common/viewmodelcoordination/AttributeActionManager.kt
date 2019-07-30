@@ -22,11 +22,11 @@ data class UnapplyAttributeEvent(
 
 @Singleton
 @Autoinjectable
-public class AttributeOperator @Inject constructor(val logicHooks: LogicHooks,
-                                                   val animationActionQueueProvider: AnimationActionQueueProvider,
-                                                   val floatingTextGenerator: FloatingTextGenerator,
-                                                   val eventNotifier: EventNotifier,
-                                                   val actionManager: ActionManager) : GameEventListener{
+public class AttributeActionManager @Inject constructor(val logicHooks: LogicHooks,
+                                                        val animationActionQueueProvider: AnimationActionQueueProvider,
+                                                        val floatingTextGenerator: FloatingTextGenerator,
+                                                        val eventNotifier: EventNotifier,
+                                                        val actionManager: ActionManager) : GameEventListener{
     override fun consumeGameEvent(tacticalGameEvent: TacticalGameEvent) {
         when(tacticalGameEvent){
             is ApplyAttributeEvent -> this.applyAttribute(tacticalGameEvent.logicalCharacter, tacticalGameEvent.logicalCharacterAttribute,
@@ -48,7 +48,7 @@ public class AttributeOperator @Inject constructor(val logicHooks: LogicHooks,
 
 
     fun applyAttribute(logicalCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute,
-                       stacksToApply: Int = 1){
+                       stacksToApply: Int = 1, popup: String? = null){
         if (hasAttribute(logicalCharacter, logicalCharacterAttribute) and !logicalCharacterAttribute.stackable){
             return
         }
@@ -62,8 +62,13 @@ public class AttributeOperator @Inject constructor(val logicHooks: LogicHooks,
                     logicalCharacterAttribute, logicalCharacter)
         }
 
+        if (popup!= null){
+            actionManager.risingText(popup, logicalCharacter.tileLocation)
+        }
+
         animationActionQueueProvider.addAction(
                 floatingTextGenerator.getTemporaryAnimationActorActionPair("${logicalCharacterAttribute.name}", logicalCharacter.tileLocation))
+
 
         if (hasAttribute(logicalCharacter, logicalCharacterAttribute) and logicalCharacterAttribute.stackable){
             logicalCharacter.incrementAttribute(logicalCharacterAttribute, stacksToApply)

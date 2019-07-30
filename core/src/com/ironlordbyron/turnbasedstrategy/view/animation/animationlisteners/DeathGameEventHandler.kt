@@ -9,17 +9,17 @@ import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.DeathAnimationGenerator
 import javax.inject.Inject
 
-public class DeathGameEventListener @Inject constructor(val gameEventNotifier: GameEventNotifier,
-                                                        val animationActionQueueProvider: AnimationActionQueueProvider,
-                                                        val logicHooks: LogicHooks,
-                                                        val deathAnimationGenerator: DeathAnimationGenerator) : GameEventListener{
+public class DeathGameEventHandler @Inject constructor(val gameEventNotifier: GameEventNotifier,
+                                                       val animationActionQueueProvider: AnimationActionQueueProvider,
+                                                       val logicHooks: LogicHooks,
+                                                       val deathAnimationGenerator: DeathAnimationGenerator) : GameEventListener{
     override fun consumeGameEvent(tacticalGameEvent: TacticalGameEvent) {
         when(tacticalGameEvent){
             is TacticalGameEvent.UnitKilled -> handleUnitKilledEvent(tacticalGameEvent.character)
         }
     }
 
-    private fun handleUnitKilledEvent(targetCharacter: LogicalCharacter) {
+    public fun handleUnitKilledEvent(targetCharacter: LogicalCharacter) {
         // animation
         animationActionQueueProvider.addAction(deathAnimationGenerator.turnCharacterSideways(targetCharacter))
 

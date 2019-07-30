@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Logger
 import com.google.inject.Singleton
 import com.ironlordbyron.turnbasedstrategy.Logging
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.common.getCharacter
 import com.ironlordbyron.turnbasedstrategy.tiledutils.xml.TilemapXmlProcessor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 import java.util.*
@@ -150,6 +151,7 @@ fun TiledMap.getSpawnableTilemapTiles(): List<TileLocation> {
         return listOf()
     }
     return transformTiledObjectsToTileLocations(recs)
+            .filter{it.getCharacter() == null}
 }
 
 fun TiledMap.getTilesByKeyValuePairs(kvs: List<TileKeyValuePair>): List<TileLocation> {

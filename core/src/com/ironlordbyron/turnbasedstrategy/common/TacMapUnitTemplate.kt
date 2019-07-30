@@ -11,6 +11,8 @@ import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCha
 import com.ironlordbyron.turnbasedstrategy.common.equipment.EquipmentClass
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
+import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
+import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.TurnStartAction
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.WeakMinionSpawner
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TerrainType
@@ -121,8 +123,8 @@ object TacMapUnitTemplateKeys{
     val DEFAULT_ENEMY_UNIT_SPAWNER = "default_enemy_unit_spawner"
 }
 
-public fun String.toTacMapUnitTemplate() : TacMapUnitTemplate?{
-    return TacMapUnitTemplate.Dict[this]
+public fun String.toTacMapUnitTemplate() : TacMapUnitTemplate{
+    return TacMapUnitTemplate.Dict[this]?:throw IllegalArgumentException("$this is not a unit template ID")
 }
 
 @Autoinjectable
@@ -130,4 +132,9 @@ private class TemporaryTacMapUnitTemplateRegistration(){
     init{
         TacMapUnitTemplate.DEFAULT_ENEMY_UNIT.register()
     }
+}
+
+val tacMapUnitTemplateRegistrar: UnitTemplateRegistrar by LazyInject(UnitTemplateRegistrar::class.java)
+private fun TacMapUnitTemplate.TacMapUnit.fromId(id: String): TacMapUnitTemplate {
+    return tacMapUnitTemplateRegistrar.getTacMapUnitById(id)?:throw IllegalArgumentException("$id is not a valid tac map unit template ID")
 }

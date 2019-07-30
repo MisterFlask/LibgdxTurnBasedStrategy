@@ -2,8 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen
 
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.abilities.specific.SNOOZING
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeOperator
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
@@ -14,7 +13,7 @@ import javax.inject.Singleton
 // Responsible for deciding what monsters to put in a given room
 public class MobGenerator @Inject constructor (val mobRegistrar: MobRegistrar,
                                                val actionManager: ActionManager,
-                                               val attributeOperator: AttributeOperator){
+                                               val attributeActionManager: AttributeActionManager){
     fun populateRooms(rooms : Collection<MapRoom>, scenarioParams: ScenarioParams){
         val mobGenParams = scenarioParams.mobGenerationParams!!
         var difficultyLeft = mobGenParams.totalDifficultyAllowed
@@ -42,7 +41,7 @@ public class MobGenerator @Inject constructor (val mobRegistrar: MobRegistrar,
         val tilesShuffled = room.tiles.shuffled()
         nextMobGroup.mobGroupTemplate.units.forEachIndexed { index, tacMapUnitTemplate ->
             val logicalCharacterReturned = actionManager.addCharacterToTileFromTemplate(tacMapUnitTemplate, tilesShuffled[index], false)
-            attributeOperator.applyAttribute(logicalCharacterReturned, SNOOZING)
+            attributeActionManager.applyAttribute(logicalCharacterReturned, SNOOZING)
         }
     }
 

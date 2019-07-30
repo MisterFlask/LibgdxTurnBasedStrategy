@@ -3,27 +3,23 @@ package com.ironlordbyron.turnbasedstrategy.common.abilities.specific
 import com.ironlordbyron.turnbasedstrategy.ai.IntentType
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.abilities.*
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.DamageType
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalAttributeEffect
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalEffectParameters
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeOperator
-import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeActionManager
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
-import com.ironlordbyron.turnbasedstrategy.getAttribute
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.isAdjacentTo
 import com.ironlordbyron.turnbasedstrategy.toCharacter
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 import java.util.*
-import kotlin.reflect.KClass
 
 
 class GuardAction: LogicalAbilityEffect {
     val actionManager = GameModuleInjector.generateInstance(ActionManager::class.java)
-    val attributeOperator = GameModuleInjector.generateInstance(AttributeOperator::class.java)
+    val attributeOperator = GameModuleInjector.generateInstance(AttributeActionManager::class.java)
     override fun runAction(characterUsing: LogicalCharacter, tileLocationTargeted: TileLocation) {
         attributeOperator.applyAttribute(tileLocationTargeted.getCharacter()!!, GuardedAttribute(characterUsing.id))
     }

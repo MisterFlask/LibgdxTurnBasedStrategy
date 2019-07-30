@@ -2,7 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.common
 
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeOperator
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeActionManager
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
 import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
@@ -85,7 +85,8 @@ class ReinforcementsEvent(val unitTemplateId: String) : BattleEvent(){
     override fun handle() {
         val appropriateLocation = getSpawnableUnitLocation()
         val unit = unitTemplateRegistrar.getTacMapUnitById(unitTemplateId)!!
-        actionManager.addCharacterToTileFromTemplate(unit, appropriateLocation, false)
+        actionManager.addCharacterToTileFromTemplate(unit, appropriateLocation, false,
+                popup = "Reinforcements arrive!")
     }
 
     private fun getSpawnableUnitLocation(): TileLocation {
@@ -103,13 +104,13 @@ class MassStatusAfflictionEvent(val attribute: LogicalCharacterAttribute,
     val actionManager: ActionManager by lazy {
         GameModuleInjector.generateInstance(ActionManager::class.java)
     }
-    val attributeOperator: AttributeOperator by lazy {
-        GameModuleInjector.generateInstance(AttributeOperator::class.java)
+    val attributeActionManager: AttributeActionManager by lazy {
+        GameModuleInjector.generateInstance(AttributeActionManager::class.java)
     }
 
     override fun handle() {
         tacMapState.listOfPlayerCharacters.forEach{
-            attributeOperator.applyAttribute(it, attribute, numStacks)
+            attributeActionManager.applyAttribute(it, attribute, numStacks)
         }
     }
 

@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.ironlordbyron.turnbasedstrategy.common.GlobalTacMapState
+import com.ironlordbyron.turnbasedstrategy.common.wrappers.RenderingFunction
 import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
@@ -76,9 +77,13 @@ val textLabelGenerator: TextLabelGenerator by lazy{
     GameModuleInjector.generateInstance(TextLabelGenerator::class.java)
 }
 
-fun Table.addLabel(text: String, scale: Float= .2f){
+fun Table.addLabel(text: String, scale: Float= .2f, tooltip: String? = null){
     this.row()
-    this.add(textLabelGenerator.generateLabel(text,  scale = scale).label)
+    val label = textLabelGenerator.generateLabel(text,  scale = scale)
+    this.add(label.label)
+    if (tooltip != null){
+        label.addTooltip(RenderingFunction.simple(tooltip))
+    }
 }
 
 

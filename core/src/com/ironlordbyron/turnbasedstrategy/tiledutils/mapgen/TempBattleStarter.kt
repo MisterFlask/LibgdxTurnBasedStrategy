@@ -4,9 +4,8 @@ import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.abilities.specific.SNOOZING
-import com.ironlordbyron.turnbasedstrategy.common.equipment.StandardEquipment
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeOperator
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.entrypoints.CadenceEffectsRegistrar
 import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
@@ -67,7 +66,7 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
                                             val logicHooks: LogicHooks,
                                             val animationActionQueueProvider: AnimationActionQueueProvider,
                                             val actionManager: ActionManager,
-                                            val attributeOperator: AttributeOperator,
+                                            val attributeActionManager: AttributeActionManager,
                                             val unitTemplateRegistrar: UnitTemplateRegistrar){
     val cadenceEffectsRegistrar: CadenceEffectsRegistrar by lazy {
         GameModuleInjector.generateInstance(CadenceEffectsRegistrar::class.java)
@@ -118,7 +117,7 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
             logicHooks.onUnitCreation(char)
         }
         for (char in tacmapState.listOfEnemyCharacters){
-            attributeOperator.applyAttribute(char, SNOOZING)
+            attributeActionManager.applyAttribute(char, SNOOZING)
         }
 
         animationActionQueueProvider.runThroughActionQueue()
