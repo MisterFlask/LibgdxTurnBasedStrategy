@@ -123,9 +123,11 @@ object TacMapUnitTemplateKeys{
     val DEFAULT_ENEMY_UNIT_SPAWNER = "default_enemy_unit_spawner"
 }
 
+val unitTemplateRegistrar: UnitTemplateRegistrar by LazyInject(UnitTemplateRegistrar::class.java)
 public fun String.toTacMapUnitTemplate() : TacMapUnitTemplate{
-    return TacMapUnitTemplate.Dict[this]?:throw IllegalArgumentException("$this is not a unit template ID")
+    return unitTemplateRegistrar.getTacMapUnitById(this)?:throw java.lang.IllegalArgumentException("Could not find tac map unit template ID for $this")
 }
+
 
 @Autoinjectable
 private class TemporaryTacMapUnitTemplateRegistration(){

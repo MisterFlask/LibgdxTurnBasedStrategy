@@ -5,7 +5,6 @@ import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeActionManager
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplate
-import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 
@@ -15,15 +14,15 @@ public fun VoidBell(): TacMapUnitTemplate {
             TacMapUnitTemplate._demonImg.copy(textureId = "9"),
             templateName = "Void Bell Alarm",
             enemyAiType = EnemyAiType.IMMOBILE_UNIT,
-            turnStartAction = SpawnMinionTurnAction("WEAK_MINION", 5),
+            turnStartAction = SpawnMinionOnSpecificTurnAction("WEAK_MINION", 5),
             metagoal = NullAiMetaGoal(),
             templateId = "VOID_BELL")
 }
 
 val actionManager: ActionManager by LazyInject(ActionManager::class.java)
 
-class SpawnMinionTurnAction(val tacMapUnitTemplateId: String,
-                            val numberToSpawn: Int)
+class SpawnMinionOnSpecificTurnAction(val tacMapUnitTemplateId: String,
+                                      val numberToSpawn: Int)
     : TurnStartAction(displayName = "Spawn Minion",
         extendedDescription = "Spawns $numberToSpawn $tacMapUnitTemplateId nearby when alertness first becomes [5, 10]."){
     val tacticalMapState: TacticalMapState by lazy{

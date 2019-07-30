@@ -1,10 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.ai.goals
 
 import com.ironlordbyron.turnbasedstrategy.Logging
-import com.ironlordbyron.turnbasedstrategy.ai.AiPlannedAction
-import com.ironlordbyron.turnbasedstrategy.ai.BasicAiDecisions
-import com.ironlordbyron.turnbasedstrategy.ai.EnemyAiType
-import com.ironlordbyron.turnbasedstrategy.ai.Intent
+import com.ironlordbyron.turnbasedstrategy.ai.*
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
@@ -18,6 +15,9 @@ class AttackGoal() : Goal{
         GameModuleInjector.generateInstance(TacticalMapState::class.java)
     }
     override fun executeOnIntent(thisCharacter: LogicalCharacter): List<AiPlannedAction> {
+        if (thisCharacter.intent.intentType == IntentType.NONE){
+            thisCharacter.intent = Intent.Move()
+        }
 
         when(thisCharacter.intent) {
             is Intent.Move -> {
