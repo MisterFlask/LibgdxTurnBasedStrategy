@@ -210,7 +210,7 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
                 allowEndingOnLastTile = true)
 
         if (pathToEnemy == null){
-            println("Could not find path from ${thisCharacter.tileLocation} to ${closestEnemy.tileLocation} for ${thisCharacter.tacMapUnit.templateName}")
+            println("GetNextMoveLocationForAbility: Could not find path from ${thisCharacter.tileLocation} to ${closestEnemy.tileLocation} for ${thisCharacter.tacMapUnit.templateName}")
             return null
         }
         if (pathToEnemy.isEmpty()){

@@ -5,6 +5,8 @@ import com.ironlordbyron.turnbasedstrategy.ai.Intent
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 
 interface Goal{
+    fun describe() : String
+
     fun formulateIntent(thisCharacter: LogicalCharacter) : Intent
 
     fun executeOnIntent(thisCharacter: LogicalCharacter) : List<AiPlannedAction>

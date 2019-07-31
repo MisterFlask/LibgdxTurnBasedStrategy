@@ -9,6 +9,10 @@ import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 
 val MIN_ATTACK_DISTANCE = 10
 class ConquerCityGoal(): Goal{
+
+    override fun describe(): String {
+        return "Goal:Conquer"
+    }
     val basicAiDecisions: BasicAiDecisions by lazy{
         GameModuleInjector.generateInstance(BasicAiDecisions::class.java)
     }

@@ -12,7 +12,6 @@ import org.xguzm.pathfinding.grid.finders.AStarGridFinder
 import org.xguzm.pathfinding.grid.finders.GridFinderOptions
 import java.lang.Exception
 import java.lang.IllegalArgumentException
-import java.util.concurrent.TimeUnit
 
 private val SENTINEL_VALUE = 100000
 
@@ -98,7 +97,7 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
     }
 
 
-    override public fun acquireBestPathTo(startCharacter: LogicalCharacter, endLocation: TileLocation, allowEndingOnLastTile: Boolean) : Collection<PathfindingTileLocation>?{
+    override public fun acquireBestPathTo(character: LogicalCharacter, endLocation: TileLocation, allowEndingOnLastTile: Boolean) : Collection<PathfindingTileLocation>?{
 
         val stopwatch = Stopwatch.createStarted()
         try {
@@ -106,8 +105,8 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
             opt.allowDiagonal = false
             // navigationGrid.setNodes(convertToNodes())
             var finder = AStarGridFinder(PathfindingTileLocation::class.java, opt)
-            val bestPath = finder.findPath(startCharacter.tileLocation.x,
-                    startCharacter.tileLocation.y,
+            val bestPath = finder.findPath(character.tileLocation.x,
+                    character.tileLocation.y,
                     endLocation.x,
                     endLocation.y,
                     this.navigationGrid)
@@ -125,7 +124,7 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
                 return bestPath
             }
         } catch(e: Exception){
-            println("ERROR when attempting to go from ${startCharacter.tileLocation} to ${endLocation} with allowEndingOnLastTile=${allowEndingOnLastTile}")
+            println("ERROR when attempting to go from ${character.tileLocation} to ${endLocation} with allowEndingOnLastTile=${allowEndingOnLastTile}")
             throw e;
         } finally{
             stopwatch.stop()

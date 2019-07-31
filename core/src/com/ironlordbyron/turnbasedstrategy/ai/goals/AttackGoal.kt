@@ -7,7 +7,9 @@ import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 
 class AttackGoal() : Goal{
-
+    override fun describe(): String {
+        return "Goal:Attack"
+    }
     val basicAiDecisions: BasicAiDecisions by lazy{
         GameModuleInjector.generateInstance(BasicAiDecisions::class.java)
     }
@@ -32,7 +34,9 @@ class AttackGoal() : Goal{
                     return listOf()
                 }
                 val nextMove = AiPlannedAction.MoveToTile(bestPathToClosestPlayerUnit.last().location)
-                return listOf(nextMove)
+                val returned = listOf(nextMove)
+
+                return returned
             }
             is Intent.Attack -> {
                 Logging.DebugCombatLogic("Character ${thisCharacter.tacMapUnit.templateName} is attempting attack")
@@ -51,9 +55,6 @@ class AttackGoal() : Goal{
     }
 
     override fun formulateIntent(thisCharacter: LogicalCharacter) : Intent{
-        if (thisCharacter.tacMapUnit.enemyAiType == EnemyAiType.BASIC){
-            return basicAiDecisions.getAttackIntentForThisTurn(thisCharacter)
-        }
-        return Intent.Move()
+        return basicAiDecisions.getAttackIntentForThisTurn(thisCharacter)
     }
 }

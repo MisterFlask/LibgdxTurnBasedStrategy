@@ -11,6 +11,7 @@ public class ConquerCityMetagoal : Metagoal{
     }
 }
 
+// TODO: Attack meta goal doesn't function?
 public class AttackMetaGoal: Metagoal{
     override fun formulateNewGoal(logicalCharacter: LogicalCharacter): Goal {
         return AttackGoal()

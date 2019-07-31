@@ -5,7 +5,7 @@ import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.abilities.StandardAbilities
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplate
 
-
+// TODO: This unit doesn't move correctly.  But why?  It appears to be the attack metagoal
 @SpawnableUnitTemplate("WEAK_SLIME")
 fun WeakSlime() : TacMapUnitTemplate{
     return TacMapUnitTemplate(8,

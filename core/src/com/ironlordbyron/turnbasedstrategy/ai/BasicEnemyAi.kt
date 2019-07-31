@@ -23,7 +23,9 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
         if (thisCharacter.goal == null || thisCharacter.goal!!.shouldChangeGoal()){
             thisCharacter.goal = thisCharacter.tacMapUnit.metagoal.formulateNewGoal(thisCharacter)
         }
-        return thisCharacter.goal!!.executeOnIntent(thisCharacter)
+        val nextActions =  thisCharacter.goal!!.executeOnIntent(thisCharacter)
+        thisCharacter.goal!!.formulateIntent(thisCharacter)
+        return nextActions
     }
 
     private fun getNextAbilityUsage(thisCharacter: LogicalCharacter, locationAfterMove: TileLocation): AiPlannedAction.AbilityUsage? {
@@ -74,7 +76,7 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
                 allowEndingOnLastTile = true)
 
         if (pathToEnemy == null){
-            println("Could not find path from ${thisCharacter.tileLocation} to ${closestEnemy.tileLocation} for ${thisCharacter.tacMapUnit.templateName}")
+            println("BasicEnemyAi:Could not find path from ${thisCharacter.tileLocation} to ${closestEnemy.tileLocation} for ${thisCharacter.tacMapUnit.templateName}")
             return null
         }
         if (pathToEnemy.isEmpty()){

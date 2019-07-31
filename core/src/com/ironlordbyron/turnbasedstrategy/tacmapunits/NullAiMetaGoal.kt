@@ -14,6 +14,9 @@ class NullAiMetaGoal : Metagoal {
 }
 
 class NullGoal : Goal {
+    override fun describe(): String {
+       return "Goal:Null"
+    }
     override fun formulateIntent(thisCharacter: LogicalCharacter): Intent {
         return Intent.None()
     }
