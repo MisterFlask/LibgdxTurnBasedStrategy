@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.tacmapunits
 
+import com.ironlordbyron.turnbasedstrategy.ai.goals.AttackMetaGoal
 import com.ironlordbyron.turnbasedstrategy.ai.goals.ConquerCityMetagoal
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.abilities.StandardAbilities
@@ -11,7 +12,8 @@ fun WeakSlime() : TacMapUnitTemplate{
     return TacMapUnitTemplate(8,
             TacMapUnitTemplate._demonImg.copy(textureId = "7"),
             templateName = "Weak Slime",
-            abilities = listOf(StandardAbilities.SlimeStrike))
+            abilities = listOf(StandardAbilities.RangedAttack),
+            metagoal = AttackMetaGoal())
 }
 
 @SpawnableUnitTemplate("SIMPLE_RANGED_ENEMY")

@@ -65,6 +65,9 @@ public class ActionManager @Inject constructor(
         if (popup!=null){
             this.risingText(popup, tileLocation)
         }
+        if (!characterSpawned.playerControlled){
+            characterSpawned.formulateNewIntent()
+        }
         return characterSpawned
     }
 

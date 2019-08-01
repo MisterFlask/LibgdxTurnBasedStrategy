@@ -85,11 +85,17 @@ public fun TileLocation.nearestUnoccupiedSquares(squaresNeeded: Int): Collection
         val current = squaresToProcess.remove()
         val neighbors = current.neighbors()
         val eligible =
-                neighbors.filter{it.getCharacter() == null}
+                neighbors
+                .filter{it.getCharacter() == null}
                 .filter{!squaresFound.contains(it)}
         squaresFound.addAll(eligible)
         squaresToProcess.addAll(neighbors)
     }
     return squaresFound.subList(0, squaresNeeded)
 
+}
+
+public fun Collection<TileLocation>.thatIsClosestTo(tileLocation: TileLocation): TileLocation {
+
+    return this.minBy{tileLocation.distanceTo(it)}!!
 }

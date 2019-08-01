@@ -66,7 +66,7 @@ public class BasicEnemyAi(val tiledMapOperationsHandler: TiledMapOperationsHandl
         }
 
         // TODO; this doesn't exactly work how i want, but it's a low priority for fixing.
-        val targetEndTile = aiGridGraph.findClosestUnoccupiedTileTo(closestEnemy.tileLocation, allowEndingOnLastTile = false)
+        val targetEndTile = aiGridGraph.findClosestWalkableTileTo(closestEnemy.tileLocation, thisCharacter)
         if (targetEndTile == null){
             println("WARNING: Could not acquire target tile for ai.")
             return null

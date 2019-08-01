@@ -46,9 +46,9 @@ class ConquerCityGoal(): Goal{
 
     override fun executeOnIntent(thisCharacter: LogicalCharacter): List<AiPlannedAction> {
 
-        if (thisCharacter.intent is Intent.None || thisCharacter.intent is Intent.Move){
+        if (thisCharacter.intent is Intent.None){
             thisCharacter.intent = formulateIntent(thisCharacter)
-        }
+        } //TODO: This should be done after spawning
         when(thisCharacter.intent.intentType){
             IntentType.ATTACK -> {
                 Logging.DebugCombatLogic("Character ${thisCharacter.tacMapUnit.templateName} is attempting attack")
@@ -57,6 +57,7 @@ class ConquerCityGoal(): Goal{
                     val plannedActions = basicAiDecisions.getNecessaryMoveForTargetingCharacterWithAbility(thisCharacter, tacticalMapState.getCharacterFromId(attackIntent.logicalCharacterUuid), thisCharacter.intent.intentType)!!
                     return plannedActions
                 }
+                // TODO: This should be done later, after movement
                 thisCharacter.intent = formulateIntent(thisCharacter)
                 return executeOnIntent(thisCharacter)
             }

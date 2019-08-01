@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
+import com.ironlordbyron.turnbasedstrategy.ai.EnemyAiType
 import com.ironlordbyron.turnbasedstrategy.ai.Intent
 import com.ironlordbyron.turnbasedstrategy.ai.IntentType
 import com.ironlordbyron.turnbasedstrategy.ai.goals.Goal
@@ -9,6 +10,7 @@ import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
+import com.ironlordbyron.turnbasedstrategy.tacmapunits.NullAiMetaGoal
 import com.ironlordbyron.turnbasedstrategy.view.animation.LogicalCharacterActorGroup
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationlisteners.DeathGameEventHandler
 import java.util.*
@@ -26,6 +28,10 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
                             val id: UUID = UUID.randomUUID(),
                             var intent: Intent = Intent.None(),
                             var goal: Goal? = null) {
+
+    override fun toString(): String {
+        return "$tileLocation : ${tacMapUnit.templateName}"
+    }
 
     val abilities: Collection<LogicalAbilityAndEquipment>
         get() = acquireAbilities()
@@ -81,7 +87,19 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
         deathGameEventHandler.handleUnitKilledEvent(this)
         actionManager.despawnEntityInSequence(this.actor)
     }
+
+    fun formulateNewIntent(){
+        if (this.tacMapUnit.metagoal is NullAiMetaGoal || this.tacMapUnit.enemyAiType == EnemyAiType.IMMOBILE_UNIT){
+            return
+        }
+        if (this.goal == null){
+            this.goal = this.tacMapUnit.metagoal.formulateNewGoal(this)
+        }
+        this.intent = this.goal!!.formulateIntent(this)
+    }
 }
+
+
 
 
     data class LogicalAbilityAndEquipment(val ability: LogicalAbility, val equipment: LogicalEquipment?){

@@ -2,10 +2,9 @@ package com.ironlordbyron.turnbasedstrategy.ai
 
 import com.google.common.base.Stopwatch
 import com.google.inject.Inject
-import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
-import com.ironlordbyron.turnbasedstrategy.common.TacticalMapAlgorithms
-import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
-import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.Logging
+import com.ironlordbyron.turnbasedstrategy.common.*
+import com.ironlordbyron.turnbasedstrategy.tacmapunits.util.mustBeNull
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import org.xguzm.pathfinding.grid.NavigationGrid
 import org.xguzm.pathfinding.grid.finders.AStarGridFinder
@@ -60,7 +59,7 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
         if (closestEnemyCharacter == null){
             return null
         }
-        if (acquireBestPathTo(logicalCharacter, endLocation = closestEnemyCharacter.tileLocation, allowEndingOnLastTile = false) == null){
+        if (acquireBestPathTo(logicalCharacter, endLocation = closestEnemyCharacter.tileLocation, allowEndingOnLastTile = true) == null){
             return null
         }
 
@@ -68,7 +67,9 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
     }
 
     val MAX_RADIUS = 5
-    public fun findClosestUnoccupiedTileTo(origin: TileLocation, allowEndingOnLastTile: Boolean) : TileLocation?{
+    public fun findClosestWalkableTileTo(origin: TileLocation,
+                                           logicalCharacter: LogicalCharacter,
+                                           allowEndingOnOrigin: Boolean = false) : TileLocation?{
         // look at a max radius of five, then give up
         val tileSet = HashSet<TileLocation>()
         tileSet.add(origin)
@@ -77,10 +78,11 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
             tileSet.addAll(nextRing)
             // todo: clumsy implementation
             for (tile in nextRing){
-                if (tile == origin && !allowEndingOnLastTile){
+                if (tile == origin && !allowEndingOnOrigin){
                     continue
                 }
-                if (tacticalMapAlgorithms.isTileUnoccupied(tileLocation = tile)){
+                if (tacticalMapAlgorithms.canWalkOnTile(tileLocation = tile,
+                                logicalCharacter =logicalCharacter )){
                     return tile
                 }
             }
@@ -97,24 +99,37 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
     }
 
 
-    override public fun acquireBestPathTo(character: LogicalCharacter, endLocation: TileLocation, allowEndingOnLastTile: Boolean) : Collection<PathfindingTileLocation>?{
+    override public fun acquireBestPathTo(character: LogicalCharacter,
+                                          endLocation: TileLocation,
+                                          allowEndingOnLastTile: Boolean) : Collection<PathfindingTileLocation>?{
 
+        var trueEndLocation = endLocation
+        if (!tacticalMapAlgorithms.canWalkOnTile(character, endLocation)){
+            Logging.DebugPathfinding("Character ${character.tacMapUnit.templateName} cannot walk on $endLocation; attempting substitute location")
+            trueEndLocation = findClosestWalkableTileTo(endLocation, character, false)?:return null
+        }
         val stopwatch = Stopwatch.createStarted()
         try {
             var opt = GridFinderOptions()
             opt.allowDiagonal = false
             // navigationGrid.setNodes(convertToNodes())
             var finder = AStarGridFinder(PathfindingTileLocation::class.java, opt)
+
+            trueEndLocation.getCharacter().mustBeNull()
             val bestPath = finder.findPath(character.tileLocation.x,
                     character.tileLocation.y,
-                    endLocation.x,
-                    endLocation.y,
-                    this.navigationGrid)
+                    trueEndLocation.x,
+                    trueEndLocation.y,
+                    this.navigationGrid)?.toList()
 
 
             // println("${if (bestPath == null) "FAILURE" else "SUCCESS"} in finding route between ${startCharacter.tileLocation} and ${endLocation}")
 
-            if (!allowEndingOnLastTile) {
+            if (bestPath == null){
+                return null
+            }
+
+            if (!allowEndingOnLastTile && trueEndLocation == endLocation) {
                 if (bestPath?.size ?: 0 <= 1) {
                     return listOf()
                 }

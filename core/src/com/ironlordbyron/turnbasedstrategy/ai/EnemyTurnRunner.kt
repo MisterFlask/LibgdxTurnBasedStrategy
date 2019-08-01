@@ -57,10 +57,6 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
                 enemyCharacter.tacMapUnit.turnStartAction.performAction(enemyCharacter)
             }
 
-            if (enemyCharacter.endedTurn){
-                continue //characters that have already gone don't get turns
-            }
-
             if (enemyCharacter.isDead){
                 continue //dead characters don't get turns
             }

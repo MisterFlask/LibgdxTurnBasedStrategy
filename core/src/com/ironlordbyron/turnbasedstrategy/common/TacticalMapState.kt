@@ -60,8 +60,9 @@ class TacticalMapState @Inject constructor(val logicalTileTracker: LogicalTileTr
     }
 
     fun closestPlayerControlledCharacterTo(logicalCharacter: LogicalCharacter): LogicalCharacter? {
-        return listOfPlayerCharacters.filter{it.id != logicalCharacter.id}
-                .minBy{ it.tileLocation.distanceTo(logicalCharacter.tileLocation)}!!
+        return listOfPlayerCharacters
+                .filter{it.id != logicalCharacter.id}
+                .minBy{ it.tileLocation.distanceTo(logicalCharacter.tileLocation)}
     }
 
     fun characterAt(tile: TileLocation): LogicalCharacter?{

@@ -70,7 +70,10 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
         val playerUnits = tacticalMapState.listOfPlayerCharacters
         var currentBestPath: Collection<PathfindingTileLocation>? = null
         for (targetUnit in playerUnits){
-            val path = pathfinder.acquireBestPathTo(thisCharacter, targetUnit.tileLocation, false)
+            val targetTileToMoveTo = targetUnit.tileLocation
+                    .nearestUnoccupiedSquares(4)
+                    .thatIsClosestTo(thisCharacter.tileLocation)
+            val path = pathfinder.acquireBestPathTo(thisCharacter, targetTileToMoveTo, true)
             if (path == null){
                 continue
             }
@@ -126,9 +129,10 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
         if (first == null){
             throw IllegalStateException("Could not find ability for intent ${thisCharacter.intent}")
         }
+
         val nextLocation = getNextMoveLocationForAbility(thisCharacter, first)
         if (nextLocation == null){
-            Logging.DebugCombatLogic("Enemy ${thisCharacter.tacMapUnit.templateName} cannot find ability t operform or location to go to")
+            Logging.DebugCombatLogic("Enemy ${thisCharacter.tacMapUnit.templateName} cannot find ability to perform or location to go to")
             return Intent.None()
         }
 
@@ -181,12 +185,14 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
 
     // First priority: Can we hit an enemy with an abilityEquipmentPair from a reachable tile?  If so, DO IT.
     // Otherwise just get as close as possible to the enemy.
+    //  TODO: This might not be working?
     fun getNextMoveLocationForAbility(thisCharacter: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment) : TileLocation?{
         val reachableLocations  = mapAlgorithms.getWhereCharacterCanMoveTo(thisCharacter)
         // First: if we can target the enemy from a location we can reach?  GO THERE.
         for (reachableLocation in reachableLocations){
             val ability = logicalAbilityAndEquipment.ability.abilityTargetingParameters
-            val targetableTilesFromThisSquare = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter,logicalAbilityAndEquipment, reachableLocation)
+            val targetableTilesFromThisSquare
+                    = ability.getSquaresThatCanActuallyBeTargetedByAbility(thisCharacter,logicalAbilityAndEquipment, reachableLocation)
             if (!targetableTilesFromThisSquare.isEmpty()){
                 return reachableLocation
             }
@@ -200,14 +206,14 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
         }
 
         // TODO; this doesn't exactly work how i want, but it's a low priority for fixing.
-        val targetEndTile = aiGridGraph.findClosestUnoccupiedTileTo(closestEnemy.tileLocation, allowEndingOnLastTile = false)
+        val targetEndTile = aiGridGraph.findClosestWalkableTileTo(closestEnemy.tileLocation, thisCharacter)
         if (targetEndTile == null){
             println("WARNING: Could not acquire target tile for ai.")
             return null
         }
 
         val pathToEnemy = aiGridGraph.acquireBestPathTo(thisCharacter, targetEndTile,
-                allowEndingOnLastTile = true)
+                allowEndingOnLastTile = false)
 
         if (pathToEnemy == null){
             println("GetNextMoveLocationForAbility: Could not find path from ${thisCharacter.tileLocation} to ${closestEnemy.tileLocation} for ${thisCharacter.tacMapUnit.templateName}")
