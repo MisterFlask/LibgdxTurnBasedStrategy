@@ -120,7 +120,7 @@ class TacMapHud(viewPort: Viewport,
 
         var actor = abilityEquipmentPair.ability.attackSprite?.toActor()
         if (actor == null){
-            actor = ImageIcon(ImageIcon.PAINTERLY_FOLDER, "rip-acid-1.png").toActor() //todo
+            actor = ImageIcon(ImageIcon._PAINTERLY_FOLDER, "rip-acid-1.png").toActor() //todo
         }
         val button = actor
 

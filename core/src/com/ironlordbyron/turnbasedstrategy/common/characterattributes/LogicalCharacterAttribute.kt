@@ -1,20 +1,12 @@
 package com.ironlordbyron.turnbasedstrategy.common.characterattributes
 
-import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
-import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.*
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
-import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.TransientEntityTracker
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.ExplodesOnDeathFunctionalUnitEffect
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.ShieldsAnotherOrganFunctionalAttribute
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
-import com.ironlordbyron.turnbasedstrategy.view.animation.external.SpecialEffectManager
-import java.util.*
-import javax.inject.Inject
 
 /**
  * So, here's how this works: Each attribute corresponds to a visible icon for the player to interact with.
@@ -37,7 +29,7 @@ public open class LogicalCharacterAttribute(val name: String,
                                             val tacticalMapProtoActorOffsetY: Int = 0){
     companion object {
         val _demonImg = SuperimposedTilemaps(tileSetNames = listOf("Demon0","Demon1"), textureId = "2")
-        val _painterlyIcon = ImageIcon(ImageIcon.PAINTERLY_FOLDER, "fire-arrows-1.png")
+        val _painterlyIcon = ImageIcon(ImageIcon._PAINTERLY_FOLDER, "fire-arrows-1.png")
         val EXPLODES_ON_DEATH = LogicalCharacterAttribute("Explodes On Death",
                 _painterlyIcon,
                 customEffects = listOf(ExplodesOnDeathFunctionalUnitEffect(4, 5)),

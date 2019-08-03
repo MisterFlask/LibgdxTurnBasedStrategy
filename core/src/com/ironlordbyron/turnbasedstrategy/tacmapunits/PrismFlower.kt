@@ -13,7 +13,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.Superimpose
 public fun PrismFlower(): TacMapUnitTemplate{
     return TacMapUnitTemplate(
             0,
-            SuperimposedTilemaps.toDefaultProtoActor(),
+            SuperimposedTilemaps.plantImageNumber("0"),
             "Prism Flower",
             listOf(PrismFlowerAttack()),
             listOf(),

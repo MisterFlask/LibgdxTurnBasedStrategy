@@ -14,8 +14,9 @@ public class ImageIcon (
         val filename : String,
         override val orientation: OrientationType = OrientationType.NEUTRAL) : ProtoActor{
     companion object {
-        val ICON_FOLDER = "icons"
-        val PAINTERLY_FOLDER = "icons/painterly"
+        val _ICON_FOLDER = "icons"
+        val _PAINTERLY_FOLDER = "icons/painterly"
+
     }
     override fun toActor(animatedImageParams: AnimatedImageParams): ActorWrapper {
         val fileTexture = retrieveIconImage(folder, filename)
@@ -31,5 +32,22 @@ public class ImageIcon (
         val tex = Texture(Gdx.files.internal(path));
         IMAGE_ICON_CACHE.put(path, tex)
         return tex
+    }
+}
+
+class PainterlyIcon(val fileString: String) {
+    fun toProtoActor(extremitude: Int): ProtoActor {
+        return ImageIcon(ImageIcon._PAINTERLY_FOLDER, fileString.replace("[x]", extremitude.toString()))
+    }
+}
+
+private fun String.toPainterlyIcon(i: Int = 1): PainterlyIcon{
+    return PainterlyIcon(this, i)
+}
+
+public class PainterlyIcons{
+    companion object {
+        val FIRE_ARROWS = "fire-arrows-[x].png".toPainterlyIcon(1)
+        val FOG_ACID = "fog-acid-[x].png".toPainterlyIcon(1)
     }
 }
