@@ -50,6 +50,7 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
         val enemies = boardState.listOfEnemyCharacters
         for (enemyCharacter in enemies) {
             if (!logicHooks.canUnitAct(enemyCharacter)){
+                actionManager.risingText("Can't act!", enemyCharacter.tileLocation)
                 continue // characters that can't act don't get turns
             }
 

@@ -7,11 +7,12 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.Attribut
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 
 @SpawnableUnitTemplate("VOID_BELL")
 public fun VoidBell(): TacMapUnitTemplate {
     return TacMapUnitTemplate(0,
-            TacMapUnitTemplate._demonImg.copy(textureId = "9"),
+            SuperimposedTilemaps.doorImageNumber("47"),
             templateName = "Void Bell Alarm",
             enemyAiType = EnemyAiType.IMMOBILE_UNIT,
             turnStartAction = SpawnMinionOnSpecificTurnAction("WEAK_MINION", 5),

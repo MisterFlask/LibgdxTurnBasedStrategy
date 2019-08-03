@@ -16,7 +16,7 @@ val tacMapState : TacticalMapState by LazyInject(TacticalMapState::class.java)
 @SpawnableUnitTemplate("PRISM_FLOWER_CONTROLLER")
 public fun PrismFlowerController(): TacMapUnitTemplate {
     return TacMapUnitTemplate(0,
-            TacMapUnitTemplate._demonImg.copy(textureId = "9"),
+            SuperimposedTilemaps.elementalImageNumber("33"),
             templateName = "Prism Flower Controller",
             enemyAiType = EnemyAiType.IMMOBILE_UNIT,
             turnStartAction = GenerateUnitAtRandomLocationTurnAction("PRISM_FLOWER", 1, "Prism Flower Sprouting"),

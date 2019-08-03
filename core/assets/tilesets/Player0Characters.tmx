@@ -12,11 +12,14 @@
  <tileset firstgid="500" source="Demon0.tsx"/>
  <tileset firstgid="572" source="Demon1.tsx"/>
  <tileset firstgid="644" source="white_tile.tsx"/>
+ <tileset firstgid="645" source="Elemental0.tsx"/>
+ <tileset firstgid="733" source="Elemental1.tsx"/>
+ <tileset firstgid="821" source="Slime1.tsx"/>
  <layer id="1" name="Tile Layer 1" width="3" height="3">
   <data encoding="csv">
 244,6,644,
-252,511,583,
-31,28,460
+252,829,470,
+31,28,654
 </data>
  </layer>
 </map>

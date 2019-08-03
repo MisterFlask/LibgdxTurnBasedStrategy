@@ -6,6 +6,7 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionMa
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeActionManager
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 
 
 @SpawnableUnitTemplate("WEAK_MINION_SPAWNER")
@@ -13,7 +14,7 @@ public fun WeakMinionSpawner()
     : TacMapUnitTemplate
 {
     return TacMapUnitTemplate(0,
-        TacMapUnitTemplate._demonImg.copy(textureId = "8"),
+        SuperimposedTilemaps.doorImageNumber("43"),
         templateName = "EnemySpawner",
         turnStartAction = SpawnMinionEachTurnAction("WEAK_SLIME", 1),
         enemyAiType = EnemyAiType.IMMOBILE_UNIT,

@@ -17,7 +17,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.Superimpose
 @SpawnableUnitTemplate("ARMORER")
 public fun Armorer(): TacMapUnitTemplate {
     return TacMapUnitTemplate(0,
-            TacMapUnitTemplate._demonImg.copy(textureId = "9"),
+            SuperimposedTilemaps.elementalImageNumber("1"),
             templateName = "Hellplate Armorer",
             enemyAiType = EnemyAiType.IMMOBILE_UNIT,
             turnStartAction = ArmorerTurnAction(),

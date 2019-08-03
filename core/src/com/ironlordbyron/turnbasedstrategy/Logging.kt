@@ -17,5 +17,10 @@ public class Logging{
         public fun DebugPathfinding(msg: String){
             println("PATHFINDING: " + msg)
         }
+
+        public fun Warning(msg: String, exception: Exception){
+            println(msg + " : " + exception.message)
+            exception.printStackTrace()
+        }
     }
 }

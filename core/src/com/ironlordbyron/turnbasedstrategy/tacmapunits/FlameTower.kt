@@ -12,7 +12,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.Superimpose
 public fun FlameTower(): TacMapUnitTemplate {
     return TacMapUnitTemplate(
             0,
-            SuperimposedTilemaps.toDefaultProtoActor(),
+            SuperimposedTilemaps.elementalImageNumber("2"),
             "Flame Tower",
             listOf(FlameTowerAttack()),
             listOf(),
@@ -30,7 +30,7 @@ public fun FlameTowerAttack() : LogicalAbility{
             0,
             SuperimposedTilemaps.toDefaultProtoActor(),
             damage = 2,
-            description = "Fires a laser beam in any direction",
+            description = "Fires a gout of flame",
             rangeStyle = RangeStyle.Simple(6),
             requiredTargetType = RequiredTargetType.ENEMY_ONLY,
             requiresTarget = true,

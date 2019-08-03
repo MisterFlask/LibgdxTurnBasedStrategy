@@ -4,11 +4,12 @@ import com.ironlordbyron.turnbasedstrategy.ai.EnemyAiType
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplate
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 
 @SpawnableUnitTemplate("MASTER_ORGAN")
 fun MasterOrgan() : TacMapUnitTemplate{
     return TacMapUnitTemplate(0,
-            TacMapUnitTemplate._demonImg.copy(textureId = "9"),
+            SuperimposedTilemaps.elementalImageNumber("34"),
             templateName = "Master Organ",
             enemyAiType = EnemyAiType.IMMOBILE_UNIT,
             startingAttributes = listOf(LogicalCharacterAttribute.MASTER_ORGAN,

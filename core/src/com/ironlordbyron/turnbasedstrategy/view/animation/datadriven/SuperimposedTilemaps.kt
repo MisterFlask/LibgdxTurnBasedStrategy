@@ -21,13 +21,39 @@ data class SuperimposedTilemaps(val tileMapWithTextureName: String = COMMON_TILE
     }
 
     companion object {
+        val DOORS = listOf("Door0", "Door1")
+        val DEMONS = listOf("Demon0", "Demon1")
+        val SLIMES = listOf("Slime0", "Slime1")
         val PLAYER_TILE_SETS = listOf("Player0", "Player1")
         val COMMON_TILE_MAP = "tilesets/Player0Characters.tmx"
-
+        val ELEMENTALS = listOf("Elemental0","Elemental1")
         public fun toDefaultProtoActor(): ProtoActor {
             return SuperimposedTilemaps(
                     tileSetNames = PLAYER_TILE_SETS,
                     textureId = "8")
         }
+
+        public fun doorImageNumber(i: String): SuperimposedTilemaps {
+            return SuperimposedTilemaps(tileSetNames = DOORS,
+                    textureId = i)
+        }
+        public fun demonImageNumber(i: String): SuperimposedTilemaps {
+            return SuperimposedTilemaps(tileSetNames = DEMONS,
+                    textureId = i)
+        }
+        public fun slimeImageNumber(i: String): SuperimposedTilemaps {
+            return SuperimposedTilemaps(tileSetNames = SLIMES,
+                    textureId = i)
+        }
+        public fun playerImageNumber(i: String): SuperimposedTilemaps {
+            return SuperimposedTilemaps(tileSetNames = PLAYER_TILE_SETS,
+                    textureId = i)
+        }
+
+        public fun elementalImageNumber(i: String): SuperimposedTilemaps {
+            return SuperimposedTilemaps(tileSetNames = ELEMENTALS,
+                    textureId = i)
+        }
+
     }
 }
