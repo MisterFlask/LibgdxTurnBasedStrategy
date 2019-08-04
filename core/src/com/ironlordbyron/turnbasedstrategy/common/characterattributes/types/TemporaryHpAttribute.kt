@@ -14,7 +14,7 @@ class TemporaryHpAttributeEffect : FunctionalAttributeEffect() {
             attributeActionManager.applyAttribute(params.thisCharacter, params.logicalCharacterAttribute, -1 * damageAttemptInput.damage)
             return damageAttemptInput.copy(damage = 0)
         }
-        if (params.stacks < damageAttemptInput.damage){
+        if (params.stacks <= damageAttemptInput.damage){
             val finalDamage = damageAttemptInput.damage - params.stacks
             attributeActionManager.unapplyAttribute(params.thisCharacter, params.logicalCharacterAttribute)
             return damageAttemptInput.copy(damage = finalDamage)

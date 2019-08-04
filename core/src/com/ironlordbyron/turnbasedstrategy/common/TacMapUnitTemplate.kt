@@ -74,6 +74,10 @@ class TacMapUnitTemplate(val movesPerTurn: Int,
             _attributes.add(logicalAttribute)
             stacksOfAttribute[logicalAttribute.id] = stacks
         }
+        if (stacksOfAttribute[logicalAttribute.id] == 0){
+            this._attributes.remove(logicalAttribute)
+            stacksOfAttribute.remove(logicalAttribute.id)
+        }
     }
     fun removeAttributeById(id: String){
         if (stacksOfAttribute.containsKey(id)){

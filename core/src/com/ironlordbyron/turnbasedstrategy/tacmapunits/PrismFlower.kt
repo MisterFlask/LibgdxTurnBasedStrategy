@@ -6,6 +6,7 @@ import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.abilities.*
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.PainterlyIcons
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 
 
@@ -27,9 +28,12 @@ public fun PrismFlower(): TacMapUnitTemplate{
 }
 
 public fun PrismFlowerAttack() : LogicalAbility{
-    return LogicalAbility("Laser", AbilitySpeed.ENDS_TURN, 0, SuperimposedTilemaps.toDefaultProtoActor(), damage = 1,
+    return LogicalAbility("Laser", AbilitySpeed.ENDS_TURN, 0,
+            PainterlyIcons.BEAM_ORANGE.toProtoActor(1),
+            damage = 1,
             description = "Fires a laser beam in any direction",
             rangeStyle = RangeStyle.Linear(null),
+
             requiredTargetType = RequiredTargetType.ENEMY_ONLY,
             requiresTarget = true,
             projectileActor = DataDrivenOnePageAnimation.FIREBALL,

@@ -3,10 +3,7 @@ package com.ironlordbyron.turnbasedstrategy.common.characterattributes
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.*
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.ExplodesOnDeathFunctionalUnitEffect
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.ShieldsAnotherOrganFunctionalAttribute
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.*
 
 /**
  * So, here's how this works: Each attribute corresponds to a visible icon for the player to interact with.
@@ -31,34 +28,31 @@ public open class LogicalCharacterAttribute(val name: String,
         val _demonImg = SuperimposedTilemaps(tileSetNames = listOf("Demon0","Demon1"), textureId = "2")
         val _painterlyIcon = ImageIcon(ImageIcon._PAINTERLY_FOLDER, "fire-arrows-1.png")
         val EXPLODES_ON_DEATH = LogicalCharacterAttribute("Explodes On Death",
-                _painterlyIcon,
+                PainterlyIcons.LIGHT_ROYAL.toProtoActor(3),
                 customEffects = listOf(ExplodesOnDeathFunctionalUnitEffect(4, 5)),
                 description = {"Explodes on death, dealing 5 damage to everything in a 4-tile radius"})
         val MASTER_ORGAN = LogicalCharacterAttribute("Master Organ",
-                _demonImg.copy(textureId = "3"),
+                PainterlyIcons.LINK_BLUE.toProtoActor(3),
                 masterOrgan= true,
                 description = {"Master organ.  When destroyed, the fortress will begin sinking back into Hell."})
         val SHIELDS_ANOTHER_ORGAN = LogicalCharacterAttribute("Shields Organ",
-                _demonImg.copy(textureId = "4"),
+                PainterlyIcons.PROTECT_SKY.toProtoActor(3),
                 customEffects = listOf(ShieldsAnotherOrganFunctionalAttribute()),
                 description = {"Shields an organ from all damage."})
-        val UPGRADES_TROOPS = LogicalCharacterAttribute("Upgrades Troops",
-                _demonImg.copy(textureId = "5"),
-                description = {"Upgrades a unit each turn."})
         val STUNNED = LogicalCharacterAttribute("Stunned",
                 _demonImg.copy(textureId = "7"),
                 statusEffect = true,
                 customEffects = listOf(), //todo
                 description = {"This unit is stunned for the round."})
         val ON_FIRE = LogicalCharacterAttribute("On Fire",
-                _demonImg.copy(textureId = "8"),
+                PainterlyIcons.FIRE_ARROWS.toProtoActor(3),
                 statusEffect = true,
                 customEffects = listOf(OnFireFunctionalEffect(1)),
                 description = {stacks -> "This character is on fire and takes ${stacks} damage per turn."},
                 tacticalMapProtoActor = DataDrivenOnePageAnimation.FIRE
         )
         val SLIMED: LogicalCharacterAttribute = LogicalCharacterAttribute("Slimed",
-                _demonImg.copy(textureId = "9"),
+                PainterlyIcons.FOG_ACID.toProtoActor(1),
                 statusEffect = true,
                 customEffects = listOf(SlimedUnitFunctionalEffect()),
                 description = {stacks -> "This character's movement rate is reduced by ${stacks}}."},

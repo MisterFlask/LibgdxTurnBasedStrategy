@@ -3,6 +3,7 @@ package com.ironlordbyron.turnbasedstrategy.view.animation.datadriven
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.TextureRegion
+import com.badlogic.gdx.utils.Array
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.ActorWrapper
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.ImageWrapper
@@ -41,13 +42,62 @@ class PainterlyIcon(val fileString: String) {
     }
 }
 
-private fun String.toPainterlyIcon(i: Int = 1): PainterlyIcon{
-    return PainterlyIcon(this, i)
+private fun String.toPainterlyIcon(): PainterlyIcon{
+    return PainterlyIcon(this)
 }
 
-public class PainterlyIcons{
-    companion object {
-        val FIRE_ARROWS = "fire-arrows-[x].png".toPainterlyIcon(1)
-        val FOG_ACID = "fog-acid-[x].png".toPainterlyIcon(1)
+public object PainterlyIcons{
+    val FIRE_ARROWS = "fire-arrows-[x].png".toPainterlyIcon()
+    val FOG_ACID = "fog-acid-[x].png".toPainterlyIcon()
+    val FOG_AIR = "fog-air-[x].png".toPainterlyIcon()
+    val FOG_SKY = "fog-sky-[x].png".toPainterlyIcon()
+    val FOG_ORANGE = "fog-orange-[x].png".toPainterlyIcon()
+    val BEAM_ORANGE = "beam-orange-[x].png".toPainterlyIcon()
+    val HEAL_JADE = "heal-jade-[x].png".toPainterlyIcon()
+    val PROTECT_SKY = "protect-sky-[x].png".toPainterlyIcon()
+    val LINK_BLUE = "link-blue-[x].png".toPainterlyIcon()
+    val LIGHT_ROYAL = "light-royal-[x].png".toPainterlyIcon()
+}
+
+val iconBorderFolder = "icons/borders"
+private fun String.toPainterlyBorder(): ImageIcon {
+    return ImageIcon(iconBorderFolder, this)
+}
+
+public object PainterlyBorders{
+    val greenFrame = "frame-0-acid.png".toPainterlyBorder()
+    val blueFrame = "frame-0-blue.png".toPainterlyBorder()
+}
+
+
+
+public class SpritesheetIconPage(val filePath: String,
+                                 val rows: Int,
+                                 val cols: Int){
+
+    val frames = splitIntoFrames()
+
+    private fun splitIntoFrames(): List<TextureRegion> {
+
+        val frameRows = rows
+        val frameCols = cols
+        val walkSheet = Texture(Gdx.files.internal(filePath))
+
+        // Use the split utility method to create a 2D array of TextureRegions. This is
+        // possible because this sprite sheet contains frames of equal size and they are
+        // all aligned.
+        val tmp = TextureRegion.split(walkSheet,
+                walkSheet.getWidth() / frameCols,
+                walkSheet.getHeight() / frameRows)
+
+        // Place the regions into a 1D array in the correct order, starting from the top
+        // left, going across first. The Animation constructor requires a 1D array.
+        val walkFrames = Array<TextureRegion>(frameCols * frameRows)
+        for (i in 0 until frameRows) {
+            for (j in 0 until frameCols) {
+                walkFrames.add(tmp[i][j])
+            }
+        }
+        return walkFrames.toList()
     }
 }

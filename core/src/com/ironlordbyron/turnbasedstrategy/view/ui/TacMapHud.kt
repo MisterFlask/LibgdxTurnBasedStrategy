@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.view.ui
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
@@ -26,6 +27,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.LogicalCharacterActorGroup
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.PulseAnimationGenerator
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.PainterlyBorders
 import com.ironlordbyron.turnbasedstrategy.view.ui.external.BackgroundColor
 import com.kotcrab.vis.ui.building.utilities.Alignment
 
@@ -183,7 +185,7 @@ class TacMapHud(viewPort: Viewport,
         return table
     }
     private fun regenerateTable(){
-        characterDisplayTable.debug()
+        // characterDisplayTable.debug()
         abilityTextArea = Label("", DEFAULT_SKIN)
         val backgroundColor = backgroundColor()
         characterDisplayTable.setBackground(backgroundColor)
@@ -261,6 +263,8 @@ class TacMapHud(viewPort: Viewport,
                 characterDisplayTable.addLabel("AT TURN START")
                 characterDisplayTable.row()
                 characterDisplayTable.addLabel(turnStartAction.displayName, tooltip = turnStartAction.extendedDescription)
+                characterDisplayTable.row()
+                characterDisplayTable.addLabel("[" + turnStartAction.cooldownDescription + "]")
             }
         }
         // NOTE TO FUTURE SELF: Table controls size of images, DOES NOT RESPECT image preferred size
@@ -283,12 +287,15 @@ class TacMapHud(viewPort: Viewport,
         val abilityTable = Table()
         if (selectedCharacter != null) {
             for (ability in selectedCharacter.abilities) {
-                abilityTable.add(actionButton(ability)).width(50f).height(50f)
+                abilityTable.add(actionButton(ability)?.borderize())
+                        .width(50f).height(50f)
                 abilityTable.add(Label(ability.ability.name, DEFAULT_SKIN))
                 abilityTable.row()
+
             }
             for (ability in contextualAbilityFactory.getContextualAbilitiesAvailableForCharacter(selectedCharacter)) {
-                abilityTable.add(actionButton(LogicalAbilityAndEquipment(ability, null))).width(50f).height(50f)
+                abilityTable.add(actionButton(LogicalAbilityAndEquipment(ability, null))?.borderize())
+                            .width(50f).height(50f)
                 abilityTable.add(Label(ability.name, DEFAULT_SKIN))
                 abilityTable.row()
             }
@@ -373,6 +380,37 @@ class TacMapHud(viewPort: Viewport,
 
 }
 
+private fun Actor.borderize() : Actor{
+    /*
+    val group = Group()
+    group.x = this.x
+    group.y = this.y
+    group.addActor(this)
+
+    val borderActor = PainterlyBorders.blueFrame.toActor()
+    borderActor.actor.width = this.width
+    borderActor.actor.height = this.height
+    this.x = 0f
+    this.y = 0f
+    group.addActor(borderActor.actor)
+
+    return group*/
+    return this
+    // TODO: This
+}
+
+/*
+private fun <T: Actor> Cell<T>.surroundWithBorder(): Cell<T> {
+    if (this.actor?.stage == null) return this
+    val borderActor = PainterlyBorders.blueFrame.toActor()
+    borderActor.actor.width = this.actor.width
+    borderActor.actor.height = this.actor.height
+    borderActor.actor.x = this.actor.x
+    borderActor.actor.y = this.actor.y
+    this.actor.stage.addActor(borderActor.actor)
+    return this
+}
+*/
 private fun Cell<*>.scaleByDimension(target: Dimensions, scale: Float): Cell<*> {
 
     return this.width(target.width * scale).height(target.height * scale)

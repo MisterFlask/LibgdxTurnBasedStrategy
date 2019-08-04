@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.tacmapunits
 
+import com.ironlordbyron.turnbasedstrategy.Logging
 import com.ironlordbyron.turnbasedstrategy.ai.EnemyAiType
 import com.ironlordbyron.turnbasedstrategy.common.GlobalTacMapState
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
@@ -12,6 +13,7 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.Attribut
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.PainterlyIcons
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 
 @SpawnableUnitTemplate("ARMORER")
@@ -40,6 +42,7 @@ class ArmorerTurnAction() : TurnStartAction(displayName = "Armorer",
 
     override fun perform(logicalCharacter: LogicalCharacter) {
         // give all allied units +1 temporary HP
+        Logging.DebugGeneral("Performing armorer action!")
         for (ally in tacticalMapState.listOfEnemyCharacters){
             if (!(ally.getAttributes().any{it.logicalAttribute.id == Hellplate().id})){
                 attributeActionManager.applyAttribute(ally, Hellplate(), 3,
@@ -52,9 +55,11 @@ class ArmorerTurnAction() : TurnStartAction(displayName = "Armorer",
 
 fun Hellplate() : LogicalCharacterAttribute{
     return LogicalCharacterAttribute("Hellplate",
-            SuperimposedTilemaps.toDefaultProtoActor(),
+            PainterlyIcons.PROTECT_SKY.toProtoActor(1),
             description = {"Soaks up to $it damage"},
-            customEffects = listOf(TemporaryHpAttributeEffect())
+            customEffects = listOf(TemporaryHpAttributeEffect()),
+            stackable = true,
+            id = "HELLPLATE"
     )
 }
 
@@ -94,8 +99,10 @@ abstract class TurnStartAction(val displayName: String,
 
     public fun performAction(logicalCharacter: LogicalCharacter){
         if (specificallyOnAlertnesses.isEmpty()){
+            Logging.DebugCombatLogic("${this.displayName} triggers on cooldown of ${this.maxCooldown} turns.")
             cooldownTriggerLogic(logicalCharacter)
         }else{
+            Logging.DebugCombatLogic("${this.displayName} triggers on alertness.")
             alertnessTriggerLogic(logicalCharacter)
         }
     }
