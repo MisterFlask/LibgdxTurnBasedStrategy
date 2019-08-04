@@ -26,8 +26,7 @@ public class SpeechBubbleAnimation{
     }
 
     val GROUP_HEIGHT_OFFSET = 20f
-    fun createSpeechBubbleFromTile(text: String, tileLocation: TileLocation, sideLength: Float = 100f,
-                                   existsFor: Duration) : Actor {
+    fun createSpeechBubbleFromTile(text: String, tileLocation: TileLocation, sideLength: Float = 100f) : Actor {
         val image = rightwardSpeechBubble.toNonHittableImage()
         image.height = sideLength
         image.width = sideLength
@@ -47,16 +46,6 @@ public class SpeechBubbleAnimation{
         actorGroup.addActor(image)
         actorGroup.addActor(label.label)
         actorGroup.isVisible = false
-        actorGroup.addAction(
-            Actions.sequence(
-                    Actions.alpha(0f),
-                    Actions.visible(true),
-                    Actions.fadeIn(.5f),
-                    Actions.delay(1f),
-                    Actions.fadeOut(.5f),
-                    Actions.removeActor()
-            )
-        )
         return actorGroup
     }
 }

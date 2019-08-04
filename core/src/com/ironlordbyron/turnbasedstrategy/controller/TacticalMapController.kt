@@ -36,7 +36,8 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                                                 val mapHighlighter: MapHighlighter,
                                                 val tacticalMapAlgorithms: TacticalMapAlgorithms,
                                                 val enemyTurnRunner: EnemyTurnRunner,
-                                                val animationActionQueueProvider: AnimationActionQueueProvider) : EventListener, BoardInputStateProvider {
+                                                val animationActionQueueProvider: AnimationActionQueueProvider,
+                                                val tileMapHighlighter: MapHighlighter) : EventListener, BoardInputStateProvider {
 
     override var boardInputState : BoardInputState = BoardInputState.DefaultState()
         set(value) {
@@ -85,6 +86,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 boardInputState = BoardInputState.PlayerIsPlacingUnits(arrayListOf(TacMapUnitTemplate.DEFAULT_UNIT,
                         TacMapUnitTemplate.DEFAULT_ENEMY_UNIT))
                 val boardInputState = boardInputState as BoardInputState.PlayerIsPlacingUnits
+                tileMapHighlighter.highlightTiles(tiledMapProvider.getPlayerPlacementTilemapTiles(), HighlightType.GREEN_TILE)
                 // TODO:  This breaks in the case where we have zero units
                 eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.PlayerIsPlacingUnit(boardInputState.nextUnit()!!))
             }
@@ -125,6 +127,10 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
             if (location.getCharacter() != null){
                 return
             }
+            if (!isValidPlacementOfCharacter(location)){
+                actionManager.createSpeechBubble(location, "I can only deploy in a drop zone!")
+                return
+            }
             val boardInputState = boardInputState as BoardInputState.PlayerIsPlacingUnits
             val characterToPlace = boardInputState.unitsToPlace.first()
             boardInputState.unitsToPlace.removeAt(0)
@@ -137,6 +143,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 // todo: graphical showing that the input state has changed
                 this.boardInputState = BoardInputState.DefaultState()
                 eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.CharacterUnselected())
+                tileMapHighlighter.killHighlights()
             }
             return
         }
@@ -167,6 +174,12 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
             selectedCharacter = null
             eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.CharacterUnselected())
         }
+    }
+
+    private fun isValidPlacementOfCharacter(location: TileLocation): Boolean {
+        val tilesValidForPlacement = tiledMapProvider.getPlayerPlacementTilemapTiles()
+
+        return tilesValidForPlacement.contains(location)
     }
 
     private fun selectCharacterInTacMap(character: LogicalCharacter) {

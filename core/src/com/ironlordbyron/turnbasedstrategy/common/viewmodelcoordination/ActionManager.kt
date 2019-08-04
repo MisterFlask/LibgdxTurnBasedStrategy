@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination
 
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.ironlordbyron.turnbasedstrategy.ai.BasicAiDecisions
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
@@ -209,14 +210,22 @@ public class ActionManager @Inject constructor(
         GameModuleInjector.generateInstance(SpeechBubbleAnimation::class.java)
     }
 
-    fun createSpeechBubble(logicalCharacter: LogicalCharacter, text: String){
+    fun createSpeechBubble(tileLocation: TileLocation, text: String){
+        val actor = speechBubbleAnimation.createSpeechBubbleFromTile(text, tileLocation)
+        stageProvider.tiledMapStage.addActor(actor)
+        actor.isVisible = false
+
         animationActionQueueProvider.addAction(
-                customAction(logicalCharacter.actor){
-                   tiledMapStageProvider.tiledMapStage.addActor(
-                           speechBubbleAnimation.createSpeechBubbleFromTile(text, logicalCharacter.tileLocation,
-                                   existsFor = Duration.ofSeconds(1))
-                   )
-                }
+                ActorActionPair(actor,  Actions.sequence(
+                        Actions.alpha(0f),
+                        Actions.visible(true),
+                        Actions.fadeIn(.5f),
+                        Actions.delay(1f),
+                        Actions.fadeOut(.5f),
+                        Actions.removeActor()
+                ),
+                murderActorsOnceCompletedAnimation = true,
+                cameraTrigger = false)
         )
 
     }

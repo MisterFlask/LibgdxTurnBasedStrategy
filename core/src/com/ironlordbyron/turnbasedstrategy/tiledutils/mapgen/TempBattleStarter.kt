@@ -53,7 +53,10 @@ class TileMapProvider {
     }
 
     fun getSpawnableTilemapTiles(): List<TileLocation> {
-        return tiledMap.getSpawnableTilemapTiles()
+        return tiledMap.getSpawnableEnemyTilemapTiles()
+    }
+    fun getPlayerPlacementTilemapTiles() : List<TileLocation>{
+        return tiledMap.getPlayerPlacementTiles()
     }
 }
 

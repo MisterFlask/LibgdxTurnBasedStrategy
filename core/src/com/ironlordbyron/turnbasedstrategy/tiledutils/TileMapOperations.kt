@@ -144,10 +144,19 @@ data class TiledObjectIdentifier(val boundingRectangle: BoundingRectangle, val p
 
 data class TileKeyValuePair(val key: String, val value: String)
 
-fun TiledMap.getSpawnableTilemapTiles(): List<TileLocation> {
+fun TiledMap.getSpawnableEnemyTilemapTiles(): List<TileLocation> {
     val recs = this.getObjectLayerRectangles("SpawnLayer")
     if (recs.isEmpty()){
         Logging.DebugGeneral("Could not find spawn layer, assuming none exists")
+        return listOf()
+    }
+    return transformTiledObjectsToTileLocations(recs)
+            .filter{it.getCharacter() == null}
+}
+fun TiledMap.getPlayerPlacementTiles(): List<TileLocation> {
+    val recs = this.getObjectLayerRectangles("PlayerPlacementLayer")
+    if (recs.isEmpty()){
+        Logging.DebugGeneral("Could not find player unit placement layer, assuming none exists")
         return listOf()
     }
     return transformTiledObjectsToTileLocations(recs)
