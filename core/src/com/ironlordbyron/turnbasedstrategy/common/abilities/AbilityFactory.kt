@@ -128,7 +128,6 @@ class SimpleAttackAbility() : AbilityTargetingParameters() {
 
         if (sourceCharacter.playerControlled){
             animationActionQueueProvider.runThroughActionQueue(finalAction = {})
-            animationActionQueueProvider.clearQueue()
         }
     }
 

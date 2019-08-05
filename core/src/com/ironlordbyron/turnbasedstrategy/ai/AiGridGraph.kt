@@ -101,10 +101,14 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
 
     override public fun acquireBestPathTo(character: LogicalCharacter,
                                           endLocation: TileLocation,
-                                          allowEndingOnLastTile: Boolean) : Collection<PathfindingTileLocation>?{
+                                          allowEndingOnLastTile: Boolean,
+                                          allowFuzzyMatching: Boolean) : Collection<PathfindingTileLocation>?{
 
         var trueEndLocation = endLocation
         if (!tacticalMapAlgorithms.canWalkOnTile(character, endLocation)){
+            if (!allowFuzzyMatching){
+                throw IllegalArgumentException("Character ${character.tacMapUnit.templateName} cannot walk on $endLocation")
+            }
             Logging.DebugPathfinding("Character ${character.tacMapUnit.templateName} cannot walk on $endLocation; attempting substitute location")
             trueEndLocation = findClosestWalkableTileTo(endLocation, character, false)?:return null
         }

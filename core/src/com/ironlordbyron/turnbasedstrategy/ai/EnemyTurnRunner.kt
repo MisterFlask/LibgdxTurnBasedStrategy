@@ -66,15 +66,20 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
             val nextActions = ai.getNextActions(enemyCharacter);
             for (action in nextActions){
                 when(action){
-                    is AiPlannedAction.MoveToTile -> gameBoardOperator.moveCharacterToTile(enemyCharacter,
-                            action.to,
-                            waitOnMoreQueuedActions = true,
-                            wasPlayerInitiated = false)
+                    is AiPlannedAction.MoveToTile -> {
+                        gameBoardOperator.moveCharacterToTile(enemyCharacter,
+                                action.to,
+                                waitOnMoreQueuedActions = true,
+                                wasPlayerInitiated = false)
+                    }
                     is AiPlannedAction.AbilityUsage ->  {
                         val charToTarget = boardState.characterAt(action.squareToTarget)
                         val ability = action.ability.ability.abilityTargetingParameters
                         performTileHighlightAnimationForAction(enemyCharacter, action)
-                        ability.activateAbility(action.squareToTarget, charToTarget, action.sourceCharacter, action.ability)
+                        ability.activateAbility(action.squareToTarget,
+                                charToTarget,
+                                action.sourceCharacter,
+                                action.ability)
                     }
                 }
             }
@@ -83,7 +88,6 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
         animationActionQueueProvider.runThroughActionQueue(finalAction = {
             eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.FinishedEnemyTurn())
         })
-        animationActionQueueProvider.clearQueue()
     }
 
     public fun conquerCitiesStep(enemyCharacter: LogicalCharacter){
@@ -95,7 +99,11 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
 
     private fun performTileHighlightAnimationForAction(enemyCharacter: LogicalCharacter, action: AiPlannedAction.AbilityUsage) {
         val tilesThatActionCanTarget = action.ability.getSquaresInRangeOfAbility(enemyCharacter.tileLocation, enemyCharacter)
-        val actorActionPairForHighlights = mapHighlighter.getTileHighlightActorActionPairs(tilesThatActionCanTarget, HighlightType.ENEMY_ATTACK_TILE, enemyCharacter.actor.characterActor)
+        highlightTilesAssociatedWithCharacterAction(tilesThatActionCanTarget, enemyCharacter, HighlightType.ENEMY_ATTACK_TILE)
+    }
+
+    private fun highlightTilesAssociatedWithCharacterAction(tilesThatActionCanTarget: Collection<TileLocation>, enemyCharacter: LogicalCharacter, highlightType: HighlightType) {
+        val actorActionPairForHighlights = mapHighlighter.getTileHighlightActorActionPairs(tilesThatActionCanTarget, highlightType, enemyCharacter.actor.characterActor)
         val pulseActionPair = pulseAnimationGenerator.generateActorActionPair(enemyCharacter.actor.characterActor, 1f / AnimationSpeedManager.animationSpeedScale)
         actorActionPairForHighlights.secondaryActions += pulseActionPair
         animationActionQueueProvider.addAction(actorActionPairForHighlights)

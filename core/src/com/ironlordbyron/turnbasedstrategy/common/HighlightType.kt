@@ -25,13 +25,13 @@ class HighlightType(val tiledTexturePath: TiledTexturePath,
     }
 
     companion object{
-        val RED_TILE = HighlightType(TiledTexturePath.RED_TILE)
-        val BLUE_TILE = HighlightType(TiledTexturePath.BLUE_TILE)
-        val GREEN_TILE = HighlightType(TiledTexturePath.GREEN_TILE)
+        val RED_TILE = HighlightType(TiledTexturePath.WHITE_TILE, Color.RED)
+        val BLUE_TILE = HighlightType(TiledTexturePath.WHITE_TILE, Color.BLUE)
+        val GREEN_TILE = HighlightType(TiledTexturePath.WHITE_TILE, Color.GREEN)
         val WHITE_TILE = HighlightType(TiledTexturePath.WHITE_TILE)
         // special-purpose
-        val ENEMY_MOVE_TILE = HighlightType(TiledTexturePath.WHITE_TILE, Color.FIREBRICK)
-        val ENEMY_ATTACK_TILE = HighlightType(TiledTexturePath.WHITE_TILE, Color.MAGENTA)
+        val ENEMY_MOVE_TILE = HighlightType(TiledTexturePath.WHITE_TILE, Color.MAGENTA)
+        val ENEMY_ATTACK_TILE = HighlightType(TiledTexturePath.WHITE_TILE, Color.FIREBRICK)
 
         fun tileOfColor(color: Color) : HighlightType {
             return HighlightType(TiledTexturePath.WHITE_TILE, color)

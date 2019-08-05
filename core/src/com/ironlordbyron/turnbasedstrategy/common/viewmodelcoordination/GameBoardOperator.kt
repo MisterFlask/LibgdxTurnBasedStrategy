@@ -78,6 +78,9 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
     // moves the character to the given tile logically, and returns the actor/action pair for animation purposes.
     fun moveCharacterToTile(character: LogicalCharacter, toTile: TileLocation, waitOnMoreQueuedActions: Boolean,
                             wasPlayerInitiated: Boolean){
+        if (toTile == character.tileLocation){
+            return
+        }
         if (!wasPlayerInitiated) {
             // first, show the player where the ai COULD move to
             val tilesToHighlight = tacticalMapAlgorithms.getWhereCharacterCanMoveTo(character)
@@ -129,7 +132,8 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
         val tiles = pathfinder.acquireBestPathTo(
                 logicalCharacter,
                 toTile,
-                allowEndingOnLastTile = true)
+                allowEndingOnLastTile = true,
+                allowFuzzyMatching = false)
         return tiles?.map{it.location}?.toList() ?: throw IllegalStateException("Required to call this on a character that can go to the provided tile")
     }
 
