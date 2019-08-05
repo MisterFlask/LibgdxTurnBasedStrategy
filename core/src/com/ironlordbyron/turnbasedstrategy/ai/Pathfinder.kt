@@ -6,5 +6,6 @@ import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 
 @ImplementedBy(AiGridGraph::class)
 interface Pathfinder {
-    fun acquireBestPathTo(character: LogicalCharacter, endLocation: TileLocation, allowEndingOnLastTile: Boolean, allowFuzzyMatching:Boolean = true) : Collection<PathfindingTileLocation>?
+    fun acquireBestPathTo(character: LogicalCharacter, endLocation: TileLocation, allowEndingOnLastTile: Boolean,
+                          allowFuzzyMatching:Boolean = true,restrictToCharacterMoveRange: Boolean = false) : Collection<PathfindingTileLocation>?
 }

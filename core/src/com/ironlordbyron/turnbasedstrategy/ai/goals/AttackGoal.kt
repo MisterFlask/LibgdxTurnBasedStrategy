@@ -26,6 +26,8 @@ class AttackGoal() : Goal{
                 Logging.DebugCombatLogic("Character ${thisCharacter.tacMapUnit.templateName} is attempting movement")
 
                 val bestPathToClosestPlayerUnit = basicAiDecisions.pathfindToClosestPlayerUnit(thisCharacter)
+                        ?.truncateToCharacterMoveRange(thisCharacter)
+
                 if (bestPathToClosestPlayerUnit == null) {
                     println("Could not find best path to tile ")
                     return listOf()
@@ -57,4 +59,11 @@ class AttackGoal() : Goal{
     override fun formulateIntent(thisCharacter: LogicalCharacter) : Intent{
         return basicAiDecisions.getAttackIntentForThisTurn(thisCharacter)
     }
+}
+
+private fun List<PathfindingTileLocation>.truncateToCharacterMoveRange(character: LogicalCharacter): List<PathfindingTileLocation> {
+    if (this.size <= character.tacMapUnit.movesPerTurn){
+        return this
+    }
+    return this.subList(0, character.tacMapUnit.movesPerTurn)
 }

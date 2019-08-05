@@ -102,7 +102,8 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
     override public fun acquireBestPathTo(character: LogicalCharacter,
                                           endLocation: TileLocation,
                                           allowEndingOnLastTile: Boolean,
-                                          allowFuzzyMatching: Boolean) : Collection<PathfindingTileLocation>?{
+                                          allowFuzzyMatching: Boolean,
+                                          restrictToCharacterMoveRange: Boolean) : Collection<PathfindingTileLocation>?{
 
         var trueEndLocation = endLocation
         if (!tacticalMapAlgorithms.canWalkOnTile(character, endLocation)){
@@ -132,16 +133,21 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
             if (bestPath == null){
                 return null
             }
+            var protoAnswer:List<PathfindingTileLocation> = listOf()
 
             if (!allowEndingOnLastTile && trueEndLocation == endLocation) {
-                if (bestPath?.size ?: 0 <= 1) {
+                if (bestPath.size <= 1) {
                     return listOf()
                 }
                 val answer = bestPath.subList(0, bestPath.size - 1)
-                return answer
+                protoAnswer = answer
             } else {
-                return bestPath
+                protoAnswer = bestPath
             }
+            if (restrictToCharacterMoveRange){
+                protoAnswer = truncateToAllowedCharacterMovementForThisTurn(character, protoAnswer)
+            }
+            return protoAnswer
         } catch(e: Exception){
             println("ERROR when attempting to go from ${character.tileLocation} to ${endLocation} with allowEndingOnLastTile=${allowEndingOnLastTile}")
             throw e;
@@ -149,5 +155,12 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
             stopwatch.stop()
             // println("Millis elapsed for pathfinding:" + stopwatch.elapsed(TimeUnit.MILLISECONDS))
         }
+    }
+
+    private fun truncateToAllowedCharacterMovementForThisTurn(character: LogicalCharacter, protoAnswer: List<PathfindingTileLocation>): List<PathfindingTileLocation> {
+        if (protoAnswer.size <= character.tacMapUnit.movesPerTurn){
+            return protoAnswer
+        }
+        return protoAnswer.subList(0, character.tacMapUnit.movesPerTurn)
     }
 }

@@ -26,7 +26,9 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
             return listOf()
         }
         val aiGridGraph = aiGridGraphFactory.createGridGraph(thisCharacter)
-        val pathToCity = aiGridGraph.acquireBestPathTo(thisCharacter, closestCity.tileLocation, allowEndingOnLastTile = true)
+        val pathToCity = aiGridGraph.acquireBestPathTo(thisCharacter,
+                closestCity.tileLocation, allowEndingOnLastTile = true,
+                restrictToCharacterMoveRange = true)
         if (pathToCity == null){
             return listOf()
         }
@@ -65,10 +67,10 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
     }
 
 
-    public fun pathfindToClosestPlayerUnit(thisCharacter: LogicalCharacter) : Collection<PathfindingTileLocation>?{
+    public fun pathfindToClosestPlayerUnit(thisCharacter: LogicalCharacter) : List<PathfindingTileLocation>?{
         val pathfinder = pathfinderFactory.createGridGraph(thisCharacter)
         val playerUnits = tacticalMapState.listOfPlayerCharacters
-        var currentBestPath: Collection<PathfindingTileLocation>? = null
+        var currentBestPath: List<PathfindingTileLocation>? = null
         for (targetUnit in playerUnits){
             val targetTileToMoveTo = targetUnit.tileLocation
                     .nearestUnoccupiedSquares(4)
@@ -78,10 +80,10 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
                 continue
             }
             if (currentBestPath == null){
-                currentBestPath = path
+                currentBestPath = path.toList()
             }
             if (currentBestPath.size > path.size){
-                currentBestPath = path
+                currentBestPath = path.toList()
             }
         }
         return currentBestPath
@@ -213,7 +215,8 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
         }
 
         val pathToEnemy = aiGridGraph.acquireBestPathTo(thisCharacter, targetEndTile,
-                allowEndingOnLastTile = false)
+                allowEndingOnLastTile = false,
+                restrictToCharacterMoveRange = true)
 
         if (pathToEnemy == null){
             println("GetNextMoveLocationForAbility: Could not find path from ${thisCharacter.tileLocation} to ${closestEnemy.tileLocation} for ${thisCharacter.tacMapUnit.templateName}")
