@@ -29,6 +29,10 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
                             var intent: Intent = Intent.None(),
                             var goal: Goal? = null) {
 
+    fun hasAttribute(logicalAttribute: LogicalCharacterAttribute): Boolean {
+        return this.getAttributes().any{it.logicalAttribute.id == logicalAttribute.id && it.stacks > 0}
+    }
+
     override fun toString(): String {
         return "$tileLocation : ${tacMapUnit.templateName}"
     }

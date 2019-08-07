@@ -2,8 +2,6 @@ package com.ironlordbyron.turnbasedstrategy.tacmapunits
 
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.FunctionalCharacterAttribute
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalAttributeEffect
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalEffectParameters
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager

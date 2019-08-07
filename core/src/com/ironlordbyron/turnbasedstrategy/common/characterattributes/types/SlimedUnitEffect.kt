@@ -1,7 +1,5 @@
 package com.ironlordbyron.turnbasedstrategy.common.characterattributes.types
 
-import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
 import javax.inject.Inject
 import javax.inject.Singleton

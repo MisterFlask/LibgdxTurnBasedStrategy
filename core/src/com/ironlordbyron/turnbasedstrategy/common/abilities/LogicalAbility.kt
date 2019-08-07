@@ -14,11 +14,11 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 
 public class LogicalAbility(val name: String,
                                  val speed: AbilitySpeed,
-                                @Deprecated("use rangeStyle instead")
+                                 @Deprecated("use rangeStyle instead")
                                  val range: Int,
                                  val attackSprite: ProtoActor? = null,
                                  val missionLimit: Int? = null,
-                            @Deprecated("use damageStyle instead")
+                                 @Deprecated("use damageStyle instead")
                                  val damage: Int? = null,
                                  val description: String? = null,
                                  val abilityClass: AbilityClass,
@@ -41,7 +41,9 @@ public class LogicalAbility(val name: String,
                                  val intentType: IntentType = IntentType.ATTACK,
                                  val requiresTarget: Boolean = true,
                                  val abilityTargetingParameters: AbilityTargetingParameters = SimpleAttackAbility(),
-                                 val customAbilityAi: CustomAbilityAi? = null){
+                                 val customAbilityAi: CustomAbilityAi? = null,
+                                 val mpCost: Int = 0,
+                                 val id: String = name){
 
 }
 

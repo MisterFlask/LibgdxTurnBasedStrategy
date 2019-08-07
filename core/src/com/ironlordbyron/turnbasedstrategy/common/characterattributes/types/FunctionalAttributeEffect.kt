@@ -1,16 +1,13 @@
 package com.ironlordbyron.turnbasedstrategy.common.characterattributes.types
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.ironlordbyron.turnbasedstrategy.common.DamageAttemptInput
-import com.ironlordbyron.turnbasedstrategy.common.LogicalAbilityAndEquipment
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.DamageType
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 
-public abstract class FunctionalAttributeEffect(){
+public abstract class FunctionalAttributeEffect() {
     val eventNotifier: EventNotifier by lazy {
         GameModuleInjector.generateInstance(EventNotifier::class.java)
     }

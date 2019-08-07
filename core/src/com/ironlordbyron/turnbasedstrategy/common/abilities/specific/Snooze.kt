@@ -7,7 +7,6 @@ import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.Func
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalEffectParameters
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.UnapplyAttributeEvent
-import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import javax.inject.Inject
@@ -29,7 +28,7 @@ val SNOOZING: LogicalCharacterAttribute = LogicalCharacterAttribute("Unaware",
  */
 @Singleton
 public class SnoozeFunctionalUnitEffect @Inject constructor()
-    : FunctionalAttributeEffect(){
+    : FunctionalAttributeEffect() {
 
     val tacMapAlgorithms: TacticalMapAlgorithms by lazy {
         GameModuleInjector.generateInstance(TacticalMapAlgorithms::class.java)

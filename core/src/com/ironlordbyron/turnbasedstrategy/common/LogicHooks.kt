@@ -134,4 +134,7 @@ public data class DamageAttemptInput(val sourceCharacter: LogicalCharacter,
                                      val targetCharacter: LogicalCharacter,
                                      val sourceAbility: LogicalAbilityAndEquipment,
                                      val damage:Int,
-                                     val damageType: DamageType)
+                                     val damageType: DamageType,
+                                     // "Simulation" is true iff we're just running the calculation as a what-if for the player.
+                                     // it should be false if we're calculating damage for an attack that's actually occurred.
+                                     val simulation: Boolean = false)

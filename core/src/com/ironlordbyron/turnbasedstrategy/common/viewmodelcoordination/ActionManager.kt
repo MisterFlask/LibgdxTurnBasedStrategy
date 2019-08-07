@@ -1,12 +1,16 @@
 package com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination
 
+import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.ironlordbyron.turnbasedstrategy.ai.BasicAiDecisions
+import com.ironlordbyron.turnbasedstrategy.ai.PathfinderFactory
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.controller.MapHighlighter
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tiledutils.CharacterImageManager
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
@@ -17,11 +21,14 @@ import com.ironlordbyron.turnbasedstrategy.tileentity.CityTileEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
+import com.ironlordbyron.turnbasedstrategy.view.animation.AnimationSpeedManager
+import com.ironlordbyron.turnbasedstrategy.view.animation.SpriteColorActorAction
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.*
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.external.SpecialEffectManager
 import java.lang.IllegalArgumentException
+import java.lang.IllegalStateException
 import java.time.Duration
 import java.util.*
 import javax.inject.Inject
@@ -99,6 +106,75 @@ public class ActionManager @Inject constructor(
         val projectileActor = addActorToTile(fromTile, abilityProjectileProtoActor)
         return movementAnimationGenerator.createMoveActorToTileActorActionPair(toTile, projectileActor, true)
     }
+
+
+    val TIME_TO_MOVE = .5f
+    //TODO: Migrate this to an animation generator
+    private fun getCharacterMovementActorActionPair(toTile: TileLocation,
+                                                    character: LogicalCharacter,
+                                                    breadcrumbHint: List<TileLocation>? = null) : List<ActorActionPair> {
+        val breadcrumbs = breadcrumbHint?:getBreadcrumbs(character, toTile)
+        val actorActionPairs = ArrayList<ActorActionPair>()
+        val timePerSquare = TIME_TO_MOVE/breadcrumbs.size
+        for (breadcrumb in breadcrumbs){
+            val libgdxLocation = logicalTileTracker.getLibgdxCoordinatesFromLocation(breadcrumb)
+            var moveAction: Action = Actions.moveTo(libgdxLocation.x.toFloat(), libgdxLocation.y.toFloat(), timePerSquare / AnimationSpeedManager.animationSpeedScale)
+            actorActionPairs.add(ActorActionPair(character.actor, moveAction))
+        }
+        return actorActionPairs
+    }
+
+    val pathfinderFactory: PathfinderFactory by LazyInject(PathfinderFactory::class.java)
+    val pulseAnimationGenerator: PulseAnimationGenerator by LazyInject(PulseAnimationGenerator::class.java)
+    val mapHighlighter: MapHighlighter by LazyInject(MapHighlighter::class.java)
+    val logicHooks: LogicHooks by LazyInject(LogicHooks::class.java)
+
+    private fun getBreadcrumbs(logicalCharacter: LogicalCharacter,
+                               toTile: TileLocation): List<TileLocation> {
+        val pathfinder = pathfinderFactory.createGridGraph(logicalCharacter)
+        val tiles = pathfinder.acquireBestPathTo(
+                logicalCharacter,
+                toTile,
+                allowEndingOnLastTile = true,
+                allowFuzzyMatching = false)
+        return tiles?.map{it.location}?.toList() ?: throw IllegalStateException("Required to call this on a character that can go to the provided tile")
+    }
+
+
+    // moves the character to the given tile logically, and returns the actor/action pair for animation purposes.
+    fun moveCharacterToTile(character: LogicalCharacter, toTile: TileLocation, waitOnMoreQueuedActions: Boolean,
+                            wasPlayerInitiated: Boolean){
+        if (toTile == character.tileLocation){
+            return
+        }
+        if (!wasPlayerInitiated) {
+            // first, show the player where the ai COULD move to
+            val tilesToHighlight = tacticalMapAlgorithms.getWhereCharacterCanMoveTo(character)
+            val actorActionPairForHighlights = mapHighlighter.getTileHighlightActorActionPairs(tilesToHighlight, HighlightType.ENEMY_MOVE_TILE)
+            val pulseActionPair = pulseAnimationGenerator.generateActorActionPair(character.actor.characterActor, 1f / AnimationSpeedManager.animationSpeedScale)
+            actorActionPairForHighlights.secondaryActions += pulseActionPair
+            animationActionQueueProvider.addAction(actorActionPairForHighlights)
+        }
+
+        val result = getCharacterMovementActorActionPair(toTile, character)
+        boardState.moveCharacterToTile(character, toTile)
+        animationActionQueueProvider.addActions(result)
+
+        if (wasPlayerInitiated){
+            logicHooks.playerMovedCharacter(character)
+        }
+
+        if (character.endedTurn){
+            animationActionQueueProvider.addAction(SpriteColorActorAction.build(character, SpriteColorActorAction.DIM_COLOR))
+        }
+        if (!waitOnMoreQueuedActions){
+            animationActionQueueProvider.runThroughActionQueue(finalAction = {})
+            animationActionQueueProvider.clearQueue()
+        }
+
+        // now mark the character as moved by darkening the sprite.
+    }
+
 
     fun openDoorAction(location: TileLocation): ActorActionPair {
         if (!logicalTileTracker.isDoor(location)){

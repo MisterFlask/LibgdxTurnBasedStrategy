@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 
 class ExplodesOnDeathFunctionalUnitEffect @Inject constructor (val radius: Int, val damage: Int
-) : FunctionalAttributeEffect(){
+) : FunctionalAttributeEffect() {
     val actionManager: ActionManager by lazy{
         GameModuleInjector.generateInstance(ActionManager::class.java)
     }

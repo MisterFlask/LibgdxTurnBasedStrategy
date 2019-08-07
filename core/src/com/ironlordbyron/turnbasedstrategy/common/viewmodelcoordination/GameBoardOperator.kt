@@ -6,6 +6,7 @@ import com.ironlordbyron.turnbasedstrategy.ai.PathfinderFactory
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.VisibleCharacterDataFactory
 import com.ironlordbyron.turnbasedstrategy.controller.*
+import com.ironlordbyron.turnbasedstrategy.tacmapunits.actionManager
 import com.ironlordbyron.turnbasedstrategy.view.CharacterSpriteUtils
 import com.ironlordbyron.turnbasedstrategy.view.animation.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
@@ -78,63 +79,7 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
     // moves the character to the given tile logically, and returns the actor/action pair for animation purposes.
     fun moveCharacterToTile(character: LogicalCharacter, toTile: TileLocation, waitOnMoreQueuedActions: Boolean,
                             wasPlayerInitiated: Boolean){
-        if (toTile == character.tileLocation){
-            return
-        }
-        if (!wasPlayerInitiated) {
-            // first, show the player where the ai COULD move to
-            val tilesToHighlight = tacticalMapAlgorithms.getWhereCharacterCanMoveTo(character)
-            val actorActionPairForHighlights = mapHighlighter.getTileHighlightActorActionPairs(tilesToHighlight, HighlightType.ENEMY_MOVE_TILE)
-            val pulseActionPair = pulseAnimationGenerator.generateActorActionPair(character.actor.characterActor, 1f / AnimationSpeedManager.animationSpeedScale)
-            actorActionPairForHighlights.secondaryActions += pulseActionPair
-            animationActionQueueProvider.addAction(actorActionPairForHighlights)
-        }
-
-        val result = getCharacterMovementActorActionPair(toTile, character)
-        boardState.moveCharacterToTile(character, toTile)
-        animationActionQueueProvider.addActions(result)
-
-        if (wasPlayerInitiated){
-            logicHooks.playerMovedCharacter(character)
-        }
-
-        if (character.endedTurn){
-            animationActionQueueProvider.addAction(SpriteColorActorAction.build(character, SpriteColorActorAction.DIM_COLOR))
-        }
-        if (!waitOnMoreQueuedActions){
-            animationActionQueueProvider.runThroughActionQueue(finalAction = {})
-            animationActionQueueProvider.clearQueue()
-        }
-
-        // now mark the character as moved by darkening the sprite.
-    }
-
-    val TIME_TO_MOVE = .5f
-    //TODO: Migrate this to an animation generator
-    private fun getCharacterMovementActorActionPair(toTile: TileLocation,
-                                                    character: LogicalCharacter,
-                                                    breadcrumbHint: List<TileLocation>? = null) : List<ActorActionPair> {
-        val breadcrumbs = breadcrumbHint?:getBreadcrumbs(character, toTile)
-        val actorActionPairs = ArrayList<ActorActionPair>()
-        val timePerSquare = TIME_TO_MOVE/breadcrumbs.size
-        for (breadcrumb in breadcrumbs){
-            val libgdxLocation = logicalTileTracker.getLibgdxCoordinatesFromLocation(breadcrumb)
-            var moveAction: Action = Actions.moveTo(libgdxLocation.x.toFloat(), libgdxLocation.y.toFloat(), timePerSquare / AnimationSpeedManager.animationSpeedScale)
-            actorActionPairs.add(ActorActionPair(character.actor, moveAction))
-        }
-        return actorActionPairs
-
-    }
-
-    private fun getBreadcrumbs(logicalCharacter: LogicalCharacter,
-                               toTile: TileLocation): List<TileLocation> {
-        val pathfinder = pathfinderFactory.createGridGraph(logicalCharacter)
-        val tiles = pathfinder.acquireBestPathTo(
-                logicalCharacter,
-                toTile,
-                allowEndingOnLastTile = true,
-                allowFuzzyMatching = false)
-        return tiles?.map{it.location}?.toList() ?: throw IllegalStateException("Required to call this on a character that can go to the provided tile")
+        actionManager.moveCharacterToTile(character, toTile, waitOnMoreQueuedActions, wasPlayerInitiated)
     }
 
     fun removeCharacter(character: LogicalCharacter) {

@@ -1,6 +1,5 @@
 package com.ironlordbyron.turnbasedstrategy.common.characterattributes.types
 
-import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
