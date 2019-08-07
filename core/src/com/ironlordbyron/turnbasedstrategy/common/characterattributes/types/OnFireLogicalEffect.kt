@@ -19,7 +19,7 @@ public class OnFireFunctionalEffect (val damagePerTurn: Int) : FunctionalAttribu
         val ON_FIRE_ATTRIBUTE  = LogicalCharacterAttribute("On Fire",
                 LogicalCharacterAttribute._demonImg.copy(textureId = "6"),
                 statusEffect = true,
-                customEffects = listOf(OnFireFunctionalEffect(1)),
+                otherCustomEffects = listOf(OnFireFunctionalEffect(1)),
                 description = {"This unit is on fire and will take one damage per turn until it's put out."})
     }
 }

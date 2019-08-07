@@ -15,7 +15,7 @@ import javax.inject.Singleton
 val SNOOZING: LogicalCharacterAttribute = LogicalCharacterAttribute("Unaware",
         LogicalCharacterAttribute._demonImg.copy(textureId="10"),
         statusEffect = true,
-        customEffects = listOf(SnoozeFunctionalUnitEffect()),
+        otherCustomEffects = listOf(SnoozeFunctionalUnitEffect()),
         description = {"This character is unaware."},
         stackable = false,
         tacticalMapProtoActor = DataDrivenOnePageAnimation.SNOOZE_ACTOR,
