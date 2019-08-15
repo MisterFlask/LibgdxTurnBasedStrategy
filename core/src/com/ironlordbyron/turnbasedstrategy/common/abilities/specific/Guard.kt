@@ -68,7 +68,7 @@ class GuardedFunctionalEffect(val guardedByCharacter: UUID) : FunctionalAttribut
             is TacticalGameEvent.UnitTurnStart -> activatedThisTurn = false
         }
     }
-    override fun applyDamageMods(damageAttemptInput: DamageAttemptInput, params: FunctionalEffectParameters): DamageAttemptInput {
+    override fun applyDamageModsAsVictim(damageAttemptInput: DamageAttemptInput, params: FunctionalEffectParameters): DamageAttemptInput {
         if (activatedThisTurn){
             return damageAttemptInput
         }

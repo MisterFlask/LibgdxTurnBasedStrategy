@@ -3,7 +3,6 @@ package com.ironlordbyron.turnbasedstrategy.tacmapunits.classes
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.abilities.*
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
-import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.OnFireFunctionalEffect
 import com.ironlordbyron.turnbasedstrategy.common.equipment.EquipmentClass
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
 
@@ -14,14 +13,14 @@ class PyromancerClass() : TacMapUnitClass("Pyromancer",
         5,
         0,
         7,
-        startingSecondaryWeapon = startingSpellbook()
+        startingSecondaryWeapon = startingPyromancerSpellbook()
 ){
     override fun createNewTacMapUnit(): TacMapUnitTemplate {
         return TacMapUnitTemplate.DEFAULT_ENEMY_UNIT
     }
 }
 
-fun startingSpellbook(): LogicalEquipment {
+fun startingPyromancerSpellbook(): LogicalEquipment {
     return LogicalEquipment("Tome of Fire",
             EquipmentClass.SPELLBOOK,
             abilityEnabled = listOf(ignite())

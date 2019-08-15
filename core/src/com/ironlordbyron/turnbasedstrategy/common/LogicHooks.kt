@@ -105,12 +105,29 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
     }
 
     fun attemptToDamage(damageAttemptInput: DamageAttemptInput): DamageAttemptInput {
+        var damageAttemptResult = runVictimEffects(damageAttemptInput)
+        damageAttemptResult = runVictimEffects(damageAttemptResult)
+        return damageAttemptResult
+    }
+
+    private fun runAggressorEffects(damageAttemptInput: DamageAttemptInput): DamageAttemptInput {
+        var damageAttemptResult = damageAttemptInput
+        val logicalAttributes = damageAttemptInput.sourceCharacter.getAttributes()
+        for (attr in logicalAttributes) {
+            val aggressorEffectsToRun = attr.logicalAttribute.customEffects
+            for (effect in aggressorEffectsToRun) {
+                damageAttemptResult = effect.applyDamageModsAsAggressor(damageAttemptResult, FunctionalEffectParameters(damageAttemptInput.targetCharacter, attr.logicalAttribute, attr.stacks))
+            }
+        }
+        return damageAttemptResult
+    }
+    private fun runVictimEffects(damageAttemptInput: DamageAttemptInput): DamageAttemptInput {
         var damageAttemptResult = damageAttemptInput
         val logicalAttributes = damageAttemptInput.targetCharacter.getAttributes()
-        for (attr in logicalAttributes){
+        for (attr in logicalAttributes) {
             val victimEffectsToRun = attr.logicalAttribute.customEffects
-            for (effect in victimEffectsToRun){
-                damageAttemptResult = effect.applyDamageMods(damageAttemptResult, FunctionalEffectParameters(damageAttemptInput.targetCharacter, attr.logicalAttribute, attr.stacks))
+            for (effect in victimEffectsToRun) {
+                damageAttemptResult = effect.applyDamageModsAsVictim(damageAttemptResult, FunctionalEffectParameters(damageAttemptInput.targetCharacter, attr.logicalAttribute, attr.stacks))
             }
         }
         return damageAttemptResult

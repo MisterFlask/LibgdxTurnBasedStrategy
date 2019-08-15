@@ -25,9 +25,11 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
                             val playerControlled: Boolean,
                             var endedTurn: Boolean = false,
                             var actionsLeft: Int = 2,
-                            val id: UUID = UUID.randomUUID(),
                             var intent: Intent = Intent.None(),
                             var goal: Goal? = null) {
+
+    val id: UUID
+        get() = tacMapUnit.uuid
 
     fun hasAttribute(logicalAttribute: LogicalCharacterAttribute): Boolean {
         return this.getAttributes().any{it.logicalAttribute.id == logicalAttribute.id && it.stacks > 0}
@@ -119,5 +121,6 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
 
     fun getSquaresInRangeOfAbility(sourceSquare: TileLocation, logicalCharacter: LogicalCharacter): Collection<TileLocation> {
         return ability.rangeStyle.getTargetableTiles(logicalCharacter, this, sourceSquare)
+                .filter{this.ability.abilityUsageTileFilter.tileIsValid(it)}
     }
 }

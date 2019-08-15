@@ -18,7 +18,9 @@ public abstract class TacMapUnitClass(val name: String,
                                       val startingSecondaryWeapon: LogicalEquipment,
                                       val startingMp: Int = 0){
 
-    abstract fun createNewTacMapUnit(): TacMapUnitTemplate
+    open fun createNewTacMapUnit(): TacMapUnitTemplate{
+        return TacMapUnitTemplate.DEFAULT_ENEMY_UNIT
+    }
 }
 
 

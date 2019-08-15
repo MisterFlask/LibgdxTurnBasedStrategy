@@ -6,6 +6,7 @@ import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
+import java.lang.IllegalArgumentException
 import java.util.*
 import javax.inject.Singleton
 
@@ -19,10 +20,12 @@ public data class TileAlreadyOccupiedException(val tileLocation: TileLocation) :
 class TacticalMapState @Inject constructor(val logicalTileTracker: LogicalTileTracker,
                                            val eventNotifier: EventNotifier) : GameEventListener{
 
+    val unitsThatBailedFromMission = ArrayList<TacMapUnitTemplate>()
+    val unitsOutsideMission = ArrayList<TacMapUnitTemplate>()
+
     override fun consumeGameEvent(tacticalGameEvent: TacticalGameEvent) {
         when(tacticalGameEvent){
             is TacticalGameEvent.INITIALIZE -> {
-                // TODO: Remove locations list, is inappropriate
                 locations.clear()
                 listOfCharacters.clear()
             }
@@ -30,6 +33,14 @@ class TacticalMapState @Inject constructor(val logicalTileTracker: LogicalTileTr
     }
     init {
         eventNotifier.registerGameListener(this)
+    }
+
+    fun evacuateUnit(logicalCharacter: LogicalCharacter){
+        if (!listOfCharacters.contains(logicalCharacter)){
+            throw IllegalArgumentException("Couldn't find logical character: ${logicalCharacter.tacMapUnit.templateName}")
+        }
+        listOfCharacters.remove(logicalCharacter)
+        unitsThatBailedFromMission.add(logicalCharacter.tacMapUnit)
     }
 
     fun getCharacterFromId(uuid: UUID): LogicalCharacter {
@@ -68,6 +79,8 @@ class TacticalMapState @Inject constructor(val logicalTileTracker: LogicalTileTr
     fun characterAt(tile: TileLocation): LogicalCharacter?{
         return listOfCharacters.filter{it.tileLocation == tile}.firstOrNull()
     }
+
+
 
     fun moveCharacterToTile(character: LogicalCharacter, tile: TileLocation){
         character.tileLocation = tile

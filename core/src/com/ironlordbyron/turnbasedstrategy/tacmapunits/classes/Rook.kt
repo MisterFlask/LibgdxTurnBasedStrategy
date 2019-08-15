@@ -29,9 +29,9 @@ class RookClass() : TacMapUnitClass("Rook",
 }
 
 fun startingHook(): LogicalEquipment {
-    return LogicalEquipment("Longsword",
+    return LogicalEquipment("Hook",
             EquipmentClass.DAGGER,
-            abilityEnabled = listOf(slash(), slashAndEngage())
+            abilityEnabled = listOf(distantRescue(), hookWhereItHurts())
     )
 }
 

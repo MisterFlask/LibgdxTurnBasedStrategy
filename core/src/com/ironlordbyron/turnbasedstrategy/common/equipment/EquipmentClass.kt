@@ -11,5 +11,7 @@ enum class EquipmentClass {
 
     GLAIVE,
 
-    SHOTGUN
+    SHOTGUN,
+
+    PISTOL
 }

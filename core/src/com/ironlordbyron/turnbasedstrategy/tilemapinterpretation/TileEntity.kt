@@ -9,34 +9,37 @@ import com.ironlordbyron.turnbasedstrategy.common.floodFill
 import com.ironlordbyron.turnbasedstrategy.common.terrainProperties
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
+import com.ironlordbyron.turnbasedstrategy.font.TextLabelGenerator
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
+import com.ironlordbyron.turnbasedstrategy.tacmapunits.actionManager
 import com.ironlordbyron.turnbasedstrategy.tileentity.CityTileEntity
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.ActorSettable
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SimpleActorWrapper
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.consolidateActors
 import com.ironlordbyron.turnbasedstrategy.view.ui.addLabel
 import javax.inject.Singleton
 
-class PortalProtoEntity(val tileLocation: TileLocation, val actor: ProtoActor) : TileProtoEntity<PortalEntity>{
+class PortalProtoEntity(val protoActor: ProtoActor = SuperimposedTilemaps.toDefaultProtoActor()) : TileProtoEntity<PortalEntity>{
     val name: String = "Portal"
     val eventNotifier = GameModuleInjector.generateInstance(EventNotifier::class.java)
-    override fun toTileEntity(): PortalEntity {
-        return PortalEntity(eventNotifier, tileLocation, actor.toActor().actor)
+    override fun toTileEntity(tileLocation: TileLocation): PortalEntity {
+        return PortalEntity(tileLocation, protoActor.toActor().actor)
     }
-
 }
 
-interface TileProtoEntity <T> {
-    fun toTileEntity() : T
+
+interface TileProtoEntity <T: TileEntity> {
+    fun toTileEntity(tileLocation: TileLocation) : T
 }
 
 interface TileEntity {
     val tileLocations: Collection<TileLocation>
     val actor: Actor
-    val name: String
+    val name: String // TODO
     fun targetableByAbility(ability: LogicalAbility): Boolean{
         return false
     }
@@ -58,6 +61,40 @@ interface TileEntity {
     }
 
 }
+
+class WarpingInPortalTileProtoEntity() : TileProtoEntity<WarpingInPortalTileEntity>{
+    val protoActor = SuperimposedTilemaps.elementalImageNumber("4")
+    override fun toTileEntity(tileLocation: TileLocation): WarpingInPortalTileEntity {
+        return WarpingInPortalTileEntity(listOf(tileLocation), protoActor.toActor())
+    }
+}
+
+class WarpingInPortalTileEntity(override val tileLocations: Collection<TileLocation>,
+                                override val actor: Actor,
+                                override val name: String = "Warp Rift",
+                                var turnsLeftUntilEntityCreated: Int = 3) : TileEntity{
+    init{
+        assert(tileLocations.size == 1)
+    }
+    override fun runTurn() {
+        turnsLeftUntilEntityCreated --
+        if (turnsLeftUntilEntityCreated == 0){
+            actionManager.destroyTileEntity(this)
+            actionManager.createTileEntity(PortalProtoEntity(), this.tileLocations.first())
+        }
+    }
+
+    val textLabelGenerator: TextLabelGenerator by LazyInject(TextLabelGenerator::class.java)
+    override fun buildUiDisplay(parentTable: Table) {
+        if (turnsLeftUntilEntityCreated > 1){
+            parentTable.addLabel("Warping in portal in $turnsLeftUntilEntityCreated turns.")
+        }else{
+            parentTable.addLabel("Warping in portal next turn.")
+        }
+        parentTable.row()
+    }
+}
+
 
 interface TileEntityGenerator{
     fun generateTileEntity(tileLocations: Collection<TileLocation>) : TileEntity
@@ -140,10 +177,11 @@ class TileEntityRegistrar(){
     }
 }
 
-class PortalEntity(val eventNotifier: EventNotifier,
+class PortalEntity(
                    val tileLocation: TileLocation,
                    override var actor: Actor,
                    override val name: String = "portal") : TileEntity{
+    val eventNotifier: EventNotifier by LazyInject(EventNotifier::class.java)
     override val tileLocations: Collection<TileLocation>
         get() = listOf(tileLocation)
     override fun targetableByAbility(ability: LogicalAbility): Boolean {
@@ -154,6 +192,8 @@ class PortalEntity(val eventNotifier: EventNotifier,
         val portalProtoActor: ProtoActor = SuperimposedTilemaps(tileSetNames = listOf("Door1"), textureId = "0")
     }
 }
+
+
 
 class FortressEntity(var durability: Int,
                      override val actor: Actor,

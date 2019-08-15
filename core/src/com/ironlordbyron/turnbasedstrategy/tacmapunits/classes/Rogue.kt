@@ -55,7 +55,7 @@ class SkulkingStatusEffect(val modifier: Int): LogicalCharacterAttribute("Skulki
         description = {"This character hides in the shadows.  If concealment is broken by an attack, it deals an extra $modifier damage."},
         stackable = false,
         imageIcon = SuperimposedTilemaps.toDefaultProtoActor()) {
-    override fun applyDamageMods(damageAttemptInput: DamageAttemptInput, params: FunctionalEffectParameters): DamageAttemptInput {
+    override fun applyDamageModsAsVictim(damageAttemptInput: DamageAttemptInput, params: FunctionalEffectParameters): DamageAttemptInput {
         if (!damageAttemptInput.simulation){
             this.removeThisAttribute(this.id, params.thisCharacter)
         }

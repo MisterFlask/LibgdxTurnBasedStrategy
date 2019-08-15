@@ -49,8 +49,12 @@ public abstract class FunctionalAttributeEffect() {
 
     }
 
-    open fun applyDamageMods(damageAttemptInput: DamageAttemptInput, params: FunctionalEffectParameters): DamageAttemptInput{
+    open fun applyDamageModsAsVictim(damageAttemptInput: DamageAttemptInput, params: FunctionalEffectParameters): DamageAttemptInput{
         return damageAttemptInput
+    }
+
+    open fun applyDamageModsAsAggressor(damageAttemptResult: DamageAttemptInput, functionalEffectParameters: FunctionalEffectParameters): DamageAttemptInput {
+        return damageAttemptResult
     }
 
     ////////////////////////////////////////////////////////

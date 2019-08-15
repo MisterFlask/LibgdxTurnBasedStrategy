@@ -177,7 +177,9 @@ class SimpleAttackAbility() : AbilityTargetingParameters() {
     }
     private fun getTilesInRangeOfAbility(character: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment, sourceSquare: TileLocation? = null): Collection<TileLocation> {
         // BUG:  this SHOULD be referencing sourceSquare.  NOT character.
-        val tiles = logicalAbilityAndEquipment.ability.rangeStyle.getTargetableTiles(character, logicalAbilityAndEquipment, sourceSquare)
+        val tiles = logicalAbilityAndEquipment
+                .ability.rangeStyle.getTargetableTiles(character, logicalAbilityAndEquipment, sourceSquare)
+                .filter{logicalAbilityAndEquipment.ability.abilityUsageTileFilter.tileIsValid(it)}
         return tiles
     }
 }

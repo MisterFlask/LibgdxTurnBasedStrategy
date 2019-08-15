@@ -7,6 +7,8 @@ import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCha
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.tacmapunits.classes.nonclassabilities.NullTileFilter
+import com.ironlordbyron.turnbasedstrategy.tacmapunits.classes.nonclassabilities.TileFilter
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTile
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
@@ -43,7 +45,8 @@ public class LogicalAbility(val name: String,
                                  val abilityTargetingParameters: AbilityTargetingParameters = SimpleAttackAbility(),
                                  val customAbilityAi: CustomAbilityAi? = null,
                                  val mpCost: Int = 0,
-                                 val id: String = name){
+                                 val id: String = name,
+                                val abilityUsageTileFilter : TileFilter = NullTileFilter()){
 
 }
 

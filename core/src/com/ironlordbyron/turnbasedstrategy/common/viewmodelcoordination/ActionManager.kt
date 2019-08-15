@@ -19,6 +19,8 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tiledutils.setBoundingBox
 import com.ironlordbyron.turnbasedstrategy.tileentity.CityTileEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileProtoEntity
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimationSpeedManager
@@ -29,7 +31,6 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.external.SpecialEffectManager
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
-import java.time.Duration
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -188,18 +189,26 @@ public class ActionManager @Inject constructor(
     /**
      * Spawns an entity at a tile, AND puts it on the animation queue.
      */
-    fun spawnEntityAtTileInSequence(protoActor: ProtoActor,
+    fun spawnActorAtTileInSequence(actor: Actor,
                                     tileLocation: TileLocation,
-                                    animatedImageParams: AnimatedImageParams = AnimatedImageParams.RUN_ALWAYS_AND_FOREVER,
-                                    boundingBoxType: BoundingBoxType = BoundingBoxType.WHOLE_TILE,
-                                    isChildActor: Boolean = false) : Actor{
-        val actor = protoActor.toActor(animatedImageParams).actor
+                                    boundingBoxType: BoundingBoxType = BoundingBoxType.WHOLE_TILE) : Actor{
         val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation, boundingBoxType)
         actor.setBoundingBox(boundingBox)
         tiledMapStageProvider.tiledMapStage.addActor(actor)
         actor.isVisible = false
         animationActionQueueProvider.addAction(ActorActionPair(actor, revealActionGenerator.generateRevealAction(actor)))
         return actor
+    }
+    /**
+     * Spawns an entity at a tile, AND puts it on the animation queue.
+     */
+    fun spawnEntityAtTileInSequence(protoActor: ProtoActor,
+                                    tileLocation: TileLocation,
+                                    animatedImageParams: AnimatedImageParams = AnimatedImageParams.RUN_ALWAYS_AND_FOREVER,
+                                    boundingBoxType: BoundingBoxType = BoundingBoxType.WHOLE_TILE,
+                                    isChildActor: Boolean = false) : Actor{
+        val actor = protoActor.toActor(animatedImageParams).actor
+        return spawnActorAtTileInSequence(actor, tileLocation, boundingBoxType)
     }
 
     fun spawnAttributeActorAtTileInSequence(logicalAttribute: LogicalCharacterAttribute,
@@ -305,6 +314,20 @@ public class ActionManager @Inject constructor(
                 cameraTrigger = false)
         )
 
+    }
+
+    fun destroyTileEntity(entity: TileEntity) {
+        logicalTileTracker.tileEntities.remove(entity)
+        this.despawnEntityInSequence(entity.actor)
+    }
+
+    fun createTileEntity(protoEntity: TileProtoEntity<*>, tileLocation: TileLocation){
+        if (logicalTileTracker.tileEntities.any{it.tileLocations.contains(tileLocation)}){
+            throw IllegalStateException("Entity already placed at tile location")
+        }
+        val entity = protoEntity.toTileEntity(tileLocation)
+        logicalTileTracker.tileEntities.add(entity)
+        this.spawnActorAtTileInSequence(entity.actor, tileLocation)
     }
 
 }
