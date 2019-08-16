@@ -7,16 +7,20 @@ import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityClass
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
+import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
+import com.ironlordbyron.turnbasedstrategy.tacmapunits.tacMapState
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
 
+val tacMapState: TacticalMapState by LazyInject(TacticalMapState::class.java)
+
 interface BoardInputState{
     abstract val name: String
-    data class PlayerIsPlacingUnits(val unitsToPlace: ArrayList<TacMapUnitTemplate>, override val name: String = "PlacingUnits"): BoardInputState{
+    data class PlayerIsPlacingUnits(override val name: String = "PlacingUnits"): BoardInputState{
         fun nextUnit() : TacMapUnitTemplate?
         {
-            return unitsToPlace.firstOrNull()
+            return tacMapState.unitsAvailableToDeploy.firstOrNull()
         }
     }
     data class UnitSelected(val unit: LogicalCharacter, override val name: String = "UnitSelected") : BoardInputState
@@ -83,8 +87,8 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 }
             }
             is TacticalGuiEvent.ScenarioStart -> {
-                boardInputState = BoardInputState.PlayerIsPlacingUnits(arrayListOf(TacMapUnitTemplate.DEFAULT_UNIT,
-                        TacMapUnitTemplate.DEFAULT_ENEMY_UNIT))
+                tacMapState.unitsAvailableToDeploy.addAll(event.scenarioParams.unitsThatPlayerWillDeploy)
+                boardInputState = BoardInputState.PlayerIsPlacingUnits()
                 val boardInputState = boardInputState as BoardInputState.PlayerIsPlacingUnits
                 tileMapHighlighter.highlightTiles(tiledMapProvider.getPlayerPlacementTilemapTiles(), HighlightType.GREEN_TILE)
                 // TODO:  This breaks in the case where we have zero units
@@ -98,15 +102,15 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 }
                 if (event.characterIdSelected == null){
                     // just move to the next character
-                    val tmp = boardInputState.unitsToPlace[0]
+                    val tmp = tacMapState.unitsAvailableToDeploy[0]
 
                     // cycle first to the end
-                    boardInputState.unitsToPlace.removeAt(0)
-                    boardInputState.unitsToPlace.add(tmp)
+                    tacMapState.unitsAvailableToDeploy.removeAt(0)
+                    tacMapState.unitsAvailableToDeploy.add(tmp)
                 }else{
                     throw NotImplementedError("Haven't yet done cycling to specific unit")
                 }
-                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.PlayerIsPlacingUnit(boardInputState.unitsToPlace.first()))
+                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.PlayerIsPlacingUnit(tacMapState.unitsAvailableToDeploy.first()))
 
             }
         }
@@ -132,14 +136,14 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 return
             }
             val boardInputState = boardInputState as BoardInputState.PlayerIsPlacingUnits
-            val characterToPlace = boardInputState.unitsToPlace.first()
-            boardInputState.unitsToPlace.removeAt(0)
+            val characterToPlace = tacMapState.unitsAvailableToDeploy.first()
+            tacMapState.unitsAvailableToDeploy.removeAt(0)
 
             placePlayerUnit(location, characterToPlace)
             if (boardInputState.nextUnit() != null){
                 eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.PlayerIsPlacingUnit(boardInputState.nextUnit()!!))
             }
-            if (boardInputState.unitsToPlace.isEmpty()){
+            if (tacMapState.unitsAvailableToDeploy.isEmpty()){
                 // todo: graphical showing that the input state has changed
                 this.boardInputState = BoardInputState.DefaultState()
                 eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.CharacterUnselected())

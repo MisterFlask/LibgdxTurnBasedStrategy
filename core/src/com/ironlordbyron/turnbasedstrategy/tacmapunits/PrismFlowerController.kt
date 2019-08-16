@@ -24,7 +24,7 @@ public fun PrismFlowerController(): TacMapUnitTemplate {
             attributes = arrayListOf(LogicalCharacterAttribute(
                     "Prism Flower Controller",
                     imageIcon = SuperimposedTilemaps.toDefaultProtoActor(),
-                    customEffects = listOf(KillAllUnitsOfTypeEffect("PRISM_FLOWER")),
+                    otherCustomEffects = listOf(KillAllUnitsOfTypeEffect("PRISM_FLOWER")),
                     description = {"All prism flowers die when this does."},
                     stackable = false
             )),
@@ -42,7 +42,7 @@ public fun FlameTowerController(): TacMapUnitTemplate {
             attributes = arrayListOf(LogicalCharacterAttribute(
                     "Flame Tower Controller",
                     imageIcon = SuperimposedTilemaps.toDefaultProtoActor(),
-                    customEffects = listOf(KillAllUnitsOfTypeEffect("FLAME_TOWER")),
+                    otherCustomEffects = listOf(KillAllUnitsOfTypeEffect("FLAME_TOWER")),
                     description = {"All prism flowers die when this does."},
                     stackable = false
             )),

@@ -19,6 +19,6 @@ fun MasterOrgan() : TacMapUnitTemplate{
 fun ExplodesOnDeath(): LogicalCharacterAttribute {
     return LogicalCharacterAttribute("Explodes On Death",
             LogicalCharacterAttribute._painterlyIcon,
-            customEffects = listOf(ExplodesOnDeathFunctionalUnitEffect(4, 5)),
+            otherCustomEffects = listOf(ExplodesOnDeathFunctionalUnitEffect(4, 5)),
             description = {"Explodes on death, dealing 5 damage to everything in a 4-tile radius"})
 }

@@ -11,6 +11,7 @@ import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.MapHighlighter
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
+import com.ironlordbyron.turnbasedstrategy.tacmapunits.tacMapState
 import com.ironlordbyron.turnbasedstrategy.tiledutils.CharacterImageManager
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
@@ -59,6 +60,18 @@ public class ActionManager @Inject constructor(
 
 )  {
 
+
+    fun addCharacterToMapFromDeploymentZone(tacMapUnit: TacMapUnitTemplate,
+                                            tileLocation: TileLocation){
+        tacMapState.unitsAvailableToDeploy.removeAndAssert(tacMapUnit)
+        addCharacterToTileFromTemplate(tacMapUnit, tileLocation, true)
+    }
+
+    fun evacuateCharacter(logicalCharacter: LogicalCharacter){
+        despawnEntityInSequence(logicalCharacter.actor)
+        tacMapState.listOfCharacters.removeAndAssert(logicalCharacter)
+        tacMapState.evacuatedUnits.add(logicalCharacter.tacMapUnit)
+    }
 
     fun addCharacterToTileFromTemplate(tacMapUnit: TacMapUnitTemplate,
                                        tileLocation: TileLocation,

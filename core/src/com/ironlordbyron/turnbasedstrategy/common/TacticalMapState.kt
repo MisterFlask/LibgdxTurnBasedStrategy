@@ -1,12 +1,12 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
 import com.google.inject.Inject
-import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import java.lang.IllegalArgumentException
+import java.lang.IllegalStateException
 import java.util.*
 import javax.inject.Singleton
 
@@ -20,8 +20,8 @@ public data class TileAlreadyOccupiedException(val tileLocation: TileLocation) :
 class TacticalMapState @Inject constructor(val logicalTileTracker: LogicalTileTracker,
                                            val eventNotifier: EventNotifier) : GameEventListener{
 
-    val unitsThatBailedFromMission = ArrayList<TacMapUnitTemplate>()
-    val unitsOutsideMission = ArrayList<TacMapUnitTemplate>()
+    val evacuatedUnits = ArrayList<TacMapUnitTemplate>()
+    val unitsAvailableToDeploy = ArrayList<TacMapUnitTemplate>()
 
     override fun consumeGameEvent(tacticalGameEvent: TacticalGameEvent) {
         when(tacticalGameEvent){
@@ -40,7 +40,7 @@ class TacticalMapState @Inject constructor(val logicalTileTracker: LogicalTileTr
             throw IllegalArgumentException("Couldn't find logical character: ${logicalCharacter.tacMapUnit.templateName}")
         }
         listOfCharacters.remove(logicalCharacter)
-        unitsThatBailedFromMission.add(logicalCharacter.tacMapUnit)
+        evacuatedUnits.add(logicalCharacter.tacMapUnit)
     }
 
     fun getCharacterFromId(uuid: UUID): LogicalCharacter {
@@ -102,3 +102,9 @@ public fun <E> java.util.HashSet<E>.doesNotContain(it: E): Boolean {
 data class TacticalMapTileState(val tileLocation: TileLocation,
                                 val passable: Boolean)
 
+public fun <E> MutableCollection<E>.removeAndAssert(obj: E){
+    if (!this.contains(obj)){
+        throw IllegalStateException("Couldn't remove object! ${obj.toString()}")
+    }
+    this.remove(obj)
+}

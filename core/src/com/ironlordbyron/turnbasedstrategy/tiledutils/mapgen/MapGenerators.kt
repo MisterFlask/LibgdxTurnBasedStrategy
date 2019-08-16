@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen
 
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.google.inject.Inject
+import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
@@ -69,7 +70,8 @@ data class MobGenerationParams(val numberMobsToGenerate: Int,
 data class ScenarioParams(val sourceMapName: String,
                           val name: String,
                           val mapGeneratorType: MapGeneratorType,
-                          val mobGenerationParams: MobGenerationParams? = null)
+                          val mobGenerationParams: MobGenerationParams? = null,
+                          val unitsThatPlayerWillDeploy: Collection<TacMapUnitTemplate>)
 enum class MapGeneratorType{
     NONE,
     PARTIAL_PROCEDURAL,

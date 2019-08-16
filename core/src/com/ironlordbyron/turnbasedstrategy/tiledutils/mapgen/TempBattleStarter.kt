@@ -78,33 +78,6 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
     fun startBattle(){
         println("Starting battle")
         cadenceEffectsRegistrar.turnStartEffects.forEach{it.handleTurnStartEvent()}
-        val playerSpawns = tiledMapInterpreter.getPossiblePlayerSpawnPositions(boardProvider.tiledMap)
-        for (tile in playerSpawns){
-            actionManager.addCharacterToTileFromTemplate(tacMapUnit = TacMapUnitTemplate.DEFAULT_UNIT, tileLocation = tile,
-                    playerControlled = true)
-        }
-        val enemyTiles = tiledMapInterpreter.getPossibleEnemySpawnPositions(boardProvider.tiledMap)
-        for (tile in enemyTiles){
-            actionManager.addCharacterToTileFromTemplate(tacMapUnit = TacMapUnitTemplate.DEFAULT_ENEMY_UNIT,
-                    tileLocation = tile,
-                    playerControlled = false)
-        }
-        val spawners = tiledMapInterpreter.getSpawners(boardProvider.tiledMap)
-        for (tile in spawners){
-            actionManager.addCharacterToTileFromTemplate(tacMapUnit = WeakMinionSpawner(), tileLocation = tile,
-                    playerControlled = false)
-        }
-        val masterOrgans = tiledMapInterpreter.getMasterOrgan(boardProvider.tiledMap)
-        for (tile in masterOrgans){
-            actionManager.addCharacterToTileFromTemplate(tacMapUnit = TacMapUnitTemplate.MASTER_ORGAN, tileLocation = tile,
-                    playerControlled = false)
-        }
-        val shieldingOrgans = tiledMapInterpreter.getShieldingOrgan(boardProvider.tiledMap)
-        for (tile in shieldingOrgans){
-            actionManager.addCharacterToTileFromTemplate(tacMapUnit = ShieldingOrgan(),
-                    tileLocation = tile,
-                    playerControlled = false)
-        }
 
         for (spawner in unitTemplateRegistrar.unitTemplates){
             val unitId = spawner.id
@@ -119,9 +92,9 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
         for (char in tacmapState.listOfCharacters){
             logicHooks.onUnitCreation(char)
         }
-        for (char in tacmapState.listOfEnemyCharacters){
-            attributeActionManager.applyAttribute(char, SNOOZING)
-        }
+        //for (char in tacmapState.listOfEnemyCharacters){
+        //    attributeActionManager.applyAttribute(char, SNOOZING)
+        //}
 
         animationActionQueueProvider.runThroughActionQueue()
     }

@@ -57,7 +57,7 @@ fun Hellplate() : LogicalCharacterAttribute{
     return LogicalCharacterAttribute("Hellplate",
             PainterlyIcons.PROTECT_SKY.toProtoActor(1),
             description = {"Soaks up to $it damage"},
-            customEffects = listOf(TemporaryHpAttributeEffect()),
+            otherCustomEffects = listOf(TemporaryHpAttributeEffect()),
             stackable = true,
             id = "HELLPLATE"
     )

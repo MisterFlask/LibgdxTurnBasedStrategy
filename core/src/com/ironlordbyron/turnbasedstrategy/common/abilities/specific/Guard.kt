@@ -30,7 +30,7 @@ class GuardedAttribute(val guardedByCharacter: UUID): LogicalCharacterAttribute(
         imageIcon = SuperimposedTilemaps.toDefaultProtoActor(),
         id = "GUARDED",
         description = {"if this character is near ${guardedByCharacter.toCharacter().tacMapUnit.templateName}, attacks that target this character hit "},
-        customEffects = listOf(GuardedFunctionalEffect(guardedByCharacter)) // TODO
+        otherCustomEffects = listOf(GuardedFunctionalEffect(guardedByCharacter)) // TODO
 )
 
 val GuardAbility = LogicalAbility("Guard", AbilitySpeed.FREE_ACTION, 1,

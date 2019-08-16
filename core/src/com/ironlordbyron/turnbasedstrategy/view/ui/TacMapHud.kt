@@ -230,7 +230,7 @@ class TacMapHud(viewPort: Viewport,
         // TODO:  Add indicator saying what the user should be doing here
         characterSelectCarousel.clearChildren()
         val boardInputState = boardInputStateProvider.boardInputState as? BoardInputState.PlayerIsPlacingUnits ?: return
-        for (unit in boardInputState.unitsToPlace){
+        for (unit in tacMapState.unitsAvailableToDeploy){
             var nextCharacterActor = characterImageManager.retrieveCharacterTemplateImage(unit).actor
             nextCharacterActor.setScale(3f)
             characterSelectCarousel.add(nextCharacterActor).width(nextCharacterActor.width).pad(10f)

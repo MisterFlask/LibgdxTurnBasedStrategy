@@ -84,6 +84,7 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
                 }
             }
             conquerCitiesStep(enemyCharacter)
+            enemyCharacter.formulateNewIntent()
         }
         animationActionQueueProvider.runThroughActionQueue(finalAction = {
             eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.FinishedEnemyTurn())
