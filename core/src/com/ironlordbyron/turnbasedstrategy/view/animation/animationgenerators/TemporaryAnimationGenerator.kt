@@ -2,13 +2,12 @@ package com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators
 
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
-import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.StageProvider
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImage
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.SpriteSheetParser
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import javax.inject.Inject
 
@@ -46,7 +45,7 @@ public interface ActivatableActor {
 }
 
 class TemporaryAnimationGenerator @Inject constructor (val tileMapProvider: TileMapProvider,
-                                                       val tiledMapStageProvider: TacticalTiledMapStageProvider,
+                                                       val tiledMapStageProvider: StageProvider,
                                                        val spriteSheetParser: SpriteSheetParser
                                   ) {
     // WARNING: This doesn't actually work with protoactors that don't create AnimatedImages

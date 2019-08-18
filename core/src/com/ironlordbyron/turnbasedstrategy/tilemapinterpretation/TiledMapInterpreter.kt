@@ -7,13 +7,12 @@ import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
-import com.ironlordbyron.turnbasedstrategy.tileentity.CityTileEntity
 import javax.inject.Inject
 
 /// Responsible for figuring out which of the Tiled tiles need to become actors
 /// so that they can be manipulated.
 public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: TileEntityFactory,
-                                                     val tiledMapStageProvider: TacticalTiledMapStageProvider,
+                                                     val tiledMapStageProvider: StageProvider,
                                                      val logicalTileTracker: LogicalTileTracker,
                                                      val tileMapProvider: TileMapProvider){
 
@@ -57,12 +56,12 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
     }
 
     val tileEntityRegistrar: TileEntityRegistrar by LazyInject(TileEntityRegistrar::class.java)
-    val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider by LazyInject(TacticalTiledMapStageProvider::class.java)
+    val stageProvider: StageProvider by LazyInject(StageProvider::class.java)
     fun initializeTileEntities(tileMap: TiledMap, tileLocation: TileLocation){
         val entities = ArrayList<TileEntity>()
         val entity = tileEntityRegistrar.registerEntity(tileLocation)
         if (entity != null) {
-            tacticalTiledMapStageProvider.tiledMapStage.addActor(entity.actor)
+            stageProvider.tiledMapStage.addActor(entity.actor)
             entities.add(entity)
         }
 
@@ -133,7 +132,7 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
         return toAggloms
     }
 }
-val tiledMapStageProvider: TacticalTiledMapStageProvider by LazyInject(TacticalTiledMapStageProvider::class.java)
+val TILED_MAP_STAGE_PROVIDER: StageProvider by LazyInject(StageProvider::class.java)
 val tileMapProvider: TileMapProvider by LazyInject(TileMapProvider::class.java)
 data class TiledCellData(val properties: Collection<String>,
                          val cell: TiledMapTileLayer.Cell,

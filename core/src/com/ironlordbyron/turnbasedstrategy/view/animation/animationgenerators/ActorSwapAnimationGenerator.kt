@@ -2,7 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators
 
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Actor
-import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.StageProvider
 import com.ironlordbyron.turnbasedstrategy.tiledutils.getBoundingBox
 import com.ironlordbyron.turnbasedstrategy.tiledutils.setBoundingBox
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
@@ -10,7 +10,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import javax.inject.Inject
 
-public class ActorSwapAnimationGenerator @Inject constructor(val stageProvider: TacticalTiledMapStageProvider){
+public class ActorSwapAnimationGenerator @Inject constructor(val stageProvider: StageProvider){
 
     public fun generateActorSwapActorActionPair(protoActorToCreate: ProtoActor,
                                                 animatedImageParams: AnimatedImageParams,

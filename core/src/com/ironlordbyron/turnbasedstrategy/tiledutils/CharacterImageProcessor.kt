@@ -64,7 +64,7 @@ private val TextureRegion.boundingRectangle: BoundingRectangle
     }
 
 @Singleton
-class SpriteActorFactory @Inject constructor(val stageProvider: TacticalTiledMapStageProvider) {
+class SpriteActorFactory @Inject constructor(val stageProvider: StageProvider) {
     fun createSpriteActor(texture: TextureRegion, bounds: BoundingRectangle, alpha: Float = 1f): SpriteActor {
         val spriteActor = SpriteActor(texture, bounds, alpha)
 

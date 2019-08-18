@@ -1,9 +1,12 @@
 package com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.badlogic.gdx.scenes.scene2d.ui.TextArea
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.extensions.toImage
@@ -32,11 +35,29 @@ public class SpeechBubbleAnimation{
 
     val GROUP_HEIGHT_OFFSET = 20f
 
-    fun createTextBoxAtTopOfScreenWithCharacter(text: String, protoActor: ProtoActor? = null) : Actor{
+    fun createLocalizedTextBoxWithCharacter(text: String, protoActor: ProtoActor? = null) : Actor{
         val dimensions = ActorDimensions(.2f, .8f, .9f, .7f)
-        val textButton=  TextButton(text, DEFAULT_SKIN)
-        textButton.clampToScreenRatio(dimensions)
+        val textButton=  TextArea(text, DEFAULT_SKIN) // TODO
         return textButton
+    }
+    val textButtonUnderlay by lazy { "simple/white_color.png".fromFileToTextureRegion() }
+
+    fun createTextBoxAtTopOfScreenWithCharacter(text: String, protoActor: ProtoActor? = null, startVisible: Boolean = false) : Actor {
+        val dimensions = ActorDimensions(.2f, .8f, .8f, .6f)
+
+        val textButton = TextArea(text, DEFAULT_SKIN)
+        val img = Image(textButtonUnderlay)
+        img.color = Color.BLACK
+        val actorGroup = Group()
+        actorGroup.addActor(img)
+        actorGroup.addActor(textButton)
+        actorGroup.clampToScreenRatio(dimensions)
+
+        if (!startVisible) {
+            //actorGroup.setTrueVisibility(false)
+        }
+
+        return actorGroup
     }
 
     data class ActorDimensions(val leftBorder: Float, val rightBorder: Float, val topBorder: Float, val botBorder: Float){
@@ -56,8 +77,14 @@ public class SpeechBubbleAnimation{
 
         this.width = screenwidth * (dimensions.rightBorder - dimensions.leftBorder)
         this.height = screenheight * (dimensions.topBorder - dimensions.botBorder)
-        this.x = screenheight * dimensions.leftBorder
-        this.y = screenheight * dimensions.topBorder
+        this.x = screenwidth * dimensions.leftBorder
+        this.y = screenheight * dimensions.topBorder - this.height
+        if (this is Group){
+            for (actor in this.children){
+                actor.width = this.width
+                actor.height = this.height
+            }
+        }
     }
 
     fun createSpeechBubbleFromTile(text: String, tileLocation: TileLocation, sideLength: Float = 100f) : Actor {

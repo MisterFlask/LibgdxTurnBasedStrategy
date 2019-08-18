@@ -3,14 +3,14 @@ package com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators
 import com.badlogic.gdx.graphics.Color
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.view.animation.external.FloatingText
-import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.StageProvider
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimationSpeedManager
 import javax.inject.Inject
 
 public class FloatingTextGenerator @Inject constructor (val tileMapProvider: TileMapProvider,
-                                                       val tiledMapStageProvider: TacticalTiledMapStageProvider
+                                                       val tiledMapStageProvider: StageProvider
 ){
     public fun getTemporaryAnimationActorActionPair(text: String, tileLocation: TileLocation, scale: Float = 1.0f): ActorActionPair {
 

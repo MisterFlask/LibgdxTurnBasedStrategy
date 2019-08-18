@@ -25,17 +25,17 @@ class TiledMapStage(
         val battleStarter: TempBattleStarter,
         val spriteActorFactory: SpriteActorFactory,
         val tileMapProvider: TileMapProvider,
-        val tacticalTiledMapStageProvider: TacticalTiledMapStageProvider,
+        val stageProvider: StageProvider,
         val tiledMapInterpreter: TiledMapInterpreter,
         val tiledMapProvider: TileMapProvider,
         val eventNotifier: EventNotifier,
         val tiledMapInitializer: TiledMapInitializer) : Stage(), InputProcessor {
     init {
-        tacticalTiledMapStageProvider.tiledMapStage = this
+        stageProvider.tiledMapStage = this
     }
 
     public fun initializeBattle(tiledMap: TiledMap){
-        tacticalTiledMapStageProvider.tiledMapStage = this
+        stageProvider.tiledMapStage = this
         val layer = tiledMap.getTileLayer(TileLayer.BASE)
         createActorsAndLocationsForLayer(layer, tiledMap)
         createFactoriesForStage()

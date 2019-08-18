@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 class CharacterImageManager @Inject constructor(val tiledMapOperationsHandler: TiledMapOperationsHandler,
                                                 val spriteActorFactory: SpriteActorFactory,
-                                                val stageProvider: TacticalTiledMapStageProvider,
+                                                val stageProvider: StageProvider,
                                                 val tileMapProvider: TileMapProvider) : CanTransformTextureToActor {
 
 

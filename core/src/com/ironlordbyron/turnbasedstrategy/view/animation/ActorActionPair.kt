@@ -18,5 +18,6 @@ data class ActorActionPair(val actor: Actor, val action: Action,
                            val screenShake: Boolean = false,
                            val actionOnceAnimationCompletes: () -> Unit = {},
                            val cameraTrigger: Boolean = true,
-                           val cameraFocusActor: Actor? = null) {
+                           val cameraFocusActor: Actor? = null,
+                           val startsVisible: Boolean = true) {
 }

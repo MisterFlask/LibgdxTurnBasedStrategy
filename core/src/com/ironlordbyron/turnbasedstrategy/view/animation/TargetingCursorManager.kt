@@ -8,10 +8,10 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionMa
 import com.ironlordbyron.turnbasedstrategy.controller.*
 import com.ironlordbyron.turnbasedstrategy.view.images.FileImageRetriever
 import com.ironlordbyron.turnbasedstrategy.view.images.Icon
-import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.StageProvider
 import javax.inject.Inject
 
-class TargetingCursorManager @Inject constructor(val tiledMapStageProvider: TacticalTiledMapStageProvider,
+class TargetingCursorManager @Inject constructor(val tiledMapStageProvider: StageProvider,
                                                  val imageRetriever: FileImageRetriever,
                                                  val eventNotifier: EventNotifier,
                                                  val stateProvider: BoardInputStateProvider,

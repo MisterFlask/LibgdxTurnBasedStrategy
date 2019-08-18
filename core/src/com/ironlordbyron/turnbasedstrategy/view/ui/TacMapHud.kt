@@ -2,7 +2,6 @@ package com.ironlordbyron.turnbasedstrategy.view.ui
 
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Actor
-import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.*
@@ -21,13 +20,14 @@ import com.ironlordbyron.turnbasedstrategy.common.abilities.ContextualAbilityFac
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.RenderingFunction
 import com.ironlordbyron.turnbasedstrategy.controller.*
 import com.ironlordbyron.turnbasedstrategy.font.TextLabelGenerator
+import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
+import com.ironlordbyron.turnbasedstrategy.tiledutils.StageProvider
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.LogicalCharacterActorGroup
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.PulseAnimationGenerator
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.PainterlyBorders
 import com.ironlordbyron.turnbasedstrategy.view.ui.external.BackgroundColor
 import com.kotcrab.vis.ui.building.utilities.Alignment
 
@@ -48,11 +48,14 @@ class TacMapHudFactory @Inject constructor(val eventNotifier: EventNotifier,
                                            val contextualAbilityFactory: ContextualAbilityFactory,
                                            val pulseAnimationGenerator: PulseAnimationGenerator,
                                            val textLabelGenerator: TextLabelGenerator) {
+    val stageProvider: StageProvider by LazyInject(StageProvider::class.java)
     fun create(viewPort: Viewport): TacMapHud {
-        return TacMapHud(viewPort, eventNotifier, tacticalMapState, spriteActorFactory, fileImageRetriever, characterImageManager,
+        val tmh = TacMapHud(viewPort, eventNotifier, tacticalMapState, spriteActorFactory, fileImageRetriever, characterImageManager,
                 logicalTileTracker,
                 boardInputStateProvider,
                 contextualAbilityFactory, pulseAnimationGenerator, textLabelGenerator)
+        stageProvider.tacMapHudStage = tmh
+        return tmh
     }
 }
 

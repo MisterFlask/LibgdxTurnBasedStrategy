@@ -2,7 +2,6 @@ package com.ironlordbyron.turnbasedstrategy.common.characterattributes
 
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.ActorWrapper
-import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 
 

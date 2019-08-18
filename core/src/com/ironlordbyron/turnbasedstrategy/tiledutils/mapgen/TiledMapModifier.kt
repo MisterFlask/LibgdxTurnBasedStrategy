@@ -9,7 +9,7 @@ import javax.inject.Inject
 public class TiledMapModifier  @Inject constructor (val logicalTileTracker: LogicalTileTracker,
                                                     val tileEntityFactory: TileEntityFactory,
                                                     val tileMapProvider: TileMapProvider,
-                                                    val tiledMapStageProvider: TacticalTiledMapStageProvider){
+                                                    val tiledMapStageProvider: StageProvider){
     fun purgeTile(tileLocation: TileLocation,
                     layer: TileLayer){
         val tile = logicalTileTracker.getLogicalTileFromLocation(tileLocation)

@@ -5,10 +5,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
-import com.badlogic.gdx.utils.Align
-import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
-import com.ironlordbyron.turnbasedstrategy.tiledutils.getBoundingBox
-import com.ironlordbyron.turnbasedstrategy.tiledutils.setBoundingBox
+import com.ironlordbyron.turnbasedstrategy.tiledutils.StageProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import java.util.*
 import javax.inject.Singleton
@@ -20,7 +17,7 @@ import kotlin.math.absoluteValue
 
 
 @Singleton
-class SpecialEffectManager @Inject constructor(val stageProvider: TacticalTiledMapStageProvider){
+class SpecialEffectManager @Inject constructor(val stageProvider: StageProvider){
     // val lasers = ArrayList<LaserEffect>()
     val lines = ArrayList<LineEffect>()
     val spriteBatch: SpriteBatch = SpriteBatch()

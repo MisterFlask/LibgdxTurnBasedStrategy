@@ -6,10 +6,10 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.math.Vector3
 import com.badlogic.gdx.math.Vector2
-import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.StageProvider
 import javax.inject.Inject
 
-public class ShaderFactory @Inject constructor (val tiledMapStageProvider: TacticalTiledMapStageProvider){
+public class ShaderFactory @Inject constructor (val tiledMapStageProvider: StageProvider){
 
     fun generateOutlineShaderOfColor(color: Color,
                                      outlineSize: Float): ShaderProgram {

@@ -14,7 +14,7 @@ import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
-import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.StageProvider
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.MapGenerationApplicator
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.ScenarioParams
 import com.ironlordbyron.turnbasedstrategy.view.external_deprecated.TacMapEffectsList
@@ -24,7 +24,7 @@ import javax.inject.Singleton
 
 @Singleton
 public class  TacticalMapScreen @Inject constructor(val eventNotifier: EventNotifier,
-                                                    val tiledMapStageProvider: TacticalTiledMapStageProvider,
+                                                    val tiledMapStageProvider: StageProvider,
                                                     val mapGenerationApplicator: MapGenerationApplicator) : ScreenAdapter(){
 
 

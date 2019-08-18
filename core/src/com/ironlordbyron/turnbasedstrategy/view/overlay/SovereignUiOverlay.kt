@@ -2,13 +2,13 @@ package com.ironlordbyron.turnbasedstrategy.view.overlay
 
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog
-import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.StageProvider
 import com.ironlordbyron.turnbasedstrategy.view.ui.DEFAULT_SKIN
 import javax.inject.Inject
 
 
 // When activated, brings up a sovereign menu that forces the player to hit a selection to do anything.
-public class SovereignUiOverlay @Inject constructor(val stage: TacticalTiledMapStageProvider){
+public class SovereignUiOverlay @Inject constructor(val stage: StageProvider){
     // DEMO
     public fun display(){
         val dialog = object : Dialog("Warning", DEFAULT_SKIN, "dialog") {

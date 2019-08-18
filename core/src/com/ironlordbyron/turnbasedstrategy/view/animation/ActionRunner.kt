@@ -55,7 +55,7 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
         if (current.screenShake){
             rumbler.executeRumble(.5f, 1f)
         }
-        current.actor.isVisible = true // ASSUMPTION:  All actors should be visible when their animations begin.
+        current.actor.isVisible = current.startsVisible
         current.actor.addAction(Actions.sequence(current.action, CustomAction {
             if (current.name != null){
                 // println("Actor ${current.name} has started processing.")

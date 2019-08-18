@@ -14,7 +14,7 @@ import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.tacMapState
 import com.ironlordbyron.turnbasedstrategy.tiledutils.CharacterImageManager
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
-import com.ironlordbyron.turnbasedstrategy.tiledutils.TacticalTiledMapStageProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.StageProvider
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.BoundingBoxType
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tiledutils.setBoundingBox
@@ -43,13 +43,13 @@ public class ActionManager @Inject constructor(
         private val boardState: TacticalMapState,
         private val eventNotifier: EventNotifier,
         private  val persistentActorGenerator: PersistentActorGenerator,
-        private  val stageProvider: TacticalTiledMapStageProvider,
+        private  val stageProvider: StageProvider,
         private val tileMapProvider: TileMapProvider,
         private  val movementAnimationGenerator: MovementAnimationGenerator,
         private  val revealActionGenerator: RevealActionGenerator,
         private   val logicalTileTracker: LogicalTileTracker,
         private   val actorSwapGenerator: ActorSwapAnimationGenerator,
-        private    val tiledMapStageProvider: TacticalTiledMapStageProvider,
+        private    val tiledMapStageProvider: StageProvider,
         private   val animationActionQueueProvider: AnimationActionQueueProvider,
         private    val hideAnimationGenerator: HideAnimationGenerator,
         private    val visibleCharacterDataFactory: VisibleCharacterDataFactory,
@@ -310,12 +310,13 @@ public class ActionManager @Inject constructor(
     }
 
     fun createSpeechBubble(tileLocation: TileLocation, text: String){
-        val actor = speechBubbleAnimation.createSpeechBubbleFromTile(text, tileLocation)
-        stageProvider.tiledMapStage.addActor(actor)
+        val actor = speechBubbleAnimation.createTextBoxAtTopOfScreenWithCharacter(text)
         actor.isVisible = false
+        stageProvider.tacMapHudStage.addActor(actor)
 
         animationActionQueueProvider.addAction(
-                ActorActionPair(actor,  Actions.sequence(
+                ActorActionPair(actor,
+                        Actions.sequence(
                         Actions.alpha(0f),
                         Actions.visible(true),
                         Actions.fadeIn(.5f),
@@ -324,7 +325,8 @@ public class ActionManager @Inject constructor(
                         Actions.removeActor()
                 ),
                 murderActorsOnceCompletedAnimation = true,
-                cameraTrigger = false)
+                cameraTrigger = false,
+                startsVisible = false)
         )
 
     }
