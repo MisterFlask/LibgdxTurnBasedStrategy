@@ -19,12 +19,9 @@ class RogueClass() : TacMapUnitClass("Rogue",
         6,
         0,
         6,
-        startingSecondaryWeapon = startingDagger()
+        startingSecondaryWeapon = startingDagger(),
+        protoActor = SuperimposedTilemaps.playerImageNumber("28")
 ){
-    override fun createNewTacMapUnit(): TacMapUnitTemplate {
-
-        return TacMapUnitTemplate.DEFAULT_ENEMY_UNIT
-    }
 }
 
 fun startingDagger(): LogicalEquipment {

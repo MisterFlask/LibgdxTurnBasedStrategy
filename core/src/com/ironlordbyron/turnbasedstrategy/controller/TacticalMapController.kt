@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.controller
 
+import com.badlogic.gdx.graphics.Color
 import com.google.common.base.Stopwatch
 import com.ironlordbyron.turnbasedstrategy.ai.EnemyTurnRunner
 import com.ironlordbyron.turnbasedstrategy.ai.Intent
@@ -90,7 +91,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 tacMapState.unitsAvailableToDeploy.addAll(event.scenarioParams.unitsThatPlayerWillDeploy)
                 boardInputState = BoardInputState.PlayerIsPlacingUnits()
                 val boardInputState = boardInputState as BoardInputState.PlayerIsPlacingUnits
-                tileMapHighlighter.highlightTiles(tiledMapProvider.getPlayerPlacementTilemapTiles(), HighlightType.GREEN_TILE)
+                tileMapHighlighter.highlightTiles(tiledMapProvider.getPlayerPlacementTilemapTiles(), HighlightType.GREEN_TILE, tag = "move")
                 // TODO:  This breaks in the case where we have zero units
                 eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.PlayerIsPlacingUnit(boardInputState.nextUnit()!!))
             }
@@ -112,6 +113,22 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 }
                 eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.PlayerIsPlacingUnit(tacMapState.unitsAvailableToDeploy.first()))
 
+            }
+            is TacticalGuiEvent.TileHovered -> {
+                val tileTargeted = event.location
+                val boardInputState = boardInputState
+                if (boardInputState is BoardInputState.PlayerIntendsToUseAbility){
+                    val tilesInRange = boardInputState.ability.getSquaresInRangeOfAbility(boardInputState.unit.tileLocation, boardInputState.unit)
+                    if (tileTargeted in tilesInRange){
+                        val aoe = boardInputState.ability.ability.areaOfEffect.getTilesAffected(
+                                tileTargeted,
+                                boardInputState.unit,
+                                boardInputState.ability)
+                        tileMapHighlighter.highlightTiles(aoe, HighlightType.tileOfColor(Color.GOLD), tag = "aoe-highlights")
+                    } else {
+                        tileMapHighlighter.killHighlights(tag = "aoe-highlights")
+                    }
+                }
             }
         }
     }
@@ -190,13 +207,13 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
         boardInputState = BoardInputState.UnitSelected(character)
         if (character.playerControlled){
             val tilesToHighlight = tacticalMapAlgorithms.getWhereCharacterCanMoveTo(character)
-            mapHighlighter.highlightTiles(tilesToHighlight, HighlightType.GREEN_TILE)
+            mapHighlighter.highlightTiles(tilesToHighlight, HighlightType.GREEN_TILE, tag = "move")
         }
         val enemiesTargetingPlayer = boardState.listOfEnemyCharacters
                 .filter{it.intent is Intent.Attack}
                 .filter{(it.intent as Intent.Attack).logicalCharacterUuid == character.id}
                 .map{it.tileLocation}
-        mapHighlighter.highlightTiles(enemiesTargetingPlayer, HighlightType.RED_TILE)
+        mapHighlighter.highlightTiles(enemiesTargetingPlayer, HighlightType.RED_TILE, tag = "attack")
 
         // actionManager.createSpeechBubble(character, "'Allo!")
         animationActionQueueProvider.runThroughActionQueue()

@@ -18,13 +18,9 @@ class CommissarClass() : TacMapUnitClass("Commissar",
         8,
         1,
         6,
-        startingSecondaryWeapon = startingPistol()
-) {
-    override fun createNewTacMapUnit(): TacMapUnitTemplate {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-}
-
+        startingSecondaryWeapon = startingPistol(),
+        protoActor = SuperimposedTilemaps.playerImageNumber("25")
+)
 fun startingPistol(): LogicalEquipment {
     return LogicalEquipment("Commissar's Pistol", EquipmentClass.PISTOL,
             listOf(motivateAbility(), melterPistol()))

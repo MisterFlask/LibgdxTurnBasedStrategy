@@ -5,6 +5,7 @@ import com.ironlordbyron.turnbasedstrategy.common.abilities.*
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.equipment.EquipmentClass
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 
 
 class PyromancerClass() : TacMapUnitClass("Pyromancer",
@@ -13,11 +14,9 @@ class PyromancerClass() : TacMapUnitClass("Pyromancer",
         5,
         0,
         7,
-        startingSecondaryWeapon = startingPyromancerSpellbook()
+        startingSecondaryWeapon = startingPyromancerSpellbook(),
+        protoActor = SuperimposedTilemaps.playerImageNumber("27")
 ){
-    override fun createNewTacMapUnit(): TacMapUnitTemplate {
-        return TacMapUnitTemplate.DEFAULT_ENEMY_UNIT
-    }
 }
 
 fun startingPyromancerSpellbook(): LogicalEquipment {

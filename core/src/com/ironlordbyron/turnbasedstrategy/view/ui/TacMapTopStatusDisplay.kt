@@ -14,6 +14,7 @@ import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.font.TextLabelGenerator
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
+import com.ironlordbyron.turnbasedstrategy.view.images.Dimensions
 import com.ironlordbyron.turnbasedstrategy.view.ui.external.BackgroundColor
 
 public class TacMapTopStatusDisplay(val viewPort: Viewport) : Stage(viewPort),
@@ -108,7 +109,7 @@ fun Actor.clampToTop(rightExclusion: Float?){
     }
 }
 
-private fun Float?.shouldBeFractional() {
+fun Float?.shouldBeFractional() {
     if (this == null){
         throw IllegalArgumentException("Must be a fraction, but was null")
     }

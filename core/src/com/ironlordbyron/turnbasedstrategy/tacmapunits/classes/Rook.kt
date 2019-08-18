@@ -21,11 +21,9 @@ class RookClass() : TacMapUnitClass("Rook",
         8,
         1,
         6,
-        startingSecondaryWeapon = startingHook()
+        startingSecondaryWeapon = startingHook(),
+        protoActor = SuperimposedTilemaps.playerImageNumber("24")
 ){
-    override fun createNewTacMapUnit(): TacMapUnitTemplate {
-        return TacMapUnitTemplate.DEFAULT_ENEMY_UNIT
-    }
 }
 
 fun startingHook(): LogicalEquipment {

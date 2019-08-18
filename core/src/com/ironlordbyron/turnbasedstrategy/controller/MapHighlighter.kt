@@ -17,11 +17,13 @@ public class MapHighlighter @Inject constructor(val tiledMapOperationsHandler: T
                                                 val imageActorFactory: SpriteActorFactory,
                                                 val tileMapProvider: TileMapProvider){
 
-    private val listOfHighlights = ArrayList<Actor>()
+    private val mapOfHighlights = HashMap<String, MutableCollection<Actor>>()
 
     public fun highlightTiles(tiles: Collection<TileLocation>,
                        highlightType: HighlightType,
+                       tag: String,
                        actionGenerator: ActionGeneratorType = ActionGeneratorType.HIGHLIGHT_UNTIL_FURTHER_NOTICE) {
+        killHighlights(tag)
         for (location in tiles) {
             val actionToApply = when(actionGenerator){
                 ActionGeneratorType.HIGHLIGHT_UNTIL_FURTHER_NOTICE -> foreverHighlightBlinking()
@@ -32,13 +34,22 @@ public class MapHighlighter @Inject constructor(val tiledMapOperationsHandler: T
                 actor.color = highlightType.color
             }
             actor.addAction(actionToApply)
-            listOfHighlights.add(actor)
+
+            if (!mapOfHighlights.containsKey(tag)){
+                mapOfHighlights.put(tag, arrayListOf())
+            }
+            mapOfHighlights.get(tag)!!.add(actor)
         }
     }
 
-    public fun killHighlights() {
-        listOfHighlights.forEach { it.remove() }
-        listOfHighlights.removeAll{true}
+    public fun killHighlights(tag: String? = null) {
+        for (item in mapOfHighlights){
+            if (tag == null || tag == item.key){
+                val listOfHighlights = item.value
+                listOfHighlights.forEach { it.remove() }
+                listOfHighlights.removeAll{true}
+            }
+        }
     }
 
     fun getTileHighlightActorActionPairs(tiles: Collection<TileLocation>,

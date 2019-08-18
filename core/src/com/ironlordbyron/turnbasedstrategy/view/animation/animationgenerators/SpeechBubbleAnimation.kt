@@ -1,16 +1,21 @@
 package com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators
 
+import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Group
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.extensions.toImage
 import com.ironlordbyron.turnbasedstrategy.common.extensions.toNonHittableImage
 import com.ironlordbyron.turnbasedstrategy.font.TextLabelGenerator
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.tiledutils.toLibgdxCoordinates
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.images.Dimensions
 import com.ironlordbyron.turnbasedstrategy.view.images.fromFileToTextureRegion
+import com.ironlordbyron.turnbasedstrategy.view.ui.DEFAULT_SKIN
+import com.ironlordbyron.turnbasedstrategy.view.ui.shouldBeFractional
 import java.time.Duration
 
 public class SpeechBubbleAnimation{
@@ -26,6 +31,35 @@ public class SpeechBubbleAnimation{
     }
 
     val GROUP_HEIGHT_OFFSET = 20f
+
+    fun createTextBoxAtTopOfScreenWithCharacter(text: String, protoActor: ProtoActor? = null) : Actor{
+        val dimensions = ActorDimensions(.2f, .8f, .9f, .7f)
+        val textButton=  TextButton(text, DEFAULT_SKIN)
+        textButton.clampToScreenRatio(dimensions)
+        return textButton
+    }
+
+    data class ActorDimensions(val leftBorder: Float, val rightBorder: Float, val topBorder: Float, val botBorder: Float){
+        init{
+            leftBorder.shouldBeFractional()
+            rightBorder.shouldBeFractional()
+            topBorder.shouldBeFractional()
+            botBorder.shouldBeFractional()
+            assert(leftBorder < rightBorder)
+            assert(topBorder > botBorder)
+        }
+    }
+
+    fun Actor.clampToScreenRatio(dimensions: ActorDimensions){
+        val screenwidth  = Gdx.graphics.width.toFloat()
+        val screenheight  = Gdx.graphics.height.toFloat()
+
+        this.width = screenwidth * (dimensions.rightBorder - dimensions.leftBorder)
+        this.height = screenheight * (dimensions.topBorder - dimensions.botBorder)
+        this.x = screenheight * dimensions.leftBorder
+        this.y = screenheight * dimensions.topBorder
+    }
+
     fun createSpeechBubbleFromTile(text: String, tileLocation: TileLocation, sideLength: Float = 100f) : Actor {
         val image = rightwardSpeechBubble.toNonHittableImage()
         image.height = sideLength
@@ -44,6 +78,8 @@ public class SpeechBubbleAnimation{
         actorGroup.x = libgdxCoords.x.toFloat()
         actorGroup.y = libgdxCoords.y.toFloat() - GROUP_HEIGHT_OFFSET
         actorGroup.addActor(image)
+        //image.width = label.label.width
+        //image.height = label.label.height
         actorGroup.addActor(label.label)
         actorGroup.isVisible = false
         return actorGroup

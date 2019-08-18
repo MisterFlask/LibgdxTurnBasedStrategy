@@ -21,11 +21,9 @@ class KnightClass() : TacMapUnitClass("Knight",
         8,
         1,
         6,
-        startingSecondaryWeapon = startingLongsword()
+        startingSecondaryWeapon = startingLongsword(),
+        protoActor = SuperimposedTilemaps.playerImageNumber("26")
 ){
-    override fun createNewTacMapUnit(): TacMapUnitTemplate {
-        return TacMapUnitTemplate.DEFAULT_ENEMY_UNIT
-    }
 }
 
 fun startingLongsword(): LogicalEquipment {

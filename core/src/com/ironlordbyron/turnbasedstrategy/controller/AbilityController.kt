@@ -16,7 +16,7 @@ class AbilityController @Inject constructor(val tacticalMapState: TacticalMapSta
         val ability = logicalAbilityAndEquipment.ability.abilityTargetingParameters
         val tilesInRange = ability.getValidAbilityTargetSquares(characterUsingAbility, logicalAbilityAndEquipment, characterUsingAbility.tileLocation)
         mapHighlighter.killHighlights()
-        mapHighlighter.highlightTiles(tilesInRange, HighlightType.RED_TILE)
+        mapHighlighter.highlightTiles(tilesInRange, HighlightType.RED_TILE, tag = "attack")
     }
 
     fun isSquareInRangeForAbility(characterUsingAbility: LogicalCharacter,
