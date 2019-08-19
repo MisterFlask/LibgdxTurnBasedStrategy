@@ -35,14 +35,35 @@ public class SpeechBubbleAnimation{
 
     val GROUP_HEIGHT_OFFSET = 20f
 
-    fun createLocalizedTextBoxWithCharacter(text: String, protoActor: ProtoActor? = null) : Actor{
-        val dimensions = ActorDimensions(.2f, .8f, .9f, .7f)
-        val textButton=  TextArea(text, DEFAULT_SKIN) // TODO
-        return textButton
-    }
     val textButtonUnderlay by lazy { "simple/white_color.png".fromFileToTextureRegion() }
 
-    fun createTextBoxAtTopOfScreenWithCharacter(text: String, protoActor: ProtoActor? = null, startVisible: Boolean = false) : Actor {
+    fun createLocationOrientedTextBox(text: String,
+                                protoActor: ProtoActor? = null,
+                                tileLocation: TileLocation): Group {
+
+        val width = 200f
+        val height = 80f
+
+        val textButton = TextArea(text, DEFAULT_SKIN)
+        val img = Image(textButtonUnderlay)
+        img.color = Color.BLACK
+        img.width = width
+        img.height = height
+        textButton.width = width
+        textButton.height = height
+        val actorGroup = Group()
+        actorGroup.addActor(img)
+        actorGroup.addActor(textButton)
+
+        val screencoords = tileLocation.toLibgdxCoordinates()
+        actorGroup.x = screencoords.x.toFloat() + 30f
+        actorGroup.y = screencoords.y.toFloat() + 30f
+        return actorGroup
+    }
+
+    fun createTextBoxAtTopOfScreenWithCharacter(text: String,
+                                                protoActor: ProtoActor? = null,
+                                                startVisible: Boolean = false) : Actor {
         val dimensions = ActorDimensions(.2f, .8f, .8f, .6f)
 
         val textButton = TextArea(text, DEFAULT_SKIN)

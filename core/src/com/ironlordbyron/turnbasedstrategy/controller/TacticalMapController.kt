@@ -5,7 +5,6 @@ import com.google.common.base.Stopwatch
 import com.ironlordbyron.turnbasedstrategy.ai.EnemyTurnRunner
 import com.ironlordbyron.turnbasedstrategy.ai.Intent
 import com.ironlordbyron.turnbasedstrategy.common.*
-import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityClass
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
@@ -149,7 +148,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 return
             }
             if (!isValidPlacementOfCharacter(location)){
-                actionManager.createSpeechBubble(location, "I can only deploy in a drop zone!")
+                actionManager.createSpeechBubbleAtLocation(location, "I can only deploy in a drop zone!")
                 return
             }
             val boardInputState = boardInputState as BoardInputState.PlayerIsPlacingUnits
@@ -215,7 +214,7 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 .map{it.tileLocation}
         mapHighlighter.highlightTiles(enemiesTargetingPlayer, HighlightType.RED_TILE, tag = "attack")
 
-        // actionManager.createSpeechBubble(character, "'Allo!")
+        // actionManager.createSpeechBubbleAtLocation(character, "'Allo!")
         animationActionQueueProvider.runThroughActionQueue()
 
     }

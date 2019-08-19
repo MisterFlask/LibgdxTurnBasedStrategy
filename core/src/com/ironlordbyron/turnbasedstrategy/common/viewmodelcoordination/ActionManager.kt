@@ -309,19 +309,19 @@ public class ActionManager @Inject constructor(
         GameModuleInjector.generateInstance(SpeechBubbleAnimation::class.java)
     }
 
-    fun createSpeechBubble(tileLocation: TileLocation, text: String){
-        val actor = speechBubbleAnimation.createTextBoxAtTopOfScreenWithCharacter(text)
+    fun createSpeechBubbleAtLocation(tileLocation: TileLocation, text: String){
+        val actor = speechBubbleAnimation.createLocationOrientedTextBox(text, tileLocation = tileLocation)
         actor.isVisible = false
-        stageProvider.tacMapHudStage.addActor(actor)
+        stageProvider.tiledMapStage.addActor(actor)
 
         animationActionQueueProvider.addAction(
                 ActorActionPair(actor,
                         Actions.sequence(
                         Actions.alpha(0f),
                         Actions.visible(true),
-                        Actions.fadeIn(.5f),
+                        Actions.fadeIn(.2f),
                         Actions.delay(1f),
-                        Actions.fadeOut(.5f),
+                        Actions.fadeOut(.2f),
                         Actions.removeActor()
                 ),
                 murderActorsOnceCompletedAnimation = true,
