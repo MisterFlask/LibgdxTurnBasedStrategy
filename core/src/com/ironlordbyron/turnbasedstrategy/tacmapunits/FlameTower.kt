@@ -6,6 +6,7 @@ import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.abilities.*
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.PainterlyIcons
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 
 @SpawnableUnitTemplate("FLAME_TOWER")
@@ -28,7 +29,7 @@ public fun FlameTower(): TacMapUnitTemplate {
 public fun FlameTowerAttack() : LogicalAbility{
     return LogicalAbility("Laser", AbilitySpeed.ENDS_TURN,
             0,
-            SuperimposedTilemaps.toDefaultProtoActor(),
+            PainterlyIcons.FIRE_ARROWS.toProtoActor(1),
             damage = 2,
             description = "Fires a gout of flame",
             rangeStyle = RangeStyle.Simple(6),

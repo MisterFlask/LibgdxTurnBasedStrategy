@@ -74,9 +74,12 @@ public class AppliesAttributeOnHit() : FunctionalAttributeEffect() {
     }
 }
 
-annotation class SpawnableUnitTemplate(val id: String)
+enum class SpawnableUnitTemplateTags{
+    ORGAN, MOB
+}
+annotation class SpawnableUnitTemplate(val id: String, val tags: Array<SpawnableUnitTemplateTags> = arrayOf())
 
-data class UnitTemplateSpawner(val obj: Any?, val method: Method, val id: String){
+data class UnitTemplateSpawner(val obj: Any?, val method: Method, val id: String, val tags: List<SpawnableUnitTemplateTags> = listOf()){
     fun spawn() : TacMapUnitTemplate{
         return method.invoke(null) as TacMapUnitTemplate
     }
@@ -114,7 +117,7 @@ public class UnitTemplateRegistrar(){
             }
             val annotation = item.getAnnotation(SpawnableUnitTemplate::class.java)
             val tacMapUnitTemplate = item.invoke(null)
-            unitTemplates.add(UnitTemplateSpawner(null, item, annotation.id))
+            unitTemplates.add(UnitTemplateSpawner(null, item, annotation.id, tags = annotation.tags.toList()))
         }
 
         Logging.DebugGeneral("Registered ${unitTemplates.size} unit templates!")

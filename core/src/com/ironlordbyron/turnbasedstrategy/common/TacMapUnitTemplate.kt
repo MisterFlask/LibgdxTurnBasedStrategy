@@ -21,6 +21,9 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 import java.util.*
 
+class Tags{
+
+}
 
 class TacMapUnitTemplate(val movesPerTurn: Int,
                               val tiledTexturePath: ProtoActor,
@@ -43,7 +46,8 @@ class TacMapUnitTemplate(val movesPerTurn: Int,
                               val possibleRandomizedIntents: List<IntentType> = listOf(IntentType.ATTACK, IntentType.MOVE),
                               val templateId: String = templateName,
                               val metagoal: Metagoal = AttackMetaGoal(),
-                              val turnStartAction: TurnStartAction? = null
+                              val turnStartAction: TurnStartAction? = null,
+                              val tags: Tags? = null
 ) {
 
     private val stacksOfAttribute: HashMap<String, Int> = hashMapOf()

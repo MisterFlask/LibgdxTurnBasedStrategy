@@ -4,6 +4,7 @@ import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCha
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeActionManager
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
 import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
@@ -36,6 +37,11 @@ public class GlobalTacMapState: TurnStartListener, BattleStartListener {
         )
     }
 
+
+    fun incrementAlertness(i: Int){
+        alertness += i
+        eventNotifierObject.notifyListenersOfGuiEvent(TacticalGuiEvent.ShouldRefreshGui())
+    }
 
     override fun handleBattleStartEvent() {
         alertness = 0

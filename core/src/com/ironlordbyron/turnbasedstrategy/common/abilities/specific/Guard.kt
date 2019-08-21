@@ -13,6 +13,7 @@ import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.isAdjacentTo
 import com.ironlordbyron.turnbasedstrategy.toCharacter
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.PainterlyIcons
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 import java.util.*
 
@@ -27,7 +28,7 @@ class GuardAction: LogicalAbilityEffect {
 
 class GuardedAttribute(val guardedByCharacter: UUID): LogicalCharacterAttribute(
         "Guarded",
-        imageIcon = SuperimposedTilemaps.toDefaultProtoActor(),
+        imageIcon = PainterlyIcons.PROTECT_SKY.toProtoActor(1),
         id = "GUARDED",
         description = {"if this character is near ${guardedByCharacter.toCharacter().tacMapUnit.templateName}, attacks that target this character hit "},
         otherCustomEffects = listOf(GuardedFunctionalEffect(guardedByCharacter)) // TODO

@@ -5,11 +5,12 @@ import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeActionManager
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplate
+import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplateTags
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 
-@SpawnableUnitTemplate("VOID_BELL")
+@SpawnableUnitTemplate("VOID_BELL", tags = arrayOf(SpawnableUnitTemplateTags.ORGAN))
 public fun VoidBell(): TacMapUnitTemplate {
     return TacMapUnitTemplate(0,
             SuperimposedTilemaps.doorImageNumber("47"),

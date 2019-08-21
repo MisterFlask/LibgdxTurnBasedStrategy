@@ -11,12 +11,13 @@ import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.Temp
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeActionManager
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplate
+import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplateTags
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.PainterlyIcons
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 
-@SpawnableUnitTemplate("ARMORER")
+@SpawnableUnitTemplate("ARMORER", tags = arrayOf(SpawnableUnitTemplateTags.ORGAN))
 public fun Armorer(): TacMapUnitTemplate {
     return TacMapUnitTemplate(0,
             SuperimposedTilemaps.elementalImageNumber("1"),

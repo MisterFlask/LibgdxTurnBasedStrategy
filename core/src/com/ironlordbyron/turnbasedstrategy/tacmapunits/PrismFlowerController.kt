@@ -6,14 +6,16 @@ import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCha
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalAttributeEffect
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalEffectParameters
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplate
+import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplateTags
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.randomElement
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.PainterlyIcons
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 
 
 val tacMapState : TacticalMapState by LazyInject(TacticalMapState::class.java)
 
-@SpawnableUnitTemplate("PRISM_FLOWER_CONTROLLER")
+@SpawnableUnitTemplate("PRISM_FLOWER_CONTROLLER", tags = arrayOf(SpawnableUnitTemplateTags.ORGAN))
 public fun PrismFlowerController(): TacMapUnitTemplate {
     return TacMapUnitTemplate(0,
             SuperimposedTilemaps.elementalImageNumber("33"),
@@ -23,7 +25,7 @@ public fun PrismFlowerController(): TacMapUnitTemplate {
             metagoal = NullAiMetaGoal(),
             attributes = arrayListOf(LogicalCharacterAttribute(
                     "Prism Flower Controller",
-                    imageIcon = SuperimposedTilemaps.toDefaultProtoActor(),
+                    imageIcon = PainterlyIcons.BEAM_ORANGE.toProtoActor(3),
                     otherCustomEffects = listOf(KillAllUnitsOfTypeEffect("PRISM_FLOWER")),
                     description = {"All prism flowers die when this does."},
                     stackable = false
@@ -31,7 +33,7 @@ public fun PrismFlowerController(): TacMapUnitTemplate {
             templateId = "PRISM_FLOWER_CONTROLLER")
 }
 
-@SpawnableUnitTemplate("FLAME_TOWER_CONTROLLER")
+@SpawnableUnitTemplate("FLAME_TOWER_CONTROLLER", tags = arrayOf(SpawnableUnitTemplateTags.ORGAN))
 public fun FlameTowerController(): TacMapUnitTemplate {
     return TacMapUnitTemplate(0,
             TacMapUnitTemplate._demonImg.copy(textureId = "9"),
@@ -41,7 +43,8 @@ public fun FlameTowerController(): TacMapUnitTemplate {
             metagoal = NullAiMetaGoal(),
             attributes = arrayListOf(LogicalCharacterAttribute(
                     "Flame Tower Controller",
-                    imageIcon = SuperimposedTilemaps.toDefaultProtoActor(),
+                    imageIcon =
+                    PainterlyIcons.BEAM_ORANGE.toProtoActor(2),
                     otherCustomEffects = listOf(KillAllUnitsOfTypeEffect("FLAME_TOWER")),
                     description = {"All prism flowers die when this does."},
                     stackable = false

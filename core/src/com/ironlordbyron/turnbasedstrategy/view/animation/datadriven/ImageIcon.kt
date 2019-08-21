@@ -38,6 +38,7 @@ public class ImageIcon (
 
 class PainterlyIcon(val fileString: String) {
     fun toProtoActor(extremitude: Int): ProtoActor {
+        assert(extremitude in 1 .. 4)
         return ImageIcon(ImageIcon._PAINTERLY_FOLDER, fileString.replace("[x]", extremitude.toString()))
     }
 }
