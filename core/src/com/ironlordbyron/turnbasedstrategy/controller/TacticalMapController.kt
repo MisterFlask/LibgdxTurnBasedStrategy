@@ -73,6 +73,9 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 playerHasPriority = true
             }
             is TacticalGuiEvent.ClickedButtonToActivateAbility -> {
+                if (boardInputState is BoardInputState.PlayerIsPlacingUnits){
+                    return
+                }
                 val selectedCharacter = selectedCharacter
                 if (selectedCharacter == null){
                     throw IllegalStateException("Clicked button to activate abilityEquipmentPair when no char selected")

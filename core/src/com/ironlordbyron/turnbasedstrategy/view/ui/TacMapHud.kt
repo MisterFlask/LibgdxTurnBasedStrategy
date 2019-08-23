@@ -208,7 +208,7 @@ class TacMapHud(viewPort: Viewport,
 
         characterDisplayTable.row()
         characterDisplayTable.add(debugTextArea).width(300f)
-
+        characterDisplayTable.withBorder()
     }
 
     val combatPhaseLabel = Table()
@@ -336,9 +336,9 @@ class TacMapHud(viewPort: Viewport,
         val actor =
                 Window("", DEFAULT_SKIN).let {
 
-                    it.add(combatPhaseLabel).fill().expand()
+                    it.add(combatPhaseLabel.withBorder()).fill().expand()
                     it.row()
-                    it.add(characterSelectCarousel).fill().expand()
+                    it.add(characterSelectCarousel.withBorder()).fill().expand()
                     it.row()
                     it.add(characterDisplayTable).fill().expand()
 
