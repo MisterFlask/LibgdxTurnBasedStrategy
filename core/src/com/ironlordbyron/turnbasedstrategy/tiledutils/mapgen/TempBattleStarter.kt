@@ -93,8 +93,8 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
             logicHooks.onUnitCreation(char)
         }
 
-        actionManager.createSpeechBubbleForCharacter("And now, we begin.",
-                TacMapUnitTemplate.DEFAULT_ENEMY_UNIT, 3f)
+        actionManager.createAwaitedSpeechBubbleForCharacter("And now, we begin.",
+                TacMapUnitTemplate.DEFAULT_ENEMY_UNIT)
 
         animationActionQueueProvider.runThroughActionQueue()
     }

@@ -1,23 +1,25 @@
 package com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination
 
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import com.google.inject.assistedinject.Assisted
 import com.ironlordbyron.turnbasedstrategy.ai.BasicAiDecisions
 import com.ironlordbyron.turnbasedstrategy.ai.PathfinderFactory
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.MapHighlighter
+import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.tacMapState
-import com.ironlordbyron.turnbasedstrategy.tiledutils.CharacterImageManager
-import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
-import com.ironlordbyron.turnbasedstrategy.tiledutils.StageProvider
+import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.BoundingBoxType
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
-import com.ironlordbyron.turnbasedstrategy.tiledutils.setBoundingBox
 import com.ironlordbyron.turnbasedstrategy.tileentity.CityTileEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
@@ -34,6 +36,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.external.SpecialEffect
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -310,9 +313,47 @@ public class ActionManager @Inject constructor(
         GameModuleInjector.generateInstance(SpeechBubbleAnimation::class.java)
     }
 
+    /**
+     * Defines action to be performed when user clicks on or hovers over a tile.
+     */
+    class ThingClickedListener(
+                               val clicked: AtomicBoolean) : ClickListener() {
+        override fun touchDown(event: InputEvent, x: Float,
+                               y: Float, pointer: Int, button: Int): Boolean {
+            clicked.set(true)
+            return false
+        }
+    }
+    fun createAwaitedSpeechBubbleForCharacter(text: String, tacMapUnit: TacMapUnitTemplate){
+
+        val actor = speechBubbleAnimation.createTextBoxAtTopOfScreenWithCharacter(text,
+                protoActor = tacMapUnit.tiledTexturePath)
+        actor.isVisible = false
+        val isDone = AtomicBoolean(false)
+        actor.addListener(ThingClickedListener(isDone))
+        stageProvider.tacMapHudStage.addActor(actor)
+
+        animationActionQueueProvider.addAction(
+                ActorActionPair(actor,
+                        Actions.sequence(
+                                Actions.alpha(0f),
+                                Actions.visible(true),
+                                Actions.fadeIn(.2f),
+                                TriggeredDelayAction(isDone),
+                                Actions.fadeOut(.2f),
+                                Actions.removeActor()
+                        ),
+                        murderActorsOnceCompletedAnimation = true,
+                        cameraTrigger = false,
+                        startsVisible = false)
+        )
+    }
+
     fun createSpeechBubbleForCharacter(text: String,
                                        tacMapUnit: TacMapUnitTemplate,
-                                       timeToLiveInSeconds: Float){
+                                       timeToLiveInSeconds: Float,
+                                       //  todo: Figure out how to make wait-for-click work with animation engine
+                                       waitForClick: Boolean = false){
 
         val actor = speechBubbleAnimation.createTextBoxAtTopOfScreenWithCharacter(text,
                 protoActor = tacMapUnit.tiledTexturePath)
@@ -374,5 +415,29 @@ public class ActionManager @Inject constructor(
     }
 
 }
+
+class TriggeredDelayAction(val trigger: AtomicBoolean): Action() {
+    override fun act(delta: Float): Boolean {
+        return trigger.get()
+    }
+
+}
+
+val DIM_COLOR = Color(.5f,.5f,.5f, 1f)
+val BRIGHT_COLOR = Color.WHITE
+private class HoverGlowListener(val actor: Actor) : ClickListener() {
+    override fun enter(event: InputEvent?, x: Float, y: Float, pointer: Int, fromActor: Actor?) {
+        actor.color = BRIGHT_COLOR
+    }
+
+    override fun exit(event: InputEvent?, x: Float, y: Float, pointer: Int, toActor: Actor?) {
+        actor.color = DIM_COLOR
+    }
+}
+
+fun Actor.addHoverLighting(){
+    this.addListener(HoverGlowListener(this))
+}
+
 // TODO: Data driven character generation
 data class SpawnCharacterAtTileParams(val tacMapUnit: TacMapUnitTemplate, val tileLocation: TileLocation, val protoActor: ProtoActor, val animatedImageParams: AnimatedImageParams = AnimatedImageParams.RUN_ALWAYS_AND_FOREVER)
