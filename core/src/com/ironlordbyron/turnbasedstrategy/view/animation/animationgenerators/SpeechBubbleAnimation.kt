@@ -1,10 +1,9 @@
 package com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators
 
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Group
-import com.badlogic.gdx.scenes.scene2d.ui.Image
+import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextArea
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.font.TextLabelGenerator
@@ -14,6 +13,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.images.fromFileToTextureRegion
 import com.ironlordbyron.turnbasedstrategy.view.ui.DEFAULT_SKIN
 import com.ironlordbyron.turnbasedstrategy.view.ui.shouldBeFractional
+import com.ironlordbyron.turnbasedstrategy.view.ui.withBorder
 
 public class SpeechBubbleAnimation{
     val textLabelGenerator by lazy{
@@ -25,53 +25,35 @@ public class SpeechBubbleAnimation{
     val textButtonUnderlay by lazy { "simple/white_color.png".fromFileToTextureRegion() }
 
     fun createLocationOrientedTextBox(text: String,
-                                protoActor: ProtoActor? = null,
                                 tileLocation: TileLocation): Group {
 
-        val width = 200f
-        val height = 80f
-
+        val width = 300f
+        val height = 150f
         val textButton = TextArea(text, DEFAULT_SKIN)
-        val img = Image(textButtonUnderlay)
-        img.color = Color.BLACK
-        img.width = width
-        img.height = height
-        textButton.width = width
-        textButton.height = height
-        val actorGroup = Group()
-        actorGroup.addActor(img)
-        actorGroup.addActor(textButton)
+        val table = Table()
+        table.width = width
+        table.height = height
+        table.add(textButton).fill().expand()
+        table.withBorder()
 
         val screencoords = tileLocation.toLibgdxCoordinates()
-        actorGroup.x = screencoords.x.toFloat() + 30f
-        actorGroup.y = screencoords.y.toFloat() + 30f
-        return actorGroup
+        table.x = screencoords.x.toFloat() + 30f
+        table.y = screencoords.y.toFloat() + 30f
+        return table
     }
 
     fun createTextBoxAtTopOfScreenWithCharacter(text: String,
                                                 protoActor: ProtoActor) : Actor {
-        val dimensions = ActorDimensions(.4f, .8f, .8f, .6f)
-        val leftPortraitDimensions = ActorDimensions(.25f, .4f, .8f, .6f)
+        val dimensions = ActorDimensions(.25f, .8f, .2f, 0f)
         val textButton = TextArea(text, DEFAULT_SKIN)
-        val img = Image(textButtonUnderlay)
-        img.color = Color.BLACK
-        val textActorGroup = Group()
-        textActorGroup.addActor(img)
-        textActorGroup.addActor(textButton)
-        textActorGroup.clampToScreenRatio(dimensions)
+        val table = Table()
+        table.clampToScreenRatio(dimensions)
+        val actor = protoActor.toActor().actor
+        val aspectRatio = actor.height / actor.width
 
-        val imageActorGroup = Group()
-        val portrait = protoActor!!.toActor()
-        val portraitBackground = Image(textButtonUnderlay)
-        portraitBackground.color = Color.BLACK
-        imageActorGroup.addActor(portraitBackground)
-        imageActorGroup.addActor(portrait.actor)
-        imageActorGroup.clampToScreenRatio(leftPortraitDimensions)
-
-        val totalGroup = Group()
-        totalGroup.addActor(imageActorGroup)
-        totalGroup.addActor(textActorGroup)
-        return totalGroup
+        table.add(actor).height(table.height).width(table.height / aspectRatio)
+        table.add(textButton).expand().fill()
+        return table.withBorder(scale = 3f)
     }
 
     data class ActorDimensions(val leftBorder: Float, val rightBorder: Float, val topBorder: Float, val botBorder: Float){

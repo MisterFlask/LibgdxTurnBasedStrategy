@@ -70,7 +70,7 @@ public class TacMapTopStatusDisplay(val viewPort: Viewport) : Stage(viewPort),
         val nextEvent = tacMapGlobalState.nextEvent()
         overallTable.addLabel("Alertness: ${tacMapGlobalState.alertness}", .2f)
         overallTable.addLabel("Next event: ${nextEvent.eventName} at ${nextEvent.atAlertness}", .2f)
-
+        overallTable.withBorder()
     }
 }
 

@@ -27,6 +27,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimationSpeedManager
 import com.ironlordbyron.turnbasedstrategy.view.animation.SpriteColorActorAction
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.*
+import com.ironlordbyron.turnbasedstrategy.view.animation.camera.GameCameraProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.external.SpecialEffectManager
@@ -333,10 +334,12 @@ public class ActionManager @Inject constructor(
                         startsVisible = false)
         )
     }
-
+    val cameraProvider by LazyInject(GameCameraProvider::class.java)
     fun createSpeechBubbleAtLocation(tileLocation: TileLocation, text: String){
         val actor = speechBubbleAnimation.createLocationOrientedTextBox(text, tileLocation = tileLocation)
         actor.isVisible = false
+        actor.setTransform(true)
+        actor.setScale(cameraProvider.camera.zoom)
         stageProvider.tiledMapStage.addActor(actor)
 
         animationActionQueueProvider.addAction(

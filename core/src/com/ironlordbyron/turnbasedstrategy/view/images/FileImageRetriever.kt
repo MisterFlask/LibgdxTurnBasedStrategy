@@ -27,6 +27,9 @@ public fun String.fromFileToTextureRegion() : TextureRegion{
     return TextureRegion(Texture(Gdx.files.internal(this)))
 }
 
+public fun String.fromFileToTexture() : Texture{
+    return Texture(Gdx.files.internal(this))
+}
 public class FileImageRetriever @Inject constructor(val tileMapProvider: TileMapProvider){
 
     public fun retrieveIconImage(icon: Icon): Texture {
