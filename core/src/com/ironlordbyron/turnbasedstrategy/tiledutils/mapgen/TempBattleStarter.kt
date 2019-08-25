@@ -10,6 +10,7 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionMa
 import com.ironlordbyron.turnbasedstrategy.entrypoints.CadenceEffectsRegistrar
 import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.missiongen.TileZone
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.ShieldingOrgan
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.WeakMinionSpawner
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
@@ -57,6 +58,10 @@ class TileMapProvider {
     }
     fun getPlayerPlacementTilemapTiles() : List<TileLocation>{
         return tiledMap.getPlayerPlacementTiles()
+    }
+    fun getDiscreteZones() : List<TileZone>{
+        return tiledMap.getObjectLayerRectangles(layerName = "Zones")
+                .map{ TileZone(it.toLocations()) }
     }
 }
 

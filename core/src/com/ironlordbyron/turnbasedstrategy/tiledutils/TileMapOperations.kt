@@ -9,6 +9,7 @@ import com.google.inject.Singleton
 import com.ironlordbyron.turnbasedstrategy.Logging
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.getCharacter
+import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tiledutils.xml.TilemapXmlProcessor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 import java.util.*
@@ -218,4 +219,8 @@ fun TiledMapTileLayer.getTiles(): Set<TiledMapTile> {
 
 enum class MapType(val filePrefix: String){
     SOURCE_MAP(sourceMapPrecursor), FRAGMENT_MAP(fragmentsPrecursor), HIGHLIGHT_MAP("tilehighlights")
+}
+
+fun LogicalTiledObject.toLocations() : Collection<TileLocation>{
+    return transformTiledObjectsToTileLocations(listOf(this))
 }

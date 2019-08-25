@@ -14,6 +14,7 @@ import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCha
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.MapHighlighter
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
+import com.ironlordbyron.turnbasedstrategy.font.TextLabelGenerator
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.tacMapState
@@ -249,6 +250,7 @@ public class ActionManager @Inject constructor(
         actorGroup.attributeActors[logicalAttribute.id] = actor
     }
 
+
     fun despawnAttributeActorAtTileInSequence(logicalAttribute: LogicalCharacterAttribute,
                                               logicalCharacter: LogicalCharacter){
         val attrActor = logicalCharacter.actor.attributeActors[logicalAttribute.id]
@@ -331,6 +333,7 @@ public class ActionManager @Inject constructor(
         actor.isVisible = false
         val isDone = AtomicBoolean(false)
         actor.addListener(ThingClickedListener(isDone))
+        actor.addHoverLighting()
         stageProvider.tacMapHudStage.addActor(actor)
 
         animationActionQueueProvider.addAction(
@@ -424,14 +427,17 @@ class TriggeredDelayAction(val trigger: AtomicBoolean): Action() {
 }
 
 val DIM_COLOR = Color(.5f,.5f,.5f, 1f)
-val BRIGHT_COLOR = Color.WHITE
+val BRIGHT_COLOR = Color(2f, 2f, 2f, 1f)
 private class HoverGlowListener(val actor: Actor) : ClickListener() {
+    val originalColor = actor.color!!
     override fun enter(event: InputEvent?, x: Float, y: Float, pointer: Int, fromActor: Actor?) {
-        actor.color = BRIGHT_COLOR
+        super.enter(event, x, y, pointer, fromActor)
+        actor.color = DIM_COLOR
     }
 
     override fun exit(event: InputEvent?, x: Float, y: Float, pointer: Int, toActor: Actor?) {
-        actor.color = DIM_COLOR
+        super.exit(event, x, y, pointer, toActor)
+        actor.color = originalColor
     }
 }
 
