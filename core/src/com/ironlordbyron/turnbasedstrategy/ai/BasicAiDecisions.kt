@@ -129,7 +129,7 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
         }
         val first = thisCharacter.abilitiesForIntent(IntentType.ATTACK).firstOrNull()
         if (first == null){
-            throw IllegalStateException("Could not find ability for intent ${thisCharacter.intent}")
+            throw IllegalStateException("Could not find ability for intent ${thisCharacter.intent} (template: ${thisCharacter.tacMapUnit.templateName})")
         }
 
         val nextLocation = getNextMoveLocationForAbility(thisCharacter, first)

@@ -7,7 +7,7 @@ import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 
-public class MissionUnitTemplateDecider{
+public class ZoneStyleMissionUnitTemplateDecider{
     val unitTemplateRegistrar by LazyInject(UnitTemplateRegistrar::class.java)
 
     /**
@@ -15,7 +15,7 @@ public class MissionUnitTemplateDecider{
      */
     private fun getOrgansToBeUsedInMission(organsToUse: Int) : Collection<TacMapUnitTemplate>{
         assert(organsToUse > 3)
-        val organs = unitTemplateRegistrar.unitTemplates.filter{it.tags.contains(SpawnableUnitTemplateTags.ORGAN)}
+        val organs = unitTemplateRegistrar.unitTemplates.filter{it.compileTimeTags.contains(SpawnableUnitTemplateTags.ORGAN)}
                 .toMutableList()
         val masterOrgan = organs.first{it.id == "MASTER_ORGAN"}
         val shieldingOrgan = organs.first{it.id == "SHIELDING_ORGAN"}
@@ -30,7 +30,11 @@ public class MissionUnitTemplateDecider{
     }
 
     private fun getMobsToBeUsedForOrganGuardianship(mobsToUse: Int): List<TacMapUnitTemplate> {
-        val mobs = unitTemplateRegistrar.unitTemplates.filter{!it.tags.contains(SpawnableUnitTemplateTags.ORGAN)}
+        val mobs = unitTemplateRegistrar
+                .unitTemplates
+                .filter{!it.compileTimeTags.contains(SpawnableUnitTemplateTags.ORGAN)}
+                .filter{it.tags.isSpawnableEnemy}
+
         val mobsDeck = mobs.repeat(3).toMutableList()
         mobsDeck.shuffle()
         return mobsDeck.take(mobsToUse).map{it.spawn()}
@@ -38,7 +42,7 @@ public class MissionUnitTemplateDecider{
 
     val tiledMapProvider by LazyInject(TileMapProvider::class.java)
 
-    fun createUnitsAndOrgans(): Collection<UnitSpawnParameter>{
+    fun createUnitsAndOrganGenerationParameters(): Collection<UnitSpawnParameter>{
         val returnedUnitSpawns = ArrayList<UnitSpawnParameter>()
         var zones = tiledMapProvider.getDiscreteZones()
         zones = zones.shuffled()
@@ -46,6 +50,9 @@ public class MissionUnitTemplateDecider{
         for (zone in zones){
             val mobs = getMobsToBeUsedForOrganGuardianship(4)
             val organ = organQueue.pop()
+            if (organ == null){
+                continue
+            }
             val tilesInZone = zone.tiles.shuffled().toList()
             mobs.forEachIndexed{
                 i, template -> returnedUnitSpawns.add(UnitSpawnParameter(tilesInZone.get(i), template))
@@ -66,8 +73,9 @@ fun<T> Collection<T>.repeat(n: Int) : Collection<T>{
     return l
 }
 
-fun<T> MutableList<T>.pop(): T {
-    val last = this.last()
+fun<T> MutableList<T>.pop(): T? {
+    val last = this.lastOrNull()
+    if (last == null) return null
     this.removeAt(this.lastIndex)
     return last
 }

@@ -3,16 +3,15 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.ironlordbyron.turnbasedstrategy.common.*
-import com.ironlordbyron.turnbasedstrategy.common.abilities.specific.SNOOZING
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.entrypoints.CadenceEffectsRegistrar
 import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.missiongen.TileZone
-import com.ironlordbyron.turnbasedstrategy.tacmapunits.ShieldingOrgan
-import com.ironlordbyron.turnbasedstrategy.tacmapunits.WeakMinionSpawner
+import com.ironlordbyron.turnbasedstrategy.missiongen.ZoneStyleMissionUnitTemplateDecider
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 import javax.inject.Inject
@@ -80,6 +79,8 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
         GameModuleInjector.generateInstance(CadenceEffectsRegistrar::class.java)
     }
 
+    val zoneStyleMissionUnitTemplateDecider by LazyInject(ZoneStyleMissionUnitTemplateDecider::class.java)
+
     fun startBattle(){
         println("Starting battle")
         cadenceEffectsRegistrar.turnStartEffects.forEach{it.handleTurnStartEvent()}
@@ -92,6 +93,14 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
                         tileLocation = tile,
                         playerControlled = false)
             }
+        }
+
+        val templatesForZones = zoneStyleMissionUnitTemplateDecider.createUnitsAndOrganGenerationParameters()
+        for (item in templatesForZones){
+
+            actionManager.addCharacterToTileFromTemplate(tacMapUnit = item.tacMapUnitTemplate,
+                    tileLocation = item.tile,
+                    playerControlled = false)
         }
 
         for (char in tacmapState.listOfCharacters){

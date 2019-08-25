@@ -23,6 +23,13 @@ public class Scenarios
                 unitsThatPlayerWillDeploy = listOf(
                         TacMapUnitTemplate.DEFAULT_UNIT,
                         TacMapUnitTemplate.DEFAULT_ENEMY_UNIT))
-        val SCENARIO_LIST = listOf(DEFAULT_SCENARIO, PARTIAL_PROCEDURAL_SCENARIO, OVERWORLD_SCENARIO)
+        val EREBUS_SCENARIO = ScenarioParams(sourceMapName = "tileMaps/erebusstyle.tmx",
+                name = "Erebus-style Overworld Combat", mapGeneratorType = MapGeneratorType.NONE,
+                unitsThatPlayerWillDeploy = listOf(
+                        TacMapUnitTemplate.DEFAULT_UNIT,
+                        TacMapUnitTemplate.DEFAULT_ENEMY_UNIT))
+
+
+        val SCENARIO_LIST = listOf(DEFAULT_SCENARIO, PARTIAL_PROCEDURAL_SCENARIO, OVERWORLD_SCENARIO, EREBUS_SCENARIO)
     }
 }

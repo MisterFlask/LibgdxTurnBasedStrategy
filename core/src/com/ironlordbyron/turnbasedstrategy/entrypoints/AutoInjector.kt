@@ -79,7 +79,13 @@ enum class SpawnableUnitTemplateTags{
 }
 annotation class SpawnableUnitTemplate(val id: String, val tags: Array<SpawnableUnitTemplateTags> = arrayOf())
 
-data class UnitTemplateSpawner(val obj: Any?, val method: Method, val id: String, val tags: List<SpawnableUnitTemplateTags> = listOf()){
+data class UnitTemplateSpawner(val obj: Any?,
+                               val method: Method,
+                               val id: String,
+                               val compileTimeTags: List<SpawnableUnitTemplateTags> = listOf(),
+                               val tags: Tags){
+
+
     fun spawn() : TacMapUnitTemplate{
         return method.invoke(null) as TacMapUnitTemplate
     }
@@ -96,6 +102,10 @@ public class UnitTemplateRegistrar(){
 
     init{
         registerUnitTemplates()
+    }
+
+    fun getTacMapUnitTagsById(id: String) : Tags?{
+        return unitTemplates.find{it.id == id}?.spawn()?.tags
     }
 
     fun registerUnitTemplates(){
@@ -116,8 +126,9 @@ public class UnitTemplateRegistrar(){
                 throw Exception("${item.name} should have no parameters.")
             }
             val annotation = item.getAnnotation(SpawnableUnitTemplate::class.java)
-            val tacMapUnitTemplate = item.invoke(null)
-            unitTemplates.add(UnitTemplateSpawner(null, item, annotation.id, tags = annotation.tags.toList()))
+            val tacMapUnitTemplate = item.invoke(null) as TacMapUnitTemplate
+            unitTemplates.add(UnitTemplateSpawner(null, item, annotation.id,
+                    compileTimeTags = annotation.tags.toList(), tags = tacMapUnitTemplate.tags))
         }
 
         Logging.DebugGeneral("Registered ${unitTemplates.size} unit templates!")

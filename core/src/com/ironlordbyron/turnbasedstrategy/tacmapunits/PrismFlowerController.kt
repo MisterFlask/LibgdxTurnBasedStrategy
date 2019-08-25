@@ -77,6 +77,9 @@ class GenerateUnitAtRandomLocationTurnAction(val unitTemplateId: String,
 
     private fun getSpawnableUnitLocation(): TileLocation {
         val tiles = tiledMapProvider.getSpawnableTilemapTiles()
+        if (tiles.isEmpty()){
+            throw IllegalStateException("This tac map does NOT have spawnable tile map tiles attached!")
+        }
         return tiles.randomElement()
     }
 
