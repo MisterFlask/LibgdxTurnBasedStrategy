@@ -35,9 +35,13 @@ public class AttributeActionManager @Inject constructor(val logicHooks: LogicHoo
         }
     }
 
-    public fun unapplyAttribute(logicalCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute) {
+    public fun unapplyAttribute(logicalCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute,
+                                textPopup: String? = null) {
         if (logicalCharacterAttribute.tacticalMapProtoActor != null){
             actionManager.despawnAttributeActorAtTileInSequence(logicalCharacterAttribute, logicalCharacter)
+        }
+        if (textPopup != null){
+            actionManager.risingText("!!!", logicalCharacter.tileLocation)
         }
         logicalCharacter.tacMapUnit.removeAttribute(logicalCharacterAttribute)
     }

@@ -53,7 +53,9 @@ class TileMapProvider {
     }
 
     fun getSpawnableTilemapTiles(): List<TileLocation> {
-        return tiledMap.getSpawnableEnemyTilemapTiles()
+        val ret = tiledMap.getSpawnableEnemyTilemapTiles()
+        if (ret.isNotEmpty()) return ret
+        return getDiscreteZones().flatMap { it.tiles }
     }
     fun getPlayerPlacementTilemapTiles() : List<TileLocation>{
         return tiledMap.getPlayerPlacementTiles()
@@ -97,10 +99,12 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
 
         val templatesForZones = zoneStyleMissionUnitTemplateDecider.createUnitsAndOrganGenerationParameters()
         for (item in templatesForZones){
-
-            actionManager.addCharacterToTileFromTemplate(tacMapUnit = item.tacMapUnitTemplate,
+            val logicalCharacter = actionManager.addCharacterToTileFromTemplate(tacMapUnit = item.tacMapUnitTemplate,
                     tileLocation = item.tile,
                     playerControlled = false)
+            for (attr in item.attrsToApply){
+                attributeActionManager.applyAttribute(logicalCharacter, attr)
+            }
         }
 
         for (char in tacmapState.listOfCharacters){

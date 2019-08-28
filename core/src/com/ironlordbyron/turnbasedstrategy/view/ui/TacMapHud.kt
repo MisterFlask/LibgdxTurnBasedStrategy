@@ -237,7 +237,7 @@ class TacMapHud(viewPort: Viewport,
             var nextCharacterActor = characterImageManager.retrieveCharacterTemplateImage(unit).actor
             nextCharacterActor.setScale(3f)
             characterSelectCarousel.add(nextCharacterActor).width(nextCharacterActor.width).pad(10f)
-            if (boardInputState.nextUnit()!!.uuid == unit.uuid){
+            if (boardInputState.nextUnit()!!.unitId == unit.unitId){
                 nextCharacterActor = emphasizeActor(nextCharacterActor)
             }
         }

@@ -24,28 +24,29 @@ import java.util.*
 data class Tags(val isSpawnableEnemy: Boolean = true)
 
 class TacMapUnitTemplate(val movesPerTurn: Int,
-                              val tiledTexturePath: ProtoActor,
-                              val templateName: String = "Peasant",
-                              var abilities: List<LogicalAbility> = listOf(),
-                              var allowedEquipment: Collection<EquipmentClass> = listOf(EquipmentClass.MELEE_WEAPON_LARGE), //TODO
-                              val walkableTerrainTypes : Collection<TerrainType> = listOf(TerrainType.GRASS, TerrainType.FOREST),
-                              val enemyAiType: EnemyAiType = EnemyAiType.BASIC,
-                              var startingAttributes: Collection<LogicalCharacterAttribute> = listOf(),
-                              val uuid: UUID = UUID.randomUUID(),
-                              var maxActionsLeft: Int = 2,
-                              var maxHealth: Int = 3,
-                              var healthLeft: Int = maxHealth,
-                              var equipment: ArrayList<LogicalEquipment> = ArrayList(),
-                              attributes: ArrayList<LogicalCharacterAttribute> = ArrayList(startingAttributes),
-                              val strength: Int = 0,
-                              val dexterity: Int = 0,
+                         val tiledTexturePath: ProtoActor,
+                         val templateName: String = "Peasant",
+                         var abilities: List<LogicalAbility> = listOf(),
+                         var allowedEquipment: Collection<EquipmentClass> = listOf(EquipmentClass.MELEE_WEAPON_LARGE), //TODO
+                         val walkableTerrainTypes : Collection<TerrainType> = listOf(TerrainType.GRASS, TerrainType.FOREST),
+                         val enemyAiType: EnemyAiType = EnemyAiType.BASIC,
+                         var startingAttributes: Collection<LogicalCharacterAttribute> = listOf(),
+                         val unitId: UUID = UUID.randomUUID(),
+                         var maxActionsLeft: Int = 2,
+                         var maxHealth: Int = 3,
+                         var healthLeft: Int = maxHealth,
+                         var equipment: ArrayList<LogicalEquipment> = ArrayList(),
+                         attributes: ArrayList<LogicalCharacterAttribute> = ArrayList(startingAttributes),
+                         val strength: Int = 0,
+                         val dexterity: Int = 0,
                               // used in map generation
-                              val difficulty: Int = 1,
-                              val possibleRandomizedIntents: List<IntentType> = listOf(IntentType.ATTACK, IntentType.MOVE),
-                              val templateId: String = templateName,
-                              val metagoal: Metagoal = AttackMetaGoal(),
-                              val turnStartAction: TurnStartAction? = null,
-                              val tags: Tags = Tags()
+                         val difficulty: Int = 1,
+                         val possibleRandomizedIntents: List<IntentType> = listOf(IntentType.ATTACK, IntentType.MOVE),
+                         val templateId: String = templateName,
+                         val metagoal: Metagoal = AttackMetaGoal(),
+                         val turnStartAction: TurnStartAction? = null,
+                         val tags: Tags = Tags(),
+                         var block: Int = 0
 ) {
 
     private val stacksOfAttribute: HashMap<String, Int> = hashMapOf()

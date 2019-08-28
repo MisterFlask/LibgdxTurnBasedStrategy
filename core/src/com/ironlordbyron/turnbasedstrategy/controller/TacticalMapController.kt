@@ -70,6 +70,11 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 }
             }
             is TacticalGuiEvent.FinishedEnemyTurn -> {
+
+                // reset block a la STS
+                com.ironlordbyron.turnbasedstrategy.controller.tacMapState.listOfPlayerCharacters.
+                        forEach{it.tacMapUnit.block = 0}
+
                 playerHasPriority = true
             }
             is TacticalGuiEvent.ClickedButtonToActivateAbility -> {

@@ -76,10 +76,11 @@ class GenerateUnitAtRandomLocationTurnAction(val unitTemplateId: String,
     }
 
     private fun getSpawnableUnitLocation(): TileLocation {
-        var tiles = tiledMapProvider.getSpawnableTilemapTiles()
+        var tiles = tiledMapProvider.getSpawnableTilemapTiles().filter{it.getCharacter() == null}
         if (tiles.isEmpty()){
             tiles = tiledMapProvider.getDiscreteZones()
                     .flatMap { it.tiles }
+                    .filter{it.getCharacter() == null}
 
         }
         return tiles.randomElement()

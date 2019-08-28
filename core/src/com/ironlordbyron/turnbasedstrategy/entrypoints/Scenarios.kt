@@ -28,8 +28,14 @@ public class Scenarios
                 unitsThatPlayerWillDeploy = listOf(
                         TacMapUnitTemplate.DEFAULT_UNIT,
                         TacMapUnitTemplate.DEFAULT_ENEMY_UNIT))
+        val SMALLER_EREBUS_SCENARIO = ScenarioParams(sourceMapName = "SmallerErebusStyle.tmx",
+                name = "Smaller Erebus-style Overworld Combat", mapGeneratorType = MapGeneratorType.NONE,
+                unitsThatPlayerWillDeploy = listOf(
+                        TacMapUnitTemplate.DEFAULT_UNIT,
+                        TacMapUnitTemplate.DEFAULT_ENEMY_UNIT))
 
 
-        val SCENARIO_LIST = listOf(DEFAULT_SCENARIO, PARTIAL_PROCEDURAL_SCENARIO, OVERWORLD_SCENARIO, EREBUS_SCENARIO)
+        val SCENARIO_LIST = listOf(DEFAULT_SCENARIO, PARTIAL_PROCEDURAL_SCENARIO, OVERWORLD_SCENARIO, EREBUS_SCENARIO,
+                SMALLER_EREBUS_SCENARIO)
     }
 }

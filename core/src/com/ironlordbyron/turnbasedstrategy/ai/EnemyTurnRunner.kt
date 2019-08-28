@@ -6,6 +6,7 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.Animatio
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.MapHighlighter
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
+import com.ironlordbyron.turnbasedstrategy.controller.tacMapState
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.CharacterSpriteUtils
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActionRunner

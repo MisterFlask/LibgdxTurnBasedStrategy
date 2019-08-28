@@ -2,6 +2,10 @@ package com.ironlordbyron.turnbasedstrategy.missiongen
 
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.AdrenalGlands
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.SleepingGuardian
+import com.ironlordbyron.turnbasedstrategy.common.characterattributes.attributeOperator
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplateTags
 import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
@@ -55,14 +59,17 @@ public class ZoneStyleMissionUnitTemplateDecider{
             }
             val tilesInZone = zone.tiles.shuffled().toList()
             mobs.forEachIndexed{
-                i, template -> returnedUnitSpawns.add(UnitSpawnParameter(tilesInZone.get(i), template))
+                i, template -> returnedUnitSpawns.add(UnitSpawnParameter(tilesInZone.get(i), template, listOf(SleepingGuardian(organ.unitId))))
             }
-            returnedUnitSpawns.add(UnitSpawnParameter(tilesInZone.last(), organ))
+
+            returnedUnitSpawns.add(UnitSpawnParameter(tilesInZone.last(), organ, listOf(AdrenalGlands())))
         }
         return returnedUnitSpawns
     }
 }
-data class UnitSpawnParameter(val tile: TileLocation, val tacMapUnitTemplate: TacMapUnitTemplate)
+data class UnitSpawnParameter(val tile: TileLocation,
+                              val tacMapUnitTemplate: TacMapUnitTemplate,
+                              val attrsToApply: Collection<LogicalCharacterAttribute> = listOf())
 data class TileZone(val tiles: Collection<TileLocation>)
 
 fun<T> Collection<T>.repeat(n: Int) : Collection<T>{

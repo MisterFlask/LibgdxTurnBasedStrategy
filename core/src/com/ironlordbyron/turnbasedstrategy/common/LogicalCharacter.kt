@@ -29,10 +29,14 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
                             var goal: Goal? = null) {
 
     val id: UUID
-        get() = tacMapUnit.uuid
+        get() = tacMapUnit.unitId
 
     fun hasAttribute(logicalAttribute: LogicalCharacterAttribute): Boolean {
         return this.getAttributes().any{it.logicalAttribute.id == logicalAttribute.id && it.stacks > 0}
+    }
+
+    fun hasAttributeWithId(attributeId: String): Boolean {
+        return this.getAttributes().any{it.logicalAttribute.id == attributeId && it.stacks > 0}
     }
 
     override fun toString(): String {

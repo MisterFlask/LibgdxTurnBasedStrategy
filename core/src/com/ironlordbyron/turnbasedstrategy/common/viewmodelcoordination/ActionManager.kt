@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.google.inject.assistedinject.Assisted
@@ -428,16 +429,18 @@ class TriggeredDelayAction(val trigger: AtomicBoolean): Action() {
 
 val DIM_COLOR = Color(.5f,.5f,.5f, 1f)
 val BRIGHT_COLOR = Color(2f, 2f, 2f, 1f)
-private class HoverGlowListener(val actor: Actor) : ClickListener() {
-    val originalColor = actor.color!!
+private class HoverGlowListener(val actor: Actor) : InputListener() {
+    init{
+        this.actor.color = DIM_COLOR
+    }
     override fun enter(event: InputEvent?, x: Float, y: Float, pointer: Int, fromActor: Actor?) {
         super.enter(event, x, y, pointer, fromActor)
-        actor.color = DIM_COLOR
+        actor.color = BRIGHT_COLOR
     }
 
     override fun exit(event: InputEvent?, x: Float, y: Float, pointer: Int, toActor: Actor?) {
         super.exit(event, x, y, pointer, toActor)
-        actor.color = originalColor
+        actor.color = DIM_COLOR
     }
 }
 

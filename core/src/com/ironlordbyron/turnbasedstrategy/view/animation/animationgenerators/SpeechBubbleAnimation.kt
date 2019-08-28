@@ -56,30 +56,31 @@ public class SpeechBubbleAnimation{
         return table.withBorder(scale = 3f)
     }
 
-    data class ActorDimensions(val leftBorder: Float, val rightBorder: Float, val topBorder: Float, val botBorder: Float){
-        init{
-            leftBorder.shouldBeFractional()
-            rightBorder.shouldBeFractional()
-            topBorder.shouldBeFractional()
-            botBorder.shouldBeFractional()
-            assert(leftBorder < rightBorder)
-            assert(topBorder > botBorder)
-        }
+}
+
+
+data class ActorDimensions(val leftBorder: Float, val rightBorder: Float, val topBorder: Float, val botBorder: Float){
+    init{
+        leftBorder.shouldBeFractional()
+        rightBorder.shouldBeFractional()
+        topBorder.shouldBeFractional()
+        botBorder.shouldBeFractional()
+        assert(leftBorder < rightBorder)
+        assert(topBorder > botBorder)
     }
+}
+fun Actor.clampToScreenRatio(dimensions: ActorDimensions){
+    val screenwidth  = Gdx.graphics.width.toFloat()
+    val screenheight  = Gdx.graphics.height.toFloat()
 
-    fun Actor.clampToScreenRatio(dimensions: ActorDimensions){
-        val screenwidth  = Gdx.graphics.width.toFloat()
-        val screenheight  = Gdx.graphics.height.toFloat()
-
-        this.width = screenwidth * (dimensions.rightBorder - dimensions.leftBorder)
-        this.height = screenheight * (dimensions.topBorder - dimensions.botBorder)
-        this.x = screenwidth * dimensions.leftBorder
-        this.y = screenheight * dimensions.topBorder - this.height
-        if (this is Group){
-            for (actor in this.children){
-                actor.width = this.width
-                actor.height = this.height
-            }
+    this.width = screenwidth * (dimensions.rightBorder - dimensions.leftBorder)
+    this.height = screenheight * (dimensions.topBorder - dimensions.botBorder)
+    this.x = screenwidth * dimensions.leftBorder
+    this.y = screenheight * dimensions.topBorder - this.height
+    if (this is Group){
+        for (actor in this.children){
+            actor.width = this.width
+            actor.height = this.height
         }
     }
 }
