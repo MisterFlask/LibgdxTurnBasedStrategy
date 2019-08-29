@@ -6,7 +6,9 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
@@ -30,6 +32,7 @@ import com.ironlordbyron.turnbasedstrategy.view.ui.addLabel
 import com.ironlordbyron.turnbasedstrategy.view.ui.withBorder
 import com.kotcrab.vis.ui.building.utilities.Alignment
 import java.util.*
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.ArrayList
 
 public class CharacterSelectionScreen: ScreenAdapter(){
@@ -38,12 +41,11 @@ public class CharacterSelectionScreen: ScreenAdapter(){
     val roster by LazyInject(CharacterRoster::class.java)
     val characterDisplayTable = CharacterDisplayUiElement()
     val characterListTable = Table()
-    val viewport: ScreenViewport
-    val stage: Stage
+    val viewport = ScreenViewport()
+    val stage: Stage = Stage(viewport)
     val characterSelectors = ArrayList<CharacterSelector>()
+    var characterDetailsRequired: TacMapUnitTemplate? = null
     init{
-        viewport = ScreenViewport()
-        stage = Stage(viewport)
         val table = Table()
         table.withBorder()
         table.clampToScreenRatio(ActorDimensions(
@@ -55,6 +57,10 @@ public class CharacterSelectionScreen: ScreenAdapter(){
         table.add(characterListTable)
         table.add(characterDisplayTable)
         characterDisplayTable.regenerateCharacterDisplayTable()
+        table.row()
+        table.addButton("Start Mission"){
+            startGame()
+        }
         stage.addActor(table)
     }
 
@@ -63,8 +69,14 @@ public class CharacterSelectionScreen: ScreenAdapter(){
         characterListTable.clear()
         for (rosterChar in this.roster.characters){
             val selector= CharacterSelector(rosterChar)
+            selector.addHoverListener {
+                this.characterDetailsRequired = selector.character
+                characterDisplayTable.regenerateCharacterDisplayTable()
+            }
             characterSelectors.add(selector)
+
             characterListTable.add(selector)
+            characterListTable.row()
         }
     }
 
@@ -78,6 +90,7 @@ public class CharacterSelectionScreen: ScreenAdapter(){
         val scenarioParams = scenarioParams.copy(unitsThatPlayerWillDeploy = collectSelectedUnits())
         tacMapScreen.scenarioStart(scenarioParams)
         eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.ScenarioStart(scenarioParams))
+        eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.SwapToTacticsScreen())
     }
 
     private fun collectSelectedUnits(): Collection<TacMapUnitTemplate> {
@@ -131,4 +144,21 @@ private class FlexibleClickListener(val func: () -> Unit) : ClickListener() {
         super.clicked(event, x, y)
         func()
     }
+}
+
+fun Actor.addHoverListener(func: () -> Unit){
+    this.addListener(FlexibleHoverListener(func))
+}
+
+private class FlexibleHoverListener(val func: () -> Unit) : InputListener() {
+    override fun enter(event: InputEvent?, x: Float, y: Float, pointer: Int, fromActor: Actor?) {
+        super.enter(event, x, y, pointer, fromActor)
+        func()
+    }
+}
+
+fun Table.addButton(text: String, action: () -> Unit){
+    val button = Button(DEFAULT_SKIN)
+    button.addClickListener(action)
+    this.add(button)
 }

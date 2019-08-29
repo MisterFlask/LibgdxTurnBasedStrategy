@@ -40,7 +40,7 @@ public class MainMenuScreen @Inject constructor(val tacticalMapScreen: TacticalM
 
         for (scenario in Scenarios.SCENARIO_LIST){
             table.add(playScenarioButton(eventNotifier,
-                    TacticalGuiEvent.SwapToTacticsScreen(),
+                    TacticalGuiEvent.SwapToCharacterSelectScreen(scenario),
                     scenario.name,
                     scenario))
             table.row()
@@ -57,7 +57,7 @@ public class MainMenuScreen @Inject constructor(val tacticalMapScreen: TacticalM
         playButton.setWidth((Gdx.graphics.width / 2).toFloat())
         playButton.addListener(object : InputListener() {
             override fun touchUp(event: InputEvent, x: Float, y: Float, pointer: Int, button: Int) {
-                tacticalMapScreen.scenarioStart(scenarioParams)
+
                 eventNotifier.notifyListenersOfGuiEvent(tacticalGuiEventToSend)
             }
 
