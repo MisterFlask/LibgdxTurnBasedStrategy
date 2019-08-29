@@ -157,8 +157,10 @@ private class FlexibleHoverListener(val func: () -> Unit) : InputListener() {
     }
 }
 
-fun Table.addButton(text: String, action: () -> Unit){
+fun Table.addButton(text: String, init: (Button)->Unit = {}, action: () -> Unit){
     val button = Button(DEFAULT_SKIN)
+    button.add(text)
     button.addClickListener(action)
     this.add(button)
+    init(button)
 }
