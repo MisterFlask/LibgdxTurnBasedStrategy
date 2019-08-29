@@ -82,7 +82,6 @@ public class CharacterSelectionScreen: ScreenAdapter(){
     fun startGame(){
         val scenarioParams = scenarioParams.copy(unitsThatPlayerWillDeploy = collectSelectedUnits())
         tacMapScreen.scenarioStart(scenarioParams)
-        eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.ScenarioStart(scenarioParams))
         eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.SwapToTacticsScreen())
     }
 
