@@ -121,32 +121,5 @@ class TacMapUnitTemplate(val movesPerTurn: Int,
                         LogicalCharacterAttribute.EXPLODES_ON_DEATH))
         val RANGED_ENEMY = TacMapUnitTemplate(3, _demonImg.copy(textureId = "7"), templateName = "Enemy",
                 abilities = listOf(StandardAbilities.RangedAttack))
-        val Dict = mapOf(TacMapUnitTemplateKeys.DEFAULT_UNIT to DEFAULT_UNIT,
-                TacMapUnitTemplateKeys.DEFAULT_ENEMY_UNIT to DEFAULT_ENEMY_UNIT,
-                TacMapUnitTemplateKeys.DEFAULT_ENEMY_UNIT_SPAWNER to WeakMinionSpawner())
     }
-}
-
-object TacMapUnitTemplateKeys{
-    val DEFAULT_UNIT = "default_unit"
-    val DEFAULT_ENEMY_UNIT = "default_enemy_unit"
-    val DEFAULT_ENEMY_UNIT_SPAWNER = "default_enemy_unit_spawner"
-}
-
-val unitTemplateRegistrar: UnitTemplateRegistrar by LazyInject(UnitTemplateRegistrar::class.java)
-public fun String.toTacMapUnitTemplate() : TacMapUnitTemplate{
-    return unitTemplateRegistrar.getTacMapUnitById(this)?:throw java.lang.IllegalArgumentException("Could not find tac map unit template ID for $this")
-}
-
-
-@Autoinjectable
-private class TemporaryTacMapUnitTemplateRegistration(){
-    init{
-        TacMapUnitTemplate.DEFAULT_ENEMY_UNIT.register()
-    }
-}
-
-val tacMapUnitTemplateRegistrar: UnitTemplateRegistrar by LazyInject(UnitTemplateRegistrar::class.java)
-private fun TacMapUnitTemplate.TacMapUnit.fromId(id: String): TacMapUnitTemplate {
-    return tacMapUnitTemplateRegistrar.getTacMapUnitById(id)?:throw IllegalArgumentException("$id is not a valid tac map unit template ID")
 }

@@ -145,15 +145,6 @@ interface LogicalAbilityEffect {
     fun runAction(characterUsing: LogicalCharacter,
                   tileLocationTargeted: TileLocation)
 
-    public data class SpawnsUnit(val unitToBeSpawned: String): LogicalAbilityEffect{
-        val unitSpawner = GameModuleInjector.generateInstance(ActionManager::class.java)
-        val animationActionQueueProvider = GameModuleInjector.generateInstance(AnimationActionQueueProvider::class.java)
-
-        override fun runAction(characterUsing: LogicalCharacter,
-                               tileLocationTargeted: TileLocation) {
-            unitSpawner.addCharacterToTileFromTemplate(unitToBeSpawned.toTacMapUnitTemplate()!!, tileLocationTargeted!!,
-                    characterUsing.playerControlled)        }
-    }
 
 
     public class LightsTileOnFire: LogicalAbilityEffect{

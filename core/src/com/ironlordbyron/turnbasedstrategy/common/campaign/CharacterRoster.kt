@@ -18,6 +18,6 @@ class CharacterRoster{
     init {
         //todo: better
 
-        characters.addAll(listOf(TacMapUnitTemplate.RANGED_ENEMY, TacMapUnitTemplate.DEFAULT_UNIT))
+        characters.addAll(listOf(TacMapUnitTemplate.RANGED_ENEMY))
     }
 }

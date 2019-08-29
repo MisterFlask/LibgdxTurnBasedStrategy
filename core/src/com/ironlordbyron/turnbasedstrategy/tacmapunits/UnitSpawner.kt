@@ -6,8 +6,11 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionMa
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeActionManager
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplateTags
+import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
+import java.lang.IllegalStateException
 
 
 @SpawnableUnitTemplate("WEAK_MINION_SPAWNER", tags = arrayOf(SpawnableUnitTemplateTags.ORGAN))
@@ -41,4 +44,9 @@ class SpawnMinionEachTurnAction(val tacMapUnitTemplateId: String,
             actionManager.addCharacterToTileFromTemplate(this.tacMapUnitTemplateId.toTacMapUnitTemplate(), square, playerControlled = false)
         }
     }
+}
+
+val tacMapUnitTemplateRegistrar by LazyInject(UnitTemplateRegistrar::class.java)
+fun String.toTacMapUnitTemplate(): TacMapUnitTemplate {
+    return tacMapUnitTemplateRegistrar.getTacMapUnitById(this) ?: throw IllegalStateException("Could not find template for $this")
 }

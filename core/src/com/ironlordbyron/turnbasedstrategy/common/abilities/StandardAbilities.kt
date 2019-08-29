@@ -1,6 +1,5 @@
 package com.ironlordbyron.turnbasedstrategy.common.abilities
 
-import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplateKeys
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
@@ -64,14 +63,4 @@ object StandardAbilities{
             landingActor = DataDrivenOnePageAnimation.EXPLODE,
             inflictsStatusAffect = listOf(LogicalCharacterAttribute.ON_FIRE)
     );
-    val SpawnUnit = LogicalAbility("Spawn Unit",
-            AbilitySpeed.ENDS_TURN,
-            damage = null,
-            range = 2,
-            description = "Spawns an enemy unit at targeted location.",
-            abilityClass = AbilityClass.TARGETED_ATTACK_ABILITY,
-            requiredTargetType = RequiredTargetType.NO_CHARACTER_AT_LOCATION,
-            abilityEffects = listOf(LogicalAbilityEffect.SpawnsUnit(TacMapUnitTemplateKeys.DEFAULT_ENEMY_UNIT)),
-            projectileActor = null,
-            landingActor = DataDrivenOnePageAnimation.EXPLODE)
 }

@@ -26,8 +26,6 @@ private fun getNinepatchFromSheetWindow(sheetWindow: Texture): NinePatch{
     return ninepatch
 }
 
-private val ninepatchImgWhite = "border/tinyborder.png".fromFileToTexture()
-
 fun Table.withOrangeBorder(scale: Float? = 1f){
     this.withBorder(null, scale, orangeNinepatch)
 }

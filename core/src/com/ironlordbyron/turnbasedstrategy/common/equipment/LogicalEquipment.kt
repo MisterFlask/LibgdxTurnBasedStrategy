@@ -7,5 +7,6 @@ import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCha
 public data class LogicalEquipment(val name: String,
                                    val equipmentClass: EquipmentClass,
                                    val abilityEnabled: Collection<LogicalAbility> = listOf(),
+                                   // attributes are applied at beginning of combat, with "applied by" tooltip
                                    val attributesApplied: Collection<LogicalCharacterAttribute> = listOf(),
                                    val effectToApply: LogicalAbilityEffect? = null)
