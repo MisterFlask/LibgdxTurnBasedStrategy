@@ -21,6 +21,7 @@ class CommissarClass() : TacMapUnitClass("Commissar",
         startingSecondaryWeapon = startingPistol(),
         protoActor = SuperimposedTilemaps.playerImageNumber("25")
 )
+
 fun startingPistol(): LogicalEquipment {
     return LogicalEquipment("Commissar's Pistol", EquipmentClass.PISTOL,
             listOf(motivateAbility(), melterPistol()))

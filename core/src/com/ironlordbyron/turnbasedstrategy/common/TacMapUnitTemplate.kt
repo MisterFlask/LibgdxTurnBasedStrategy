@@ -23,6 +23,8 @@ import java.util.*
 
 data class Tags(val isSpawnableEnemy: Boolean = true)
 
+data class EquipmentSlot(val allowedEquipment: Collection<EquipmentClass>, val currentEquipment: LogicalEquipment? = null)
+
 class TacMapUnitTemplate(val movesPerTurn: Int,
                          val tiledTexturePath: ProtoActor,
                          val templateName: String = "Peasant",
@@ -46,7 +48,8 @@ class TacMapUnitTemplate(val movesPerTurn: Int,
                          val metagoal: Metagoal = AttackMetaGoal(),
                          val turnStartAction: TurnStartAction? = null,
                          val tags: Tags = Tags(),
-                         var block: Int = 0
+                         var block: Int = 0,
+                         var equipmentSlots: List<EquipmentSlot> = listOf()
 ) {
 
     private val stacksOfAttribute: HashMap<String, Int> = hashMapOf()
