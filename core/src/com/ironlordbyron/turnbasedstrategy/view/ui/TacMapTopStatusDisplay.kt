@@ -78,8 +78,8 @@ val textLabelGenerator: TextLabelGenerator by lazy{
     GameModuleInjector.generateInstance(TextLabelGenerator::class.java)
 }
 
-fun Table.addLabel(text: String, scale: Float= .2f, tooltip: String? = null){
-    this.row()
+fun Table.addLabel(text: String, scale: Float= .2f, tooltip: String? = null, skipRow: Boolean = false){
+    if (!skipRow) this.row()
     val label = textLabelGenerator.generateLabel(text,  scale = scale)
     this.add(label.label)
     if (tooltip != null){

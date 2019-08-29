@@ -4,10 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.ScreenAdapter
 import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
-import com.badlogic.gdx.scenes.scene2d.Actor
-import com.badlogic.gdx.scenes.scene2d.InputEvent
-import com.badlogic.gdx.scenes.scene2d.InputListener
-import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.*
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
@@ -56,6 +53,7 @@ public class CharacterSelectionScreen: ScreenAdapter(){
         populateCharacterListTable()
         table.add(characterListTable)
         table.add(characterDisplayTable)
+        characterDisplayTable.selectedCharacter = roster.characters.first()
         characterDisplayTable.regenerateCharacterDisplayTable()
         table.row()
         table.addButton("Start Mission"){
@@ -125,13 +123,15 @@ class CharacterSelector(val character: TacMapUnitTemplate): Table() {
     var selected: Boolean = false
 
     init{
-        this.add(this.character.tiledTexturePath.toActor().actor).width(40f)
-        this.addLabel(this.character.templateName)
+        this.add(this.character.tiledTexturePath.toActor().actor).width(40f).height(40f)
+        this.addLabel(this.character.templateName, skipRow = true)
         this.addHoverLighting()
         this.addClickListener {
             this.selected = !this.selected
             if (this.selected) this.color = activeColor else this.color = inactiveColor
         }
+        this.withBorder()
+        this.touchable = Touchable.enabled
     }
 }
 
