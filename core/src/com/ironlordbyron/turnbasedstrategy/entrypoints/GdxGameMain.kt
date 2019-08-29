@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.entrypoints
 
+import com.badlogic.gdx.ApplicationLogger
 import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Screen
@@ -25,6 +26,7 @@ class GdxGameMain : Game(), EventListener {
         this.screen = mainMenuScreen
 
         this.screen.show()
+
     }
 
     override fun consumeGuiEvent(event: TacticalGuiEvent) {
@@ -44,4 +46,8 @@ class GdxGameMain : Game(), EventListener {
             }
         }
     }
+}
+
+fun Any.log(msg: String){
+    println("${this.javaClass.simpleName}:$msg")
 }

@@ -6,19 +6,16 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.scenes.scene2d.*
 import com.badlogic.gdx.scenes.scene2d.ui.Button
-import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
-import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.ironlordbyron.turnbasedstrategy.common.CharacterDisplayUiElement
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.campaign.CharacterRoster
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.addHoverLighting
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
-import com.ironlordbyron.turnbasedstrategy.entrypoints.Scenarios
 import com.ironlordbyron.turnbasedstrategy.entrypoints.TacticalMapScreen
-import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.entrypoints.log
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.guice.eventNotifier
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.ScenarioParams
@@ -27,9 +24,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.cl
 import com.ironlordbyron.turnbasedstrategy.view.ui.DEFAULT_SKIN
 import com.ironlordbyron.turnbasedstrategy.view.ui.addLabel
 import com.ironlordbyron.turnbasedstrategy.view.ui.withBorder
-import com.kotcrab.vis.ui.building.utilities.Alignment
-import java.util.*
-import java.util.concurrent.atomic.AtomicBoolean
+import com.ironlordbyron.turnbasedstrategy.view.ui.withOrangeBorder
 import kotlin.collections.ArrayList
 
 public class CharacterSelectionScreen: ScreenAdapter(){
@@ -41,7 +36,6 @@ public class CharacterSelectionScreen: ScreenAdapter(){
     val viewport = ScreenViewport()
     val stage: Stage = Stage(viewport)
     val characterSelectors = ArrayList<CharacterSelector>()
-    var characterDetailsRequired: TacMapUnitTemplate? = null
     init{
         val table = Table()
         table.withBorder()
@@ -55,6 +49,7 @@ public class CharacterSelectionScreen: ScreenAdapter(){
         table.add(characterDisplayTable)
         characterDisplayTable.selectedCharacter = roster.characters.first()
         characterDisplayTable.regenerateCharacterDisplayTable()
+        characterDisplayTable.withBorder()
         table.row()
         table.addButton("Start Mission"){
             startGame()
@@ -68,7 +63,7 @@ public class CharacterSelectionScreen: ScreenAdapter(){
         for (rosterChar in this.roster.characters){
             val selector= CharacterSelector(rosterChar)
             selector.addHoverListener {
-                this.characterDetailsRequired = selector.character
+                characterDisplayTable.selectedCharacter = selector.character
                 characterDisplayTable.regenerateCharacterDisplayTable()
             }
             characterSelectors.add(selector)
@@ -127,11 +122,17 @@ class CharacterSelector(val character: TacMapUnitTemplate): Table() {
         this.addLabel(this.character.templateName, skipRow = true)
         this.addHoverLighting()
         this.addClickListener {
+            log("Hit click listener on char select")
             this.selected = !this.selected
-            if (this.selected) this.color = activeColor else this.color = inactiveColor
+            if (this.selected){
+                this.withOrangeBorder()
+            } else {
+                this.withBorder()
+            }
         }
         this.withBorder()
         this.touchable = Touchable.enabled
+
     }
 }
 

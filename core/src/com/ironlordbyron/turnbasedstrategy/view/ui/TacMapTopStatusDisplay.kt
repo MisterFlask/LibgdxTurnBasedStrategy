@@ -7,14 +7,12 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.ironlordbyron.turnbasedstrategy.common.GlobalTacMapState
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.RenderingFunction
-import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.font.TextLabelGenerator
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
-import com.ironlordbyron.turnbasedstrategy.view.images.Dimensions
 import com.ironlordbyron.turnbasedstrategy.view.ui.external.BackgroundColor
 
 public class TacMapTopStatusDisplay(val viewPort: Viewport) : Stage(viewPort),
