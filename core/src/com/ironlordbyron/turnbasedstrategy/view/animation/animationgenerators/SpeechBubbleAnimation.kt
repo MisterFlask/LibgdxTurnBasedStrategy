@@ -48,7 +48,7 @@ public class SpeechBubbleAnimation{
         val textButton = TextArea(text, DEFAULT_SKIN)
         val table = Table()
         table.clampToScreenRatio(dimensions)
-        val actor = protoActor.toActor().actor
+        val actor = protoActor.toActorWrapper().actor
         val aspectRatio = actor.height / actor.width
 
         table.add(actor).height(table.height).width(table.height / aspectRatio)

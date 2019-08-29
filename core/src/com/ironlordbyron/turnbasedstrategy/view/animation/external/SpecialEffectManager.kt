@@ -96,7 +96,7 @@ class LineEffect(val startActor: Actor,
     val actor = this.create(lineSettings)
 
     fun create(lineSettings: LineSettings) : Actor {
-        val lineActor = protoActor.toActor().actor
+        val lineActor = protoActor.toActorWrapper().actor
         lineActor.height = startActor.distanceTo(endActor).absoluteValue.toFloat() - startActor.width
         lineActor.width = lineSettings.lineWidth.toFloat()
         val startCoords = startActor.getXYCoordinatesClosestTo(endActor)

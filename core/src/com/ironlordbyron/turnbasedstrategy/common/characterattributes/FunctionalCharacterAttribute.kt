@@ -26,7 +26,7 @@ public abstract class FunctionalCharacterAttribute(){
 
     // returns the representation of the attribute ON THE TAC MAP.
     fun generateAttributeTacMapRepresentation(thisCharacter: LogicalCharacter, logicalCharacterAttribute: LogicalCharacterAttribute){
-        this.actor = getAttributeTacMapRepresentationInternal(thisCharacter, logicalCharacterAttribute)?.toActor()
+        this.actor = getAttributeTacMapRepresentationInternal(thisCharacter, logicalCharacterAttribute)?.toActorWrapper()
         if (this.actor != null){
 
         }

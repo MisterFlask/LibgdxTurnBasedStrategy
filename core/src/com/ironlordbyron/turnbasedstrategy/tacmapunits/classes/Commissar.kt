@@ -1,7 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.tacmapunits.classes
 
 import com.ironlordbyron.turnbasedstrategy.common.DamageAttemptInput
-import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilityClass
 import com.ironlordbyron.turnbasedstrategy.common.abilities.AbilitySpeed
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
@@ -18,16 +17,16 @@ class CommissarClass() : TacMapUnitClass("Commissar",
         8,
         1,
         6,
-        startingSecondaryWeapon = startingPistol(),
+        startingSecondaryWeapon = startingMelterPistol(),
         protoActor = SuperimposedTilemaps.playerImageNumber("25")
 )
 
-fun startingPistol(): LogicalEquipment {
+fun startingMelterPistol(): LogicalEquipment {
     return LogicalEquipment("Commissar's Pistol", EquipmentClass.PISTOL,
-            listOf(motivateAbility(), melterPistol()))
+            listOf(motivateAbility(), melterPistolShot()))
 }
 
-fun melterPistol(): LogicalAbility {
+fun melterPistolShot(): LogicalAbility {
     return LogicalAbility("'Motivate'", AbilitySpeed.ONE_ACTION, 5, null, 1,
             null, "Increases movement rate by 3 and damage by 2 for the turn.", AbilityClass.TARGETED_ATTACK_ABILITY,
             allowsTargetingSelf = false, landingActor = null, projectileActor = null)

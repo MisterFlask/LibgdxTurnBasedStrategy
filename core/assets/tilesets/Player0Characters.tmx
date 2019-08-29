@@ -17,11 +17,14 @@
  <tileset firstgid="821" source="Slime1.tsx"/>
  <tileset firstgid="861" source="Plant0.tsx"/>
  <tileset firstgid="925" source="Plant1.tsx"/>
+ <tileset firstgid="989" name="MedWep" tilewidth="16" tileheight="16" tilecount="16" columns="8">
+  <image source="../DawnLike/Items/MedWep.png" width="128" height="32"/>
+ </tileset>
  <layer id="1" name="Tile Layer 1" width="3" height="3">
   <data encoding="csv">
 244,6,644,
-252,829,470,
-31,959,654
+252,989,470,
+31,989,654
 </data>
  </layer>
 </map>

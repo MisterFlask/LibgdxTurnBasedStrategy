@@ -20,7 +20,7 @@ public class Scenarios
         val EREBUS_SCENARIO = ScenarioParams(sourceMapName = "tileMaps/erebusstyle.tmx",
                 name = "Erebus-style Overworld Combat", mapGeneratorType = MapGeneratorType.NONE,
                 unitsThatPlayerWillDeploy = listOf())
-        val SMALLER_EREBUS_SCENARIO = ScenarioParams(sourceMapName = "SmallerErebusStyle.tmx",
+        val SMALLER_EREBUS_SCENARIO = ScenarioParams(sourceMapName = "tileMaps/SmallerErebusStyle.tmx",
                 name = "Smaller Erebus-style Overworld Combat", mapGeneratorType = MapGeneratorType.NONE,
                 unitsThatPlayerWillDeploy = listOf())
 

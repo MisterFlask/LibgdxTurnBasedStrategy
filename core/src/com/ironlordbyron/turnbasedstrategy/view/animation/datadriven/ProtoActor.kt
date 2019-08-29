@@ -10,7 +10,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 
 public interface ProtoActor{
     val orientation: OrientationType
-    fun toActor(animatedImageParams: AnimatedImageParams = getDefaultAnimatedImageParams()) : ActorWrapper
+    fun toActorWrapper(animatedImageParams: AnimatedImageParams = getDefaultAnimatedImageParams()) : ActorWrapper
     fun getDefaultAnimatedImageParams() : AnimatedImageParams {
         return AnimatedImageParams.RUN_ALWAYS_AND_FOREVER
     }
@@ -31,7 +31,7 @@ public fun Collection<Actor>.consolidateActors() : Group{
 
 public class ProtoActorFromActor(val actor: Actor,
                                  override val orientation: OrientationType = OrientationType.NEUTRAL) : ProtoActor{
-    override fun toActor(animatedImageParams: AnimatedImageParams): ActorWrapper {
+    override fun toActorWrapper(animatedImageParams: AnimatedImageParams): ActorWrapper {
         return SimpleActorWrapper(actor)
     }
 

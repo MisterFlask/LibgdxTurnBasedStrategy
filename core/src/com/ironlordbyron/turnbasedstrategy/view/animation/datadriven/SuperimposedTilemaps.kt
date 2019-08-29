@@ -14,7 +14,7 @@ data class SuperimposedTilemaps(val tileMapWithTextureName: String = COMMON_TILE
                                 val textureId: String,
                                 override val orientation: OrientationType = OrientationType.NEUTRAL) : ProtoActor {
 
-    override fun toActor(animatedImageParams: AnimatedImageParams): AnimatedImage {
+    override fun toActorWrapper(animatedImageParams: AnimatedImageParams): AnimatedImage {
         val anim = AnimatedImage.fromTextureRegions(TiledMapOperationsHandler(TilemapXmlProcessor()).pullTextures(this),
                 animatedImageParams)
         return anim
@@ -26,7 +26,7 @@ data class SuperimposedTilemaps(val tileMapWithTextureName: String = COMMON_TILE
         val SLIMES = listOf("Slime0", "Slime1")
         val PLAYER_TILE_SETS = listOf("Player0", "Player1")
         val PLANTS = listOf("Plant0", "Plant1")
-        val COMMON_TILE_MAP = "tilesets/Player0Characters.tmx"
+        val COMMON_TILE_MAP = "tilesets/MASTER_TILESET.tmx"
         val ELEMENTALS = listOf("Elemental0","Elemental1")
         public fun toDefaultProtoActor(): ProtoActor {
             return SuperimposedTilemaps(
@@ -36,6 +36,10 @@ data class SuperimposedTilemaps(val tileMapWithTextureName: String = COMMON_TILE
 
         public fun doorImageNumber(i: String): SuperimposedTilemaps {
             return SuperimposedTilemaps(tileSetNames = DOORS,
+                    textureId = i)
+        }
+        public fun weaponImageNumber(i: String): SuperimposedTilemaps {
+            return SuperimposedTilemaps(tileSetNames = listOf("MedWep"),
                     textureId = i)
         }
         public fun demonImageNumber(i: String): SuperimposedTilemaps {

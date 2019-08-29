@@ -36,7 +36,7 @@ class SpriteSheetParser(){
         val frameCols = anim.cols
         val walkSheet = Texture(Gdx.files.internal(anim.filePath))
 
-        // Use the split utility method to create a 2D array of TextureRegions. This is
+        // Use the split utilityOrVest method to create a 2D array of TextureRegions. This is
         // possible because this sprite sheet contains frames of equal size and they are
         // all aligned.
         val tmp = TextureRegion.split(walkSheet,

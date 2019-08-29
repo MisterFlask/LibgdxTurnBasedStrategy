@@ -60,7 +60,7 @@ class CharacterDisplayUiElement : Table() {
     fun displayCharacterAttributes(selectedCharacter: TacMapUnitTemplate): Table{
         val table = Table(DEFAULT_SKIN)
         for (item in selectedCharacter.getAttributes()){
-            val attrImage = item.logicalAttribute.imageIcon.toActor(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER.copy(hittable = true))
+            val attrImage = item.logicalAttribute.imageIcon.toActorWrapper(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER.copy(hittable = true))
             attrImage.addTooltip(RenderingFunction.simple(item.logicalAttribute.description(item.stacks)))
             table.add(attrImage.actor).width(iconDimensions.width.toFloat()).height(iconDimensions.height.toFloat())
             if (item.stacks > 1) {

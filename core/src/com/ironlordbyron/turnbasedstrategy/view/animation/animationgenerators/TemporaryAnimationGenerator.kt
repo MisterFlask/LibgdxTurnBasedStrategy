@@ -50,7 +50,7 @@ class TemporaryAnimationGenerator @Inject constructor (val tileMapProvider: Tile
                                   ) {
     // WARNING: This doesn't actually work with protoactors that don't create AnimatedImages
     public fun getTemporaryAnimationActorActionPair(tileLocation: TileLocation, dataDrivenOnePageAnimation: ProtoActor): ActorActionPair {
-        val animatedImage = dataDrivenOnePageAnimation.toActor(animatedImageParams = AnimatedImageParams.RUN_ONCE_AFTER_DELAY) as AnimatedImage // HACK
+        val animatedImage = dataDrivenOnePageAnimation.toActorWrapper(animatedImageParams = AnimatedImageParams.RUN_ONCE_AFTER_DELAY) as AnimatedImage // HACK
         tiledMapStageProvider.tiledMapStage.addActor(animatedImage)
         val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
         animatedImage.setX(boundingBox.x.toFloat())

@@ -9,21 +9,31 @@ import com.ironlordbyron.turnbasedstrategy.common.abilities.StandardAbilities
 import com.ironlordbyron.turnbasedstrategy.common.abilities.specific.GuardAbility
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.equipment.EquipmentClass
+import com.ironlordbyron.turnbasedstrategy.common.equipment.EquipmentSuperclass
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
-import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
-import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
-import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.TurnStartAction
-import com.ironlordbyron.turnbasedstrategy.tacmapunits.WeakMinionSpawner
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TerrainType
-import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.register
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 import java.util.*
 
 data class Tags(val isSpawnableEnemy: Boolean = true)
 
-data class EquipmentSlot(val allowedEquipment: Collection<EquipmentClass>, val currentEquipment: LogicalEquipment? = null)
+data class EquipmentSlot(val allowedEquipment: Collection<EquipmentSuperclass>,
+                         val name: String,
+                         val currentEquipment: LogicalEquipment? = null){
+    companion object{
+        fun utilityOrVest(): EquipmentSlot {
+            return EquipmentSlot(listOf(EquipmentSuperclass.UTILITY, EquipmentSuperclass.VEST), "Utility/Vest")
+        }
+        fun secondaryWeapon(): EquipmentSlot {
+            return EquipmentSlot(listOf(EquipmentSuperclass.SECONDARY_WEAPON), "Secondary Weapon")
+        }
+        fun primaryWeapon(): EquipmentSlot {
+            return EquipmentSlot(listOf(EquipmentSuperclass.PRIMARY_WEAPON), "Primary Weapon")
+        }
+    }
+}
 
 class TacMapUnitTemplate(val movesPerTurn: Int,
                          val tiledTexturePath: ProtoActor,
@@ -49,7 +59,8 @@ class TacMapUnitTemplate(val movesPerTurn: Int,
                          val turnStartAction: TurnStartAction? = null,
                          val tags: Tags = Tags(),
                          var block: Int = 0,
-                         var equipmentSlots: List<EquipmentSlot> = listOf()
+                         var equipmentSlots: List<EquipmentSlot> = listOf(EquipmentSlot.primaryWeapon(), EquipmentSlot.secondaryWeapon(),
+                                 EquipmentSlot.utilityOrVest())
 ) {
 
     private val stacksOfAttribute: HashMap<String, Int> = hashMapOf()

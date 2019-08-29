@@ -17,7 +17,6 @@ import com.ironlordbyron.turnbasedstrategy.tileentity.CityTileEntity
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.ActorSettable
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
-import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SimpleActorWrapper
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.consolidateActors
 import com.ironlordbyron.turnbasedstrategy.view.ui.addLabel
@@ -27,7 +26,7 @@ class PortalProtoEntity(val protoActor: ProtoActor = SuperimposedTilemaps.toDefa
     val name: String = "Portal"
     val eventNotifier = GameModuleInjector.generateInstance(EventNotifier::class.java)
     override fun toTileEntity(tileLocation: TileLocation): PortalEntity {
-        return PortalEntity(tileLocation, protoActor.toActor().actor)
+        return PortalEntity(tileLocation, protoActor.toActorWrapper().actor)
     }
 }
 
@@ -65,7 +64,7 @@ interface TileEntity {
 class WarpingInPortalTileProtoEntity() : TileProtoEntity<WarpingInPortalTileEntity>{
     val protoActor = SuperimposedTilemaps.elementalImageNumber("4")
     override fun toTileEntity(tileLocation: TileLocation): WarpingInPortalTileEntity {
-        return WarpingInPortalTileEntity(listOf(tileLocation), protoActor.toActor())
+        return WarpingInPortalTileEntity(listOf(tileLocation), protoActor.toActorWrapper())
     }
 }
 

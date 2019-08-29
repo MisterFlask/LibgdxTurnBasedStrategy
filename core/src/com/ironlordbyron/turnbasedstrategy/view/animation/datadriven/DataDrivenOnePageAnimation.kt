@@ -11,7 +11,7 @@ data class DataDrivenOnePageAnimation(val filePath: String, val rows : Int, val 
                                       override val orientation: OrientationType = OrientationType.NEUTRAL,
                                       val frameDurationInSeconds: Float = .25f,
                                       val scaleFactor: Float = 1f): ProtoActor {
-    override fun toActor(animatedImageParams: AnimatedImageParams): AnimatedImage {
+    override fun toActorWrapper(animatedImageParams: AnimatedImageParams): AnimatedImage {
         return AnimatedImage.fromDataDrivenAnimation(this, animatedImageParams)
     }
 

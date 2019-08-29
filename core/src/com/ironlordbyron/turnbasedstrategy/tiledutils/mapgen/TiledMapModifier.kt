@@ -21,7 +21,7 @@ public class TiledMapModifier  @Inject constructor (val logicalTileTracker: Logi
     fun placeDoor(tileLocation: TileLocation){
         val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
         val doorEntityProtoActor = DoorEntity.closedDoorProtoActor
-        val actor = doorEntityProtoActor.toActor().actor;
+        val actor = doorEntityProtoActor.toActorWrapper().actor;
         tiledMapStageProvider.tiledMapStage.addActor(actor)
         actor.setBoundingBox(boundingBox)
         val doorEntity = tileEntityFactory.createDoor(tileLocation, actor)

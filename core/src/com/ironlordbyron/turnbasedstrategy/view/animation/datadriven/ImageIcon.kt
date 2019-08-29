@@ -19,7 +19,7 @@ public class ImageIcon (
         val _PAINTERLY_FOLDER = "icons/painterly"
 
     }
-    override fun toActor(animatedImageParams: AnimatedImageParams): ActorWrapper {
+    override fun toActorWrapper(animatedImageParams: AnimatedImageParams): ActorWrapper {
         val fileTexture = retrieveIconImage(folder, filename)
         return ImageWrapper(texture = TextureRegion(fileTexture),
                 hittable = true)
@@ -84,7 +84,7 @@ public class SpritesheetIconPage(val filePath: String,
         val frameCols = cols
         val walkSheet = Texture(Gdx.files.internal(filePath))
 
-        // Use the split utility method to create a 2D array of TextureRegions. This is
+        // Use the split utilityOrVest method to create a 2D array of TextureRegions. This is
         // possible because this sprite sheet contains frames of equal size and they are
         // all aligned.
         val tmp = TextureRegion.split(walkSheet,

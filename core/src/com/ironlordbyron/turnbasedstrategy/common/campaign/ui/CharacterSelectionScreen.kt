@@ -11,7 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.ironlordbyron.turnbasedstrategy.common.CharacterDisplayUiElement
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
-import com.ironlordbyron.turnbasedstrategy.common.campaign.CharacterRoster
+import com.ironlordbyron.turnbasedstrategy.common.campaign.CharacterAndEquipmentRoster
+import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.addHoverLighting
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.entrypoints.TacticalMapScreen
@@ -30,9 +31,10 @@ import kotlin.collections.ArrayList
 public class CharacterSelectionScreen: ScreenAdapter(){
 
     private lateinit var scenarioParams: ScenarioParams
-    val roster by LazyInject(CharacterRoster::class.java)
+    val roster by LazyInject(CharacterAndEquipmentRoster::class.java)
     val characterDisplayTable = CharacterDisplayUiElement()
     val characterListTable = Table()
+    val characterEquipmentTable = Table()
     val viewport = ScreenViewport()
     val stage: Stage = Stage(viewport)
     val characterSelectors = ArrayList<CharacterSelector>()
@@ -45,6 +47,7 @@ public class CharacterSelectionScreen: ScreenAdapter(){
         table.addLabel("CHARACTER SELECTION")
         table.row()
         populateCharacterListTable()
+        table.add(characterEquipmentTable)
         table.add(characterListTable)
         table.add(characterDisplayTable)
         characterDisplayTable.selectedCharacter = roster.characters.first()
@@ -57,6 +60,13 @@ public class CharacterSelectionScreen: ScreenAdapter(){
         stage.addActor(table)
     }
 
+    private fun populateEquipmentTable(){
+        val unattachedEquipment = roster.unusedEquipment
+        for (equipment in unattachedEquipment){
+            //characterEquipmentTable.add(equipment)
+        }
+    }
+
     private fun populateCharacterListTable() {
         characterSelectors.clear()
         characterListTable.clear()
@@ -67,7 +77,6 @@ public class CharacterSelectionScreen: ScreenAdapter(){
                 characterDisplayTable.regenerateCharacterDisplayTable()
             }
             characterSelectors.add(selector)
-
             characterListTable.add(selector)
             characterListTable.row()
         }
@@ -113,11 +122,36 @@ public class CharacterSelectionScreen: ScreenAdapter(){
 private val activeColor = Color.RED
 private val inactiveColor = Color.WHITE
 
+
+class EquipmentSelector(val equipment: LogicalEquipment): Table(){
+    // if it's in use, show character that's using it
+
+    var characterUsing: TacMapUnitTemplate? = null
+    init{
+        val characterUsing = characterUsing
+        if (characterUsing != null){
+            this.add(characterUsing.tiledTexturePath.toActorWrapper().actor).width(40f).height(40f)
+        } else{
+            this.add(Table()).width(40f).height(40f) // basically just a dummy to ensure consistent spacing
+        }
+        this.addLabel(equipment.name,
+                afterCreation = {cell -> cell.width(40f).height(40f)})
+        // add ui bit showing details
+
+        this.add(equipment.protoActor.toActorWrapper().actor)
+    }
+
+    fun refresh(){
+        characterUsing = equipment.characterUsing()
+    }
+
+}
+
 class CharacterSelector(val character: TacMapUnitTemplate): Table() {
     var selected: Boolean = false
 
     init{
-        this.add(this.character.tiledTexturePath.toActor().actor).width(40f).height(40f)
+        this.add(this.character.tiledTexturePath.toActorWrapper().actor).width(40f).height(40f)
         this.addLabel(this.character.templateName, skipRow = true)
         this.addHoverLighting()
         this.addClickListener {
@@ -163,4 +197,21 @@ fun Table.addButton(text: String, init: (Button)->Unit = {}, action: () -> Unit)
     button.addClickListener(action)
     this.add(button)
     init(button)
+}
+
+
+val roster by LazyInject(CharacterAndEquipmentRoster::class.java)
+fun LogicalEquipment.isNotInUse(): Boolean {
+    return roster.unusedEquipment.map{it.uuid}.contains(this.uuid)
+}
+fun LogicalEquipment.isInUse(): Boolean{
+    return !this.isNotInUse()
+}
+fun LogicalEquipment.characterUsing() : TacMapUnitTemplate? {
+    for (character in roster.characters){
+        if (character.equipment.contains(this)){
+            return character
+        }
+    }
+    return null
 }

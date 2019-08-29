@@ -112,7 +112,7 @@ class TacMapHud(viewPort: Viewport,
 
     private fun createFakeLogicalCharacter(template: TacMapUnitTemplate): LogicalCharacter {
         return LogicalCharacter(
-                actor = LogicalCharacterActorGroup(template.tiledTexturePath.toActor()),
+                actor = LogicalCharacterActorGroup(template.tiledTexturePath.toActorWrapper()),
         tileLocation = TileLocation(0,0),
         tacMapUnit = template,
         playerControlled = true)
@@ -123,9 +123,9 @@ class TacMapHud(viewPort: Viewport,
 
     private fun actionButton(abilityEquipmentPair : LogicalAbilityAndEquipment): Actor? {
 
-        var actor = abilityEquipmentPair.ability.attackSprite?.toActor()
+        var actor = abilityEquipmentPair.ability.attackSprite?.toActorWrapper()
         if (actor == null){
-            actor = ImageIcon(ImageIcon._PAINTERLY_FOLDER, "rip-acid-1.png").toActor() //todo
+            actor = ImageIcon(ImageIcon._PAINTERLY_FOLDER, "rip-acid-1.png").toActorWrapper() //todo
         }
         val button = actor
 
@@ -174,7 +174,7 @@ class TacMapHud(viewPort: Viewport,
     fun displayCharacterAttributes(selectedCharacter: LogicalCharacter): Table{
         val table = Table(DEFAULT_SKIN)
         for (item in selectedCharacter.getAttributes()){
-            val attrImage = item.logicalAttribute.imageIcon.toActor(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER.copy(hittable = true))
+            val attrImage = item.logicalAttribute.imageIcon.toActorWrapper(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER.copy(hittable = true))
             attrImage.addTooltip(RenderingFunction.simple(item.logicalAttribute.description(item.stacks)))
             table.add(attrImage.actor).width(iconDimensions.width.toFloat()).height(iconDimensions.height.toFloat())
             if (item.stacks > 1) {
@@ -390,7 +390,7 @@ private fun Actor.borderize() : Actor{
     group.y = this.y
     group.addActor(this)
 
-    val borderActor = PainterlyBorders.blueFrame.toActor()
+    val borderActor = PainterlyBorders.blueFrame.toActorWrapper()
     borderActor.actor.width = this.width
     borderActor.actor.height = this.height
     this.x = 0f
@@ -405,7 +405,7 @@ private fun Actor.borderize() : Actor{
 /*
 private fun <T: Actor> Cell<T>.surroundWithBorder(): Cell<T> {
     if (this.actor?.stage == null) return this
-    val borderActor = PainterlyBorders.blueFrame.toActor()
+    val borderActor = PainterlyBorders.blueFrame.toActorWrapper()
     borderActor.actor.width = this.actor.width
     borderActor.actor.height = this.actor.height
     borderActor.actor.x = this.actor.x

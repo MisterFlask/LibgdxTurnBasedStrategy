@@ -19,7 +19,7 @@ data class TiledTexturePath(
         val tileSetName: String,
         val sourceTileMapName: String = COMMON_TILE_MAP, override val orientation: OrientationType = OrientationType.NEUTRAL
 ): ProtoActor {
-    override fun toActor(animatedImageParams: AnimatedImageParams): ActorWrapper {
+    override fun toActorWrapper(animatedImageParams: AnimatedImageParams): ActorWrapper {
         return ImageWrapper(TiledMapOperationsHandler(TilemapXmlProcessor()).pullGenericTexture(spriteId, tileSetName))
     }
 

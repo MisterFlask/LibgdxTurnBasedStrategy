@@ -22,7 +22,7 @@ class CharacterImageManager @Inject constructor(val tiledMapOperationsHandler: T
 
     override fun placeCharacterActor(tileLocation: TileLocation, protoActor: ProtoActor) : LogicalCharacterActorGroup {
         val boundingBox = tileMapProvider.getBoundingBoxOfTile(tileLocation)
-        val characterActor = protoActor.toActor(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER)
+        val characterActor = protoActor.toActorWrapper(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER)
         val group = LogicalCharacterActorGroup(characterActor)
         group.addActor(characterActor.actor)
         group.setBoundingBox(boundingBox)
@@ -36,7 +36,7 @@ class CharacterImageManager @Inject constructor(val tiledMapOperationsHandler: T
 
     fun retrieveCharacterTemplateImage(characterTemplate: TacMapUnitTemplate) : ActorWrapper{
         val tiledTexturePath = characterTemplate.tiledTexturePath;
-        val actorWrapper = tiledTexturePath.toActor(AnimatedImageParams(true, true, 14f, hittable = true))
+        val actorWrapper = tiledTexturePath.toActorWrapper(AnimatedImageParams(true, true, 14f, hittable = true))
         return actorWrapper
     }
 }

@@ -7,15 +7,12 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
-import com.google.inject.assistedinject.Assisted
 import com.ironlordbyron.turnbasedstrategy.ai.BasicAiDecisions
 import com.ironlordbyron.turnbasedstrategy.ai.PathfinderFactory
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.MapHighlighter
-import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
-import com.ironlordbyron.turnbasedstrategy.font.TextLabelGenerator
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.tacMapState
@@ -226,7 +223,7 @@ public class ActionManager @Inject constructor(
                                     animatedImageParams: AnimatedImageParams = AnimatedImageParams.RUN_ALWAYS_AND_FOREVER,
                                     boundingBoxType: BoundingBoxType = BoundingBoxType.WHOLE_TILE,
                                     isChildActor: Boolean = false) : Actor{
-        val actor = protoActor.toActor(animatedImageParams).actor
+        val actor = protoActor.toActorWrapper(animatedImageParams).actor
         return spawnActorAtTileInSequence(actor, tileLocation, boundingBoxType)
     }
 
@@ -236,7 +233,7 @@ public class ActionManager @Inject constructor(
         if (logicalAttribute.tacticalMapProtoActor == null){
             return
         }
-        val actor = logicalAttribute.tacticalMapProtoActor.toActor(animatedImageParams).actor
+        val actor = logicalAttribute.tacticalMapProtoActor.toActorWrapper(animatedImageParams).actor
         actor.isVisible = false
         animationActionQueueProvider.addAction(ActorActionPair(actor, revealActionGenerator.generateRevealAction(actor)))
         val actorGroup = logicalCharacter.actor

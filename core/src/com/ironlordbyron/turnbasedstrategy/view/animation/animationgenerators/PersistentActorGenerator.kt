@@ -16,7 +16,7 @@ public class PersistentActorGenerator @Inject constructor(val revealActionGenera
         if (alphaOverride != null){
             animatedImageParams = animatedImageParams.copy(alpha = alphaOverride)
         }
-        val actor = protoActor.toActor(animatedImageParams)
+        val actor = protoActor.toActorWrapper(animatedImageParams)
         return actor
     }
 
