@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.scenes.scene2d.*
 import com.badlogic.gdx.scenes.scene2d.ui.Button
+import com.badlogic.gdx.scenes.scene2d.ui.Cell
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.Align
@@ -296,12 +297,12 @@ private class FlexibleHoverListener(val func: () -> Unit) : InputListener() {
     }
 }
 
-fun Table.addButton(text: String, init: (Button)->Unit = {}, action: () -> Unit){
+fun Table.addButton(text: String, init: (Button)->Unit = {}, action: () -> Unit): Cell<Button> {
     val button = Button(DEFAULT_SKIN)
     button.add(text)
     button.addClickListener(action)
-    this.add(button)
     init(button)
+    return this.add(button)
 }
 
 
@@ -323,6 +324,15 @@ class DeploymentSlotsHolder(val slots: MutableList<DeploymentSlotViewModel>, val
     fun regenerate() {
         clear()
         for (slot in slots) {
+            if (slot.character != null) {
+                this.addButton("Remove") {
+                    slot.character = null
+                    screen.regenerateUi()
+                }.width(50f)
+            } else {
+                this.add(Table()).width(50f)
+            }
+
             this.add(DeploymentSlot(slot, screen)).width(150f)
             this.row()
         }
