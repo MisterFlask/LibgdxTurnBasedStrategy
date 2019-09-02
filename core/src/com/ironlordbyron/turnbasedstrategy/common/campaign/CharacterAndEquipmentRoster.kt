@@ -3,6 +3,8 @@ package com.ironlordbyron.turnbasedstrategy.common.campaign
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.classes.startingMelterPistol
+import com.ironlordbyron.turnbasedstrategy.tacmapunits.equipment.Shotgun
+import com.ironlordbyron.turnbasedstrategy.tacmapunits.equipment.glaive
 import javax.inject.Singleton
 
 @Singleton
@@ -20,6 +22,8 @@ class CharacterAndEquipmentRoster{
         //todo: better
         characters.addAll(listOf(TacMapUnitTemplate.RANGED_ENEMY))
         equipment.add(startingMelterPistol())
+        equipment.add(glaive())
+        equipment.add(Shotgun())
     }
 
     fun attachEquipmentToCharacter(equipment: LogicalEquipment, characterToEquip: TacMapUnitTemplate){

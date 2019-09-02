@@ -8,8 +8,10 @@ import com.badlogic.gdx.scenes.scene2d.*
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
+import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
 import com.ironlordbyron.turnbasedstrategy.common.CharacterDisplayUiElement
+import com.ironlordbyron.turnbasedstrategy.common.EquipmentSlot
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.campaign.CharacterAndEquipmentRoster
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
@@ -26,6 +28,8 @@ import com.ironlordbyron.turnbasedstrategy.view.ui.DEFAULT_SKIN
 import com.ironlordbyron.turnbasedstrategy.view.ui.addLabel
 import com.ironlordbyron.turnbasedstrategy.view.ui.withBorder
 import com.ironlordbyron.turnbasedstrategy.view.ui.withOrangeBorder
+import com.kotcrab.vis.ui.building.utilities.Alignment
+import java.util.*
 import kotlin.collections.ArrayList
 
 public class CharacterSelectionScreen: ScreenAdapter(){
@@ -38,46 +42,100 @@ public class CharacterSelectionScreen: ScreenAdapter(){
     val viewport = ScreenViewport()
     val stage: Stage = Stage(viewport)
     val characterSelectors = ArrayList<CharacterSelector>()
+    val deploymentSlots = arrayListOf(DeploymentSlotViewModel(), DeploymentSlotViewModel(), DeploymentSlotViewModel())
+    val table = Table()
+
+    // view model shit
+    var selectedEquipmentSlot: EquipmentSlot? = null
+
     init{
-        val table = Table()
+        this.deploymentSlots.first().selected = true
+        regenerateUi()
+        stage.addActor(table)
+    }
+
+    public fun regenerateUi(){
+        table.clear()
         table.withBorder()
         table.clampToScreenRatio(ActorDimensions(
-.2f, .8f, .8f, .2f
+                .05f, .95f, .95f, .05f
         ))
-        table.addLabel("CHARACTER SELECTION")
         table.row()
-        populateCharacterListTable()
-        table.add(characterEquipmentTable)
-        table.add(characterListTable)
-        table.add(characterDisplayTable)
-        characterDisplayTable.selectedCharacter = roster.characters.first()
+        table.add(primaryRow())
+    }
+
+    private fun generateWeaponSlotsTable(): Table{
+        val table = Table()
+        val selected = this.deploymentSlots.firstOrNull{it.selected}
+        if (selected == null) {
+            return table
+        }
+        val character = selected.character
+        if (character == null){
+            return table
+        }
+        for (slot in character.equipmentSlots){
+            table.add(WeaponSlot(slot, this))
+            table.row()
+        }
+        return table
+    }
+
+    private fun primaryRow(): Table {
+        val table = Table()
+        table.add(DeploymentSlotsHolder(deploymentSlots, this))
+                .fill(0f, 1f).width(150f).align(Alignment.LEFT.alignment)
+
+        if (this.deploymentSlots.first{it.selected}.character == null){
+            addTableForCharacterSelect()
+        }else{
+            table.add(generateWeaponSlotsTable()).width(250f).align(Alignment.LEFT.alignment)
+            table.add(generateTableForEquipmentSelect()).width(250f).align(Alignment.LEFT.alignment)
+        }
         characterDisplayTable.regenerateCharacterDisplayTable()
-        characterDisplayTable.withBorder()
+        table.add(characterDisplayTable).width(150f)
         table.row()
         table.addButton("Start Mission"){
             startGame()
         }
-        stage.addActor(table)
+        return table
+    }
+
+    private fun generateTableForEquipmentSelect() : Table {
+        populateEquipmentTable()
+        return (characterEquipmentTable)
+    }
+
+    private fun addTableForCharacterSelect() {
+        table.add(characterListTable).width(250f)
+        populateCharacterSelectTable()
+        characterDisplayTable.withBorder()
     }
 
     private fun populateEquipmentTable(){
+        characterEquipmentTable.clear()
         val unattachedEquipment = roster.unusedEquipment
         for (equipment in unattachedEquipment){
-            //characterEquipmentTable.add(equipment)
+            characterEquipmentTable.add(EquipmentSelector(equipment, this)).width(200f)
+            characterEquipmentTable.row()
         }
     }
 
-    private fun populateCharacterListTable() {
+    private fun populateCharacterSelectTable() {
         characterSelectors.clear()
         characterListTable.clear()
         for (rosterChar in this.roster.characters){
             val selector= CharacterSelector(rosterChar)
-            selector.addHoverListener {
+            selector.addClickListener {
                 characterDisplayTable.selectedCharacter = selector.character
                 characterDisplayTable.regenerateCharacterDisplayTable()
             }
+            selector.addDoubleClickListener{
+                this.deploymentSlots.first{it.selected}.character = selector.character
+                this.regenerateUi()
+            }
             characterSelectors.add(selector)
-            characterListTable.add(selector)
+            characterListTable.add(selector).width(150f).align(Align.center)
             characterListTable.row()
         }
     }
@@ -123,9 +181,11 @@ private val activeColor = Color.RED
 private val inactiveColor = Color.WHITE
 
 
-class EquipmentSelector(val equipment: LogicalEquipment): Table(){
+class EquipmentSelector(val equipment: LogicalEquipment,
+                        val characterSelectionScreen: CharacterSelectionScreen): Table(){
     // if it's in use, show character that's using it
 
+    var selected = false
     var characterUsing: TacMapUnitTemplate? = null
     init{
         val characterUsing = characterUsing
@@ -135,16 +195,26 @@ class EquipmentSelector(val equipment: LogicalEquipment): Table(){
             this.add(Table()).width(40f).height(40f) // basically just a dummy to ensure consistent spacing
         }
         this.addLabel(equipment.name,
-                afterCreation = {cell -> cell.width(40f).height(40f)})
-        // add ui bit showing details
+                afterCreation = {cell -> cell.width(150f).height(40f)})
 
-        this.add(equipment.protoActor.toActorWrapper().actor)
+        this.add(equipment.protoActor.toActorWrapper().actor).width(40f).height(40f)
+
+        this.addClickListener {
+            log("Hit click listener on char select")
+            this.selected = !this.selected
+            if (this.selected){
+                this.withOrangeBorder()
+            } else {
+                this.withBorder()
+            }
+        }
+        this.withBorder()
+        this.touchable = Touchable.enabled
     }
 
     fun refresh(){
         characterUsing = equipment.characterUsing()
     }
-
 }
 
 class CharacterSelector(val character: TacMapUnitTemplate): Table() {
@@ -170,7 +240,22 @@ class CharacterSelector(val character: TacMapUnitTemplate): Table() {
 }
 
 fun Actor.addClickListener(func: () -> Unit){
+    this.touchable = Touchable.enabled
     this.addListener(FlexibleClickListener(func))
+}
+
+fun Actor.addDoubleClickListener(func: ()->Unit){
+    this.touchable = Touchable.enabled
+    this.addListener(DoubleClickListener(func))
+}
+
+class DoubleClickListener(val func: () -> Unit) : ClickListener() {
+    override fun clicked(event: InputEvent?, x: Float, y: Float) {
+        super.clicked(event, x, y)
+        if (this.tapCount > 1){
+            func()
+        }
+    }
 }
 
 private class FlexibleClickListener(val func: () -> Unit) : ClickListener() {
@@ -200,6 +285,8 @@ fun Table.addButton(text: String, init: (Button)->Unit = {}, action: () -> Unit)
 }
 
 
+
+
 val roster by LazyInject(CharacterAndEquipmentRoster::class.java)
 fun LogicalEquipment.isNotInUse(): Boolean {
     return roster.unusedEquipment.map{it.uuid}.contains(this.uuid)
@@ -214,4 +301,88 @@ fun LogicalEquipment.characterUsing() : TacMapUnitTemplate? {
         }
     }
     return null
+}
+
+class DeploymentSlotsHolder(val slots: MutableList<DeploymentSlotViewModel>, val screen: CharacterSelectionScreen) : Table() {
+    init {
+        regenerate()
+    }
+
+    fun regenerate() {
+        clear()
+        for (slot in slots) {
+            this.add(DeploymentSlot(slot, screen)).width(150f)
+            this.row()
+        }
+    }
+}
+
+class WeaponSlot(val equipmentSlot: EquipmentSlot,
+                 var characterSelectionScreen: CharacterSelectionScreen) : Table() {
+    init{
+        regenerate()
+    }
+
+    fun regenerate(){
+        this.clear()
+        val currentEquipment = equipmentSlot.currentEquipment
+         if (currentEquipment == null){
+             this.addLabel("No Equipment Selected!", afterCreation={it.width(150f)})
+         }else{
+             this.addLabel(currentEquipment.name, afterCreation={it.width(150f)})
+         }
+
+        if (this.equipmentSlot == characterSelectionScreen.selectedEquipmentSlot){
+            this.withOrangeBorder()
+        }else{
+            this.withBorder()
+        }
+
+        this.addClickListener {
+            characterSelectionScreen.selectedEquipmentSlot = this.equipmentSlot
+            characterSelectionScreen.regenerateUi()
+        }
+    }
+}
+
+class DeploymentSlot(val slot: DeploymentSlotViewModel, val screen: CharacterSelectionScreen): Table(){
+    init{
+        regenerate()
+        this.addClickListener {
+            screen.deploymentSlots.forEach{it.selected = false}
+            this.slot.selected = true;
+            screen.regenerateUi() }
+    }
+
+    fun regenerate(){
+        this.clear()
+        val character = slot.character
+        if (character == null){
+            this.addLabel("No Character Selected", afterCreation = {it.width(150f)})
+        }else{
+            this.addLabel(character.templateName, afterCreation = {it.width(100f)})
+            this.add(character.tiledTexturePath.toActorWrapper().actor).width(50f)
+        }
+        if (slot.selected){
+            this.withOrangeBorder()
+        }else{
+            this.withBorder()
+        }
+    }
+}
+
+data class DeploymentSlotViewModel(var character: TacMapUnitTemplate? = null, var selected: Boolean = false)
+
+
+class ObservableWrapper(): Observable() {
+
+    fun notify(item: Any){
+        super.setChanged()
+        super.notifyObservers(item)
+    }
+
+    fun purge(){
+        this.deleteObservers()
+    }
+
 }

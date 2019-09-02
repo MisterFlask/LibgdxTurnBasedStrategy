@@ -35,6 +35,7 @@ class TextLabelGenerator{
         if (dimensions != null){
             label.label.setSize(dimensions.width.toFloat(), dimensions.height.toFloat())
         }
+        label.label.setWrap(true)
         return label
     }
 }

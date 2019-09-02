@@ -51,3 +51,6 @@ class GdxGameMain : Game(), EventListener {
 fun Any.log(msg: String){
     println("${this.javaClass.simpleName}:$msg")
 }
+fun Any.error(msg: String){
+    println("ERROR:${this.javaClass.simpleName}:$msg")
+}
