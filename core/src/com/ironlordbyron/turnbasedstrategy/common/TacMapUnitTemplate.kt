@@ -21,7 +21,7 @@ data class Tags(val isSpawnableEnemy: Boolean = true)
 
 data class EquipmentSlot(val allowedEquipment: Collection<EquipmentSuperclass>,
                          val name: String,
-                         val currentEquipment: LogicalEquipment? = null){
+                         var currentEquipment: LogicalEquipment? = null){
     companion object{
         fun utilityOrVest(): EquipmentSlot {
             return EquipmentSlot(listOf(EquipmentSuperclass.UTILITY, EquipmentSuperclass.VEST), "Utility/Vest")
@@ -32,6 +32,10 @@ data class EquipmentSlot(val allowedEquipment: Collection<EquipmentSuperclass>,
         fun primaryWeapon(): EquipmentSlot {
             return EquipmentSlot(listOf(EquipmentSuperclass.PRIMARY_WEAPON), "Primary Weapon")
         }
+    }
+
+    fun isEquipmentAllowed(equipment: LogicalEquipment): Boolean {
+        return allowedEquipment.any { it == equipment.equipmentClass.superclass }
     }
 }
 

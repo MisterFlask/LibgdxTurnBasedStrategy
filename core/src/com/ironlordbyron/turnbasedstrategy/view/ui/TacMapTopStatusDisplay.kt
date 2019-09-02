@@ -79,7 +79,7 @@ val textLabelGenerator: TextLabelGenerator by lazy{
     GameModuleInjector.generateInstance(TextLabelGenerator::class.java)
 }
 
-fun Table.addLabel(text: String, scale: Float= .2f, tooltip: String? = null, skipRow: Boolean = false,
+fun Table.addLabel(text: String, scale: Float= .3f, tooltip: String? = null, skipRow: Boolean = false,
                    afterCreation: (Cell<Label>) -> Unit = {}): LabelWrapper {
     if (!skipRow) this.row()
     val label = textLabelGenerator.generateLabel(text,  scale = scale)
@@ -88,6 +88,11 @@ fun Table.addLabel(text: String, scale: Float= .2f, tooltip: String? = null, ski
         label.addTooltip(RenderingFunction.simple(tooltip))
     }
     return label
+}
+
+fun Table.addSubtitleLabel(text: String, scale: Float= .15f, tooltip: String? = null, skipRow: Boolean = false,
+                           afterCreation: (Cell<Label>) -> Unit = {}){
+    addLabel(text, scale, tooltip, skipRow, afterCreation)
 }
 
 
