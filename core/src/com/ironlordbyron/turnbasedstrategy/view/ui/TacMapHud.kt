@@ -36,7 +36,8 @@ import com.kotcrab.vis.ui.building.utilities.Alignment
  * Created by Aaron on 3/30/2018.
  */
 
-public val DEFAULT_SKIN: Skin = Skin(Gdx.files.internal("tactical-ui-skins/Tracer_UI_Skin/tracerui/tracer-ui.json"))
+public val DEFAULT_SKIN: Skin = Skin(Gdx.files.internal("tactical-ui-skins/shade_skin/shadeui/uiskin.json"))
+
 @Singleton
 class TacMapHudFactory @Inject constructor(val eventNotifier: EventNotifier,
                                            val tacticalMapState: TacticalMapState,
@@ -222,7 +223,7 @@ class TacMapHud(viewPort: Viewport,
         else {
             label = "Combat Phase"
         }
-        val titleLabel = textLabelGenerator.generateLabel(label).label
+        val titleLabel = textLabelGenerator.generateGradientLabel(label).label
         titleLabel.setFontScale(.3f)
         combatPhaseLabel.add(titleLabel).height(titleLabel.height)
                 .row()
@@ -345,11 +346,6 @@ class TacMapHud(viewPort: Viewport,
                     it
                 }
         window = actor
-        val background = Image(DEFAULT_SKIN, "bg")
-        background.setScaling(Scaling.stretch)
-        background.setFillParent(true)
-        window.addActor(background)
-        background.toBack()
 
         actor.setRelativeWidth(1/4f)
         actor.clampToRightSide()

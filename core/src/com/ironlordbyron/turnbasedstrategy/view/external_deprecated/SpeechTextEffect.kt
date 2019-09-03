@@ -26,7 +26,7 @@ class SpeechTextEffect(private val x: Float, private val y: Float,
             gl = GlyphLayout()
         }
         this.duration = duration
-        this.font = FontGenerator.retrieveFont() //TODO: FontHelper.speech_font
+        this.font = FontGenerator.retrieveGradientFont() //TODO: FontHelper.speech_font
         this.s = Scanner(msg)
     }
 

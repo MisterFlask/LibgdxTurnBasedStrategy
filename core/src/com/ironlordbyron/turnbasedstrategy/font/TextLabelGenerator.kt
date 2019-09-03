@@ -3,31 +3,29 @@ package com.ironlordbyron.turnbasedstrategy.font
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
-import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.LabelWrapper
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.LabelWrapperImpl
 import com.ironlordbyron.turnbasedstrategy.view.images.Dimensions
-import java.awt.Dimension
 
 object FontGenerator{
-    fun retrieveFont(fontScale: Float? = null): BitmapFont{
+    fun retrieveGradientFont(fontScale: Float? = null): BitmapFont{
         val fontFile = Gdx.files.internal("fonts/littera_default/font.fnt")
         val picFile = Gdx.files.internal("fonts/littera_default/font.png")
         val font = BitmapFont(fontFile, picFile, false)
         if (fontScale != null){
             font.data.setScale(fontScale)
         }
+        font.getData().markupEnabled = true;
         return font
     }
 }
 
 class TextLabelGenerator{
-    fun generateLabel(text: String,
-                      dimensions: Dimensions? = null,
-                      scale: Float?= null,
-                      hittable: Boolean = true): LabelWrapper{
-        val font = FontGenerator.retrieveFont(scale)
+    fun generateGradientLabel(text: String,
+                              dimensions: Dimensions? = null,
+                              scale: Float?= null,
+                              hittable: Boolean = true): LabelWrapper{
+        val font = FontGenerator.retrieveGradientFont(scale)
         val labelStyle = Label.LabelStyle()
         labelStyle.font = font
 

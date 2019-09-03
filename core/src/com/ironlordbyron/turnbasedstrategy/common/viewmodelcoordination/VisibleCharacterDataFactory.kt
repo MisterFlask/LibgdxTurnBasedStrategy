@@ -20,7 +20,7 @@ public class VisibleCharacterDataFactory @Inject constructor (val animationActio
     }
 
     public fun generateCharacterHpMarker(character: LogicalCharacter){
-        val hpMarker = textLabelGenerator.generateLabel("${character.healthLeft}")
+        val hpMarker = textLabelGenerator.generateGradientLabel("${character.healthLeft}")
         val outlineShaderForCharacter = shaderFactory.generateOutlineShaderOfColor(
                 Color.BLACK,
                 outlineSize = 1.5f)

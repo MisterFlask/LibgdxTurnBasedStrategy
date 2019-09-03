@@ -1,7 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.view.animation.external
 
 import com.badlogic.gdx.graphics.g2d.Batch
-import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.font.FontGenerator
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.ActivatableActor
@@ -27,7 +26,7 @@ class FloatingText(val text: String,
     private var deltaX: Float = 0.toFloat()
     private var deltaY: Float = 0.toFloat()
 
-    private val font = FontGenerator.retrieveFont(fontScale)
+    private val font = FontGenerator.retrieveGradientFont(fontScale)
 
     fun setDeltaX(deltaX: Float) {
         this.deltaX = deltaX

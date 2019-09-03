@@ -67,7 +67,7 @@ public class TacMapTopStatusDisplay(val viewPort: Viewport) : Stage(viewPort),
         overallTable.debug = true
 
         overallTable.clear()
-        overallTable.add(labelGenerator.generateLabel("Test Label", scale = .2f).label)
+        overallTable.add(labelGenerator.generateGradientLabel("Test Label", scale = .2f).label)
         val nextEvent = tacMapGlobalState.nextEvent()
         overallTable.addLabel("Alertness: ${tacMapGlobalState.alertness}", .2f)
         overallTable.addLabel("Next event: ${nextEvent.eventName} at ${nextEvent.atAlertness}", .2f)
@@ -82,7 +82,7 @@ val textLabelGenerator: TextLabelGenerator by lazy{
 fun Table.addLabel(text: String, scale: Float= .3f, tooltip: String? = null, skipRow: Boolean = false,
                    afterCreation: (Cell<Label>) -> Unit = {}): LabelWrapper {
     if (!skipRow) this.row()
-    val label = textLabelGenerator.generateLabel(text,  scale = scale)
+    val label = textLabelGenerator.generateGradientLabel(text,  scale = scale)
     afterCreation(this.add(label.label))
     if (tooltip != null){
         label.addTooltip(RenderingFunction.simple(tooltip))
