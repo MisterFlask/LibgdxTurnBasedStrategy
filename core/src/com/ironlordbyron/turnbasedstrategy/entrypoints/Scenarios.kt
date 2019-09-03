@@ -23,9 +23,13 @@ public class Scenarios
         val SMALLER_EREBUS_SCENARIO = ScenarioParams(sourceMapName = "tileMaps/SmallerErebusStyle.tmx",
                 name = "Smaller Erebus-style Overworld Combat", mapGeneratorType = MapGeneratorType.NONE,
                 unitsThatPlayerWillDeploy = listOf())
+        val INDOOR_TEST_2 = ScenarioParams(sourceMapName = "tileMaps/IndoorMapTest.tmx",
+                name = "Indoor Test Combat",
+                mapGeneratorType = MapGeneratorType.NONE,
+                unitsThatPlayerWillDeploy = listOf())
 
 
         val SCENARIO_LIST = listOf(DEFAULT_SCENARIO, PARTIAL_PROCEDURAL_SCENARIO, OVERWORLD_SCENARIO, EREBUS_SCENARIO,
-                SMALLER_EREBUS_SCENARIO)
+                SMALLER_EREBUS_SCENARIO, INDOOR_TEST_2)
     }
 }

@@ -82,7 +82,7 @@ val textLabelGenerator: TextLabelGenerator by lazy{
 fun Table.addLabel(text: String, scale: Float= .3f, tooltip: String? = null, skipRow: Boolean = false,
                    afterCreation: (Cell<Label>) -> Unit = {}): LabelWrapper {
     if (!skipRow) this.row()
-    val label = textLabelGenerator.generateGradientLabel(text,  scale = scale)
+    val label = textLabelGenerator.generateSkinnedLabel(text,  scale = scale)
     afterCreation(this.add(label.label))
     if (tooltip != null){
         label.addTooltip(RenderingFunction.simple(tooltip))

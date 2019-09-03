@@ -215,19 +215,19 @@ class TacMapHud(viewPort: Viewport,
     val combatPhaseLabel = Table()
 
     private fun regenerateTacMapHudCombatPhaseLabel(){
+        combatPhaseLabel.debugTable()
         combatPhaseLabel.clearChildren()
-        var label = ""
+        var label: String
         if (boardInputStateProvider.boardInputState is BoardInputState.PlayerIsPlacingUnits){
             label = "Deployment Phase"
         }
         else {
             label = "Combat Phase"
         }
-        val titleLabel = textLabelGenerator.generateGradientLabel(label).label
-        titleLabel.setFontScale(.3f)
-        combatPhaseLabel.add(titleLabel).height(titleLabel.height)
+        val titleLabel = textLabelGenerator.generateSkinnedLabel(label).label
+        titleLabel.setFontScale(1.2f)
+        combatPhaseLabel.add(titleLabel).height(titleLabel.height).expand().fill()
                 .row()
-
     }
 
     private fun regenerateCharacterSelectionCarousel() {
@@ -337,7 +337,7 @@ class TacMapHud(viewPort: Viewport,
         val actor =
                 Window("", DEFAULT_SKIN).let {
 
-                    it.add(combatPhaseLabel.withBorder()).fill().expand()
+                    it.add(combatPhaseLabel.withBorder()).fill().expand().fill()
                     it.row()
                     it.add(characterSelectCarousel.withBorder()).fill().expand()
                     it.row()

@@ -51,9 +51,6 @@ public class CharacterSelectionScreen: ScreenAdapter(){
     var selectedEquipmentSlot: EquipmentSlot? = null
 
     init{
-        this.characterDeploymentSlots.first().selected = true
-        regenerateUi()
-        stage.addActor(masterTable)
     }
 
     public fun regenerateUi(){
@@ -114,9 +111,11 @@ public class CharacterSelectionScreen: ScreenAdapter(){
         characterSelectors.clear()
         characterListTable.clear()
 
-        val charactersSelected = characterDeploymentSlots.filter { it.character != null }
+        val charactersSelected = characterDeploymentSlots
+                .filter { it.character != null }
                 .map{it.character!!}
-        val charactersThatCanBeSelected = this.roster.characters.filter{!charactersSelected.contains(it)}
+        val charactersThatCanBeSelected = this.roster.characters
+                .filter{!charactersSelected.contains(it)}
         for (rosterChar in charactersThatCanBeSelected){
             val selector= CharacterSelector(rosterChar)
             selector.addClickListener {
@@ -157,6 +156,10 @@ public class CharacterSelectionScreen: ScreenAdapter(){
 
     fun initializeCharacterSelectionScreen(scenarioParams: ScenarioParams){
         this.scenarioParams = scenarioParams
+        roster.initializeCharacterLoadouts()
+        this.characterDeploymentSlots.first().selected = true
+        regenerateUi()
+        stage.addActor(masterTable)
     }
 
     fun startGame(){
@@ -166,9 +169,10 @@ public class CharacterSelectionScreen: ScreenAdapter(){
     }
 
     private fun collectSelectedUnits(): Collection<TacMapUnitTemplate> {
-        return this.characterSelectors
-                .filter{it.selected}
-                .map{it.character}
+        val charactersSelected = characterDeploymentSlots
+                .filter { it.character != null }
+                .map{it.character!!}
+        return charactersSelected
     }
 
 

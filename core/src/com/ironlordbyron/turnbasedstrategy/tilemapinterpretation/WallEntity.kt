@@ -1,10 +1,12 @@
 package com.ironlordbyron.turnbasedstrategy.tilemapinterpretation
 
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.abilities.LogicalAbility
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
+import com.ironlordbyron.turnbasedstrategy.view.ui.addLabel
 
 /**
  * Represents a wall (as created by the Tiled layer, possibly.)
@@ -19,6 +21,10 @@ class WallEntity(
 
     override fun targetableByAbility(logicalAbility: LogicalAbility): Boolean {
         return false
+    }
+
+    override fun buildUiDisplay(parentTable: Table) {
+        parentTable.addLabel("WALL ENTITY FOUND")
     }
 
 }

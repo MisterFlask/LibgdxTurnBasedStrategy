@@ -12,6 +12,7 @@ import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
 import com.ironlordbyron.turnbasedstrategy.font.TextLabelGenerator
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
+import com.ironlordbyron.turnbasedstrategy.guice.eventNotifier
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.actionManager
 import com.ironlordbyron.turnbasedstrategy.tileentity.CityTileEntity
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
@@ -96,6 +97,9 @@ class WarpingInPortalTileEntity(override val tileLocations: Collection<TileLocat
 
 
 interface TileEntityGenerator{
+    val singleTilePerEntity: Boolean
+        get() = false
+
     fun generateTileEntity(tileLocations: Collection<TileLocation>) : TileEntity
     fun applicableToTile(tileLocation: TileLocation) : Boolean
 
@@ -129,8 +133,22 @@ public class CityTileEntityGenerator() : TileEntityGenerator{
     override fun applicableToTile(tileLocation: TileLocation): Boolean {
         return tileLocation.terrainProperties().any{it.properties.contains("town")}
     }
+}
 
+@Autoinjectable
+@Singleton
+public class WallTileEntityGenerator() : TileEntityGenerator{
+    override val singleTilePerEntity: Boolean
+        get() = true
+    override fun generateTileEntity(tileLocations: Collection<TileLocation>): TileEntity {
+        return WallEntity(eventNotifier,
+                tileLocations.single(),
+                this.getConsolidatedActorFromTilesWithProperty(tileLocations, "wall"))
+    }
 
+    override fun applicableToTile(tileLocation: TileLocation): Boolean {
+        return tileLocation.terrainProperties().any{it.properties.contains("wall")}
+    }
 }
 
 @Autoinjectable
@@ -152,7 +170,6 @@ public class FortressTileEntityGenerator() : TileEntityGenerator{
 @Autoinjectable
 @Singleton
 class TileEntityRegistrar(){
-
     val entities = ArrayList<TileEntity>()
     val generators = ArrayList<TileEntityGenerator>()
     fun registerEntity(tileLocation: TileLocation): TileEntity?{
@@ -162,6 +179,12 @@ class TileEntityRegistrar(){
         }
         for (gen in generators){
             if (gen.applicableToTile(tileLocation)){
+                if (gen.singleTilePerEntity){
+                    val entity = gen.generateTileEntity(listOf(tileLocation))
+                    entities.add(entity)
+                    return entity
+                }
+
                 val locs = tileLocation.floodFill { gen.applicableToTile(it) }
                 val entity = gen.generateTileEntity(locs)
                 entities.add(entity)

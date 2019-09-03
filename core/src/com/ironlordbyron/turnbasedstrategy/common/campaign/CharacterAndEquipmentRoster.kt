@@ -1,5 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.common.campaign
 
+import com.ironlordbyron.turnbasedstrategy.common.EquipmentSlot
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.SimpleCityConquerer
@@ -44,6 +45,24 @@ class CharacterAndEquipmentRoster{
         equipment.add(EquipmentWithQuantity(startingMelterPistol(), Quantity.Infinite()))
         equipment.add(EquipmentWithQuantity(glaive(), Quantity.Infinite()))
         equipment.add(EquipmentWithQuantity(Shotgun(), Quantity.Infinite()))
+    }
+
+    fun initializeCharacterLoadouts() {
+        for (character in characters){
+            for (slot in character.equipmentSlots){
+                if (slot.currentEquipment == null){
+                    slot.currentEquipment = findDefaultEquipmentForCharacterAndSlot(character, slot)
+                }
+            }
+        }
+    }
+
+    private fun findDefaultEquipmentForCharacterAndSlot(character: TacMapUnitTemplate, slot: EquipmentSlot): LogicalEquipment? {
+        return equipment.filter{slot.isEquipmentAllowed(it.equipment)}
+                // .filter{character.allowedEquipment.contains(it.equipment.equipmentClass)} //TODO: Add in this restriction later
+                .filter{it.quantity is Quantity.Infinite}
+                .map{it.equipment}
+                .firstOrNull()
     }
 
     fun attachEquipmentToCharacter(equipment: LogicalEquipment, characterToEquip: TacMapUnitTemplate){

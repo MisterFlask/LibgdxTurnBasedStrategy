@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.LabelWrapper
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.LabelWrapperImpl
 import com.ironlordbyron.turnbasedstrategy.view.images.Dimensions
+import com.ironlordbyron.turnbasedstrategy.view.ui.DEFAULT_SKIN
 
 object FontGenerator{
     fun retrieveGradientFont(fontScale: Float? = null): BitmapFont{
@@ -35,5 +36,22 @@ class TextLabelGenerator{
         }
         label.label.setWrap(true)
         return label
+    }
+
+    fun generateSkinnedLabel(text: String,
+                             dimensions: Dimensions? = null,
+                             scale: Float?= null,
+                             hittable: Boolean = true): LabelWrapper{
+        val font = DEFAULT_SKIN.getFont("font-label")
+        val labelStyle = Label.LabelStyle()
+        labelStyle.font = font
+
+        val label = LabelWrapperImpl(text, labelStyle, hittable)
+        if (dimensions != null){
+            label.label.setSize(dimensions.width.toFloat(), dimensions.height.toFloat())
+        }
+        label.label.setWrap(true)
+        return label
+
     }
 }
