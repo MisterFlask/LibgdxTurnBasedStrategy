@@ -290,7 +290,7 @@ public class ActionManager @Inject constructor(
                 spawnEntityParams.protoActor)
     }
 
-    // Note: actorToFocusCameraOn is a hack around the fact that it's hard to distinguish "container" actors from the actual things users see,
+    // Note: cameraFocusActor is a hack around the fact that it's hard to distinguish "container" actors from the actual things users see,
     // sometimes resulting in artifacts where the camera zooms into 0,0.  If this happens, we can just use this.  HACK!
     fun despawnEntityInSequence(actor: Actor, cameraFocusActor: Actor? = null){
         animationActionQueueProvider.addAction(hideAnimationGenerator.generateHideActorActionPair(actor, cameraFocusActor))

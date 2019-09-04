@@ -18,11 +18,13 @@
  <tileset firstgid="861" source="Plant0.tsx"/>
  <tileset firstgid="925" source="Plant1.tsx"/>
  <tileset firstgid="989" source="MedWep.tsx"/>
+ <tileset firstgid="1005" source="Effect0.tsx"/>
+ <tileset firstgid="1213" source="Effect1.tsx"/>
  <layer id="1" name="Tile Layer 1" width="3" height="3">
   <data encoding="csv">
 244,6,644,
 252,991,470,
-991,991,654
+991,1344,1347
 </data>
  </layer>
 </map>

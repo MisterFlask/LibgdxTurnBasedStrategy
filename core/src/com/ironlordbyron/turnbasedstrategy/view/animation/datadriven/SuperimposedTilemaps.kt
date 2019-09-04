@@ -7,7 +7,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 
 /**
  * These represent animations that are basically subsections of several different tilesets.  (e.g. Player0 and Player1
- * in the Dawnlike section.)
+ * in the Dawnlike section.)  These are pretty much only applicable to Dawnlike tilesets.
  */
 data class SuperimposedTilemaps(val tileMapWithTextureName: String = COMMON_TILE_MAP,
                                 val tileSetNames: List<String>,
@@ -28,10 +28,14 @@ data class SuperimposedTilemaps(val tileMapWithTextureName: String = COMMON_TILE
         val PLANTS = listOf("Plant0", "Plant1")
         val COMMON_TILE_MAP = "tilesets/MASTER_TILESET.tmx"
         val ELEMENTALS = listOf("Elemental0","Elemental1")
+        val EFFECTS = listOf("Effect0", "Effect1")
         public fun toDefaultProtoActor(): ProtoActor {
             return SuperimposedTilemaps(
                     tileSetNames = PLAYER_TILE_SETS,
                     textureId = "8")
+        }
+        public fun effectImageNumber(i: String) : SuperimposedTilemaps{
+            return SuperimposedTilemaps(tileSetNames = EFFECTS, textureId = i)
         }
 
         public fun doorImageNumber(i: String): SuperimposedTilemaps {
