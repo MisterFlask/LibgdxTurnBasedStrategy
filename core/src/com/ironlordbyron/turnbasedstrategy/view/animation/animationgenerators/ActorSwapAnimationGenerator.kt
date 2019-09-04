@@ -12,17 +12,19 @@ import javax.inject.Inject
 
 public class ActorSwapAnimationGenerator @Inject constructor(val stageProvider: StageProvider){
 
+    @Deprecated("I don't think this still works")
     public fun generateActorSwapActorActionPair(protoActorToCreate: ProtoActor,
                                                 animatedImageParams: AnimatedImageParams,
-                                                actorSettable: ActorSettable
+                                                originalActor: ActorSettable
                                                 ) : ActorActionPair{
-        val actorToReplace = actorSettable.actor
+        val actorToReplace = originalActor.actor
         val actorToReveal = protoActorToCreate.toActorWrapper(animatedImageParams).actor
         actorToReveal.isVisible = false
         stageProvider.tiledMapStage.addActor(actorToReveal)
-        actorToReveal.setBoundingBox(actorSettable.actor.getBoundingBox())
-        return ActorActionPair(actorToReplace, ActorSwapAction(actorToReveal, actorToReplace, actorSettable))
-
+        // TODO: I think this is because of our usage of groups that causes coordinates to be set differently
+        //  from where they used to
+        actorToReveal.setBoundingBox(originalActor.actor.getBoundingBox())
+        return ActorActionPair(actorToReplace, ActorSwapAction(actorToReveal, actorToReplace, originalActor))
     }
 }
 

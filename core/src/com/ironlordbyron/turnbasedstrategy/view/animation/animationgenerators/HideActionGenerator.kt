@@ -8,8 +8,8 @@ public class HideAnimationGenerator(){
     fun generateHideAction(actor: Actor) : Action {
         return HideAction(actor)
     }
-    fun generateHideActorActionPair(actor: Actor) : ActorActionPair {
-        return ActorActionPair(actor, HideAction(actor))
+    fun generateHideActorActionPair(actor: Actor, cameraFocusActor: Actor? = null) : ActorActionPair {
+        return ActorActionPair(actor, HideAction(actor), cameraFocusActor = cameraFocusActor)
     }
 }
 

@@ -64,7 +64,6 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
             stageProvider.tiledMapStage.addActor(entity.actor)
             entities.add(entity)
         }
-
         logicalTileTracker.tileEntities.addAll(entities)
     }
 

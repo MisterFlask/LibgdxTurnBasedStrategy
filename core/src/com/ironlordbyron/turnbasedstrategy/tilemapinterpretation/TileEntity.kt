@@ -151,6 +151,26 @@ public class WallTileEntityGenerator() : TileEntityGenerator{
     }
 }
 
+
+@Autoinjectable
+@Singleton
+public class DoorTileEntityGenerator() : TileEntityGenerator{
+    override val singleTilePerEntity: Boolean
+        get() = true
+
+    override fun generateTileEntity(tileLocations: Collection<TileLocation>): TileEntity {
+        val consolidatedActor = getConsolidatedActorFromTilesWithProperty(tileLocations, "closed_door")
+        return DoorEntity(eventNotifier,
+                tileLocations.single(),
+                consolidatedActor
+        )
+    }
+
+    override fun applicableToTile(tileLocation: TileLocation): Boolean {
+        return tileLocation.terrainProperties().any{it.properties.contains("closed_door")}
+    }
+}
+
 @Autoinjectable
 @Singleton
 public class FortressTileEntityGenerator() : TileEntityGenerator{
@@ -235,6 +255,15 @@ class FortressEntity(var durability: Int,
     }
 }
 
+class DoorCloneProtoEntity(val toClone: DoorEntity,
+                          val open: Boolean) : TileProtoEntity<DoorEntity>{
+    override fun toTileEntity(tileLocation: TileLocation): DoorEntity {
+        val protoActor = if (open) toClone.openAnimation else toClone.closedAnimation
+        return DoorEntity(toClone.eventNotifier, tileLocation, protoActor.toActorWrapper().actor, "door", toClone.hp, toClone.openAnimation, toClone.closedAnimation, open)
+    }
+
+}
+
 class DoorEntity(val eventNotifier: EventNotifier,
                  val tileLocation: TileLocation,
                  override var actor: Actor,
@@ -250,9 +279,12 @@ class DoorEntity(val eventNotifier: EventNotifier,
     }
 
     companion object {
-
         val openDoorProtoActor: ProtoActor = SuperimposedTilemaps(tileSetNames = listOf("Door1"), textureId = "0")
         val closedDoorProtoActor: ProtoActor = SuperimposedTilemaps(tileSetNames = listOf("Door0"), textureId = "0")
         val animatedImageParams = AnimatedImageParams(startsVisible = true)
+    }
+
+    override fun buildUiDisplay(parentTable: Table) {
+        parentTable.addLabel("Door!")
     }
 }

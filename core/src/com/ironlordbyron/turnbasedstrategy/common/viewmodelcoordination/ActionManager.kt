@@ -20,6 +20,7 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.BoundingBoxType
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tileentity.CityTileEntity
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorCloneProtoEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileProtoEntity
@@ -193,13 +194,19 @@ public class ActionManager @Inject constructor(
     }
 
 
-    fun openDoorAction(location: TileLocation): ActorActionPair {
+    fun openDoorAction(location: TileLocation) {
         if (!logicalTileTracker.isDoor(location)){
             throw IllegalArgumentException("Cannot call openDoorAction where there is no door, at tile $location")
         }
         val doorEntity = logicalTileTracker.getEntitiesAtTile(location).first{it is DoorEntity} as DoorEntity
         doorEntity.isOpen = true
-        return actorSwapGenerator.generateActorSwapActorActionPair(doorEntity.openAnimation, AnimatedImageParams(startsVisible = false, loops = true), actorSettable = doorEntity)
+
+        this.destroyTileEntity(doorEntity)
+        this.createTileEntity(DoorCloneProtoEntity(doorEntity, true), location)
+        //return actorSwapGenerator.generateActorSwapActorActionPair(
+        //        doorEntity.openAnimation,
+        //        AnimatedImageParams(startsVisible = false, loops = true),
+        //        originalActor = doorEntity)
     }
 
     /**
@@ -283,8 +290,10 @@ public class ActionManager @Inject constructor(
                 spawnEntityParams.protoActor)
     }
 
-    fun despawnEntityInSequence(actor: Actor){
-        animationActionQueueProvider.addAction(hideAnimationGenerator.generateHideActorActionPair(actor))
+    // Note: actorToFocusCameraOn is a hack around the fact that it's hard to distinguish "container" actors from the actual things users see,
+    // sometimes resulting in artifacts where the camera zooms into 0,0.  If this happens, we can just use this.  HACK!
+    fun despawnEntityInSequence(actor: Actor, cameraFocusActor: Actor? = null){
+        animationActionQueueProvider.addAction(hideAnimationGenerator.generateHideActorActionPair(actor, cameraFocusActor))
     }
 
     fun destroySpecialEffectInSequence(uuid: UUID, motherActor: Actor){
@@ -403,7 +412,8 @@ public class ActionManager @Inject constructor(
 
     fun destroyTileEntity(entity: TileEntity) {
         logicalTileTracker.tileEntities.remove(entity)
-        this.despawnEntityInSequence(entity.actor)
+        val tileLocationActor = entity.tileLocations.first().logicalTile()!!.actor // HACK: Camera focus actor necessary here; we're hiding the right actor, but technically its location is 0,0
+        this.despawnEntityInSequence(entity.actor, cameraFocusActor = tileLocationActor)
     }
 
     fun createTileEntity(protoEntity: TileProtoEntity<*>, tileLocation: TileLocation){

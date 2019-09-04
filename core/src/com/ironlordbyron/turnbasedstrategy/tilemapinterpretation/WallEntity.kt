@@ -24,7 +24,7 @@ class WallEntity(
     }
 
     override fun buildUiDisplay(parentTable: Table) {
-        parentTable.addLabel("WALL ENTITY FOUND")
+        parentTable.addLabel("Wall")
     }
 
 }

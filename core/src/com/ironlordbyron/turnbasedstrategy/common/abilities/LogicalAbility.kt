@@ -163,7 +163,7 @@ interface LogicalAbilityEffect {
 
         override fun runAction(characterUsing: LogicalCharacter,
                                tileLocationTargeted: TileLocation) {
-            animationActionQueueProvider.addAction(unitSpawner.openDoorAction(tileLocationTargeted))
+            unitSpawner.openDoorAction(tileLocationTargeted)
         }
     }
 
