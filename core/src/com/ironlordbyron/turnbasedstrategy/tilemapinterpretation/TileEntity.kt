@@ -23,7 +23,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.consolidate
 import com.ironlordbyron.turnbasedstrategy.view.ui.addLabel
 import javax.inject.Singleton
 
-class PortalProtoEntity(val protoActor: ProtoActor = SuperimposedTilemaps.toDefaultProtoActor()) : TileProtoEntity<PortalEntity>{
+class PortalProtoEntity(val protoActor: ProtoActor = SuperimposedTilemaps.doorImageNumber("41")) : TileProtoEntity<PortalEntity>{
     val name: String = "Portal"
     val eventNotifier = GameModuleInjector.generateInstance(EventNotifier::class.java)
     override fun toTileEntity(tileLocation: TileLocation): PortalEntity {

@@ -12,6 +12,7 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.UnitWasS
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
+import com.ironlordbyron.turnbasedstrategy.controller.tacMapState
 import com.ironlordbyron.turnbasedstrategy.entrypoints.CadenceEffectsRegistrar
 import com.ironlordbyron.turnbasedstrategy.entrypoints.FunctionalEffectRegistrar
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
@@ -52,6 +53,7 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
         GameModuleInjector.generateInstance(CadenceEffectsRegistrar::class.java)
     }
     fun onPlayerTurnStart(){
+        logicalTileTracker.tileEntities.forEach { it.runTurn() }
         cadenceEffectsRegistrar.turnStartEffects.forEach{it.handleTurnStartEvent()}
         eventNotifier.notifyListenersOfGameEvent(TacticalGameEvent.PlayerTurnStartEvent())
         for (unit in tacticalMapState.listOfCharacters.filter{it.playerControlled}){
