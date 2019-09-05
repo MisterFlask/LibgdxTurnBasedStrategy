@@ -14,5 +14,4 @@ public data class LogicalEquipment(val name: String,
                                    val attributesApplied: Collection<LogicalCharacterAttribute> = listOf(),
                                    val effectToApply: LogicalAbilityEffect? = null,
                                    val uuid: UUID = UUID.randomUUID(),
-                                   val infiniteQuantity: Boolean = false,
                                    val protoActor: ProtoActor = SuperimposedTilemaps.weaponImageNumber("1"))

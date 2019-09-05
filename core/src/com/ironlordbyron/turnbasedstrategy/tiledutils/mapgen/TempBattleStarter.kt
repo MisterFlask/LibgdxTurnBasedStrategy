@@ -56,6 +56,7 @@ class TileMapProvider {
         val ret = tiledMap.getSpawnableEnemyTilemapTiles()
         if (ret.isNotEmpty()) return ret
         return getDiscreteZones().flatMap { it.tiles }
+                .filter{it.getCharacter() == null}
     }
     fun getPlayerPlacementTilemapTiles() : List<TileLocation>{
         return tiledMap.getPlayerPlacementTiles()

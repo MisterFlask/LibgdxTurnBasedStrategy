@@ -33,7 +33,7 @@ object StandardAbilities{
             range = 5,
             description = "A ranged attack that lights stuff on fire.  Ends the turn.",
             abilityClass = AbilityClass.TARGETED_ATTACK_ABILITY,
-            requiredTargetType = RequiredTargetType.ANY,
+            requiredTargetType = RequiredTargetType.ANY_CHARACTER,
             abilityEffects = listOf(),
             projectileActor = DataDrivenOnePageAnimation.FIREBALL,
             landingActor = DataDrivenOnePageAnimation.EXPLODE,

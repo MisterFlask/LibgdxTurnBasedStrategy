@@ -63,7 +63,7 @@ interface TileEntity {
 }
 
 class WarpingInPortalTileProtoEntity() : TileProtoEntity<WarpingInPortalTileEntity>{
-    val protoActor = SuperimposedTilemaps.elementalImageNumber("4")
+    val protoActor = SuperimposedTilemaps.effectImageNumber("149")
     override fun toTileEntity(tileLocation: TileLocation): WarpingInPortalTileEntity {
         return WarpingInPortalTileEntity(listOf(tileLocation), protoActor.toActorWrapper())
     }

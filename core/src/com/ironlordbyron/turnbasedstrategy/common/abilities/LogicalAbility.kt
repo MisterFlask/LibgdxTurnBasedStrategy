@@ -9,44 +9,42 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionMa
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.classes.nonclassabilities.NullTileFilter
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.classes.nonclassabilities.TileFilter
-import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTile
-import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 
 public class LogicalAbility(val name: String,
-                                 val speed: AbilitySpeed,
-                                 @Deprecated("use rangeStyle instead")
+                            val speed: AbilitySpeed,
+                            @Deprecated("use rangeStyle instead")
                                  val range: Int,
-                                 val attackSprite: ProtoActor? = null,
-                                 val missionLimit: Int? = null,
-                                 @Deprecated("use damageStyle instead")
+                            val attackSprite: ProtoActor? = null,
+                            val missionLimit: Int? = null,
+                            @Deprecated("use damageStyle instead")
                                  val damage: Int? = null,
-                                 val description: String? = null,
-                                 val abilityClass: AbilityClass,
-                                 val allowsTargetingSelf: Boolean = false,
-                                 val requiredTargetType: RequiredTargetType = RequiredTargetType.ANY,
-                                 val abilityEffects: Collection<LogicalAbilityEffect> = listOf(),
+                            val description: String? = null,
+                            val abilityClass: AbilityClass,
+                            val allowsTargetingSelf: Boolean = false,
+                            val requiredTargetType: RequiredTargetType = RequiredTargetType.ANY_CHARACTER,
+                            val abilityEffects: Collection<LogicalAbilityEffect> = listOf(),
                             // if this is non-null, there will be a projectile animation.
-                                 val projectileActor: ProtoActor?,
+                            val projectileActor: ProtoActor?,
                             // this is the actor that is spawned when the projectile lands. (Like: a fireball projectile
                             // could result in a langingActor being an explosion.
                             // a projectileActor is NOT required for this to function.
-                                 val landingActor: ProtoActor?,
+                            val landingActor: ProtoActor?,
                             // this is specifically for contextual abilities, like opening doors.
-                                 val requirement: ContextualAbilityRequirement? = null,
-                                 val inflictsStatusAffect: Collection<LogicalCharacterAttribute> = listOf(),
-                                 val areaOfEffect: AreaOfEffect = AreaOfEffect.One(),
-                                 val cooldownTurns: Int? = null,
-                                 val rangeStyle: RangeStyle = RangeStyle.Simple(range),
-                                 val damageStyle: DamageStyle = SimpleDamageStyle(damage?:0),
-                                 val intentType: IntentType = IntentType.ATTACK,
-                                 val requiresTarget: Boolean = true,
-                                 val abilityTargetingParameters: AbilityTargetingParameters = SimpleAttackAbility(),
-                                 val customAbilityAi: CustomAbilityAi? = null,
-                                 val mpCost: Int = 0,
-                                 val id: String = name,
-                                val abilityUsageTileFilter : TileFilter = NullTileFilter()){
+                            val requirement: ContextualAbilityRequirement? = null,
+                            val inflictsStatusAffect: Collection<LogicalCharacterAttribute> = listOf(),
+                            val areaOfEffect: AreaOfEffect = AreaOfEffect.One(),
+                            val cooldownTurns: Int? = null,
+                            val rangeStyle: RangeStyle = RangeStyle.Simple(range),
+                            val damageStyle: DamageStyle = SimpleDamageStyle(damage?:0),
+                            val intentType: IntentType = IntentType.ATTACK,
+                            val requiresTarget: Boolean = true,
+                            val abilityTargetingParameters: AbilityTargetingParameters = SimpleAttackAbility(),
+                            val customAbilityAi: CustomAbilityAi? = null,
+                            val mpCost: Int = 0,
+                            val id: String = name,
+                            val abilityUsageTileFilter : TileFilter = NullTileFilter()){
 
 }
 
@@ -165,17 +163,6 @@ interface LogicalAbilityEffect {
                                tileLocationTargeted: TileLocation) {
             unitSpawner.openDoorAction(tileLocationTargeted)
         }
-    }
-
-    class CreatePortal : LogicalAbilityEffect {
-        val unitSpawner = GameModuleInjector.generateInstance(ActionManager::class.java)
-        val animationActionQueueProvider = GameModuleInjector.generateInstance(AnimationActionQueueProvider::class.java)
-
-        override fun runAction(characterUsing: LogicalCharacter, tileLocationTargeted: TileLocation) {
-            // unitSpawner.spawnEntityAtTileInSequence(tileLocationTargeted))
-            // TODO
-        }
-
     }
 
 }

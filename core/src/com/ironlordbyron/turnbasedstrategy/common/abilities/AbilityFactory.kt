@@ -2,7 +2,6 @@ package com.ironlordbyron.turnbasedstrategy.common.abilities
 
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.DamageType
-import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.DamageOperator
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
@@ -10,9 +9,8 @@ import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.TemporaryAnimationGenerator
 
 enum class RequiredTargetType{
-    ENEMY_ONLY, ALLY_ONLY, ANY, NO_CHARACTER_AT_LOCATION,
-
-    DOOR
+    ENEMY_ONLY, ALLY_ONLY, ANY_CHARACTER, NO_CHARACTER_AT_LOCATION,
+    DOOR, CUSTOM_FILTER_ONLY
 }
 
 abstract class AbilityTargetingParameters{
@@ -33,13 +31,20 @@ abstract class AbilityTargetingParameters{
 
     // Like getValidAbilityTargetSquares, but takes into account allies vs enemies.
     // Note: SourceSquare is an optional parameter that represents where the logical character WOULD be using the abilityEquipmentPair from.
-    fun getSquaresThatCanActuallyBeTargetedByAbility(sourceCharacter: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment, sourceSquare: TileLocation? = null): Collection<TileLocation>{
+    fun getSquaresThatCanActuallyBeTargetedByAbility(sourceCharacter: LogicalCharacter,
+                                                     logicalAbilityAndEquipment: LogicalAbilityAndEquipment,
+                                                     sourceSquare: TileLocation? = null): Collection<TileLocation>{
+
+        if (logicalAbilityAndEquipment.ability.requiredTargetType == RequiredTargetType.CUSTOM_FILTER_ONLY){
+            val abilityTargetSquares = getValidAbilityTargetSquares(sourceCharacter, logicalAbilityAndEquipment, sourceSquare)
+            return abilityTargetSquares.filter{logicalAbilityAndEquipment.ability.abilityUsageTileFilter.tileIsValid(it)}
+        }
         val abilityTargetSquares = getValidAbilityTargetSquares(sourceCharacter, logicalAbilityAndEquipment, sourceSquare)
         val nearbyCharacters = tacticalMapState.listOfCharacters.filter{abilityTargetSquares.contains(it.tileLocation)}
         val possibilities = arrayListOf<LogicalCharacter>()
         for (target in nearbyCharacters){
             var opposingCharacters = target.playerAlly xor sourceCharacter.playerAlly
-            if (logicalAbilityAndEquipment.ability.requiredTargetType == RequiredTargetType.ANY){
+            if (logicalAbilityAndEquipment.ability.requiredTargetType == RequiredTargetType.ANY_CHARACTER){
                 possibilities.add(target)
             }
             else if (!opposingCharacters && logicalAbilityAndEquipment.ability.requiredTargetType == RequiredTargetType.ALLY_ONLY){

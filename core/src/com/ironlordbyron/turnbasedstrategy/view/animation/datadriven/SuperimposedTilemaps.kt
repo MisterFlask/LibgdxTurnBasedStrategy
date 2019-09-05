@@ -50,6 +50,9 @@ data class SuperimposedTilemaps(val tileMapWithTextureName: String = COMMON_TILE
             return SuperimposedTilemaps(tileSetNames = DEMONS,
                     textureId = i)
         }
+        public fun wandImageNumber(i: String) : SuperimposedTilemaps{
+            return SuperimposedTilemaps(tileSetNames = listOf("Wand"), textureId = i)
+        }
         public fun slimeImageNumber(i: String): SuperimposedTilemaps {
             return SuperimposedTilemaps(tileSetNames = SLIMES,
                     textureId = i)

@@ -23,7 +23,7 @@ fun openEgressPortal(): LogicalAbility {
             rangeStyle = RangeStyle.Simple(4),
             abilityUsageTileFilter = NoTileEntityAllowedFilter(),
             description = "Creates a portal through which you can escape.",
-            requiredTargetType = RequiredTargetType.ANY,
+            requiredTargetType = RequiredTargetType.ANY_CHARACTER,
             requiresTarget = true,
             inflictsStatusAffect = listOf(),
             abilityClass = AbilityClass.TARGETED_ATTACK_ABILITY,

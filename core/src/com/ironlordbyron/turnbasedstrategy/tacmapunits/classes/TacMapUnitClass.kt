@@ -42,8 +42,7 @@ public abstract class TacMapUnitClass(val name: String,
                 allowedEquipment = listOf(secondaryWeaponClass),
                 walkableTerrainTypes = listOf(TerrainType.FOREST, TerrainType.GRASS),
                 startingAttributes = listOf(),
-                maxHealth = startingHp,
-                equipment = arrayListOf(startingSecondaryWeapon)
+                maxHealth = startingHp
             )
     }
 }

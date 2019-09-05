@@ -42,7 +42,7 @@ data class EquipmentSlot(val allowedEquipment: Collection<EquipmentSuperclass>,
 class TacMapUnitTemplate(val movesPerTurn: Int,
                          val tiledTexturePath: ProtoActor,
                          val templateName: String = "Peasant",
-                         var abilities: List<LogicalAbility> = listOf(),
+                         abilities: List<LogicalAbility> = listOf(),
                          var allowedEquipment: Collection<EquipmentClass> = listOf(EquipmentClass.MELEE_WEAPON_LARGE), //TODO
                          val walkableTerrainTypes : Collection<TerrainType> = listOf(TerrainType.GRASS, TerrainType.FOREST),
                          val enemyAiType: EnemyAiType = EnemyAiType.BASIC,
@@ -51,7 +51,6 @@ class TacMapUnitTemplate(val movesPerTurn: Int,
                          var maxActionsLeft: Int = 2,
                          var maxHealth: Int = 3,
                          var healthLeft: Int = maxHealth,
-                         var equipment: ArrayList<LogicalEquipment> = ArrayList(),
                          attributes: ArrayList<LogicalCharacterAttribute> = ArrayList(startingAttributes),
                          val strength: Int = 0,
                          val dexterity: Int = 0,
@@ -67,8 +66,16 @@ class TacMapUnitTemplate(val movesPerTurn: Int,
                                  EquipmentSlot.utilityOrVest())
 ) {
 
+    val equipment: List<LogicalEquipment>
+        get() = this.equipmentSlots.map{it.currentEquipment}.filterNotNull()
     private val stacksOfAttribute: HashMap<String, Int> = hashMapOf()
     private val _attributes = attributes
+    private val _abilities = abilities.toList()
+
+    public val abilities: List<LogicalAbility>
+    get(){
+        return _abilities.toList() + equipment.flatMap { it.abilityEnabled }
+    }
 
     init{
         for (attribute in attributes){
@@ -115,8 +122,6 @@ class TacMapUnitTemplate(val movesPerTurn: Int,
 
     // defensive copying
     init{
-        equipment = ArrayList(equipment)
-        abilities = ArrayList(abilities)
         allowedEquipment = ArrayList(allowedEquipment)
         startingAttributes = ArrayList(startingAttributes)
     }

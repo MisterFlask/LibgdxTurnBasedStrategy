@@ -3,6 +3,7 @@ package com.ironlordbyron.turnbasedstrategy.common.campaign
 import com.ironlordbyron.turnbasedstrategy.common.EquipmentSlot
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.equipment.LogicalEquipment
+import com.ironlordbyron.turnbasedstrategy.common.equipment.PortalRod
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.SimpleCityConquerer
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.WeakSlime
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.classes.startingMelterPistol
@@ -45,6 +46,7 @@ class CharacterAndEquipmentRoster{
         equipment.add(EquipmentWithQuantity(startingMelterPistol(), Quantity.Infinite()))
         equipment.add(EquipmentWithQuantity(glaive(), Quantity.Infinite()))
         equipment.add(EquipmentWithQuantity(Shotgun(), Quantity.Infinite()))
+        equipment.add(EquipmentWithQuantity(PortalRod(), Quantity.Infinite()))
     }
 
     fun initializeCharacterLoadouts() {
@@ -63,14 +65,5 @@ class CharacterAndEquipmentRoster{
                 .filter{it.quantity is Quantity.Infinite}
                 .map{it.equipment}
                 .firstOrNull()
-    }
-
-    fun attachEquipmentToCharacter(equipment: LogicalEquipment, characterToEquip: TacMapUnitTemplate){
-        for (cha in characters){
-            if (cha.equipment.map{it.uuid}.contains(equipment.uuid)){
-                cha.equipment.removeIf{it.uuid == equipment.uuid}
-            }
-        }
-        characterToEquip.equipment.add(equipment)
     }
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.InputEvent
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.scenes.scene2d.Touchable
 import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener
 import com.badlogic.gdx.utils.viewport.Viewport
@@ -18,6 +19,7 @@ import com.badlogic.gdx.utils.Scaling
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.abilities.ContextualAbilityFactory
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.RenderingFunction
+import com.ironlordbyron.turnbasedstrategy.common.wrappers.addSimpleTooltip
 import com.ironlordbyron.turnbasedstrategy.controller.*
 import com.ironlordbyron.turnbasedstrategy.font.TextLabelGenerator
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
@@ -129,28 +131,6 @@ class TacMapHud(viewPort: Viewport,
             actor = ImageIcon(ImageIcon._PAINTERLY_FOLDER, "rip-acid-1.png").toActorWrapper() //todo
         }
         val button = actor
-
-        val clickListener = object : ClickListener(){
-            override fun clicked(event: InputEvent?, x: Float, y: Float) {
-                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.ClickedButtonToActivateAbility(abilityEquipmentPair))
-                super.clicked(event, x, y)
-            }
-
-            override fun enter(event: InputEvent?, x: Float, y:Float, pointer: Int, fromActor: Actor?){
-                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.StartedHoveringOverAbility(abilityEquipmentPair))
-                hoveredAbility = abilityEquipmentPair.ability
-                abilityTextArea.setText("${abilityEquipmentPair.ability.name}: ${abilityEquipmentPair.ability.description}")
-                super.enter(event, x, y, pointer, fromActor)
-            }
-            override fun exit(event: InputEvent?, x: Float, y:Float, pointer: Int, fromActor: Actor?){
-                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.StoppedHoveringOverAbility(abilityEquipmentPair))
-                hoveredAbility = null
-                abilityTextArea.setText("")
-                super.exit(event, x, y, pointer, fromActor)
-            }
-        }
-        button.actor.addListener(clickListener)
-        button.addTooltip(RenderingFunction.simple(abilityEquipmentPair.ability.description?:"INSERT BODY TEXT"))
         return button.actor
     }
 
@@ -274,7 +254,6 @@ class TacMapHud(viewPort: Viewport,
         // NOTE TO FUTURE SELF: Table controls size of images, DOES NOT RESPECT image preferred size
 
         addActionButtons(selectedCharacter)
-        addNonUnitActionButtons()
         characterDisplayTable.add(Label("", DEFAULT_SKIN)).fillY().expandY()
 
         val entitySelected = entitySelected
@@ -283,29 +262,58 @@ class TacMapHud(viewPort: Viewport,
         }
     }
 
-    private fun addNonUnitActionButtons() {
-    }
-
     private fun addActionButtons(selectedCharacter: LogicalCharacter?) {
         characterDisplayTable.row()
         val abilityTable = Table()
+        val abilityScroller = ScrollPane(abilityTable)
+        abilityScroller.setFadeScrollBars(false)
+        abilityScroller.setScrollbarsOnTop(true)
+
         if (selectedCharacter != null) {
             for (ability in selectedCharacter.abilities) {
-                abilityTable.add(actionButton(ability)?.borderize())
-                        .width(50f).height(50f)
-                abilityTable.add(Label(ability.ability.name, DEFAULT_SKIN))
+                abilityTable.add(createActionButtonForAbility(ability)).width(250f)
                 abilityTable.row()
-
             }
             for (ability in contextualAbilityFactory.getContextualAbilitiesAvailableForCharacter(selectedCharacter)) {
-                abilityTable.add(actionButton(LogicalAbilityAndEquipment(ability, null))?.borderize())
-                            .width(50f).height(50f)
-                abilityTable.add(Label(ability.name, DEFAULT_SKIN))
+                abilityTable.add(createActionButtonForAbility(LogicalAbilityAndEquipment(ability, null))).width(250f)
                 abilityTable.row()
             }
         }
 
-        characterDisplayTable.add(abilityTable)
+        characterDisplayTable.add(abilityScroller)
+    }
+
+    private fun createActionButtonForAbility(abilityAndEquipment: LogicalAbilityAndEquipment) : Table{
+        val singleAbilityTable = Table()
+        singleAbilityTable.add(actionButton(abilityAndEquipment))
+                .width(50f).height(50f)
+        singleAbilityTable.add(Label(abilityAndEquipment.ability.name, DEFAULT_SKIN))
+        singleAbilityTable.withBorder()
+
+        val clickListener = object : ClickListener(){
+            override fun clicked(event: InputEvent?, x: Float, y: Float) {
+                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.ClickedButtonToActivateAbility(abilityAndEquipment))
+                super.clicked(event, x, y)
+            }
+
+            override fun enter(event: InputEvent?, x: Float, y:Float, pointer: Int, fromActor: Actor?){
+                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.StartedHoveringOverAbility(abilityAndEquipment))
+                hoveredAbility = abilityAndEquipment.ability
+                abilityTextArea.setText("${abilityAndEquipment.ability.name}: ${abilityAndEquipment.ability.description}")
+                super.enter(event, x, y, pointer, fromActor)
+            }
+            override fun exit(event: InputEvent?, x: Float, y:Float, pointer: Int, fromActor: Actor?){
+                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.StoppedHoveringOverAbility(abilityAndEquipment))
+                hoveredAbility = null
+                abilityTextArea.setText("")
+                super.exit(event, x, y, pointer, fromActor)
+            }
+        }
+        singleAbilityTable.touchable = Touchable.enabled
+        singleAbilityTable.addListener(clickListener)
+        singleAbilityTable.addSimpleTooltip(abilityAndEquipment.ability.description?:"INSERT BODY TEXT")
+
+        return singleAbilityTable
     }
 
     private fun displayCharacterHp(selectedCharacter: LogicalCharacter): Label {
@@ -377,25 +385,6 @@ class TacMapHud(viewPort: Viewport,
 
 
 
-}
-
-private fun Actor.borderize() : Actor{
-    /*
-    val group = Group()
-    group.x = this.x
-    group.y = this.y
-    group.addActor(this)
-
-    val borderActor = PainterlyBorders.blueFrame.toActorWrapper()
-    borderActor.actor.width = this.width
-    borderActor.actor.height = this.height
-    this.x = 0f
-    this.y = 0f
-    group.addActor(borderActor.actor)
-
-    return group*/
-    return this
-    // TODO: This
 }
 
 /*

@@ -66,7 +66,7 @@ object ContextualAbilities {
             range = 1,
             description ="Enters portal, causing the character to leave the stage",
             abilityClass = AbilityClass.TARGETED_ATTACK_ABILITY, //todo
-            requiredTargetType = RequiredTargetType.ANY, //todo
+            requiredTargetType = RequiredTargetType.ANY_CHARACTER, //todo
             requirement = EnterPortalAbilityRequirement(),
             abilityEffects = listOf()
     )

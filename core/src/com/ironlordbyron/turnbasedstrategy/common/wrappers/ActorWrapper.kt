@@ -6,6 +6,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip
 import com.badlogic.gdx.scenes.scene2d.ui.TooltipManager
 import com.ironlordbyron.turnbasedstrategy.view.ui.DEFAULT_SKIN
 
+fun Actor.addSimpleTooltip(str: String){
+    TooltipManager.getInstance().maxWidth = 200f
+    val tooltip = TextTooltip(str, DEFAULT_SKIN)
+    tooltip.setInstant(true)
+    tooltip.setAlways(true)
+    this.addListener(tooltip)
+}
+
 
 public interface ActorWrapper{
     val actor: Actor

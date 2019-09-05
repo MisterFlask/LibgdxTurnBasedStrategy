@@ -13,7 +13,7 @@ data class LogicalTile(val terrainTile: TiledMapTile,
 
 
     fun tileHasProperty(property: String) : Boolean{
-        // basically, if ANY cell has a property on this tile we return true regardless of what layer it's in.
+        // basically, if ANY_CHARACTER cell has a property on this tile we return true regardless of what layer it's in.
         return allTilesAtThisSquare.any{it.cellHasProperty(property)}
     }
 
