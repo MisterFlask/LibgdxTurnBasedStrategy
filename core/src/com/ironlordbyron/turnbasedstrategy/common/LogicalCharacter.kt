@@ -44,10 +44,10 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
     }
 
     val abilities: Collection<LogicalAbilityAndEquipment>
-        get() = acquireAbilities()
+        get() = tacMapUnit.abilities
 
     fun abilitiesForIntent(intent: IntentType): List<LogicalAbilityAndEquipment> {
-        return acquireAbilities().filter { it.ability.intentType == intent }
+        return tacMapUnit.abilities.filter { it.ability.intentType == intent }
     }
 
     val healthLeft: Int
@@ -65,17 +65,6 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
         get() = tacMapUnit.healthLeft < 1
 
     public data class StacksOfAttribute(val stacks: Int, val logicalAttribute: LogicalCharacterAttribute)
-
-    private fun acquireAbilities(): Collection<LogicalAbilityAndEquipment> {
-        val abilitiesSansEquipment = tacMapUnit.abilities.map { LogicalAbilityAndEquipment(it, null) }
-        val abilitiesWithEquipment = ArrayList<LogicalAbilityAndEquipment>()
-        for (equip in tacMapUnit.equipment) {
-            for (ability in equip.abilityEnabled) {
-                abilitiesWithEquipment.add(LogicalAbilityAndEquipment(ability, equip))
-            }
-        }
-        return abilitiesSansEquipment + abilitiesWithEquipment
-    }
 
     fun getAttributes(): Collection<StacksOfAttribute> {
         return tacMapUnit.getAttributes()

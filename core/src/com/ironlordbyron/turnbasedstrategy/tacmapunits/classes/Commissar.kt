@@ -27,7 +27,7 @@ fun startingMelterPistol(): LogicalEquipment {
 }
 
 fun melterPistolShot(): LogicalAbility {
-    return LogicalAbility("'Motivate'", AbilitySpeed.ONE_ACTION, 5, null, 1,
+    return LogicalAbility("Melter Pistol Shot", AbilitySpeed.ONE_ACTION, 5, null, 1,
             null, "Increases movement rate by 3 and damage by 2 for the turn.", AbilityClass.TARGETED_ATTACK_ABILITY,
             allowsTargetingSelf = false, landingActor = null, projectileActor = null)
 }

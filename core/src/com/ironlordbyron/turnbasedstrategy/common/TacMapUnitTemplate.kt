@@ -72,9 +72,18 @@ class TacMapUnitTemplate(val movesPerTurn: Int,
     private val _attributes = attributes
     private val _abilities = abilities.toList()
 
-    public val abilities: List<LogicalAbility>
+    public val abilities: List<LogicalAbilityAndEquipment>
     get(){
-        return _abilities.toList() + equipment.flatMap { it.abilityEnabled }
+        val abilitiesSansEquipment = _abilities.toList().map{LogicalAbilityAndEquipment(it, null)}
+        val abilitiesFromEquipment = ArrayList<LogicalAbilityAndEquipment>()
+        for (equipmentSlot in equipmentSlots){
+            if (equipmentSlot.currentEquipment != null){
+                for (ability in equipmentSlot.currentEquipment!!.abilityEnabled){
+                    abilitiesFromEquipment.add(LogicalAbilityAndEquipment(ability, equipmentSlot.currentEquipment))
+                }
+            }
+        }
+        return abilitiesFromEquipment + abilitiesSansEquipment
     }
 
     init{
