@@ -56,9 +56,14 @@ interface TileEntity {
 
     }
 
-    fun buildUiDisplay(parentTable: Table) {
-
+    fun buildUiDisplay() : Table {
+        val table = Table()
+        table.addLabel(simpleUiDisplay, afterCreation = {it.fill().expand()})
+        return table
     }
+
+    val simpleUiDisplay: String
+        get() = name
 
 }
 
@@ -85,14 +90,15 @@ class WarpingInPortalTileEntity(override val tileLocations: Collection<TileLocat
     }
 
     val textLabelGenerator: TextLabelGenerator by LazyInject(TextLabelGenerator::class.java)
-    override fun buildUiDisplay(parentTable: Table) {
-        if (turnsLeftUntilEntityCreated > 1){
-            parentTable.addLabel("Warping in portal in $turnsLeftUntilEntityCreated turns.")
-        }else{
-            parentTable.addLabel("Warping in portal next turn.")
+
+    override val simpleUiDisplay: String
+        get() {
+            if (turnsLeftUntilEntityCreated > 1) {
+                return "Warping in portal in $turnsLeftUntilEntityCreated turns."
+            }else{
+                return "Warping in portal next turn."
+            }
         }
-        parentTable.row()
-    }
 }
 
 
@@ -249,9 +255,11 @@ class FortressEntity(var durability: Int,
         durability --
     }
 
-    override fun buildUiDisplay(parentTable: Table) {
+    override fun buildUiDisplay() : Table {
+        val parentTable = Table()
         parentTable.addLabel("Fortress")
         parentTable.addLabel("Turns until surrender: ${durability}")
+        return parentTable
     }
 }
 
@@ -284,7 +292,9 @@ class DoorEntity(val eventNotifier: EventNotifier,
         val animatedImageParams = AnimatedImageParams(startsVisible = true)
     }
 
-    override fun buildUiDisplay(parentTable: Table) {
-        parentTable.addLabel("Door!")
+    override fun buildUiDisplay() : Table {
+        val table = Table()
+        table.addLabel("Door!")
+        return table
     }
 }

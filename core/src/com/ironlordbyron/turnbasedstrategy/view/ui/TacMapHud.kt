@@ -188,6 +188,16 @@ class TacMapHud(viewPort: Viewport,
         characterDisplayTable.add(abilityTextArea).width(300f)
 
         characterDisplayTable.row()
+
+        val entitySelected = entitySelected
+        if (entitySelected != null) {
+            val entityTable = entitySelected.buildUiDisplay().withBorder()
+            entityTable.debugTable()
+            characterDisplayTable.add(entityTable).height(100f).left()
+            characterDisplayTable.row()
+        }
+
+
         characterDisplayTable.add(debugTextArea).width(300f)
         characterDisplayTable.withBorder()
     }
@@ -254,12 +264,8 @@ class TacMapHud(viewPort: Viewport,
         // NOTE TO FUTURE SELF: Table controls size of images, DOES NOT RESPECT image preferred size
 
         addActionButtons(selectedCharacter)
-        characterDisplayTable.add(Label("", DEFAULT_SKIN)).fillY().expandY()
 
-        val entitySelected = entitySelected
-        if (entitySelected != null) {
-            entitySelected.buildUiDisplay(this.characterDisplayTable)
-        }
+
     }
 
     private fun addActionButtons(selectedCharacter: LogicalCharacter?) {
@@ -271,11 +277,11 @@ class TacMapHud(viewPort: Viewport,
 
         if (selectedCharacter != null) {
             for (ability in selectedCharacter.abilities) {
-                abilityTable.add(createActionButtonForAbility(ability)).width(250f)
+                abilityTable.add(createActionButtonForAbility(ability)).width(250f).height(70f)
                 abilityTable.row()
             }
             for (ability in contextualAbilityFactory.getContextualAbilitiesAvailableForCharacter(selectedCharacter)) {
-                abilityTable.add(createActionButtonForAbility(LogicalAbilityAndEquipment(ability, null))).width(250f)
+                abilityTable.add(createActionButtonForAbility(LogicalAbilityAndEquipment(ability, null))).width(250f).height(70f)
                 abilityTable.row()
             }
         }

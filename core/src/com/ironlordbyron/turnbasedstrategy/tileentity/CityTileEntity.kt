@@ -35,8 +35,10 @@ public data class CityTileEntity(
 
     override val name: String = CityTileEntity.name
 
-    override fun buildUiDisplay(parentTable: Table) {
-        parentTable.addLabel("City name: $cityName")
+    override fun buildUiDisplay() : Table{
+        val table = Table()
+        table.addLabel("City name: $cityName")
+        return table
     }
 
     fun conquerByDemonAction(){

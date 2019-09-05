@@ -23,8 +23,10 @@ class WallEntity(
         return false
     }
 
-    override fun buildUiDisplay(parentTable: Table) {
-        parentTable.addLabel("Wall")
+    override fun buildUiDisplay() : Table {
+        val table = Table()
+        table.addLabel("Wall")
+        return table
     }
 
 }

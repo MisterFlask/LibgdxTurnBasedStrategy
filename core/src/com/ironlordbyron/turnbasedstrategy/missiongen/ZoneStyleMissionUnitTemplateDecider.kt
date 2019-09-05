@@ -50,7 +50,7 @@ public class ZoneStyleMissionUnitTemplateDecider{
         val returnedUnitSpawns = ArrayList<UnitSpawnParameter>()
         var zones = tiledMapProvider.getDiscreteZones()
         zones = zones.shuffled()
-        val organQueue = getOrgansToBeUsedInMission(5).toMutableList()
+        val organQueue = getOrgansToBeUsedInMission(4).toMutableList()
         for (zone in zones){
             val mobs = getMobsToBeUsedForOrganGuardianship(4)
             val organ = organQueue.pop()
