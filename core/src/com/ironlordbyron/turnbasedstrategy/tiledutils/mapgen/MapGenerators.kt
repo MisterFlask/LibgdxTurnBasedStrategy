@@ -4,6 +4,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap
 import com.google.inject.Inject
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.common.wrappers.BattleGoal
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 import java.util.*
@@ -71,7 +72,8 @@ data class ScenarioParams(val sourceMapName: String,
                           val name: String,
                           val mapGeneratorType: MapGeneratorType,
                           val mobGenerationParams: MobGenerationParams? = null,
-                          val unitsThatPlayerWillDeploy: Collection<TacMapUnitTemplate>)
+                          val unitsThatPlayerWillDeploy: Collection<TacMapUnitTemplate>,
+                          val missionGoals : Collection<BattleGoal> = listOf())
 enum class MapGeneratorType{
     NONE,
     PARTIAL_PROCEDURAL,

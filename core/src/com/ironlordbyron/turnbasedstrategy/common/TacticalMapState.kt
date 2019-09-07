@@ -22,6 +22,7 @@ class TacticalMapState @Inject constructor(val logicalTileTracker: LogicalTileTr
 
     val evacuatedUnits = ArrayList<TacMapUnitTemplate>()
     val unitsAvailableToDeploy = ArrayList<TacMapUnitTemplate>()
+    val deadCharacters = ArrayList<TacMapUnitTemplate>()
 
     override fun consumeGameEvent(tacticalGameEvent: TacticalGameEvent) {
         when(tacticalGameEvent){

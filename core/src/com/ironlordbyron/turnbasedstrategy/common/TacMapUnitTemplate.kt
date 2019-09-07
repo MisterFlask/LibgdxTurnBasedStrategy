@@ -63,7 +63,8 @@ class TacMapUnitTemplate(val movesPerTurn: Int,
                          val tags: Tags = Tags(),
                          var block: Int = 0,
                          var equipmentSlots: List<EquipmentSlot> = listOf(EquipmentSlot.primaryWeapon(), EquipmentSlot.secondaryWeapon(),
-                                 EquipmentSlot.utilityOrVest())
+                                 EquipmentSlot.utilityOrVest()),
+                         val nonMinionEnemy: Boolean = true
 ) {
 
     val equipment: List<LogicalEquipment>

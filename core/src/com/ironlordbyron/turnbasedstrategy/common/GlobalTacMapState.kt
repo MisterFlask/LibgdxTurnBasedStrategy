@@ -3,11 +3,14 @@ package com.ironlordbyron.turnbasedstrategy.common
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeActionManager
+import com.ironlordbyron.turnbasedstrategy.common.wrappers.BattleGoal
+import com.ironlordbyron.turnbasedstrategy.common.wrappers.DestroyNumberOfUnitsBattleGoal
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
 import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.ScenarioParams
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.randomElement
 import java.util.*
@@ -37,6 +40,9 @@ public class GlobalTacMapState: TurnStartListener, BattleStartListener {
         )
     }
 
+    fun initializeBattle(scenarioParams: ScenarioParams){
+
+    }
 
     fun incrementAlertness(i: Int){
         alertness += i
@@ -63,7 +69,13 @@ public class GlobalTacMapState: TurnStartListener, BattleStartListener {
                 .minBy{it.key}
                 .convertToEventDescriptor()
     }
+
+
+    public val battleGoals: Collection<BattleGoal> = listOf(
+            DestroyNumberOfUnitsBattleGoal(3)
+    )
 }
+
 
 private fun  Map.Entry<Int, BattleEvent>?.convertToEventDescriptor(): EventDescriptor {
     if (this == null){

@@ -2,7 +2,9 @@ package com.ironlordbyron.turnbasedstrategy.common.abilities
 
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.PortalEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
@@ -68,8 +70,17 @@ object ContextualAbilities {
             abilityClass = AbilityClass.TARGETED_ATTACK_ABILITY, //todo
             requiredTargetType = RequiredTargetType.ANY_CHARACTER, //todo
             requirement = EnterPortalAbilityRequirement(),
-            abilityEffects = listOf()
+            abilityEffects = listOf(EnterPortalAbilityAction())
     )
 
     val allContextualAbilities: Collection<LogicalAbility> = listOf(OpenDoor, EnterPortal)
+}
+
+class EnterPortalAbilityAction : LogicalAbilityEffect {
+    val actionmanager by LazyInject(ActionManager::class.java)
+
+    override fun runAction(characterUsing: LogicalCharacter, tileLocationTargeted: TileLocation) {
+        actionmanager.evacuateCharacter(characterUsing)
+    }
+
 }

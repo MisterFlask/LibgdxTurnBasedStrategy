@@ -2,6 +2,8 @@ package com.ironlordbyron.turnbasedstrategy.view.animation
 
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
+import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.CameraMovementAnimationGenerator
 import com.ironlordbyron.turnbasedstrategy.view.animation.camera.GameCameraProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.camera.Rumbler
@@ -16,6 +18,7 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
                                                val cameraProvider: GameCameraProvider,
                                                val cameraMovementAnimationGenerator: CameraMovementAnimationGenerator){
 
+    val eventNofifier by LazyInject(EventNotifier::class.java)
     public fun runThroughActionQueue(actionQueue: List<ActorActionPair>,
                                      currentIndex: Int = 0,
                                      interleaveCameraActions: Boolean = true,
@@ -26,7 +29,6 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
         }else{
             runThroughFinalActionQueue(actionQueue, currentIndex, finalAction)
         }
-
     }
 
     private fun interleaveActionQueueWithCameraMovements(actionQueue: List<ActorActionPair>): List<ActorActionPair> {
@@ -78,6 +80,8 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
             secondaryPair.actor.addAction(secondaryPair.action)
         }
     }
+
+
 }
 
 

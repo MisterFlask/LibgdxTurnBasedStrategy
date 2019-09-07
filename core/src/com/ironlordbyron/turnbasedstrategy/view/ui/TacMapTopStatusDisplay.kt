@@ -1,11 +1,10 @@
 package com.ironlordbyron.turnbasedstrategy.view.ui
 
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.scenes.scene2d.ui.Cell
-import com.badlogic.gdx.scenes.scene2d.ui.Label
-import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.scenes.scene2d.ui.*
 import com.badlogic.gdx.utils.viewport.Viewport
 import com.ironlordbyron.turnbasedstrategy.common.GlobalTacMapState
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.LabelWrapper
@@ -16,13 +15,9 @@ import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
 import com.ironlordbyron.turnbasedstrategy.font.TextLabelGenerator
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
-import com.ironlordbyron.turnbasedstrategy.view.ui.external.BackgroundColor
 
 public class TacMapTopStatusDisplay(val viewPort: Viewport) : Stage(viewPort),
         GameEventListener {
-    fun handleTurnStartEvent() {
-        regenerateTable()
-    }
     val eventNotifier: EventNotifier by LazyInject(EventNotifier::class.java)
 
     init {
@@ -30,11 +25,7 @@ public class TacMapTopStatusDisplay(val viewPort: Viewport) : Stage(viewPort),
     }
 
     override fun consumeGameEvent(tacticalGameEvent: TacticalGameEvent) {
-        when(tacticalGameEvent){
-            is TacticalGameEvent.PlayerTurnStartEvent -> {
-                handleTurnStartEvent()
-            }
-        }
+        regenerateTable()
     }
 
     val overallTable = Table()
@@ -48,12 +39,6 @@ public class TacMapTopStatusDisplay(val viewPort: Viewport) : Stage(viewPort),
     }
 
 
-    private fun backgroundColor(): BackgroundColor {
-        val backgroundColor = BackgroundColor("simple/white_color.png")
-        backgroundColor.setColor(0, 0, 0, 166)
-        return backgroundColor
-    }
-
     val tacMapGlobalState: GlobalTacMapState by lazy {
         GameModuleInjector.generateInstance(GlobalTacMapState::class.java)
     }
@@ -62,21 +47,52 @@ public class TacMapTopStatusDisplay(val viewPort: Viewport) : Stage(viewPort),
 
         overallTable.setRelativeHeight(1/5f)
         overallTable.clampToTop(1/4f)
-        val backgroundColor = backgroundColor()
-        overallTable.setBackground(backgroundColor)
-        overallTable.debug = true
 
         overallTable.clear()
-        overallTable.add(labelGenerator.generateGradientLabel("Test Label", scale = .2f).label)
+
         val nextEvent = tacMapGlobalState.nextEvent()
-        overallTable.addLabel("Alertness: ${tacMapGlobalState.alertness}", .2f)
-        overallTable.addLabel("Next event: ${nextEvent.eventName} at ${nextEvent.atAlertness}", .2f)
+
+        overallTable.add(buildLabel("Alertness: ${tacMapGlobalState.alertness}")).row()
+        overallTable.add(buildLabel("Next event: ${nextEvent.eventName} at ${nextEvent.atAlertness}")).row()
         overallTable.withBorder()
+
+        // Now, the goals!
+
+
+        val goalTable = Table()
+        goalTable.withGoldBorderBlackBackground()
+        goalTable.add(Label("OBJECTIVES:", DEFAULT_SKIN)).row()
+        for (goal in tacMapGlobalState.battleGoals){
+            val goalMetStr = "[${goal.getGoalProgressString()}]"
+            val label = Label("*${goal.name}: ${goal.description} $goalMetStr"  , DEFAULT_SKIN)
+            if (goal.isGoalMet()){
+                label.color = Color.GREEN
+            } else {
+                label.color = Color.RED
+            }
+            goalTable.add(label).row()
+        }
+        overallTable.row()
+        overallTable.add(goalTable)
     }
 }
 
 val textLabelGenerator: TextLabelGenerator by lazy{
     GameModuleInjector.generateInstance(TextLabelGenerator::class.java)
+}
+
+fun buildLabel(str: String, tooltip: String? = null) : Label{
+    val label = Label(str, DEFAULT_SKIN)
+    if (tooltip != null) label.addTooltipText(tooltip)
+    return label
+}
+
+fun Actor.addTooltipText(str: String){
+    TooltipManager.getInstance().maxWidth = 200f
+    val tooltip = TextTooltip(str, DEFAULT_SKIN)
+    tooltip.setInstant(true)
+    tooltip.setAlways(true)
+    this.addListener(tooltip)
 }
 
 fun Table.addLabel(text: String, scale: Float= .3f, tooltip: String? = null, skipRow: Boolean = false,
