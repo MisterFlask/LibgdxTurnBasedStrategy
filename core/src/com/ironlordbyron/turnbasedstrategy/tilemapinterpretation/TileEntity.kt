@@ -27,7 +27,7 @@ class PortalProtoEntity(val protoActor: ProtoActor = SuperimposedTilemaps.doorIm
     val name: String = "Portal"
     val eventNotifier = GameModuleInjector.generateInstance(EventNotifier::class.java)
     override fun toTileEntity(tileLocation: TileLocation): PortalEntity {
-        return PortalEntity(tileLocation, protoActor.toActorWrapper().actor)
+        return PortalEntity(tileLocation, protoActor.toActorWrapper().actor, protoActor = protoActor)
     }
 }
 
@@ -62,6 +62,13 @@ interface TileEntity {
         return table
     }
 
+    val protoActor: ProtoActor?
+        get() = null
+
+    fun needToDisplay() : Boolean{
+        return true
+    }
+
     val simpleUiDisplay: String
         get() = name
 
@@ -70,12 +77,13 @@ interface TileEntity {
 class WarpingInPortalTileProtoEntity() : TileProtoEntity<WarpingInPortalTileEntity>{
     val protoActor = SuperimposedTilemaps.effectImageNumber("149")
     override fun toTileEntity(tileLocation: TileLocation): WarpingInPortalTileEntity {
-        return WarpingInPortalTileEntity(listOf(tileLocation), protoActor.toActorWrapper())
+        return WarpingInPortalTileEntity(listOf(tileLocation), protoActor.toActorWrapper(), protoActor = protoActor)
     }
 }
 
 class WarpingInPortalTileEntity(override val tileLocations: Collection<TileLocation>,
                                 override val actor: Actor,
+                                override val protoActor: ProtoActor,
                                 override val name: String = "Warp Rift",
                                 var turnsLeftUntilEntityCreated: Int = 3) : TileEntity{
     init{
@@ -228,7 +236,8 @@ class TileEntityRegistrar(){
 class PortalEntity(
                    val tileLocation: TileLocation,
                    override var actor: Actor,
-                   override val name: String = "portal") : TileEntity{
+                   override val name: String = "portal",
+                   override val protoActor: ProtoActor) : TileEntity{
     val eventNotifier: EventNotifier by LazyInject(EventNotifier::class.java)
     override val tileLocations: Collection<TileLocation>
         get() = listOf(tileLocation)

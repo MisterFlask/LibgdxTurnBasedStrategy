@@ -138,7 +138,7 @@ class TacMapHud(viewPort: Viewport,
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    lateinit var window: Window
+    lateinit var window: Table
 
     private fun describeCharacter(character: LogicalCharacter): String {
         return "Moves per turn: $character.tacMapUnit.movesPerTurn"
@@ -157,7 +157,7 @@ class TacMapHud(viewPort: Viewport,
         for (item in selectedCharacter.getAttributes()){
             val attrImage = item.logicalAttribute.imageIcon.toActorWrapper(AnimatedImageParams.RUN_ALWAYS_AND_FOREVER.copy(hittable = true))
             attrImage.addTooltip(RenderingFunction.simple(item.logicalAttribute.description(item.stacks)))
-            table.add(attrImage.actor).width(iconDimensions.width.toFloat()).height(iconDimensions.height.toFloat())
+            table.add(attrImage.actor).prefWidth(iconDimensions.width.toFloat()).height(iconDimensions.height.toFloat())
             if (item.stacks > 1) {
                 table.add(Label("[${item.stacks.toString()}]", DEFAULT_SKIN))
             }
@@ -185,15 +185,21 @@ class TacMapHud(viewPort: Viewport,
         characterDisplayTable.row()
         characterDisplayTable.add(endTurnButton())
         characterDisplayTable.row()
-        characterDisplayTable.add(abilityTextArea).width(300f)
+        characterDisplayTable.add(abilityTextArea).prefWidth(300f).maxWidth(300f)
 
         characterDisplayTable.row()
 
         val entitySelected = entitySelected
         if (entitySelected != null) {
-            val entityTable = entitySelected.buildUiDisplay().withBorder()
+            val entityTable = entitySelected.buildUiDisplay()
+            val protoActor = entitySelected.protoActor
             entityTable.debugTable()
-            characterDisplayTable.add(entityTable).height(100f).left()
+            characterDisplayTable.add(entityTable).prefHeight(100f).fillX().expandX()
+
+            if (protoActor != null){
+                characterDisplayTable.row()
+                characterDisplayTable.add(protoActor.toActorWrapper().actor).prefSize(50f, 50f)
+            }
             characterDisplayTable.row()
         }
 
@@ -216,7 +222,7 @@ class TacMapHud(viewPort: Viewport,
         }
         val titleLabel = textLabelGenerator.generateSkinnedLabel(label).label
         titleLabel.setFontScale(1.2f)
-        combatPhaseLabel.add(titleLabel).height(titleLabel.height).expand().fill()
+        combatPhaseLabel.add(titleLabel).prefHeight(titleLabel.height).expand().fill()
                 .row()
     }
 
@@ -274,15 +280,21 @@ class TacMapHud(viewPort: Viewport,
         val abilityScroller = ScrollPane(abilityTable)
         abilityScroller.setFadeScrollBars(false)
         abilityScroller.setScrollbarsOnTop(true)
+        val numCols = 2
+        var currentCol = 0
+
 
         if (selectedCharacter != null) {
             for (ability in selectedCharacter.abilities) {
-                abilityTable.add(createActionButtonForAbility(ability)).width(250f).height(70f)
-                abilityTable.row()
+                abilityTable.add(createActionButtonForAbility(ability)).width(125f).height(70f)
+                currentCol = (currentCol + 1 ) % numCols
+                if (currentCol == 0) abilityTable.row()
             }
             for (ability in contextualAbilityFactory.getContextualAbilitiesAvailableForCharacter(selectedCharacter)) {
-                abilityTable.add(createActionButtonForAbility(LogicalAbilityAndEquipment(ability, null))).width(250f).height(70f)
-                abilityTable.row()
+                abilityTable.add(createActionButtonForAbility(LogicalAbilityAndEquipment(ability, null))).width(125f).height(70f)
+
+                currentCol = (currentCol + 1 ) % numCols
+                if (currentCol == 0) abilityTable.row()
             }
         }
 
@@ -349,19 +361,18 @@ class TacMapHud(viewPort: Viewport,
         // this.isDebugAll = true
 
         val actor =
-                Window("", DEFAULT_SKIN).let {
-
-                    it.add(combatPhaseLabel.withBorder()).fill().expand().fill()
+                Table(DEFAULT_SKIN).let {
+                    it.setRelativeWidth(1/4f)
+                    it.add(combatPhaseLabel.withBorder()).fill().expand().fill().uniformX()
                     it.row()
-                    it.add(characterSelectCarousel.withBorder()).fill().expand()
+                    it.add(characterSelectCarousel.withBorder()).fill().expand().uniformX()
                     it.row()
-                    it.add(characterDisplayTable).fill().expand()
+                    it.add(characterDisplayTable).fill().expand().uniformX()
 
                     it
                 }
         window = actor
 
-        actor.setRelativeWidth(1/4f)
         actor.clampToRightSide()
 
         this.addActor(actor)
