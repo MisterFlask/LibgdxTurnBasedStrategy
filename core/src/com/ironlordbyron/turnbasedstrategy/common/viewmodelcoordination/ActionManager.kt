@@ -333,7 +333,7 @@ public class ActionManager @Inject constructor(
             return false
         }
     }
-    fun createAwaitedSpeechBubbleForCharacter(text: String, tacMapUnit: TacMapUnitTemplate){
+    fun createAwaitedSpeechBubbleForCharacter(text: String, tacMapUnit: TacMapUnitTemplate, afterUserClosesBubble: ()-> Unit = {}){
 
         val actor = speechBubbleAnimation.createTextBoxAtTopOfScreenWithCharacter(text,
                 protoActor = tacMapUnit.tiledTexturePath)
@@ -351,7 +351,10 @@ public class ActionManager @Inject constructor(
                                 Actions.fadeIn(.2f),
                                 TriggeredDelayAction(isDone),
                                 Actions.fadeOut(.2f),
-                                Actions.removeActor()
+                                Actions.removeActor(),
+                                AnimationActionQueueProvider.CustomAction{
+                                    afterUserClosesBubble.invoke()
+                                }
                         ),
                         murderActorsOnceCompletedAnimation = true,
                         cameraTrigger = false,

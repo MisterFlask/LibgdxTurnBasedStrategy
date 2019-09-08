@@ -9,13 +9,12 @@ import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCha
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.types.FunctionalEffectParameters
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.UnitWasStruckEvent
-import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
-import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
-import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
-import com.ironlordbyron.turnbasedstrategy.controller.tacMapState
+import com.ironlordbyron.turnbasedstrategy.controller.*
 import com.ironlordbyron.turnbasedstrategy.entrypoints.CadenceEffectsRegistrar
 import com.ironlordbyron.turnbasedstrategy.entrypoints.FunctionalEffectRegistrar
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
+import com.ironlordbyron.turnbasedstrategy.missiongen.VictoryChecker
 
 /**
  *
@@ -72,6 +71,21 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
         for (unit in tacticalMapState.listOfEnemyCharacters){
             onCharacterTurnStart(unit)
         }
+    }
+
+    val victoryChecker by LazyInject(VictoryChecker::class.java)
+    // basically means any time an animation has finished occurring
+    fun onConcreteActionPerformed(){
+        return
+        // TODO
+        if (victoryChecker.isBattleOver()) {
+            actionManager.createAwaitedSpeechBubbleForCharacter("Welp, everyone's eitehr dead or evac'd.\nCLICK TO ROLL OUT.",
+                    TacMapUnitTemplate.DEFAULT_UNIT,
+            {
+                eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.SwapToVictoryScreen())
+            })
+        }
+
     }
 
     fun onCharacterTurnStart(thisCharacter: LogicalCharacter){

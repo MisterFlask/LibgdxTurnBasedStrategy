@@ -2,6 +2,8 @@ package com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination
 
 import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.ironlordbyron.turnbasedstrategy.common.LogicHooks
+import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActionRunner
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import javax.inject.Inject
@@ -11,10 +13,12 @@ import javax.inject.Singleton
 @Singleton
 class AnimationActionQueueProvider @Inject constructor(val actionRunner: ActionRunner) {
     private var actionQueue = ArrayList<ActorActionPair>()
+    private val logicHooks by LazyInject(LogicHooks::class.java)
 
     public fun runThroughActionQueue(finalAction: () -> Unit = {}){
         actionRunner.runThroughActionQueue(actionQueue, finalAction = finalAction)
         clearQueue()
+        logicHooks.onConcreteActionPerformed()
     }
 
     public fun addAction(actorActionPair: ActorActionPair){

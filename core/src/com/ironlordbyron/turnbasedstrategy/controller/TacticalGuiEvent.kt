@@ -29,4 +29,6 @@ open class TacticalGuiEvent{
     data class PlayerIsPlacingUnit(val unit: TacMapUnitTemplate) : TacticalGuiEvent()
     class ShouldRefreshGui : TacticalGuiEvent()
     class SwapToCharacterSelectScreen (val scenarioParams: ScenarioParams) : TacticalGuiEvent()
+    class SwapToVictoryScreen () : TacticalGuiEvent()
+
 }
