@@ -14,6 +14,9 @@ import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TempBattleStarter
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
+import com.ironlordbyron.turnbasedstrategy.view.ActorName
+import com.ironlordbyron.turnbasedstrategy.view.ActorOrdering
+import com.ironlordbyron.turnbasedstrategy.view.setFunctionalName
 import javax.inject.Inject
 import javax.inject.Provider
 import javax.inject.Singleton
@@ -22,7 +25,11 @@ class TileMapActor(@Assisted val tiledMap: TiledMap,
                    @Assisted val tiledMapTileLayer: TiledMapTileLayer,
                    @Assisted val cell: TiledMapTileLayer.Cell,
                    @Assisted val location: TileLocation,
-                   val fragmentCopier: TiledMapOperationsHandler) : Actor()
+                   val fragmentCopier: TiledMapOperationsHandler) : Actor(){
+    init{
+        this.setFunctionalName(ActorName(ActorOrdering.TILE))
+    }
+}
 
 
 @Singleton

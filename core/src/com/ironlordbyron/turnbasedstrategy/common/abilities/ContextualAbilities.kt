@@ -3,6 +3,7 @@ package com.ironlordbyron.turnbasedstrategy.common.abilities
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
+import com.ironlordbyron.turnbasedstrategy.entrypoints.log
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
@@ -56,6 +57,7 @@ object ContextualAbilities {
         range = 2,
         description = "Opens a door.",
         abilityClass = AbilityClass.TARGETED_ATTACK_ABILITY,
+        allowsTargetingSelf = true,
         requiredTargetType = RequiredTargetType.DOOR,
             requirement = OpenDoorAbilityRequirement()
     )
@@ -65,10 +67,10 @@ object ContextualAbilities {
             speed = AbilitySpeed.FREE_ACTION,
             landingActor = null,
             projectileActor = null,
-            range = 1,
+            range = 2,
             description ="Enters portal, causing the character to leave the stage",
             abilityClass = AbilityClass.TARGETED_ATTACK_ABILITY, //todo
-            requiredTargetType = RequiredTargetType.ANY_CHARACTER, //todo
+            requiredTargetType = RequiredTargetType.CUSTOM_FILTER_ONLY,
             requirement = EnterPortalAbilityRequirement(),
             abilityEffects = listOf(EnterPortalAbilityAction())
     )
@@ -80,6 +82,7 @@ class EnterPortalAbilityAction : LogicalAbilityEffect {
     val actionmanager by LazyInject(ActionManager::class.java)
 
     override fun runAction(characterUsing: LogicalCharacter, tileLocationTargeted: TileLocation) {
+        log("Character is entering portal!")
         actionmanager.evacuateCharacter(characterUsing)
     }
 

@@ -55,10 +55,11 @@ fun Table.withGreyBackground(scale: Float? = 1f){
 fun Table.withBorder(color: Color? = null,
                      scale: Float? = 1f,
                      ninePatch: NinePatch = blackNinepatch) : Table{
+    val ninepatchCopy = NinePatch(ninePatch)
     if (scale != null){
-        ninePatch.scale(scale, scale)
+        ninepatchCopy.scale(scale, scale)
     }
-    val background = NinePatchDrawable(ninePatch)
+    val background = NinePatchDrawable(ninepatchCopy)
     if (color != null){
         background.patch.color = color
     }

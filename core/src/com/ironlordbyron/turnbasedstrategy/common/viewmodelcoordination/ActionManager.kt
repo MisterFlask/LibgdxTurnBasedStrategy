@@ -24,6 +24,8 @@ import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorCloneProtoE
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileProtoEntity
+import com.ironlordbyron.turnbasedstrategy.view.ActorName
+import com.ironlordbyron.turnbasedstrategy.view.ActorOrdering
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimatedImageParams
 import com.ironlordbyron.turnbasedstrategy.view.animation.AnimationSpeedManager
@@ -33,6 +35,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.camera.GameCameraProvi
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.external.SpecialEffectManager
+import com.ironlordbyron.turnbasedstrategy.view.setFunctionalName
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 import java.util.*
@@ -65,10 +68,12 @@ public class ActionManager @Inject constructor(
 )  {
 
 
+    val globalTacMapState by LazyInject(GlobalTacMapState::class.java)
     fun addCharacterToMapFromDeploymentZone(tacMapUnit: TacMapUnitTemplate,
                                             tileLocation: TileLocation){
         tacMapState.unitsAvailableToDeploy.removeAndAssert(tacMapUnit)
         addCharacterToTileFromTemplate(tacMapUnit, tileLocation, true)
+        globalTacMapState.isMissionStarted = true
     }
 
     fun evacuateCharacter(logicalCharacter: LogicalCharacter){
@@ -84,7 +89,7 @@ public class ActionManager @Inject constructor(
 
         val tacMapUnitTemplate = tacMapUnit
         println("Adding character to tile: ${tacMapUnit.templateName} at ${tileLocation}")
-        val group = characterImageManager.placeCharacterActor(tileLocation,tacMapUnitTemplate.tiledTexturePath)
+        val group = characterImageManager.placeCharacterActor(tileLocation,tacMapUnitTemplate.protoActor)
         val characterSpawned = LogicalCharacter(group, tileLocation, tacMapUnitTemplate, playerControlled)
         visibleCharacterDataFactory.generateCharacterHpMarker(characterSpawned)
         boardState.addCharacter(characterSpawned)
@@ -95,6 +100,7 @@ public class ActionManager @Inject constructor(
         if (!characterSpawned.playerControlled){
             characterSpawned.formulateNewIntent()
         }
+        characterSpawned.actor.setFunctionalName(ActorName(ActorOrdering.UNIT))
         return characterSpawned
     }
 
@@ -333,10 +339,14 @@ public class ActionManager @Inject constructor(
             return false
         }
     }
+
+    fun runThroughActionQueue(){
+        animationActionQueueProvider.runThroughActionQueue({})
+    }
     fun createAwaitedSpeechBubbleForCharacter(text: String, tacMapUnit: TacMapUnitTemplate, afterUserClosesBubble: ()-> Unit = {}){
 
         val actor = speechBubbleAnimation.createTextBoxAtTopOfScreenWithCharacter(text,
-                protoActor = tacMapUnit.tiledTexturePath)
+                protoActor = tacMapUnit.protoActor)
         actor.isVisible = false
         val isDone = AtomicBoolean(false)
         actor.addListener(ThingClickedListener(isDone))
@@ -344,21 +354,19 @@ public class ActionManager @Inject constructor(
         stageProvider.tacMapHudStage.addActor(actor)
 
         animationActionQueueProvider.addAction(
-                ActorActionPair(actor,
-                        Actions.sequence(
-                                Actions.alpha(0f),
-                                Actions.visible(true),
-                                Actions.fadeIn(.2f),
-                                TriggeredDelayAction(isDone),
-                                Actions.fadeOut(.2f),
-                                Actions.removeActor(),
-                                AnimationActionQueueProvider.CustomAction{
-                                    afterUserClosesBubble.invoke()
-                                }
-                        ),
-                        murderActorsOnceCompletedAnimation = true,
-                        cameraTrigger = false,
-                        startsVisible = false)
+            ActorActionPair(actor,
+                Actions.sequence(
+                    Actions.alpha(0f),
+                    Actions.visible(true),
+                    Actions.fadeIn(.2f),
+                    TriggeredDelayAction(isDone),
+                    Actions.fadeOut(.2f),
+                    Actions.removeActor(),
+                    AnimationActionQueueProvider.CustomAction(afterUserClosesBubble)
+                ),
+                murderActorsOnceCompletedAnimation = true,
+                cameraTrigger = false,
+                startsVisible = false)
         )
     }
 
@@ -369,7 +377,7 @@ public class ActionManager @Inject constructor(
                                        waitForClick: Boolean = false){
 
         val actor = speechBubbleAnimation.createTextBoxAtTopOfScreenWithCharacter(text,
-                protoActor = tacMapUnit.tiledTexturePath)
+                protoActor = tacMapUnit.protoActor)
         actor.isVisible = false
         stageProvider.tacMapHudStage.addActor(actor)
 
@@ -426,6 +434,8 @@ public class ActionManager @Inject constructor(
         val entity = protoEntity.toTileEntity(tileLocation)
         logicalTileTracker.tileEntities.add(entity)
         this.spawnActorAtTileInSequence(entity.actor, tileLocation)
+        entity.actor.setFunctionalName(ActorName(ActorOrdering.TILE_FEATURE))
+        logicHooks.mapReorderRequired()
     }
 
 }

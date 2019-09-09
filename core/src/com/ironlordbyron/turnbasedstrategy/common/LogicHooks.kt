@@ -12,9 +12,11 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.UnitWasS
 import com.ironlordbyron.turnbasedstrategy.controller.*
 import com.ironlordbyron.turnbasedstrategy.entrypoints.CadenceEffectsRegistrar
 import com.ironlordbyron.turnbasedstrategy.entrypoints.FunctionalEffectRegistrar
+import com.ironlordbyron.turnbasedstrategy.entrypoints.log
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.missiongen.VictoryChecker
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TILED_MAP_STAGE_PROVIDER
 
 /**
  *
@@ -76,16 +78,22 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
     val victoryChecker by LazyInject(VictoryChecker::class.java)
     // basically means any time an animation has finished occurring
     fun onConcreteActionPerformed(){
-        return
         // TODO
+
         if (victoryChecker.isBattleOver()) {
-            actionManager.createAwaitedSpeechBubbleForCharacter("Welp, everyone's eitehr dead or evac'd.\nCLICK TO ROLL OUT.",
+            actionManager.createAwaitedSpeechBubbleForCharacter(
+                    "Welp, everyone's either dead or evac'd.\nCLICK TO ROLL OUT.",
                     TacMapUnitTemplate.DEFAULT_UNIT,
             {
                 eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.SwapToVictoryScreen())
             })
+            log("Starting action queue for battle over animation")
+            actionManager.runThroughActionQueue()
         }
+    }
 
+    fun mapReorderRequired(){
+        TILED_MAP_STAGE_PROVIDER.tiledMapStage.reorderActors()
     }
 
     fun onCharacterTurnStart(thisCharacter: LogicalCharacter){

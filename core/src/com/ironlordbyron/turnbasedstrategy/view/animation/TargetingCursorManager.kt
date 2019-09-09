@@ -33,7 +33,7 @@ class TargetingCursorManager @Inject constructor(val tiledMapStageProvider: Stag
         currentCursor?.remove()
         val state = stateProvider.boardInputState
         if (state is BoardInputState.PlayerIsPlacingUnits){
-            currentCursor = actionManager.spawnEntityAtTileInSequence(state.nextUnit()!!.tiledTexturePath, tileLocation)
+            currentCursor = actionManager.spawnEntityAtTileInSequence(state.nextUnit()!!.protoActor, tileLocation)
             currentCursor!!.addAction(Actions.alpha(.5f))
             animationActionQueueProvider.runThroughActionQueue()
         }else{

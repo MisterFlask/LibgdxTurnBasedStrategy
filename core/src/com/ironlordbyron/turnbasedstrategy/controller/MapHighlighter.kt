@@ -9,6 +9,9 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.te
 import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActorFactory
 import com.ironlordbyron.turnbasedstrategy.tiledutils.TiledMapOperationsHandler
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
+import com.ironlordbyron.turnbasedstrategy.view.ActorName
+import com.ironlordbyron.turnbasedstrategy.view.ActorOrdering
+import com.ironlordbyron.turnbasedstrategy.view.setFunctionalName
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -30,6 +33,7 @@ public class MapHighlighter @Inject constructor(val tiledMapOperationsHandler: T
             }
             val actor = imageActorFactory.createSpriteActorForTile(tileMapProvider.tiledMap, location, highlightType.toTexture(),
                     alpha = .5f)
+            actor.setFunctionalName(ActorName(ActorOrdering.HIGHLIGHTS))
             if (highlightType.color != null){
                 actor.color = highlightType.color
             }

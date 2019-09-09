@@ -208,7 +208,7 @@ class EquipmentSelector(val equipment: EquipmentWithQuantity,
         characterSelectionScreen.equipmentSelectors.add(this)
         val characterUsing = characterUsing
         if (characterUsing != null){
-            this.add(characterUsing.tiledTexturePath.toActorWrapper().actor).width(40f).height(40f)
+            this.add(characterUsing.protoActor.toActorWrapper().actor).width(40f).height(40f)
         } else{
             this.add(Table()).width(40f).height(40f) // basically just a dummy to ensure consistent spacing
         }
@@ -246,7 +246,7 @@ class CharacterSelector(val character: TacMapUnitTemplate): Table() {
     var selected: Boolean = false
 
     init{
-        this.add(this.character.tiledTexturePath.toActorWrapper().actor).width(40f).height(40f)
+        this.add(this.character.protoActor.toActorWrapper().actor).width(40f).height(40f)
         this.addLabel(this.character.templateName, skipRow = true)
         this.addHoverLighting()
         this.addClickListener {
@@ -389,7 +389,7 @@ class DeploymentSlot(val slot: DeploymentSlotViewModel, val screen: CharacterSel
             this.addLabel("No Character Selected", afterCreation = {it.width(150f)})
         }else{
             this.addLabel(character.templateName, afterCreation = {it.width(100f)})
-            this.add(character.tiledTexturePath.toActorWrapper().actor).width(50f).height(50f)
+            this.add(character.protoActor.toActorWrapper().actor).width(50f).height(50f)
         }
         if (slot.selected){
             this.withOrangeBorder()

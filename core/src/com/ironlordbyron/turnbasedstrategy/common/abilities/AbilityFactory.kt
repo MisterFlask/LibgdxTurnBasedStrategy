@@ -133,6 +133,7 @@ class SimpleAttackAbility() : AbilityTargetingParameters() {
 
         if (sourceCharacter.playerControlled){
             animationActionQueueProvider.runThroughActionQueue(finalAction = {})
+            logicHooks.onConcreteActionPerformed()
         }
     }
 

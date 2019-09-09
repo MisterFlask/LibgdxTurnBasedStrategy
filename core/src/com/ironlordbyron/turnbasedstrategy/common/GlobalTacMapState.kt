@@ -25,6 +25,7 @@ public class GlobalTacMapState: TurnStartListener, BattleStartListener {
         GameModuleInjector.generateInstance(EventNotifier::class.java)
     }
 
+    var isMissionStarted = false
     var alertness = 0
     var alertnessValuesTriggered = ArrayList<Int>()
     var battleEventsToTrigger = HashMap<Int, BattleEvent>()
@@ -41,6 +42,7 @@ public class GlobalTacMapState: TurnStartListener, BattleStartListener {
     }
 
     fun initializeBattle(scenarioParams: ScenarioParams){
+        isMissionStarted = false
 
     }
 

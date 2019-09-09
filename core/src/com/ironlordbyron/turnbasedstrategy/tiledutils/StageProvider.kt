@@ -8,6 +8,7 @@ import javax.inject.Singleton
 @Singleton
 class StageProvider : Provider<TiledMapStage> {
     override fun get(): TiledMapStage {
+        tiledMapStage.actors
         return tiledMapStage
     }
 

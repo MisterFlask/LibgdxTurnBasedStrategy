@@ -7,6 +7,7 @@ import com.ironlordbyron.turnbasedstrategy.ai.Intent
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
+import com.ironlordbyron.turnbasedstrategy.entrypoints.log
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.tacMapState
 import java.util.concurrent.TimeUnit
@@ -144,12 +145,6 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
         eventNotifier.registerGuiListener(this)
     }
 
-    fun placePlayerUnit(tileLocation: TileLocation, unit: TacMapUnitTemplate){
-        actionManager.addCharacterToTileFromTemplate(unit, tileLocation, playerControlled = true)
-        animationActionQueueProvider.runThroughActionQueue()
-
-    }
-
     fun playerClickedOnTile(location: TileLocation){
         if (boardInputState is BoardInputState.PlayerIsPlacingUnits){
             if (location.getCharacter() != null){
@@ -161,9 +156,9 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
             }
             val boardInputState = boardInputState as BoardInputState.PlayerIsPlacingUnits
             val characterToPlace = tacMapState.unitsAvailableToDeploy.first()
-            tacMapState.unitsAvailableToDeploy.removeAt(0)
+            actionManager.addCharacterToMapFromDeploymentZone(characterToPlace, location)
+            animationActionQueueProvider.runThroughActionQueue()
 
-            placePlayerUnit(location, characterToPlace)
             if (boardInputState.nextUnit() != null){
                 eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.PlayerIsPlacingUnit(boardInputState.nextUnit()!!))
             }
@@ -179,11 +174,14 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
         val character = tacticalMapAlgorithms.getCharacterAtLocation(location)
         mapHighlighter.killHighlights()
         val currentBoardInputState = boardInputState
+
         if (currentBoardInputState is BoardInputState.PlayerIntendsToUseAbility){
+            log("Player intends to use ability: $currentBoardInputState")
             if (abilityController.canUseAbilityOnSquare(currentBoardInputState.unit, currentBoardInputState.ability, character, location)){
                 abilityController.useAbility(currentBoardInputState.unit, currentBoardInputState.ability, character, location)
                 boardInputState = BoardInputState.DefaultState()
             }else{
+                log("Player selected invalid square to use ability: $currentBoardInputState")
                 boardInputState = BoardInputState.DefaultState()
             }
             return

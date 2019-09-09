@@ -40,7 +40,7 @@ data class EquipmentSlot(val allowedEquipment: Collection<EquipmentSuperclass>,
 }
 
 class TacMapUnitTemplate(val movesPerTurn: Int,
-                         val tiledTexturePath: ProtoActor,
+                         val protoActor: ProtoActor,
                          val templateName: String = "Peasant",
                          abilities: List<LogicalAbility> = listOf(),
                          var allowedEquipment: Collection<EquipmentClass> = listOf(EquipmentClass.MELEE_WEAPON_LARGE), //TODO

@@ -13,6 +13,7 @@ import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TempBattleStarter
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
+import com.ironlordbyron.turnbasedstrategy.view.ActorSortOrderComparator
 import javax.inject.Singleton
 
 
@@ -32,6 +33,10 @@ class TiledMapStage(
         val tiledMapInitializer: TiledMapInitializer) : Stage(), InputProcessor {
     init {
         stageProvider.tiledMapStage = this
+    }
+
+    public fun reorderActors(){
+        this.actors.sort(ActorSortOrderComparator())
     }
 
     public fun initializeBattle(tiledMap: TiledMap){

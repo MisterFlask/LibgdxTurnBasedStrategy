@@ -15,7 +15,6 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.CharacterImageManager
 import com.ironlordbyron.turnbasedstrategy.tiledutils.SpriteActorFactory
 import javax.inject.Inject
 import javax.inject.Singleton
-import com.badlogic.gdx.utils.Scaling
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.common.abilities.ContextualAbilityFactory
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.RenderingFunction
@@ -115,7 +114,7 @@ class TacMapHud(viewPort: Viewport,
 
     private fun createFakeLogicalCharacter(template: TacMapUnitTemplate): LogicalCharacter {
         return LogicalCharacter(
-                actor = LogicalCharacterActorGroup(template.tiledTexturePath.toActorWrapper()),
+                actor = LogicalCharacterActorGroup(template.protoActor.toActorWrapper()),
         tileLocation = TileLocation(0,0),
         tacMapUnit = template,
         playerControlled = true)

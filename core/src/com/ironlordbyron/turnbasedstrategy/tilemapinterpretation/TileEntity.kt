@@ -85,7 +85,7 @@ class WarpingInPortalTileEntity(override val tileLocations: Collection<TileLocat
                                 override val actor: Actor,
                                 override val protoActor: ProtoActor,
                                 override val name: String = "Warp Rift",
-                                var turnsLeftUntilEntityCreated: Int = 3) : TileEntity{
+                                var turnsLeftUntilEntityCreated: Int = 1) : TileEntity{
     init{
         assert(tileLocations.size == 1)
     }

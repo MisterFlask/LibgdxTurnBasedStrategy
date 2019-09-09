@@ -42,10 +42,7 @@ fun CreatePortalAbility(): LogicalAbility {
 class NonDoorOrWallTileFilter : TileFilter {
     override fun tileIsValid(tileLocation: TileLocation): Boolean {
         val entity = tileLocation.entity()
-        if (entity == null) return true
-        if (entity is DoorEntity) return false
-        if (entity is WallEntity) return false
-        return true
+        return if (entity == null) true else false
     }
 }
 
