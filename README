@@ -4,3 +4,4 @@ HOW TO RUN
 which is NOT the Intellij default.
 3)  You'll want to use the local Gradle distribution, which might be at somewhere similar to C:/Users/ironl/scoop/apps/gradle/5.1.1
 (assuming you used Scoop to download it.)
+4)  Note that you'll have to mark the assets folder as "resource" folders in Intellij.

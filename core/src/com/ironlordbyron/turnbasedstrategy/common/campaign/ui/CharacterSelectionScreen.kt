@@ -35,6 +35,8 @@ public class CharacterSelectionScreen: ScreenAdapter(){
 
     private lateinit var scenarioParams: ScenarioParams
     val roster by LazyInject(CharacterAndEquipmentRoster::class.java)
+    val tacMapScreen by LazyInject(TacticalMapScreen::class.java)
+
     val characterEquipmentTable = Table()
     val viewport = ScreenViewport()
     val stage: Stage = Stage(viewport)
@@ -151,8 +153,6 @@ public class CharacterSelectionScreen: ScreenAdapter(){
 
     private fun populateCharacterSelectTable() {
     }
-
-    val tacMapScreen by LazyInject(TacticalMapScreen::class.java)
 
     fun initializeCharacterSelectionScreen(scenarioParams: ScenarioParams){
         this.scenarioParams = scenarioParams

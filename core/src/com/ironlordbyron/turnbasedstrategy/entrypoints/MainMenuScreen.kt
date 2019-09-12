@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.viewport.ScreenViewport
+import com.ironlordbyron.turnbasedstrategy.common.campaign.ui.addButton
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
@@ -44,6 +45,11 @@ public class MainMenuScreen @Inject constructor(val tacticalMapScreen: TacticalM
                     scenario.name,
                     scenario))
             table.row()
+        }
+        table.row()
+        table.addButton("Victory screen test"){
+            log("Victory screen test clicked")
+            eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.SwapToVictoryScreen())
         }
         table.setPosition(Gdx.graphics.width / 2 - table.getWidth() / 2, Gdx.graphics.height / 2 - table.getHeight() / 2, Alignment.CENTER.alignment)
         stage.addActor(table)

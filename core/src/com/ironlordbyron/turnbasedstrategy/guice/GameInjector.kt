@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.google.inject.AbstractModule
 import com.google.inject.Guice
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
+import com.ironlordbyron.turnbasedstrategy.entrypoints.log
 import com.ironlordbyron.turnbasedstrategy.view.animation.TargetingCursorManager
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.BlankMapGenerator
@@ -13,6 +14,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.camera.GameCameraProvi
 import com.ironlordbyron.turnbasedstrategy.view.animation.external.SpecialEffectManager
 import com.ironlordbyron.turnbasedstrategy.view.animation.passive.EagerInitializer
 import com.ironlordbyron.turnbasedstrategy.view.ui.TacMapHudFactory
+import java.lang.IllegalStateException
 import kotlin.reflect.KProperty
 
 class GameModule : AbstractModule() {
@@ -83,11 +85,20 @@ class GameModuleInjector {
 val eventNotifier: EventNotifier by LazyInject(EventNotifier::class.java)
 
 class LazyInject <T>(val clazz: Class<T>) {
-    val cached : T by lazy<T>{
-        GameModuleInjector.generateInstance(clazz)
+    val cached : Lazy<T> = lazy<T>{
+        try {
+            GameModuleInjector.generateInstance(clazz)
+        }catch(e: Exception){
+            log("Error on attempting to instantiate class ${clazz.simpleName}: ${e.message}")
+            e.printStackTrace()
+            throw e
+        }
     }
 
     operator fun getValue(thisRef: Any?, property: KProperty<*>): T {
-        return cached
+        if (cached.value == null){
+            throw IllegalStateException("BUG: LazyInject should never return null")
+        }
+        return cached.value
     }
 }

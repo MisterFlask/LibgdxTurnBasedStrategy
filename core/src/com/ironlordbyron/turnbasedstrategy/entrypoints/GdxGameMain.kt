@@ -9,14 +9,14 @@ import com.ironlordbyron.turnbasedstrategy.controller.EventListener
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
-import netscape.javascript.JSObject.getWindow
-
+import com.ironlordbyron.turnbasedstrategy.view.VictoryScreen
 
 
 class GdxGameMain : Game(), EventListener {
     var mainMenuScreen: Screen? = null
     var tacticsScreen: Screen? = null
     val charSelectScreen by LazyInject(CharacterSelectionScreen::class.java)
+    val victoryScreen by LazyInject(VictoryScreen::class.java)
 
     override fun create() {
         GameModuleInjector.getEventNotifier().registerGuiListener(this)
@@ -26,7 +26,6 @@ class GdxGameMain : Game(), EventListener {
         this.screen = mainMenuScreen
 
         this.screen.show()
-
     }
 
     override fun consumeGuiEvent(event: TacticalGuiEvent) {
@@ -42,6 +41,12 @@ class GdxGameMain : Game(), EventListener {
             is TacticalGuiEvent.SwapToCharacterSelectScreen -> {
                 this.screen = charSelectScreen
                 charSelectScreen.initializeCharacterSelectionScreen(event.scenarioParams)
+                this.screen.show()
+            }
+            is TacticalGuiEvent.SwapToVictoryScreen -> {
+                log("Swapping to victory screen")
+                this.screen = victoryScreen
+                this.victoryScreen.populateMasterTable()
                 this.screen.show()
             }
         }
