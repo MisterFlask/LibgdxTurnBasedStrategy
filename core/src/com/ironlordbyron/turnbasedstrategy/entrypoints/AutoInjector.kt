@@ -96,6 +96,9 @@ data class UnitTemplateSpawner(val obj: Any?,
 public class UnitTemplateRegistrar(){
     val unitTemplates = ArrayList<UnitTemplateSpawner>()
 
+    val tacMapUnitIds: Collection<String>
+        get() = unitTemplates.map{it.id}
+
     fun getTacMapUnitById(id: String): TacMapUnitTemplate? {
         return unitTemplates.find{it.id == id}?.spawn()
     }

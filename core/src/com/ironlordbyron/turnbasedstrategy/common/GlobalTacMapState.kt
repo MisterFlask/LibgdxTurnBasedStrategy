@@ -1,10 +1,10 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
+import com.ironlordbyron.turnbasedstrategy.common.campaign.DestroyNumberOfUnitsBattleGoal
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeActionManager
 import com.ironlordbyron.turnbasedstrategy.common.wrappers.BattleGoal
-import com.ironlordbyron.turnbasedstrategy.common.wrappers.DestroyNumberOfUnitsBattleGoal
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.entrypoints.Autoinjectable
