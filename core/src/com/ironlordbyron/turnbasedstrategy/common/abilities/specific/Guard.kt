@@ -31,7 +31,7 @@ class GuardedAttribute(val guardedByCharacter: UUID): LogicalCharacterAttribute(
         imageIcon = PainterlyIcons.PROTECT_SKY.toProtoActor(1),
         id = "GUARDED",
         description = {"if this character is near ${guardedByCharacter.toCharacter().tacMapUnit.templateName}, attacks that target this character hit "},
-        otherCustomEffects = listOf(GuardedFunctionalEffect(guardedByCharacter)) // TODO
+        otherCustomEffects = listOf(GuardedFunctionalEffect(guardedByCharacter))
 )
 
 val GuardAbility = LogicalAbility("Guard", AbilitySpeed.FREE_ACTION, 1,

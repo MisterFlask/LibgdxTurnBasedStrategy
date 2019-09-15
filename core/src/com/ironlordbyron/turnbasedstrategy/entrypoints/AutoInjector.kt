@@ -85,6 +85,11 @@ data class UnitTemplateSpawner(val obj: Any?,
                                val compileTimeTags: List<SpawnableUnitTemplateTags> = listOf(),
                                val tags: Tags){
 
+    init{
+        if (compileTimeTags.contains(SpawnableUnitTemplateTags.ORGAN)){
+            tags.isOrgan = true
+        }
+    }
 
     fun spawn() : TacMapUnitTemplate{
         return method.invoke(null) as TacMapUnitTemplate

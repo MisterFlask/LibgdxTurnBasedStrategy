@@ -38,10 +38,6 @@ public open class LogicalCharacterAttribute(val name: String,
                 PainterlyIcons.LINK_BLUE.toProtoActor(3),
                 masterOrgan= true,
                 description = {"Master organ.  When destroyed, the fortress will begin sinking back into Hell."})
-        val SHIELDS_ANOTHER_ORGAN = LogicalCharacterAttribute("Shields Organ",
-                PainterlyIcons.PROTECT_SKY.toProtoActor(3),
-                otherCustomEffects = listOf(ShieldsAnotherOrganFunctionalAttribute()),
-                description = {"Shields an organ from all damage."})
         val STUNNED = LogicalCharacterAttribute("Stunned",
                 _demonImg.copy(textureId = "7"),
                 statusEffect = true,

@@ -14,6 +14,6 @@ fun ShieldingOrgan() : TacMapUnitTemplate{
             SuperimposedTilemaps.elementalImageNumber("32"),
             templateName = "Shielding Organ",
             enemyAiType = EnemyAiType.IMMOBILE_UNIT,
-            startingAttributes = listOf(LogicalCharacterAttribute.SHIELDS_ANOTHER_ORGAN,
+            startingAttributes = listOf(ShieldsAnotherOrganFunctionalAttribute(),
                     LogicalCharacterAttribute.EXPLODES_ON_DEATH))
 }

@@ -6,12 +6,18 @@ import com.ironlordbyron.turnbasedstrategy.common.characterattributes.AdrenalGla
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.SleepingGuardian
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.attributeOperator
+import com.ironlordbyron.turnbasedstrategy.common.wrappers.BattleGoal
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplateTags
 import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 
-public class ZoneStyleMissionUnitTemplateDecider{
+/**
+ * Accepts a tac map as input (required to have Zone object layer)
+ * Outputs list of units and locations of the same
+ * Delegates individual zoning logic to mission goals
+ */
+public class ZoneStyleMissionGenerator{
     val unitTemplateRegistrar by LazyInject(UnitTemplateRegistrar::class.java)
 
     /**
@@ -46,7 +52,7 @@ public class ZoneStyleMissionUnitTemplateDecider{
 
     val tiledMapProvider by LazyInject(TileMapProvider::class.java)
 
-    fun createUnitsAndOrganGenerationParameters(): Collection<UnitSpawnParameter>{
+    fun createUnitsAndOrganGenerationParameters(battleGoals: Collection<BattleGoal>): Collection<UnitSpawnParameter>{
         val returnedUnitSpawns = ArrayList<UnitSpawnParameter>()
         var zones = tiledMapProvider.getDiscreteZones()
         zones = zones.shuffled()

@@ -17,7 +17,9 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.SuperimposedTilemaps
 import java.util.*
 
-data class Tags(val isSpawnableEnemy: Boolean = true)
+data class Tags(val isSpawnableEnemy: Boolean = true,
+                // denotes an organ.  Note that this can be overridden if the compile time tag is set to "true".
+                var isOrgan: Boolean = false)
 
 data class EquipmentSlot(val allowedEquipment: Collection<EquipmentSuperclass>,
                          val name: String,
@@ -71,6 +73,8 @@ class TacMapUnitTemplate(val movesPerTurn: Int,
 
     val equipment: List<LogicalEquipment>
         get() = this.equipmentSlots.map{it.currentEquipment}.filterNotNull()
+    val pickedUpItems = ArrayList<LogicalEquipment>()
+
     private val stacksOfAttribute: HashMap<String, Int> = hashMapOf()
     private val _attributes = attributes
     private val _abilities = abilities.toList()

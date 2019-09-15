@@ -11,7 +11,7 @@ import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.missiongen.TileZone
-import com.ironlordbyron.turnbasedstrategy.missiongen.ZoneStyleMissionUnitTemplateDecider
+import com.ironlordbyron.turnbasedstrategy.missiongen.ZoneStyleMissionGenerator
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 import javax.inject.Inject
@@ -82,7 +82,7 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
         GameModuleInjector.generateInstance(CadenceEffectsRegistrar::class.java)
     }
 
-    val zoneStyleMissionUnitTemplateDecider by LazyInject(ZoneStyleMissionUnitTemplateDecider::class.java)
+    val zoneStyleMissionUnitTemplateDecider by LazyInject(ZoneStyleMissionGenerator::class.java)
 
     fun startBattle(){
         println("Starting battle")
