@@ -9,6 +9,7 @@ import com.ironlordbyron.turnbasedstrategy.common.wrappers.ZoneGenerationParamet
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplateTags
 import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
+import com.ironlordbyron.turnbasedstrategy.missiongen.LevelAppropriateMinionGenerator
 import com.ironlordbyron.turnbasedstrategy.missiongen.UnitSpawnParameter
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.randomElement
 
@@ -30,18 +31,34 @@ public fun destroyOrganBattleGoalGen() : BattleGoalGenerator {
     return DestroyOrganBattleGoalGenerator()
 }
 
-public class DestroyOrganBattleGoal(val unitTemplateIdToDestroy: String,
-                                    override val name: String = "Destroy $unitTemplateIdToDestroy",
-                                    override val description: String = "Before the end of combat, destroy $unitTemplateIdToDestroy") : BattleGoal{
+val levelAppropriateMinionGenerator by LazyInject(LevelAppropriateMinionGenerator::class.java)
+
+public class DestroyMasterOrganWithShieldBattleGoal(): DestroyOrganBattleGoal(){
+    override fun getRequiredZoneCreationParameters(): Collection<ZoneGenerationParameters> {
+        val masterZone = ZoneGenerationParameters(unitSpawnParams = listOf(
+                TacMapUnitTemplate.fromId("MASTER_ORGAN")
+        ) + levelAppropriateMinionGenerator.getGenericMinions(3))
+        val shieldZone = ZoneGenerationParameters(unitSpawnParams =
+                listOf(TacMapUnitTemplate.fromId("SHIELDING_ORGAN")) + levelAppropriateMinionGenerator.getGenericMinions(3)
+        )
+        return listOf(masterZone, shieldZone)
+    }
+}
+
+
+public open class DestroyOrganBattleGoal(val unitTemplateIdToDestroy: String = "MASTER_ORGAN",
+                                         override val name: String = "Destroy $unitTemplateIdToDestroy",
+                                         override val description: String = "Before the end of combat, destroy $unitTemplateIdToDestroy") : BattleGoal{
     val tacMapState by LazyInject(TacticalMapState::class.java)
     override fun isGoalMet(): Boolean {
         return tacMapState.deadCharacters.firstOrNull{it.templateId == unitTemplateIdToDestroy} != null
     }
 
     override fun getRequiredZoneCreationParameters(): Collection<ZoneGenerationParameters> {
+        val minions = levelAppropriateMinionGenerator.getGenericMinions(3)
         return listOf(ZoneGenerationParameters(unitSpawnParams = listOf(
                  TacMapUnitTemplate.fromId(unitTemplateIdToDestroy)
-        )))
+        ) + minions))
     }
 }
 

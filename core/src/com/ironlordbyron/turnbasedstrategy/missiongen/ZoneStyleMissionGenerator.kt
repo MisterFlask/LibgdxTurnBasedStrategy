@@ -33,9 +33,6 @@ public class ZoneStyleMissionGenerator{
         organs.remove(shieldingOrgan)
         organs.shuffle()
         val chosen = organs.take(organsToUse - 2).toMutableList()
-        chosen.add(masterOrgan)
-        chosen.add(shieldingOrgan)
-
         return chosen.map{it.spawn()}
     }
 
@@ -54,16 +51,28 @@ public class ZoneStyleMissionGenerator{
 
     fun createUnitsAndOrganGenerationParameters(battleGoals: Collection<BattleGoal>): Collection<UnitSpawnParameter>{
         val returnedUnitSpawns = ArrayList<UnitSpawnParameter>()
+        val bespokeZones = battleGoals.flatMap{it.getRequiredZoneCreationParameters()}.toMutableList()
         var zones = tiledMapProvider.getDiscreteZones()
         zones = zones.shuffled()
-        val organQueue = getOrgansToBeUsedInMission(4).toMutableList()
+        val organQueue = getOrgansToBeUsedInMission(2).toMutableList()
         for (zone in zones){
+            val tilesInZone = zone.tiles.shuffled().toList()
+
+            if (bespokeZones.isNotEmpty()){
+                val bespokeZone = bespokeZones.pop()
+                val mobs = bespokeZone!!.unitSpawnParams
+                 mobs.forEachIndexed{ i, mob ->
+                    val unitSpawn = UnitSpawnParameter(tilesInZone.get(i), mob)
+                    returnedUnitSpawns.add(unitSpawn)
+                }
+                continue // avoiding typical zone spawning
+            }
+            // default spawning logic
             val mobs = getMobsToBeUsedForOrganGuardianship(4)
             val organ = organQueue.pop()
             if (organ == null){
                 continue
             }
-            val tilesInZone = zone.tiles.shuffled().toList()
             mobs.forEachIndexed{
                 i, template -> returnedUnitSpawns.add(UnitSpawnParameter(tilesInZone.get(i), template, listOf(SleepingGuardian(organ.unitId))))
             }

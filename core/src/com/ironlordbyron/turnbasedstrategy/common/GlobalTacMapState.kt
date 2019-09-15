@@ -1,6 +1,6 @@
 package com.ironlordbyron.turnbasedstrategy.common
 
-import com.ironlordbyron.turnbasedstrategy.common.campaign.DestroyNumberOfUnitsBattleGoal
+import com.ironlordbyron.turnbasedstrategy.common.campaign.battlegoals.DestroyNumberOfUnitsBattleGoal
 import com.ironlordbyron.turnbasedstrategy.common.characterattributes.LogicalCharacterAttribute
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeActionManager

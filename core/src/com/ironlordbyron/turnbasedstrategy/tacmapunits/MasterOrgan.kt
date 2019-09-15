@@ -12,6 +12,7 @@ fun MasterOrgan() : TacMapUnitTemplate{
     return TacMapUnitTemplate(0,
             SuperimposedTilemaps.elementalImageNumber("34"),
             templateName = "Master Organ",
+            templateId = "MASTER_ORGAN",
             enemyAiType = EnemyAiType.IMMOBILE_UNIT,
             startingAttributes = listOf(LogicalCharacterAttribute.MASTER_ORGAN,
                     LogicalCharacterAttribute.EXPLODES_ON_DEATH))

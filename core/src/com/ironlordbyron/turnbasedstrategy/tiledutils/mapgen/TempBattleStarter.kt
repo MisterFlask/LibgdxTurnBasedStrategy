@@ -3,9 +3,11 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
 import com.ironlordbyron.turnbasedstrategy.common.*
+import com.ironlordbyron.turnbasedstrategy.common.campaign.battlegoals.DestroyMasterOrganWithShieldBattleGoal
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AnimationActionQueueProvider
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.AttributeActionManager
 import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionManager
+import com.ironlordbyron.turnbasedstrategy.controller.tacMapState
 import com.ironlordbyron.turnbasedstrategy.entrypoints.CadenceEffectsRegistrar
 import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
@@ -81,13 +83,12 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
     val cadenceEffectsRegistrar: CadenceEffectsRegistrar by lazy {
         GameModuleInjector.generateInstance(CadenceEffectsRegistrar::class.java)
     }
+    val globalTacMapState by LazyInject(GlobalTacMapState::class.java)
 
     val zoneStyleMissionUnitTemplateDecider by LazyInject(ZoneStyleMissionGenerator::class.java)
 
     fun startBattle(){
         println("Starting battle")
-        cadenceEffectsRegistrar.turnStartEffects.forEach{it.handleTurnStartEvent()}
-
         for (spawner in unitTemplateRegistrar.unitTemplates){
             val unitId = spawner.id
             val qualifyingTiles = tiledMapInterpreter.getSpawnedTacMapUnit(boardProvider.tiledMap, unitId)
@@ -98,7 +99,10 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
             }
         }
 
-        val templatesForZones = zoneStyleMissionUnitTemplateDecider.createUnitsAndOrganGenerationParameters()
+        val templatesForZones = zoneStyleMissionUnitTemplateDecider.createUnitsAndOrganGenerationParameters(
+            listOf(DestroyMasterOrganWithShieldBattleGoal())
+        )
+
         for (item in templatesForZones){
             val logicalCharacter = actionManager.addCharacterToTileFromTemplate(tacMapUnit = item.tacMapUnitTemplate,
                     tileLocation = item.tile,
@@ -107,6 +111,8 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
                 attributeActionManager.applyAttribute(logicalCharacter, attr)
             }
         }
+
+        cadenceEffectsRegistrar.turnStartEffects.forEach{it.handleTurnStartEvent()}
 
         for (char in tacmapState.listOfCharacters){
             logicHooks.onUnitCreation(char)
