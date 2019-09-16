@@ -161,7 +161,7 @@ public class ActionManager @Inject constructor(
                 toTile,
                 allowEndingOnLastTile = true,
                 allowFuzzyMatching = false)
-        return tiles?.map{it.location}?.toList() ?: throw IllegalStateException("Required to call this on a character that can go to the provided tile")
+        return tiles?.map{it}?.toList() ?: throw IllegalStateException("Required to call this on a character that can go to the provided tile")
     }
 
 
@@ -361,8 +361,8 @@ public class ActionManager @Inject constructor(
                     Actions.fadeIn(.2f),
                     TriggeredDelayAction(isDone),
                     Actions.fadeOut(.2f),
-                    Actions.removeActor(),
-                    AnimationActionQueueProvider.CustomAction(afterUserClosesBubble)
+                    AnimationActionQueueProvider.CustomAction(afterUserClosesBubble),
+                    Actions.removeActor()
                 ),
                 murderActorsOnceCompletedAnimation = true,
                 cameraTrigger = false,

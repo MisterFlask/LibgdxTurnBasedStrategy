@@ -45,7 +45,7 @@ public class BreadcrumbsPathAnimator @Inject constructor(val tileMapProvider: Ti
                         if (tiles == null){
                             return
                         }
-                        animateBreadCrumbs(tiles.map{it.location})
+                        animateBreadCrumbs(tiles)
                     }
                 }
             }

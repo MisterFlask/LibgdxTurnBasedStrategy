@@ -103,7 +103,7 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
                                           endLocation: TileLocation,
                                           allowEndingOnLastTile: Boolean,
                                           allowFuzzyMatching: Boolean,
-                                          restrictToCharacterMoveRange: Boolean) : Collection<PathfindingTileLocation>?{
+                                          restrictToCharacterMoveRange: Boolean) : Collection<TileLocation>?{
 
         var trueEndLocation = endLocation
         if (!tacticalMapAlgorithms.canWalkOnTile(character, endLocation)){
@@ -147,7 +147,7 @@ public class AiGridGraph (val tileTracker: LogicalTileTracker,
             if (restrictToCharacterMoveRange){
                 protoAnswer = truncateToAllowedCharacterMovementForThisTurn(character, protoAnswer)
             }
-            return protoAnswer
+            return protoAnswer.map{it.location}
         } catch(e: Exception){
             println("ERROR when attempting to go from ${character.tileLocation} to ${endLocation} with allowEndingOnLastTile=${allowEndingOnLastTile}")
             throw e;

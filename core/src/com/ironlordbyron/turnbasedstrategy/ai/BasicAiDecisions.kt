@@ -67,10 +67,10 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
     }
 
 
-    public fun pathfindToClosestPlayerUnit(thisCharacter: LogicalCharacter) : List<PathfindingTileLocation>?{
+    public fun pathfindToClosestPlayerUnit(thisCharacter: LogicalCharacter) : List<TileLocation>?{
         val pathfinder = pathfinderFactory.createGridGraph(thisCharacter)
         val playerUnits = tacticalMapState.listOfPlayerCharacters
-        var currentBestPath: List<PathfindingTileLocation>? = null
+        var currentBestPath: List<TileLocation>? = null
         for (targetUnit in playerUnits){
             val targetTileToMoveTo = targetUnit.tileLocation
                     .nearestUnoccupiedSquares(4)
@@ -230,13 +230,13 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
         // TODO: Ensure tile isn't occupied by enemy (if it is, stop one short)
     }
 
-    private fun getFurthestAllowedSpotOnPath(thisCharacter: LogicalCharacter, pathToEnemy: Collection<PathfindingTileLocation>): TileLocation {
+    private fun getFurthestAllowedSpotOnPath(thisCharacter: LogicalCharacter, pathToEnemy: Collection<TileLocation>): TileLocation {
         val moverate = thisCharacter.tacMapUnit.movesPerTurn
         if (pathToEnemy.size > moverate - 2) {
-            return pathToEnemy.toList()[moverate - 2].location
+            return pathToEnemy.toList()[moverate - 2]
         }
 
-        return pathToEnemy.last().location
+        return pathToEnemy.last()
     }
 
 }

@@ -73,9 +73,13 @@ public class GlobalTacMapState: TurnStartListener, BattleStartListener {
     }
 
 
-    public val battleGoals: Collection<BattleGoal> = listOf(
-            DestroyNumberOfUnitsBattleGoal(3)
+    public var battleGoals: Collection<BattleGoal> = listOf(
+            DestroyNumberOfUnitsBattleGoal(666)
     )
+
+    public fun initializeBattleGoals(goals: Collection<BattleGoal>){
+        this.battleGoals = goals
+    }
 }
 
 

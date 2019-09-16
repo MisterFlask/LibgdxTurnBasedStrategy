@@ -98,10 +98,11 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
                         playerControlled = false)
             }
         }
-
+        val battleGoals = listOf(DestroyMasterOrganWithShieldBattleGoal())
+        globalTacMapState.initializeBattleGoals(battleGoals)
         val templatesForZones = zoneStyleMissionUnitTemplateDecider.createUnitsAndOrganGenerationParameters(
-            listOf(DestroyMasterOrganWithShieldBattleGoal())
-        )
+            battleGoals)
+
 
         for (item in templatesForZones){
             val logicalCharacter = actionManager.addCharacterToTileFromTemplate(tacMapUnit = item.tacMapUnitTemplate,
@@ -112,14 +113,14 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
             }
         }
 
-        cadenceEffectsRegistrar.turnStartEffects.forEach{it.handleTurnStartEvent()}
-
         for (char in tacmapState.listOfCharacters){
             logicHooks.onUnitCreation(char)
         }
 
         actionManager.createAwaitedSpeechBubbleForCharacter("And now, we begin.",
                 TacMapUnitTemplate.DEFAULT_UNIT)
+
+        cadenceEffectsRegistrar.turnStartEffects.forEach{it.handleTurnStartEvent()}
 
         animationActionQueueProvider.runThroughActionQueue()
     }

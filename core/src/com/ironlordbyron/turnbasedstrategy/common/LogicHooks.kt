@@ -85,6 +85,7 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
                     "Welp, everyone's either dead or evac'd.\nCLICK TO ROLL OUT.",
                     TacMapUnitTemplate.DEFAULT_UNIT,
             {
+                log("Attempting to end mission")
                 eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.SwapToVictoryScreen())
             })
             log("Starting action queue for battle over animation")

@@ -4,6 +4,7 @@ import com.ironlordbyron.turnbasedstrategy.Logging
 import com.ironlordbyron.turnbasedstrategy.ai.*
 import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
+import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 
 class AttackGoal() : Goal{
@@ -35,7 +36,7 @@ class AttackGoal() : Goal{
                 if (bestPathToClosestPlayerUnit.size == 0) {
                     return listOf()
                 }
-                val nextMove = AiPlannedAction.MoveToTile(bestPathToClosestPlayerUnit.last().location)
+                val nextMove = AiPlannedAction.MoveToTile(bestPathToClosestPlayerUnit.last())
                 val returned = listOf(nextMove)
 
                 return returned
@@ -61,7 +62,7 @@ class AttackGoal() : Goal{
     }
 }
 
-private fun List<PathfindingTileLocation>.truncateToCharacterMoveRange(character: LogicalCharacter): List<PathfindingTileLocation> {
+private fun List<TileLocation>.truncateToCharacterMoveRange(character: LogicalCharacter): List<TileLocation> {
     if (this.size <= character.tacMapUnit.movesPerTurn){
         return this
     }

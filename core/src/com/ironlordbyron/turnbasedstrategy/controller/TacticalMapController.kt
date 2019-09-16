@@ -100,7 +100,9 @@ class TacticalMapController @Inject constructor(val gameBoardOperator: GameBoard
                 boardInputState = BoardInputState.PlayerIsPlacingUnits()
                 val boardInputState = boardInputState as BoardInputState.PlayerIsPlacingUnits
                 tileMapHighlighter.highlightTiles(tiledMapProvider.getPlayerPlacementTilemapTiles(), HighlightType.GREEN_TILE, tag = "move")
-                // TODO:  This breaks in the case where we have zero units
+                if (boardInputState.nextUnit() == null){
+                    throw IllegalStateException("No units configured for mission!")
+                }
                 eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.PlayerIsPlacingUnit(boardInputState.nextUnit()!!))
             }
 
