@@ -1,8 +1,10 @@
 package com.ironlordbyron.turnbasedstrategy.ai
 
 import com.google.inject.ImplementedBy
+import com.ironlordbyron.turnbasedstrategy.Logging
 import com.ironlordbyron.turnbasedstrategy.common.*
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
+import java.lang.IllegalArgumentException
 import java.util.*
 
 @ImplementedBy(BespokePathfinder::class)
@@ -20,30 +22,34 @@ data class TileLocationWithPredecessor(val tileLocation: TileLocation, val prede
 
 class BespokePathfinder : Pathfinder{
 
-
     override fun acquireBestPathTo(character: LogicalCharacter,
                                    endLocation: TileLocation,
                                    allowEndingOnLastTile: Boolean,
                                    allowFuzzyMatching: Boolean,
                                    restrictToCharacterMoveRange: Boolean): Collection<TileLocation>? {
-        var rawPath = getRawPathTo(character, endLocation)
-        if (rawPath == null){
-            if (allowFuzzyMatching){
-                // means we just try to get close
-                for (endNeighbor in endLocation.nearestUnoccupiedSquares(10)){
-                    rawPath = getRawPathTo(character, endNeighbor)
-                    if (rawPath != null){
-                        break
-                    }
-                }
-            }
+        if (endLocation == character.tileLocation){
+            return listOf()
         }
-        var path : List<TileLocation> = ArrayList<TileLocation>()
+        var trueEndLocation = endLocation
+
+        if (!tacticalMapAlgorithms.canWalkOnTile(character, endLocation)){
+            if (!allowFuzzyMatching){
+                throw IllegalArgumentException("Character ${character.tacMapUnit.templateName} cannot walk on $endLocation")
+            }
+            Logging.DebugPathfinding("Character ${character.tacMapUnit.templateName} cannot walk on $endLocation; attempting substitute location")
+            trueEndLocation = findClosestWalkableTileTo(endLocation, character, false)?:return null
+        }
+
+        var rawPath = getRawPathTo(character, trueEndLocation)
+        if (rawPath == null){
+            return null
+        }
+        var path = rawPath
         if (restrictToCharacterMoveRange){
             val moveRange = tacticalMapAlgorithms.getWhereCharacterCanMoveTo(character)
             val lastTileInPath = path.last{moveRange.contains(it)}
             val indexOfLastTile = path.lastIndexOf(lastTileInPath)
-            return path.take(indexOfLastTile)
+            path = path.take(indexOfLastTile)
         }
         if (!allowEndingOnLastTile){
             path = path.dropLast(1)
@@ -51,6 +57,29 @@ class BespokePathfinder : Pathfinder{
         return path
     }
 
+    val MAX_RADIUS = 5
+    public fun findClosestWalkableTileTo(origin: TileLocation,
+                                         logicalCharacter: LogicalCharacter,
+                                         allowEndingOnOrigin: Boolean = false) : TileLocation?{
+        // look at a max radius of five, then give up
+        val tileSet = HashSet<TileLocation>()
+        tileSet.add(origin)
+        for (i in 0 .. 5){
+            val nextRing = tileSet.flatMap { it.neighbors() }
+            tileSet.addAll(nextRing)
+            // todo: clumsy implementation
+            for (tile in nextRing){
+                if (tile == origin && !allowEndingOnOrigin){
+                    continue
+                }
+                if (tacticalMapAlgorithms.canWalkOnTile(tileLocation = tile,
+                                logicalCharacter =logicalCharacter )){
+                    return tile
+                }
+            }
+        }
+        return null
+    }
     private fun unroll(root: TileLocationWithPredecessor?): List<TileLocation> {
         val list= ArrayList<TileLocation>()
         var current = root
