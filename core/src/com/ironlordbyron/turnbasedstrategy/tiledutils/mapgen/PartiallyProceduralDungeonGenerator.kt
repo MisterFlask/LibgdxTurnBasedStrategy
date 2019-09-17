@@ -62,7 +62,7 @@ class PartiallyProceduralDungeonGenerator @Inject constructor (val tiledMapInter
 
     fun generateDungeon(scenarioParams: ScenarioParams){
         val rooms = generateRooms()
-        val walls = logicalTileTracker.tiles.filter{isWall(it)}.map{it.location}
+        val walls = logicalTileTracker.tiles.values.filter{isWall(it)}.map{it.location}
         val potentialRoomConnections = getPotentialRoomConnections(rooms, walls)
 
         // populate like 1/3 of the room connections
@@ -115,7 +115,7 @@ class PartiallyProceduralDungeonGenerator @Inject constructor (val tiledMapInter
     fun generateRooms() : Collection<MapRoom>{
         val accountedForTiles = HashSet<TileLocation>()
         val rooms = ArrayList<MapRoom>()
-        for (tile in logicalTileTracker.tiles){
+        for (tile in logicalTileTracker.tiles.values){
             if (accountedForTiles.contains(tile.location)){
                 continue
             }

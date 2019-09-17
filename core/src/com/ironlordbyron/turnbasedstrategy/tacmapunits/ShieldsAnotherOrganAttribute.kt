@@ -75,9 +75,9 @@ public class ShieldsAnotherOrganFunctionalAttribute(val tacMapUnitTemplateIdToSh
             lineActorId = line.guid
             transientEntityTracker.insertLine(line)
             // TODO
-            if (organToBeShielded.hasAttribute(ImpenetrableShieldingAttribute())){
-                throw IllegalStateException("Organ cannot have impenetrable shielding twice")
-            }
+            //if (organToBeShielded.hasAttribute(ImpenetrableShieldingAttribute())){
+            //    throw IllegalStateException("Organ cannot have impenetrable shielding twice")
+            //}
             attributeActionManager.applyAttribute(organToBeShielded, ImpenetrableShieldingAttribute())
         }
     }

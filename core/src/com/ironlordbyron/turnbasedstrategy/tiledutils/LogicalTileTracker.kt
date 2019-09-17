@@ -30,14 +30,14 @@ class LogicalTileTracker @Inject constructor (val eventNotifier: EventNotifier) 
 
     val tileEntities = ArrayList<TileEntity>()
 
-    val tiles = ArrayList<LogicalTile>()
+    val tiles = HashMap<TileLocation, LogicalTile>()
 
     fun <T: TileEntity> getEntitiesOfType(clazz: Class<T>): List<TileEntity> {
         return tileEntities.filter{clazz.isInstance(it)}
     }
 
     fun addTile(logicalTile: LogicalTile) {
-        tiles.add(logicalTile)
+        tiles.put(logicalTile.location, logicalTile)
     }
 
     public fun getNeighborTiles(tile: TileLocation): List<LogicalTile> {
@@ -86,24 +86,24 @@ class LogicalTileTracker @Inject constructor (val eventNotifier: EventNotifier) 
     }
 
     fun getLogicalTileFromTile(tile: TiledMapTile): LogicalTile? {
-        return tiles.firstOrNull { it.terrainTile === tile }
+        return tiles.values.firstOrNull { it.terrainTile === tile }
     }
 
     fun getLogicalTileFromLocation(loc: TileLocation): LogicalTile? {
-        return tiles.firstOrNull { it.location == loc }
+        return tiles[loc]
     }
 
     fun getLibgdxCoordinatesFromLocation(loc: TileLocation): LibgdxLocation {
-        val tileActor = tiles.first { it.location == loc }.actor
+        val tileActor = tiles[loc]!!.actor
 
         return LibgdxLocation(tileActor.x.toInt(), tileActor.y.toInt()) // TODO: Verify
     }
 
     fun height() : Int{
-        return tiles.maxBy{it.location.y}!!.location.y + 1
+        return tiles.values.maxBy{it.location.y}!!.location.y + 1
     }
     fun width() : Int{
-        return tiles.maxBy{it.location.x}!!.location.x + 1
+        return tiles.values.maxBy{it.location.x}!!.location.x + 1
     }
 
     fun removeEntity(tileEntity: WallEntity) {

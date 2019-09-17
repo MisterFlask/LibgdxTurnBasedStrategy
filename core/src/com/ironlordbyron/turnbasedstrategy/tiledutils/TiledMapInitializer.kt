@@ -12,7 +12,7 @@ public class TiledMapInitializer @Inject constructor(val logicalTileTracker: Log
         if (logicalTileTracker.tiles.isEmpty()){
             throw IllegalStateException("logical tile tracker not yet initialized")
         }
-        for (tile in logicalTileTracker.tiles){
+        for (tile in logicalTileTracker.tiles.values){
             // Note: we only do the base terrain types here.
             if (tile.terrainTypeFromUnderlyingTile == TerrainType.MOUNTAIN){
                 tile.terrainType = TerrainType.MOUNTAIN

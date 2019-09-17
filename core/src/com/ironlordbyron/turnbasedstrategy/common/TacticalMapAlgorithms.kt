@@ -100,7 +100,7 @@ class TacticalMapAlgorithms @Inject constructor(override val logicalTileTracker:
     }
 
     private fun isPassable(loc: TileLocation, character: LogicalCharacter, tileIsValidAlgorithm: TileIsValidAlgorithm): Boolean {
-        val tile = logicalTileTracker.tiles.firstOrNull{it.location == loc}
+        val tile = logicalTileTracker.tiles[loc]
         if (tile == null){
             return false
         }

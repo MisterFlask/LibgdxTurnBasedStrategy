@@ -59,7 +59,7 @@ class TacticalMapState @Inject constructor(val logicalTileTracker: LogicalTileTr
 
 
     fun init(){
-        for (tile in logicalTileTracker.tiles){
+        for (tile in logicalTileTracker.tiles.values){
             locations.put(tile.location, TacticalMapTileState(tile.location, true))
         }
     }
