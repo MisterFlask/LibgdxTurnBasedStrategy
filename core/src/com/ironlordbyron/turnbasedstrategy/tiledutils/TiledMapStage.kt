@@ -15,8 +15,11 @@ import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TempBattleStarter
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
+import com.ironlordbyron.turnbasedstrategy.view.ActorName
+import com.ironlordbyron.turnbasedstrategy.view.ActorOrdering
 import com.ironlordbyron.turnbasedstrategy.view.ActorSortOrderComparator
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
+import com.ironlordbyron.turnbasedstrategy.view.setFunctionalName
 import javax.inject.Singleton
 
 
@@ -97,6 +100,7 @@ class TiledMapStage(
         imageActor.setBounds(configuredActor.x, configuredActor.y, configuredActor.width, configuredActor.height)
         imageActor.color = Color.BLACK
         imageActor.color.a = .5f
+        imageActor.setFunctionalName(ActorName(ActorOrdering.FOG_OF_WAR))
         return imageActor
     }
 

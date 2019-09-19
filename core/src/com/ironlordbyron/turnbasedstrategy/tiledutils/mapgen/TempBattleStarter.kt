@@ -123,5 +123,6 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
         cadenceEffectsRegistrar.turnStartEffects.forEach{it.handleTurnStartEvent()}
 
         animationActionQueueProvider.runThroughActionQueue()
+        logicHooks.mapReorderRequired()
     }
 }

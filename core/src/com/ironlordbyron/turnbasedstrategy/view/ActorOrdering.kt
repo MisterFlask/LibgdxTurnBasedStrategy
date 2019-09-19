@@ -9,6 +9,7 @@ public enum class ActorOrdering(val order: Int){
     TILE_FEATURE(5),
     UNIT(10),
     HIGHLIGHTS(15),
+    FOG_OF_WAR(30)
 
 }
 
