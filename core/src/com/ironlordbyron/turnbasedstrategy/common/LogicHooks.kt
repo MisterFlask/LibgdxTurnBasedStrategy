@@ -74,11 +74,11 @@ class LogicHooks @Inject constructor(val functionalEffectRegistrar: FunctionalEf
             onCharacterTurnStart(unit)
         }
     }
-
+    val visionManager by LazyInject(VisionManager::class.java)
     val victoryChecker by LazyInject(VictoryChecker::class.java)
     // basically means any time an animation has finished occurring
     fun onConcreteActionPerformed(){
-        // TODO
+        visionManager.updateVisuals()
 
         if (victoryChecker.isBattleOver()) {
             actionManager.createAwaitedSpeechBubbleForCharacter(

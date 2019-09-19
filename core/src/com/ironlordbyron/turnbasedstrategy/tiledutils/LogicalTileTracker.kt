@@ -11,7 +11,6 @@ import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.WallEntity
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.reflect.KClass
 
 @Singleton
 class LogicalTileTracker @Inject constructor (val eventNotifier: EventNotifier) : GameEventListener {
@@ -94,7 +93,7 @@ class LogicalTileTracker @Inject constructor (val eventNotifier: EventNotifier) 
     }
 
     fun getLibgdxCoordinatesFromLocation(loc: TileLocation): LibgdxLocation {
-        val tileActor = tiles[loc]!!.actor
+        val tileActor = tiles[loc]!!.clickListeningActor
 
         return LibgdxLocation(tileActor.x.toInt(), tileActor.y.toInt()) // TODO: Verify
     }

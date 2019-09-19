@@ -27,7 +27,7 @@ public class LogicalAbility(val name: String,
                             val abilityEffects: Collection<LogicalAbilityEffect> = listOf(),
                             // if this is non-null, there will be a projectile animation.
                             val projectileActor: ProtoActor?,
-                            // this is the actor that is spawned when the projectile lands. (Like: a fireball projectile
+                            // this is the clickListeningActor that is spawned when the projectile lands. (Like: a fireball projectile
                             // could result in a langingActor being an explosion.
                             // a projectileActor is NOT required for this to function.
                             val landingActor: ProtoActor?,
@@ -80,7 +80,9 @@ interface RangeStyle{
         val tileMapProvider: TileMapProvider by lazy{
             GameModuleInjector.generateInstance(TileMapProvider::class.java)
         }
-        override fun getTargetableTiles(characterUsing: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment, sourceSquare: TileLocation?): Collection<TileLocation> {
+        override fun getTargetableTiles(characterUsing: LogicalCharacter,
+                                        logicalAbilityAndEquipment: LogicalAbilityAndEquipment,
+                                        sourceSquare: TileLocation?): Collection<TileLocation> {
             val tiles = ArrayList<TileLocation>()
             val y1 = characterUsing.tileLocation.y
             for (x1 in 0 .. tileMapProvider.getWidth()){

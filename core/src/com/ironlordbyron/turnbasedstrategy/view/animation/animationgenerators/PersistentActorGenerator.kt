@@ -21,7 +21,7 @@ public class PersistentActorGenerator @Inject constructor(val revealActionGenera
     }
 
     /**
-     * Creates an actor action pair that just results in the actor appearing to the player.
+     * Creates an clickListeningActor action pair that just results in the clickListeningActor appearing to the player.
      */
     public fun createPersistentActorActorActionPair(protoActor: ProtoActor,
                                         animatedImageParams: AnimatedImageParams? = null,

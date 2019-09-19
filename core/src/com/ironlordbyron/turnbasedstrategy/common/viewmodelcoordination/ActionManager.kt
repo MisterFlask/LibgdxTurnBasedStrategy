@@ -165,7 +165,7 @@ public class ActionManager @Inject constructor(
     }
 
 
-    // moves the character to the given tile logically, and returns the actor/action pair for animation purposes.
+    // moves the character to the given tile logically, and returns the clickListeningActor/action pair for animation purposes.
     fun moveCharacterToTile(character: LogicalCharacter, toTile: TileLocation, waitOnMoreQueuedActions: Boolean,
                             wasPlayerInitiated: Boolean){
         if (toTile == character.tileLocation){
@@ -196,6 +196,7 @@ public class ActionManager @Inject constructor(
             animationActionQueueProvider.clearQueue()
         }
 
+        logicHooks.onConcreteActionPerformed()
         // now mark the character as moved by darkening the sprite.
     }
 
@@ -256,7 +257,7 @@ public class ActionManager @Inject constructor(
         actor.setBoundingBox(boundingBox)
         actorGroup.addActor(actor)
         if (actorGroup.attributeActors[logicalAttribute.id] != null){
-            throw Exception("Oh no!  Attempted to add attribute actor to same character >1 time: ${logicalAttribute.id}")
+            throw Exception("Oh no!  Attempted to add attribute clickListeningActor to same character >1 time: ${logicalAttribute.id}")
         }
         actorGroup.attributeActors[logicalAttribute.id] = actor
     }
@@ -266,7 +267,7 @@ public class ActionManager @Inject constructor(
                                               logicalCharacter: LogicalCharacter){
         val attrActor = logicalCharacter.actor.attributeActors[logicalAttribute.id]
         if (attrActor == null){
-            throw Exception("Oh no!  Attempted to remove nonexistent attribute actor ${logicalAttribute.id}")
+            throw Exception("Oh no!  Attempted to remove nonexistent attribute clickListeningActor ${logicalAttribute.id}")
         }
         despawnEntityInSequence(attrActor)
     }
@@ -423,7 +424,7 @@ public class ActionManager @Inject constructor(
 
     fun destroyTileEntity(entity: TileEntity) {
         logicalTileTracker.tileEntities.remove(entity)
-        val tileLocationActor = entity.tileLocations.first().logicalTile()!!.actor // HACK: Camera focus actor necessary here; we're hiding the right actor, but technically its location is 0,0
+        val tileLocationActor = entity.tileLocations.first().logicalTile()!!.clickListeningActor // HACK: Camera focus clickListeningActor necessary here; we're hiding the right clickListeningActor, but technically its location is 0,0
         this.despawnEntityInSequence(entity.actor, cameraFocusActor = tileLocationActor)
     }
 

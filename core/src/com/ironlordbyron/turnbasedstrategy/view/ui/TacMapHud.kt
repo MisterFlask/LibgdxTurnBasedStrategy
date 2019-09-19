@@ -106,7 +106,7 @@ class TacMapHud(viewPort: Viewport,
                 this.selectedCharacter = createFakeLogicalCharacter(template)
 
                 regenerateTable()
-                //kludge: This is NOT a valid logicalCharacter because its actor isn't
+                //kludge: This is NOT a valid logicalCharacter because its clickListeningActor isn't
                 // present on the map.
             }
         }
@@ -405,13 +405,13 @@ class TacMapHud(viewPort: Viewport,
 
 /*
 private fun <T: Actor> Cell<T>.surroundWithBorder(): Cell<T> {
-    if (this.actor?.stage == null) return this
+    if (this.clickListeningActor?.stage == null) return this
     val borderActor = PainterlyBorders.blueFrame.toActorWrapper()
-    borderActor.actor.width = this.actor.width
-    borderActor.actor.height = this.actor.height
-    borderActor.actor.x = this.actor.x
-    borderActor.actor.y = this.actor.y
-    this.actor.stage.addActor(borderActor.actor)
+    borderActor.clickListeningActor.width = this.clickListeningActor.width
+    borderActor.clickListeningActor.height = this.clickListeningActor.height
+    borderActor.clickListeningActor.x = this.clickListeningActor.x
+    borderActor.clickListeningActor.y = this.clickListeningActor.y
+    this.clickListeningActor.stage.addActor(borderActor.clickListeningActor)
     return this
 }
 */

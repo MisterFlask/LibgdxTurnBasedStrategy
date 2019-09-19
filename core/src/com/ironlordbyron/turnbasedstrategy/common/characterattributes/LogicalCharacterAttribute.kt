@@ -6,7 +6,7 @@ import com.ironlordbyron.turnbasedstrategy.tacmapunits.ShieldsAnotherOrganFuncti
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.*
 
 /**
- * So, here's how this works: Each attribute corresponds to a visible icon for the player to interact with.
+ * So, here's how this works: Each attribute corresponds to a underFogOfWar icon for the player to interact with.
  * it may have ANY_CHARACTER of the provided attributes, and new attributes should be added by .
  */
 public open class LogicalCharacterAttribute(val name: String,

@@ -76,7 +76,7 @@ class GameBoardOperator @Inject constructor(val tiledMapOperationsHandler: Tiled
     }
 
 
-    // moves the character to the given tile logically, and returns the actor/action pair for animation purposes.
+    // moves the character to the given tile logically, and returns the clickListeningActor/action pair for animation purposes.
     fun moveCharacterToTile(character: LogicalCharacter, toTile: TileLocation, waitOnMoreQueuedActions: Boolean,
                             wasPlayerInitiated: Boolean){
         actionManager.moveCharacterToTile(character, toTile, waitOnMoreQueuedActions, wasPlayerInitiated)

@@ -25,7 +25,7 @@ public class VisibleCharacterDataFactory @Inject constructor (val animationActio
                 Color.BLACK,
                 outlineSize = 1.5f)
         character.actor.addActor(hpMarker.actor)
-        // character.actor.shadeableActor.shader = outlineShaderForCharacter
+        // character.clickListeningActor.shadeableActor.shader = outlineShaderForCharacter
         character.actor.hpMarker = hpMarker.label
         hpMarker.actor.setBoundingBox(character.actor.getBoundingBox().getChunkOfBoundingRectangle(1, JustificationType.TOP, 0))
         hpMarker.label.setFontScale(.1f)

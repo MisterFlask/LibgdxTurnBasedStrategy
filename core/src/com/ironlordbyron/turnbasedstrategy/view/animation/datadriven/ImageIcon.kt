@@ -13,7 +13,8 @@ val IMAGE_ICON_CACHE = HashMap<String, Texture>()
 public class ImageIcon (
         val folder : String,
         val filename : String,
-        override val orientation: OrientationType = OrientationType.NEUTRAL) : ProtoActor{
+        override val orientation: OrientationType = OrientationType.NEUTRAL,
+        val hittable: Boolean = true) : ProtoActor{
     companion object {
         val _ICON_FOLDER = "icons"
         val _PAINTERLY_FOLDER = "icons/painterly"
@@ -22,7 +23,7 @@ public class ImageIcon (
     override fun toActorWrapper(animatedImageParams: AnimatedImageParams): ActorWrapper {
         val fileTexture = retrieveIconImage(folder, filename)
         return ImageWrapper(texture = TextureRegion(fileTexture),
-                hittable = true)
+                hittable = hittable)
     }
 
     public fun retrieveIconImage(folder: String, filename: String): Texture {

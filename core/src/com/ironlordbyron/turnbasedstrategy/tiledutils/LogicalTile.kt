@@ -1,16 +1,19 @@
 package com.ironlordbyron.turnbasedstrategy.tiledutils
 
 import com.badlogic.gdx.maps.tiled.TiledMapTile
+import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.KnownObjectType
 
 data class LogicalTile(val terrainTile: TiledMapTile,
                        val location: TileLocation,
-                       val actor: TileMapActor,
+                       val clickListeningActor: TileMapActor,
                        val allTilesAtThisSquare: List<TiledMapStage.TiledCellAgglomerate>,
                        var terrainType: TerrainType = TerrainType.UNINITIALIZED,
-                       val markers: List<KnownObjectType> = listOf()) {
 
+                       val markers: List<KnownObjectType> = listOf()) {
+    lateinit var fogOfWarTileActor: Actor
+    var underFogOfWar: Boolean = true
 
     fun tileHasProperty(property: String) : Boolean{
         // basically, if ANY_CHARACTER cell has a property on this tile we return true regardless of what layer it's in.

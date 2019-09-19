@@ -18,7 +18,7 @@ public class CameraMovementAnimationGenerator @Inject constructor(val cameraProv
                                                                   val logicalTileTracker: LogicalTileTracker){
 
     fun generateCameraMovementActionToLookAt(toLookAt: Actor): ActorActionPair{
-        // HACK:   If the actor is a child of a logical character group, we're just going to look at the logical character group.
+        // HACK:   If the clickListeningActor is a child of a logical character group, we're just going to look at the logical character group.
         val actor = getCameraFocusTarget(toLookAt)
         val action = CameraMovementAction(CameraConfig.secondsForAutoCameraMove, cameraProvider.camera,
                 getDesiredPositionOfCameraForActionAtLocation(actor))
@@ -59,7 +59,7 @@ public class CameraMovementAction(val maxSeconds: Float,
     override fun act(delta: Float): Boolean {
         if (totalTimeInSeconds == 0f){
             if (camera.frustum.pointInFrustum(actorPosition)){
-                // we're just going to not do this if the actor is already in position.
+                // we're just going to not do this if the clickListeningActor is already in position.
                 return true
             }
             // first iteration

@@ -2,9 +2,11 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils
 
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.InputProcessor
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer
+import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.google.inject.assistedinject.Assisted
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
@@ -14,6 +16,7 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TempBattleStarter
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 import com.ironlordbyron.turnbasedstrategy.view.ActorSortOrderComparator
+import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ImageIcon
 import javax.inject.Singleton
 
 
@@ -67,20 +70,34 @@ class TiledMapStage(
         for (x in 0..tiledLayer.width) {
             for (y in 0..tiledLayer.height) {
                 val cell = tiledLayer.getCell(x, y) ?: continue
-                val actor = tileMapClickListenerActorFactory.createTileMapActor(this.tiledMapProvider.tiledMap, tiledLayer, cell, TileLocation(x, y)
+                val clickListeningActor = tileMapClickListenerActorFactory.createTileMapActor(this.tiledMapProvider.tiledMap, tiledLayer, cell, TileLocation(x, y)
                 )
-                actor.setBounds(x * tiledLayer.tileWidth, y * tiledLayer.tileHeight, tiledLayer.tileWidth,
+                clickListeningActor.setBounds(x * tiledLayer.tileWidth, y * tiledLayer.tileHeight, tiledLayer.tileWidth,
                         tiledLayer.tileHeight)
                 val location = TileLocation(x, y)
-                logicalTileTracker.addTile(LogicalTile(cell.tile, location, actor,
-                        tiledMapInterpreter.getAllTilesAtXY(tiledMap, TileLocation(x, y))))
-                addActor(actor)
+                val tile = LogicalTile(cell.tile, location, clickListeningActor,
+                        tiledMapInterpreter.getAllTilesAtXY(tiledMap, TileLocation(x, y)))
+                tile.fogOfWarTileActor = generateFogOfWarTileActor(tile)
+
+                logicalTileTracker.addTile(tile)
+                addActor(clickListeningActor)
+                addActor(tile.fogOfWarTileActor)
                 tiledMapInterpreter.validateTileMap(tiledMap)
                 tiledMapInterpreter.initializeTileEntities(tiledMap, location)
-                val eventListener = tileMapClickListenerFactory.create(actor)
-                actor.addListener(eventListener)
+                val eventListener = tileMapClickListenerFactory.create(clickListeningActor)
+                clickListeningActor.addListener(eventListener)
             }
         }
+    }
+
+    val whiteTile = ImageIcon("simple", "white_color.png", hittable = false)
+    private fun generateFogOfWarTileActor(tile: LogicalTile): Actor {
+        val imageActor = whiteTile.toActorWrapper().actor
+        val configuredActor = tile.clickListeningActor
+        imageActor.setBounds(configuredActor.x, configuredActor.y, configuredActor.width, configuredActor.height)
+        imageActor.color = Color.BLACK
+        imageActor.color.a = .5f
+        return imageActor
     }
 
     override fun keyUp(keycode: Int): Boolean {
