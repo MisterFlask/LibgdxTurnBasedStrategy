@@ -18,6 +18,13 @@ public class FogOfWarManager{
         for(character in playerCharacters){
             visibleTileLocations.addAll(tacticalMapAlgorithms.getTileLocationsUpToNAway(10, character.tileLocation, character))
         }
+        // now, turn all organs visible
+
+        tacMapState.listOfCharacters
+                .filter{it.tacMapUnit.tags.isOrgan}
+                .map{it.tileLocation}
+                .forEach{visibleTileLocations.add(it)}
+
         return visibleTileLocations
     }
 
@@ -46,14 +53,6 @@ public class FogOfWarManager{
         tacMapState.listOfCharacters
                 .filter{it.tileLocation.fogStatus() == FogStatus.VISIBLE}
                 .forEach { it.actor.isVisible = true }
-
-        // now, turn all organs visible
-
-        tacMapState.listOfCharacters
-                .filter{it.tacMapUnit.tags.isOrgan}
-                .map{it.tileLocation}
-                .map{logicalTileTracker.tiles[it]}
-                .forEach{it!!.underFogOfWar = FogStatus.NOT_VISIBLE}
     }
 
     public fun setStartingFogOfWar(){
