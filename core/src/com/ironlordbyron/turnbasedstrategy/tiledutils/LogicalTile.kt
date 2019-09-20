@@ -4,6 +4,11 @@ import com.badlogic.gdx.maps.tiled.TiledMapTile
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.KnownObjectType
+enum class FogStatus(val fogAlpha: Float){
+    BLACK(1f),
+    NOT_VISIBLE(.5f),
+    VISIBLE(0f)
+}
 
 data class LogicalTile(val terrainTile: TiledMapTile,
                        val location: TileLocation,
@@ -13,7 +18,7 @@ data class LogicalTile(val terrainTile: TiledMapTile,
 
                        val markers: List<KnownObjectType> = listOf()) {
     lateinit var fogOfWarTileActor: Actor
-    var underFogOfWar: Boolean = true
+    var underFogOfWar: FogStatus = FogStatus.NOT_VISIBLE
 
     fun tileHasProperty(property: String) : Boolean{
         // basically, if ANY_CHARACTER cell has a property on this tile we return true regardless of what layer it's in.

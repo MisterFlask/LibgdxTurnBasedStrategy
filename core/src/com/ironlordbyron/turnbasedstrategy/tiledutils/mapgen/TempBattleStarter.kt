@@ -86,6 +86,7 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
     val globalTacMapState by LazyInject(GlobalTacMapState::class.java)
 
     val zoneStyleMissionUnitTemplateDecider by LazyInject(ZoneStyleMissionGenerator::class.java)
+    val fogManager by LazyInject(FogOfWarManager::class.java)
 
     fun startBattle(){
         println("Starting battle")
@@ -120,8 +121,8 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
         actionManager.createAwaitedSpeechBubbleForCharacter("And now, we begin.",
                 TacMapUnitTemplate.DEFAULT_UNIT)
 
+        fogManager.setStartingFogOfWar()
         cadenceEffectsRegistrar.turnStartEffects.forEach{it.handleTurnStartEvent()}
-
         animationActionQueueProvider.runThroughActionQueue()
         logicHooks.mapReorderRequired()
     }

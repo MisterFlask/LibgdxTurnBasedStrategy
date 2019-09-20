@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.tiledutils
 
 import com.badlogic.gdx.maps.tiled.TiledMapTile
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.common.logicalTile
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.GameEventListener
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGameEvent
@@ -115,4 +116,8 @@ val logicalTileTracker: LogicalTileTracker by lazy{
 }
 fun TileLocation.toLibgdxCoordinates() : LibgdxLocation{
     return logicalTileTracker.getLibgdxCoordinatesFromLocation(this)
+}
+
+fun TileLocation.fogStatus() : FogStatus{
+    return logicalTileTracker.tiles[this]!!.underFogOfWar
 }
