@@ -1,6 +1,7 @@
 package com.ironlordbyron.turnbasedstrategy.controller
 
 import com.ironlordbyron.turnbasedstrategy.common.*
+import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -9,6 +10,7 @@ class AbilityController @Inject constructor(val tacticalMapState: TacticalMapSta
                                             val mapHighlighter: MapHighlighter,
                                             val mapAlgorithms: TacticalMapAlgorithms) {
 
+    val logicHooks by LazyInject(LogicHooks::class.java)
     /**
      * Represents a person clicking on an abilityEquipmentPair usage button (which then requires additional parameters.)
      */
@@ -45,5 +47,6 @@ class AbilityController @Inject constructor(val tacticalMapState: TacticalMapSta
                    location: TileLocation){
         val ability = logicalAbilityAndEquipment.ability.abilityTargetingParameters
         ability.activateAbility(location, targetCharacter, characterUsingAbility, logicalAbilityAndEquipment)
+        logicHooks.onConcreteActionPerformed()
     }
 }

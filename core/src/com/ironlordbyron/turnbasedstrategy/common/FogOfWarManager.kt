@@ -47,7 +47,10 @@ public class FogOfWarManager{
     public fun canViewPastTile(tileLocation: TileLocation) : Boolean{
         val entity = tileLocation.entity()
         if (entity == null) return true
-        if (entity is DoorEntity || entity is WallEntity){
+        if (entity is WallEntity){
+            return false
+        }
+        if (entity is DoorEntity && !entity.isOpen){
             return false
         }
         return true
