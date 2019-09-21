@@ -5,18 +5,59 @@ import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tiledutils.FogStatus
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.fogStatus
-import com.ironlordbyron.turnbasedstrategy.view.animation.SpriteColorActorAction
+import com.ironlordbyron.turnbasedstrategy.tiledutils.getPlayerPlacementTiles
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
+import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.WallEntity
 
 
 public class FogOfWarManager{
     val tacticalMapAlgorithms by LazyInject(TacticalMapAlgorithms::class.java)
     val tacMapState by LazyInject(TacticalMapState::class.java)
     val logicalTileTracker by LazyInject(LogicalTileTracker::class.java)
+
+    public fun getVisionForUnit(logicalCharacter: LogicalCharacter) : Collection<TileLocation>{
+        var iteration = 9
+        val tilesVisible = HashSet<TileLocation>()
+        var nextSetOfTiles = HashSet<TileLocation>()
+        var tilesToBeProcessed = hashSetOf(logicalCharacter.tileLocation)
+        while(tilesToBeProcessed.isNotEmpty() && iteration > 0){
+            val nextTile = tilesToBeProcessed.first()
+            tilesToBeProcessed.remove(nextTile)
+            val neighbors = nextTile.neighbors()
+                    .filter{canViewPastTile(it)}
+            nextSetOfTiles.addAll(neighbors.filter{tilesVisible.doesNotContain(it)})
+            tilesVisible.add(nextTile)
+            if (tilesToBeProcessed.isEmpty()){
+                tilesToBeProcessed.addAll(nextSetOfTiles)
+                iteration--
+            }
+        }
+
+        val justNeighbors = tilesToBeProcessed.flatMap{it.neighbors()} - tilesVisible
+        val tilesJustBarelyVisible = justNeighbors.filter{canViewSlightlyPastVisionRadius(it)}
+        return tilesVisible + tilesJustBarelyVisible
+    }
+
+    public fun canViewSlightlyPastVisionRadius(tileLocation: TileLocation): Boolean {
+        val entity = tileLocation.entity()
+        if (entity == null) return false
+        return entity is DoorEntity || entity is WallEntity
+    }
+
+    public fun canViewPastTile(tileLocation: TileLocation) : Boolean{
+        val entity = tileLocation.entity()
+        if (entity == null) return true
+        if (entity is DoorEntity || entity is WallEntity){
+            return false
+        }
+        return true
+    }
+
     public fun getVisionForPlayer(): HashSet<TileLocation> {
         val playerCharacters = tacMapState.listOfPlayerCharacters
         val visibleTileLocations = HashSet<TileLocation>()
         for(character in playerCharacters){
-            visibleTileLocations.addAll(tacticalMapAlgorithms.getTileLocationsUpToNAway(10, character.tileLocation, character))
+            visibleTileLocations.addAll(getVisionForUnit(character))
         }
         // now, turn all organs visible
 
@@ -24,6 +65,14 @@ public class FogOfWarManager{
                 .filter{it.tacMapUnit.tags.isOrgan}
                 .map{it.tileLocation}
                 .forEach{visibleTileLocations.add(it)}
+
+        // now, all player spawn positions
+
+        val characterSpawningZones = tiledMapProvider.tiledMap.getPlayerPlacementTiles()
+                .expandByRadius(1)
+        for (tile in characterSpawningZones){
+            visibleTileLocations.add(tile)
+        }
 
         return visibleTileLocations
     }
@@ -59,11 +108,6 @@ public class FogOfWarManager{
         val allTiles = logicalTileTracker.tiles
         for (tile in allTiles.values){
             tile.underFogOfWar = FogStatus.BLACK
-        }
-        val characterSpawningZones = tiledMapInterpreter.getPossiblePlayerSpawnPositions(tiledMapProvider.tiledMap)
-        for (tile in characterSpawningZones){
-            val logTile = logicalTileTracker.tiles[tile]
-            logTile!!.underFogOfWar = FogStatus.VISIBLE
         }
 
         updateVisuals()

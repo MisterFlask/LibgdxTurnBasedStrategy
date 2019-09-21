@@ -17,6 +17,7 @@ public class TiledMapInterpreter @Inject constructor(val tileEntityFactory: Tile
                                                      val tileMapProvider: TileMapProvider){
 
 
+    @Deprecated("Doesn't work. use method on tiledMap instead.")
     fun getPossiblePlayerSpawnPositions(map: TiledMap): Collection<TileLocation> {
         return map.getTilesInObjectByType("PLAYER_SPAWN", false)
     }

@@ -13,6 +13,7 @@ import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledCellData
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 
 data class TileLocation(val x: Int, val y: Int){
 
@@ -98,4 +99,15 @@ public fun TileLocation.nearestUnoccupiedSquares(squaresNeeded: Int): Collection
 public fun Collection<TileLocation>.thatIsClosestTo(tileLocation: TileLocation): TileLocation {
 
     return this.minBy{tileLocation.distanceTo(it)}!!
+}
+
+public fun Collection<TileLocation>.expandByRadius(radius: Int): HashSet<TileLocation> {
+    val tilesToReturn = this.toHashSet()
+    for (i in 0 .. radius){
+        for (tile in tilesToReturn.toHashSet()){
+            tilesToReturn.addAll(tile.neighbors())
+        }
+    }
+    return tilesToReturn
+
 }
