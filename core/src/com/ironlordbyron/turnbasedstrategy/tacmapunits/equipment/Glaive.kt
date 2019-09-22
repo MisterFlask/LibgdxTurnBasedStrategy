@@ -12,26 +12,11 @@ public fun glaive() : LogicalEquipment{
 fun sweepAbility(): LogicalAbility {
     return LogicalAbility("Sweep",
             AbilitySpeed.ENDS_TURN,
-            1, null, null, 1, "Capable of a sweeping AoE attack.",
+            2, null, null, 1, "Capable of a sweeping AoE attack.",
             AbilityClass.TARGETED_ATTACK_ABILITY, false, RequiredTargetType.ENEMY_ONLY, listOf(),
-            null, null, areaOfEffect = SweepAoe())
+            null, null, areaOfEffect = AreaOfEffect.SweepAoeStyle(2))
 }
 
 
-/**
- * Should be something like
- * o o x
- * o # x
- * o o x
- */
-class SweepAoe : AreaOfEffect {
-    override fun getTilesAffected(tileLocationTargeted: TileLocation, characterUsing: LogicalCharacter, logicalAbilityAndEquipment: LogicalAbilityAndEquipment): Collection<TileLocation> {
-        // each tile to the left and right of whatever tile was targeted, perpendicular to the direction of the character.
-        val diff = characterUsing.tileLocation - tileLocationTargeted
-        val nearby =
-                if (diff.x == 0) listOf(characterUsing.tileLocation + TileLocation(1, 0), characterUsing.tileLocation + TileLocation(-1, 0))
-                else  listOf(characterUsing.tileLocation + TileLocation(0, 1), characterUsing.tileLocation + TileLocation(0, -1))
-        return nearby + characterUsing.tileLocation
-    }
 
-}
+

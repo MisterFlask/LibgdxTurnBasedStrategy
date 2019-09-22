@@ -139,6 +139,33 @@ interface AreaOfEffect{
         }
     }
 
+    class SweepAoeStyle(val length: Int) : AreaOfEffect{
+        override fun getTilesAffected(tileLocationTargeted: TileLocation,
+                                      characterUsing: LogicalCharacter,
+                                      logicalAbilityAndEquipment: LogicalAbilityAndEquipment): Collection<TileLocation> {
+            val heading = NormalizedTileLocationVector.fromRelativeLocations(characterUsing.tileLocation,
+                    tileLocationTargeted)
+            var collector = AbilityTileCollector(heading, tileLocationTargeted)
+            collector.addWiden(length)
+            return collector.collect()
+        }
+    }
+
+    class ConeAoeStyle(val length: Int) : AreaOfEffect{
+        override fun getTilesAffected(tileLocationTargeted: TileLocation,
+                                      characterUsing: LogicalCharacter,
+                                      logicalAbilityAndEquipment: LogicalAbilityAndEquipment): Collection<TileLocation> {
+            val heading = NormalizedTileLocationVector.fromRelativeLocations(characterUsing.tileLocation,
+                    tileLocationTargeted)
+            var collector = AbilityTileCollector(heading, tileLocationTargeted)
+            for (i in 0 .. length){
+                collector = collector.forward(1)
+                collector.addWiden(i)
+            }
+            return collector.collect()
+        }
+    }
+
 }
 
 interface LogicalAbilityEffect {
