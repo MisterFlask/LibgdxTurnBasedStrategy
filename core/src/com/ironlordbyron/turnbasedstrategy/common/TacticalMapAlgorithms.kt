@@ -77,7 +77,7 @@ class TacticalMapAlgorithms @Inject constructor(override val logicalTileTracker:
      */
     fun getWalkableTileLocationsUpToNAway(n: Int, origin: TileLocation, character: LogicalCharacter,
                                           tileIsValidAlgorithm: TileIsValidAlgorithm): Collection<TileLocation> {
-        var iteration = n
+        var iteration = n + 1
         val tilesAlreadyProcessed = HashSet<TileLocation>()
         var nextSetOfTiles = HashSet<TileLocation>()
         var tilesToBeProcessed = hashSetOf(origin)

@@ -54,7 +54,7 @@ object ContextualAbilities {
         landingActor = null,
         projectileActor = null,
         abilityEffects = listOf(LogicalAbilityEffect.OpensDoor()),
-        range = 2,
+        range = 1,
         description = "Opens a door.",
         abilityClass = AbilityClass.TARGETED_ATTACK_ABILITY,
         allowsTargetingSelf = true,
@@ -67,7 +67,7 @@ object ContextualAbilities {
             speed = AbilitySpeed.FREE_ACTION,
             landingActor = null,
             projectileActor = null,
-            range = 2,
+            range = 1,
             description ="Enters portal, causing the character to leave the stage",
             abilityClass = AbilityClass.TARGETED_ATTACK_ABILITY, //todo
             requiredTargetType = RequiredTargetType.CUSTOM_FILTER_ONLY,

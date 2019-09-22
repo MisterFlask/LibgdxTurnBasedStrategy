@@ -14,9 +14,5 @@ fun sweepAbility(): LogicalAbility {
             AbilitySpeed.ENDS_TURN,
             2, null, null, 1, "Capable of a sweeping AoE attack.",
             AbilityClass.TARGETED_ATTACK_ABILITY, false, RequiredTargetType.ENEMY_ONLY, listOf(),
-            null, null, areaOfEffect = AreaOfEffect.SweepAoeStyle(2))
+            null, null, areaOfEffect = AreaOfEffect.SweepAoeStyle(1))
 }
-
-
-
-
