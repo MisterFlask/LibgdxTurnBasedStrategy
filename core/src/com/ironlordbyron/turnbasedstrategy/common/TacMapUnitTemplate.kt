@@ -67,7 +67,8 @@ class TacMapUnitTemplate(val movesPerTurn: Int,
                          var equipmentSlots: List<EquipmentSlot> = listOf(EquipmentSlot.primaryWeapon(), EquipmentSlot.secondaryWeapon(),
                                  EquipmentSlot.utilityOrVest()),
                          val nonMinionEnemy: Boolean = true,
-                         val isPlayerCharacter: Boolean = false
+                         val isPlayerCharacter: Boolean = false,
+                         var podId: UUID? = null
 
 ) {
 

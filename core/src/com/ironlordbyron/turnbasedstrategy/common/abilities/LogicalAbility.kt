@@ -15,7 +15,7 @@ import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
 public class LogicalAbility(val name: String,
                             val speed: AbilitySpeed,
                             @Deprecated("use rangeStyle instead")
-                                 val range: Int,
+                             val range: Int,
                             val attackSprite: ProtoActor? = null,
                             val missionLimit: Int? = null,
                             @Deprecated("use damageStyle instead")

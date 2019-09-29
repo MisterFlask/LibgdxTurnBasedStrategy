@@ -26,7 +26,10 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
                             var endedTurn: Boolean = false,
                             var actionsLeft: Int = 2,
                             var intent: Intent = Intent.None(),
-                            var goal: Goal? = null) {
+                            var goal: Goal? = null,
+                            // awoken status is asking whether or not the unit has become aware of player presence
+                            var awoken: Boolean = false
+                            ) {
 
     val id: UUID
         get() = tacMapUnit.unitId

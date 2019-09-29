@@ -10,6 +10,8 @@ import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplateTags
 import com.ironlordbyron.turnbasedstrategy.entrypoints.UnitTemplateRegistrar
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
+import java.util.*
+import kotlin.collections.ArrayList
 
 /**
  * Accepts a tac map as input (required to have Zone object layer)
@@ -48,12 +50,13 @@ public class ZoneStyleMissionGenerator{
         val nonObjectiveOrganQueue = getOrgansToBeUsedInMission(2).toMutableList()
         for (zone in zones){
             val tilesInZone = zone.tiles.shuffled().toList()
+            val podId = UUID.randomUUID()
 
             if (bespokeZones.isNotEmpty()){
                 val bespokeZone = bespokeZones.pop()
                 val mobs = bespokeZone!!.unitSpawnParams
                  mobs.forEachIndexed{ i, mob ->
-                    val unitSpawn = UnitSpawnParameter(tilesInZone.get(i), mob)
+                    val unitSpawn = UnitSpawnParameter(tilesInZone.get(i), mob, podId = podId)
                     returnedUnitSpawns.add(unitSpawn)
                 }
                 continue // avoiding typical zone spawning
@@ -65,17 +68,18 @@ public class ZoneStyleMissionGenerator{
                 continue
             }
             mobs.forEachIndexed{
-                i, template -> returnedUnitSpawns.add(UnitSpawnParameter(tilesInZone.get(i), template, listOf(SleepingGuardian(organ.unitId))))
+                i, template -> returnedUnitSpawns.add(UnitSpawnParameter(tilesInZone.get(i), template, listOf(SleepingGuardian(organ.unitId)), podId = podId))
             }
 
-            returnedUnitSpawns.add(UnitSpawnParameter(tilesInZone.last(), organ, listOf(AdrenalGlands())))
+            returnedUnitSpawns.add(UnitSpawnParameter(tilesInZone.last(), organ, listOf(AdrenalGlands()), podId = podId))
         }
         return returnedUnitSpawns
     }
 }
 data class UnitSpawnParameter(val tile: TileLocation,
                               val tacMapUnitTemplate: TacMapUnitTemplate,
-                              val attrsToApply: Collection<LogicalCharacterAttribute> = listOf())
+                              val attrsToApply: Collection<LogicalCharacterAttribute> = listOf(),
+                              var podId: UUID?)
 data class TileZone(val tiles: Collection<TileLocation>)
 
 fun<T> Collection<T>.repeat(n: Int) : Collection<T>{

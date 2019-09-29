@@ -71,15 +71,15 @@ class TileMapProvider {
 
 
 @Singleton
-class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
-                                            val gameBoardOperator: GameBoardOperator,
-                                            val tiledMapInterpreter: TiledMapInterpreter,
-                                            val tacmapState: TacticalMapState,
-                                            val logicHooks: LogicHooks,
-                                            val animationActionQueueProvider: AnimationActionQueueProvider,
-                                            val actionManager: ActionManager,
-                                            val attributeActionManager: AttributeActionManager,
-                                            val unitTemplateRegistrar: UnitTemplateRegistrar){
+class BattleStarter @Inject constructor(val boardProvider: TileMapProvider,
+                                        val gameBoardOperator: GameBoardOperator,
+                                        val tiledMapInterpreter: TiledMapInterpreter,
+                                        val tacmapState: TacticalMapState,
+                                        val logicHooks: LogicHooks,
+                                        val animationActionQueueProvider: AnimationActionQueueProvider,
+                                        val actionManager: ActionManager,
+                                        val attributeActionManager: AttributeActionManager,
+                                        val unitTemplateRegistrar: UnitTemplateRegistrar){
     val cadenceEffectsRegistrar: CadenceEffectsRegistrar by lazy {
         GameModuleInjector.generateInstance(CadenceEffectsRegistrar::class.java)
     }
@@ -111,6 +111,7 @@ class TempBattleStarter @Inject constructor(val boardProvider: TileMapProvider,
                     playerControlled = false)
             for (attr in item.attrsToApply){
                 attributeActionManager.applyAttribute(logicalCharacter, attr)
+                item.tacMapUnitTemplate.podId = item.podId
             }
         }
 

@@ -11,7 +11,7 @@ import com.google.inject.assistedinject.Assisted
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
-import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TempBattleStarter
+import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.BattleStarter
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
 import com.ironlordbyron.turnbasedstrategy.view.ActorName
@@ -63,7 +63,7 @@ class TileMapClickListener(@Assisted val actor: TileMapActor,
 class TiledMapStageFactory @Inject constructor(val tileMapClickListenerActorFactory: Provider<TileMapClickListenerActorFactory>,
                                                val tileMapClickListenerFactoryProvider: Provider<TileMapClickListenerFactory>,
                                                val logicalTileTracker: LogicalTileTracker,
-                                               val battleStarter: TempBattleStarter,
+                                               val battleStarter: BattleStarter,
                                                val spriteActorFactory: SpriteActorFactory,
                                                val tileMapProvider: TileMapProvider,
                                                val stageProvider: StageProvider,
