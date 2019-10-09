@@ -20,6 +20,7 @@ import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.BoundingBoxType
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.TileMapProvider
 import com.ironlordbyron.turnbasedstrategy.tileentity.CityTileEntity
+import com.ironlordbyron.turnbasedstrategy.tileentity.CityTileEntity.Companion.name
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorCloneProtoEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TileEntity
@@ -67,8 +68,10 @@ public class ActionManager @Inject constructor(
 
 )  {
 
-
+    val fogOfWarAlphaAnimationGenerator by LazyInject(FogOfWarAlphaAnimationGenerator::class.java)
     val globalTacMapState by LazyInject(GlobalTacMapState::class.java)
+    val fogOfWarManager by LazyInject(FogOfWarManager::class.java)
+
     fun addCharacterToMapFromDeploymentZone(tacMapUnit: TacMapUnitTemplate,
                                             tileLocation: TileLocation){
         tacMapState.unitsAvailableToDeploy.removeAndAssert(tacMapUnit)
@@ -305,6 +308,40 @@ public class ActionManager @Inject constructor(
 
     fun destroySpecialEffectInSequence(uuid: UUID, motherActor: Actor){
         animationActionQueueProvider.addBareAction(motherActor, {specialEffectManager.destroyLineEffect(uuid)})
+    }
+
+    fun awakenUnit(logicalCharacter: LogicalCharacter){
+        if (logicalCharacter.awoken){
+            return
+        }
+        this.risingText("!!!", logicalCharacter.tileLocation)
+        logicalCharacter.awoken = true
+    }
+
+    fun revealTilesTemporarily(name: String, tiles: Collection<TileLocation>){
+        fogOfWarManager.markTilesAsVisible(name, tiles.toList())
+        val aap = fogOfWarAlphaAnimationGenerator.buildFogOfWarAlphaChangeActions(FogStatus.VISIBLE, tiles)
+        this.animationActionQueueProvider.addAction(aap.toMutableList().toSingleActorActionPair())
+    }
+
+    fun animateFogOfWarShift(visibleTiles: Collection<TileLocation>){
+        val aap = fogOfWarAlphaAnimationGenerator.getVisualTransitionsActorActionPairs(visibleTiles).toMutableList()
+        if (aap.isEmpty()){
+            return
+        }
+        this.animationActionQueueProvider.addAction(aap.toSingleActorActionPair())
+    }
+
+    fun hideTiles(clumpName: String){
+        fogOfWarManager.removeVisibilityClump(clumpName)
+        val tiles = fogOfWarManager.visibilityClumps
+                .filter{it.name == clumpName}
+                .flatMap { it.tiles }
+        val aap = fogOfWarAlphaAnimationGenerator.buildFogOfWarAlphaChangeActions(FogStatus.NOT_VISIBLE, tiles)
+        if (aap.isEmpty()){
+            return
+        }
+        this.animationActionQueueProvider.addAction(aap.toMutableList().toSingleActorActionPair())
     }
 
     fun risingText(text: String, tileLocation: TileLocation, scale: Float = 1.0f){

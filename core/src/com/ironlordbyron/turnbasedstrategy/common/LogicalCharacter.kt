@@ -17,7 +17,7 @@ import java.util.*
 
 /**
  * Represents a mutable character generated from a template.
- * Has a location, an associated clickListeningActor, and a
+ * Has a location, an associated clickListeningActor, and an assortment of transient attributes based on the mission.
  */
 data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This is a transient attribute, do not persist
                             var tileLocation: TileLocation,

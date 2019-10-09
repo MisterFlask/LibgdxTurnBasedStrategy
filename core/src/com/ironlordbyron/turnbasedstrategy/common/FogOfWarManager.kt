@@ -2,18 +2,30 @@ package com.ironlordbyron.turnbasedstrategy.common
 
 import com.badlogic.gdx.graphics.Color
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
+import com.ironlordbyron.turnbasedstrategy.tacmapunits.actionManager
 import com.ironlordbyron.turnbasedstrategy.tiledutils.FogStatus
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.fogStatus
 import com.ironlordbyron.turnbasedstrategy.tiledutils.getPlayerPlacementTiles
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.DoorEntity
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.WallEntity
+import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
+import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.FogOfWarAlphaAnimationGenerator
 
+public data class FogOfWarVisibilityClump(val tiles: Collection<TileLocation>, val name: String? = null)
 
 public class FogOfWarManager{
     val tacticalMapAlgorithms by LazyInject(TacticalMapAlgorithms::class.java)
     val tacMapState by LazyInject(TacticalMapState::class.java)
     val logicalTileTracker by LazyInject(LogicalTileTracker::class.java)
+    val visibilityClumps = ArrayList<FogOfWarVisibilityClump>()
+
+    public fun markTilesAsVisible(clumpName: String, tiles: List<TileLocation>){
+        visibilityClumps.add(FogOfWarVisibilityClump(tiles, clumpName))
+    }
+    public fun removeVisibilityClump(clumpName: String){
+        visibilityClumps.removeIf{it.name == clumpName}
+    }
 
     public fun getVisionForUnit(logicalCharacter: LogicalCharacter) : Collection<TileLocation>{
         var iteration = 9
@@ -56,7 +68,7 @@ public class FogOfWarManager{
         return true
     }
 
-    public fun getVisionForPlayer(): HashSet<TileLocation> {
+    public fun getVisionForPlayer(): Set<TileLocation> {
         val playerCharacters = tacMapState.listOfPlayerCharacters
         val visibleTileLocations = HashSet<TileLocation>()
         for(character in playerCharacters){
@@ -77,34 +89,16 @@ public class FogOfWarManager{
             visibleTileLocations.add(tile)
         }
 
-        return visibleTileLocations
+        val otherVisibleTilesFromClumps = this.visibilityClumps.flatMap { it.tiles }
+        return visibleTileLocations + otherVisibleTilesFromClumps
     }
 
     val UNDER_FOG_OF_WAR_COLOR = Color.GRAY!!
 
     public fun updateVisuals(){
         val visibleTiles = getVisionForPlayer()
-        logicalTileTracker.tiles.values.forEach{
-            val isVisible = visibleTiles.contains(it.location)
-            if (isVisible) {
-                it.underFogOfWar = FogStatus.VISIBLE
-            } else {
-                if (it.underFogOfWar == FogStatus.VISIBLE){
-                    it.underFogOfWar = FogStatus.NOT_VISIBLE
-                }
-            }
-            it.fogOfWarTileActor.color.a = it.underFogOfWar.fogAlpha
-        }
-
-        // now, we turn all tile entities invisible that are under fog of war.
-        tacMapState.listOfCharacters
-                .filter{!it.tacMapUnit.tags.isOrgan}
-                .filter{it.tileLocation.fogStatus() != FogStatus.VISIBLE}
-                .forEach { it.actor.isVisible = false }
-
-        tacMapState.listOfCharacters
-                .filter{it.tileLocation.fogStatus() == FogStatus.VISIBLE}
-                .forEach { it.actor.isVisible = true }
+        actionManager.animateFogOfWarShift(visibleTiles)
+        actionManager.runThroughActionQueue()
     }
 
     public fun setStartingFogOfWar(){
