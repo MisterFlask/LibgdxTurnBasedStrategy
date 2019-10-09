@@ -20,6 +20,8 @@ public class FogOfWarManager{
     val logicalTileTracker by LazyInject(LogicalTileTracker::class.java)
     val visibilityClumps = ArrayList<FogOfWarVisibilityClump>()
 
+    val everVisibleTiles = HashSet<TileLocation>()
+
     public fun markTilesAsVisible(clumpName: String, tiles: List<TileLocation>){
         visibilityClumps.add(FogOfWarVisibilityClump(tiles, clumpName))
     }
@@ -97,6 +99,7 @@ public class FogOfWarManager{
 
     public fun updateVisuals(){
         val visibleTiles = getVisionForPlayer()
+        everVisibleTiles.addAll(visibleTiles)
         actionManager.animateFogOfWarShift(visibleTiles)
         actionManager.runThroughActionQueue()
     }
