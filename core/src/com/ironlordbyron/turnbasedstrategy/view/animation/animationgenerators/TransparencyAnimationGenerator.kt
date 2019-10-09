@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.ironlordbyron.turnbasedstrategy.common.TileLocation
+import com.ironlordbyron.turnbasedstrategy.common.getCharacter
 import com.ironlordbyron.turnbasedstrategy.common.logicalTile
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.missiongen.pop
@@ -16,6 +17,8 @@ import java.lang.IllegalArgumentException
 public class FogOfWarAlphaAnimationGenerator{
 
     val logicalTileTracker by LazyInject(LogicalTileTracker::class.java)
+    val revealActionGenerator by LazyInject(RevealActionGenerator::class.java)
+    val hideActionGenerator by LazyInject(HideAnimationGenerator::class.java)
 
     fun buildFogOfWarAlphaChangeActions(fogStatus: FogStatus, tiles: Collection<TileLocation>) : Collection<ActorActionPair>{
         if (tiles.isEmpty()) return ArrayList()
@@ -32,13 +35,25 @@ public class FogOfWarAlphaAnimationGenerator{
                 .tiles
                 .filter { it.key !in visibleLocations }
                 .filter { it.value.underFogOfWar == FogStatus.VISIBLE }
+        val characterActions = ArrayList<ActorActionPair>()
         if( modifyState){
             locationsToHide.forEach{it.value.underFogOfWar = FogStatus.NOT_VISIBLE}
             locationsToBeRevealed.map { it.logicalTile()!!}.forEach{it.underFogOfWar = FogStatus.VISIBLE}
+
+            val charactersToReveal = locationsToBeRevealed
+                    .filter{it.getCharacter() != null}
+                    .map{it.getCharacter()!!}
+
+            val charactersToHide = locationsToHide.keys
+                    .filter{it.getCharacter() != null}
+                    .map{it.getCharacter()!!}
+            val hideActions = charactersToHide.map{hideActionGenerator.generateHideActorActionPair(it.actor)}
+            val revealActions = charactersToReveal.map{revealActionGenerator.generateRevealActorActionPair(it.actor)}
+            characterActions.addAll(hideActions + revealActions)
         }
         val hideActions = buildFogOfWarAlphaChangeActions(FogStatus.NOT_VISIBLE, locationsToHide.keys)
         val revealActions = buildFogOfWarAlphaChangeActions(FogStatus.VISIBLE, locationsToBeRevealed)
-        return hideActions + revealActions
+        return hideActions + revealActions + characterActions
     }
 
 
