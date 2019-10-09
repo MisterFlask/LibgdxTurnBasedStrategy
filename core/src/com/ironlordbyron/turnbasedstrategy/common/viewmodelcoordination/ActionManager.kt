@@ -104,6 +104,7 @@ public class ActionManager @Inject constructor(
             characterSpawned.formulateNewIntent()
         }
         characterSpawned.actor.setFunctionalName(ActorName(ActorOrdering.UNIT))
+        fogOfWarManager.updateVisuals()
         return characterSpawned
     }
 

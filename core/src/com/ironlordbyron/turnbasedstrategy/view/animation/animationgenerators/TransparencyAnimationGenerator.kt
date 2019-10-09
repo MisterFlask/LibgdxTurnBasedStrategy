@@ -27,7 +27,7 @@ public class FogOfWarAlphaAnimationGenerator{
     }
 
     fun getVisualTransitionsActorActionPairs(visibleLocations: Collection<TileLocation>, modifyState: Boolean = true) : Collection<ActorActionPair> {
-        val locationsToBeRevealed = visibleLocations.filter { it.logicalTile()!!.underFogOfWar != FogStatus.VISIBLE }
+        val locationsToBeRevealed = visibleLocations
         val locationsToHide = logicalTileTracker
                 .tiles
                 .filter { it.key !in visibleLocations }

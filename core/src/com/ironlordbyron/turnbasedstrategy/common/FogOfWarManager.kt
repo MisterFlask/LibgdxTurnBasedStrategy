@@ -97,6 +97,11 @@ public class FogOfWarManager{
 
     val UNDER_FOG_OF_WAR_COLOR = Color.GRAY!!
 
+    public fun initVisuals(){
+        logicalTileTracker.tiles.values.forEach{it.underFogOfWar = FogStatus.BLACK}
+        logicalTileTracker.tiles.values.forEach{it.fogOfWarTileActor.color.a = FogStatus.BLACK.fogAlpha}
+    }
+
     public fun updateVisuals(){
         val visibleTiles = getVisionForPlayer()
         everVisibleTiles.addAll(visibleTiles)
@@ -105,11 +110,7 @@ public class FogOfWarManager{
     }
 
     public fun setStartingFogOfWar(){
-        val allTiles = logicalTileTracker.tiles
-        for (tile in allTiles.values){
-            tile.underFogOfWar = FogStatus.BLACK
-        }
-
+        initVisuals()
         updateVisuals()
     }
 
