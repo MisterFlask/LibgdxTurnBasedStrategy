@@ -19,7 +19,8 @@ import java.util.*
 
 data class Tags(val isSpawnableEnemy: Boolean = true,
                 // denotes an organ.  Note that this can be overridden if the compile time tag is set to "true".
-                var isOrgan: Boolean = false)
+                var isOrgan: Boolean = false,
+                var alwaysVisible: Boolean = false)
 
 data class EquipmentSlot(val allowedEquipment: Collection<EquipmentSuperclass>,
                          val name: String,
@@ -58,7 +59,7 @@ class TacMapUnitTemplate(val movesPerTurn: Int,
                          val dexterity: Int = 0,
                               // used in map generation
                          val difficulty: Int = 1,
-                         val possibleRandomizedIntents: List<IntentType> = listOf(IntentType.ATTACK, IntentType.MOVE),
+                         val possibleRandomizedIntents: List<IntentType> = listOf(IntentType.ATTACK, IntentType.OTHER),
                          val templateId: String = templateName,
                          val metagoal: Metagoal = AttackMetaGoal(),
                          val turnStartAction: TurnStartAction? = null,

@@ -55,8 +55,6 @@ public class FogOfWarAlphaAnimationGenerator{
         val revealActions = buildFogOfWarAlphaChangeActions(FogStatus.VISIBLE, locationsToBeRevealed)
         return hideActions + revealActions + characterActions
     }
-
-
 }
 
 fun MutableList<ActorActionPair>.toSingleActorActionPair() : ActorActionPair{

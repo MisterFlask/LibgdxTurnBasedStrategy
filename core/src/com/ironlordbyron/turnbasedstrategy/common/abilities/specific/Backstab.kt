@@ -17,7 +17,7 @@ val BackstabAbility = LogicalAbility("Guard", AbilitySpeed.FREE_ACTION, 1,
         rangeStyle = RangeStyle.Simple(2),
         projectileActor = null,
         landingActor = null,
-        intentType = IntentType.DEFEND,
+        intentType = IntentType.OTHER,
         damageStyle = BackstabDamageStyle(1, 4)
 )
 

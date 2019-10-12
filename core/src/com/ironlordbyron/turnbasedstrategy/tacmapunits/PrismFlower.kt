@@ -3,6 +3,7 @@ package com.ironlordbyron.turnbasedstrategy.tacmapunits
 import com.ironlordbyron.turnbasedstrategy.ai.EnemyAiType
 import com.ironlordbyron.turnbasedstrategy.ai.IntentType
 import com.ironlordbyron.turnbasedstrategy.common.TacMapUnitTemplate
+import com.ironlordbyron.turnbasedstrategy.common.Tags
 import com.ironlordbyron.turnbasedstrategy.common.abilities.*
 import com.ironlordbyron.turnbasedstrategy.entrypoints.SpawnableUnitTemplate
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
@@ -23,7 +24,11 @@ public fun PrismFlower(): TacMapUnitTemplate{
             listOf(),
             maxHealth = 5,
             possibleRandomizedIntents = listOf(IntentType.ATTACK),
-            templateId = "PRISM_FLOWER"
+            templateId = "PRISM_FLOWER",
+            tags = Tags(
+                    isSpawnableEnemy = false,
+                    alwaysVisible = true
+            )
             )
 }
 

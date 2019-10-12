@@ -44,7 +44,8 @@ public class LogicalAbility(val name: String,
                             val customAbilityAi: CustomAbilityAi? = null,
                             val mpCost: Int = 0,
                             val id: String = name,
-                            val abilityUsageTileFilter : TileFilter = NullTileFilter()){
+                            val abilityUsageTileFilter : TileFilter = NullTileFilter(),
+                            val requiresIntent: Boolean = false){
 
 }
 

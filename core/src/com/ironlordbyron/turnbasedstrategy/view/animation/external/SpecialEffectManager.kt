@@ -6,11 +6,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.math.Vector2
 import com.badlogic.gdx.scenes.scene2d.Actor
 import com.ironlordbyron.turnbasedstrategy.tiledutils.StageProvider
+import com.ironlordbyron.turnbasedstrategy.view.ActorName
+import com.ironlordbyron.turnbasedstrategy.view.ActorOrdering
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.DataDrivenOnePageAnimation
 import java.util.*
 import javax.inject.Singleton
 import kotlin.math.pow
 import com.ironlordbyron.turnbasedstrategy.view.animation.datadriven.ProtoActor
+import com.ironlordbyron.turnbasedstrategy.view.setFunctionalName
 import com.kotcrab.vis.ui.building.utilities.Alignment
 import javax.inject.Inject
 import kotlin.math.absoluteValue
@@ -34,6 +37,7 @@ class SpecialEffectManager @Inject constructor(val stageProvider: StageProvider)
         */
         val lineEffect = LineEffect(actor1, actor2, DataDrivenOnePageAnimation.LASER, lineSettings = LineSettings.DEFAULT)
         stageProvider.tiledMapStage.addActor(lineEffect.actor)
+        lineEffect.actor.setFunctionalName(ActorName(ActorOrdering.ABOVE_FOG_OF_WAR))
 
         lines.add(lineEffect)
         return lineEffect

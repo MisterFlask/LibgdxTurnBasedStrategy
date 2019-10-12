@@ -7,7 +7,8 @@ public interface Metagoal{
 }
 public class ConquerCityMetagoal : Metagoal{
     override fun formulateNewGoal(logicalCharacter: LogicalCharacter): Goal {
-        return ConquerCityGoal()
+        //return ConquerCityGoal()
+        return AttackGoal()
     }
 }
 

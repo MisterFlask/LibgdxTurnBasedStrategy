@@ -125,6 +125,10 @@ class BattleStarter @Inject constructor(val boardProvider: TileMapProvider,
         fogManager.setStartingFogOfWar()
         cadenceEffectsRegistrar.turnStartEffects.forEach{it.handleTurnStartEvent()}
         animationActionQueueProvider.runThroughActionQueue()
+        for (organ in tacmapState.listOfCharacters.filter{it.tacMapUnit.tags.isOrgan}){
+            //organ.visibility = VisibilityStatus.ALWAYS_VISIBLE
+        }
+
         logicHooks.mapReorderRequired()
     }
 }

@@ -19,16 +19,10 @@ interface EnemyAi{
 
 enum class IntentType{
     ATTACK,
-    DEFEND,
-    MOVE,
-    NONE,
     OTHER
 }
 sealed class Intent(val intentType: IntentType){
     data class Attack(val logicalCharacterUuid: UUID): Intent(IntentType.ATTACK)
-    class Defend(): Intent(IntentType.DEFEND)
-    class Move: Intent(IntentType.MOVE)
-    class None: Intent(IntentType.NONE)
     class Other: Intent(IntentType.OTHER)
 }
 

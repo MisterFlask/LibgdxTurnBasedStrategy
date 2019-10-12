@@ -11,9 +11,17 @@ import com.ironlordbyron.turnbasedstrategy.common.viewmodelcoordination.ActionMa
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.tacmapunits.NullAiMetaGoal
+import com.ironlordbyron.turnbasedstrategy.view.ActorName
+import com.ironlordbyron.turnbasedstrategy.view.ActorOrdering
 import com.ironlordbyron.turnbasedstrategy.view.animation.LogicalCharacterActorGroup
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationlisteners.DeathGameEventHandler
+import com.ironlordbyron.turnbasedstrategy.view.setFunctionalName
 import java.util.*
+
+enum class VisibilityStatus(val ordering: ActorOrdering) {
+    REGULAR(ActorOrdering.UNIT),
+    ALWAYS_VISIBLE(ActorOrdering.ABOVE_FOG_OF_WAR)
+}
 
 /**
  * Represents a mutable character generated from a template.
@@ -25,12 +33,16 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
                             val playerControlled: Boolean,
                             var endedTurn: Boolean = false,
                             var actionsLeft: Int = 2,
-                            var intent: Intent = Intent.None(),
+                            var intent: Intent = Intent.Other(),
                             var goal: Goal? = null,
                             // awoken status is asking whether or not the unit has become aware of player presence
                             var awoken: Boolean = false
                             ) {
-
+    var visibility: VisibilityStatus = VisibilityStatus.REGULAR
+        set(value) {
+            this.actor.characterActor.setFunctionalName(ActorName(value.ordering))
+            field = value
+        }
     val id: UUID
         get() = tacMapUnit.unitId
 
@@ -49,7 +61,8 @@ data class LogicalCharacter(val actor: LogicalCharacterActorGroup, // NOTE: This
     val abilities: Collection<LogicalAbilityAndEquipment>
         get() = tacMapUnit.abilities
 
-    fun abilitiesForIntent(intent: IntentType): List<LogicalAbilityAndEquipment> {
+    fun abilitiesForIntent(intent: IntentType?): List<LogicalAbilityAndEquipment> {
+        if (intent == null) return tacMapUnit.abilities.filter{!it.ability.requiresIntent}
         return tacMapUnit.abilities.filter { it.ability.intentType == intent }
     }
 

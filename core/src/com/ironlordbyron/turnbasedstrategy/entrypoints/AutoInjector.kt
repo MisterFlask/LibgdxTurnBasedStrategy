@@ -92,7 +92,9 @@ data class UnitTemplateSpawner(val obj: Any?,
     }
 
     fun spawn() : TacMapUnitTemplate{
-        return method.invoke(null) as TacMapUnitTemplate
+        val returned = method.invoke(null) as TacMapUnitTemplate
+        returned.tags.isOrgan = tags.isOrgan
+        return returned
     }
 }
 

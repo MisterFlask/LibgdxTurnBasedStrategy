@@ -6,7 +6,7 @@ import com.ironlordbyron.turnbasedstrategy.common.LogicalCharacter
 import com.ironlordbyron.turnbasedstrategy.common.TacticalMapState
 import com.ironlordbyron.turnbasedstrategy.common.distanceTo
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
-
+/*
 val MIN_ATTACK_DISTANCE = 10
 class ConquerCityGoal(): Goal{
 
@@ -71,4 +71,4 @@ class ConquerCityGoal(): Goal{
         }
     }
 
-}
+}*/

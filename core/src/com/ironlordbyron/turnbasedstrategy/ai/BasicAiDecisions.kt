@@ -2,6 +2,7 @@ package com.ironlordbyron.turnbasedstrategy.ai
 
 import com.ironlordbyron.turnbasedstrategy.Logging
 import com.ironlordbyron.turnbasedstrategy.common.*
+import com.ironlordbyron.turnbasedstrategy.controller.tacMapState
 import com.ironlordbyron.turnbasedstrategy.tiledutils.LogicalTileTracker
 import com.ironlordbyron.turnbasedstrategy.tiledutils.mapgen.randomElement
 import com.ironlordbyron.turnbasedstrategy.tileentity.CityTileEntity
@@ -89,13 +90,21 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
         return currentBestPath
     }
 
-    public fun canTargetCharacterWithAbility(thisCharacter: LogicalCharacter, targetCharacter: LogicalCharacter, intent: IntentType): Boolean {
+    public fun canTargetCharacterWithAbility(thisCharacter: LogicalCharacter, targetCharacter: LogicalCharacter, intent: IntentType?): Boolean {
         return getNecessaryMoveForTargetingCharacterWithAbility(thisCharacter, targetCharacter, intent) != null
+    }
+
+    public fun attemptToTargetAnyCharacterWithAnyAbility(thisCharacter: LogicalCharacter) : List<AiPlannedAction>? {
+        for (targetCharacter in tacMapState.listOfPlayerCharacters){
+            val possibleMove = getNecessaryMoveForTargetingCharacterWithAbility(thisCharacter, targetCharacter, null)
+            if (possibleMove != null) return possibleMove
+        }
+        return null
     }
 
     public fun getNecessaryMoveForTargetingCharacterWithAbility(thisCharacter: LogicalCharacter,
                                                                  targetCharacter: LogicalCharacter,
-                                                                 intent: IntentType) : List<AiPlannedAction>?{
+                                                                 intent: IntentType? = null) : List<AiPlannedAction>?{
         for (abilityAndEquipment in thisCharacter.abilitiesForIntent(intent)){
             for (tile in mapAlgorithms.getWhereCharacterCanMoveTo(thisCharacter)){
                 if (abilityAndEquipment.getSquaresInRangeOfAbility(tile, thisCharacter)
@@ -114,7 +123,7 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
 
     // Figures out who to attack.
     public fun getAttackIntentForThisTurn(thisCharacter: LogicalCharacter): Intent {
-        for (abilityAndEquipment in thisCharacter.abilitiesForIntent(IntentType.ATTACK)){
+        for (abilityAndEquipment in thisCharacter.abilitiesForIntent(IntentType.ATTACK).filter{it.ability.requiresIntent}){
             if (!canPerform(abilityAndEquipment, thisCharacter)){
                 Logging.DebugCombatLogic("Enemy ${thisCharacter.tacMapUnit.templateName} cannot perform ${abilityAndEquipment.ability.name}; continuing")
                 continue
@@ -135,11 +144,11 @@ public class BasicAiDecisions @Inject constructor (val mapAlgorithms: TacticalMa
         val nextLocation = getNextMoveLocationForAbility(thisCharacter, first)
         if (nextLocation == null){
             Logging.DebugCombatLogic("Enemy ${thisCharacter.tacMapUnit.templateName} cannot find ability to perform or location to go to")
-            return Intent.None()
+            return Intent.Other()
         }
 
         Logging.DebugCombatLogic("Enemy ${thisCharacter.tacMapUnit.templateName} cannot find ability it can perform; moving to closest enemy unit")
-        return Intent.Move()
+        return Intent.Other()
     }
 
     private fun canPerform(abilityAndEquipment: LogicalAbilityAndEquipment, thisCharacter: LogicalCharacter): Boolean {

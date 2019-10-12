@@ -18,7 +18,7 @@ class NullGoal : Goal {
        return "Goal:Null"
     }
     override fun formulateIntent(thisCharacter: LogicalCharacter): Intent {
-        return Intent.None()
+        return Intent.Other()
     }
 
     override fun executeOnIntent(thisCharacter: LogicalCharacter): List<AiPlannedAction> {

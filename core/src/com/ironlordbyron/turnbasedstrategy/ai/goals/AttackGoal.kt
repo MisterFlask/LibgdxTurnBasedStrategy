@@ -18,29 +18,7 @@ class AttackGoal() : Goal{
         GameModuleInjector.generateInstance(TacticalMapState::class.java)
     }
     override fun executeOnIntent(thisCharacter: LogicalCharacter): List<AiPlannedAction> {
-        if (thisCharacter.intent.intentType == IntentType.NONE){
-            thisCharacter.intent = Intent.Move()
-        }
-
         when(thisCharacter.intent) {
-            is Intent.Move -> {
-                Logging.DebugCombatLogic("Character ${thisCharacter.tacMapUnit.templateName} is attempting movement")
-
-                val bestPathToClosestPlayerUnit = basicAiDecisions.pathfindToClosestPlayerUnit(thisCharacter)
-                        ?.truncateToCharacterMoveRange(thisCharacter)
-
-                if (bestPathToClosestPlayerUnit == null) {
-                    println("Could not find best path to tile ")
-                    return listOf()
-                }
-                if (bestPathToClosestPlayerUnit.size == 0) {
-                    return listOf()
-                }
-                val nextMove = AiPlannedAction.MoveToTile(bestPathToClosestPlayerUnit.last())
-                val returned = listOf(nextMove)
-
-                return returned
-            }
             is Intent.Attack -> {
                 Logging.DebugCombatLogic("Character ${thisCharacter.tacMapUnit.templateName} is attempting attack")
                 val attackIntent = thisCharacter.intent as Intent.Attack
@@ -48,13 +26,41 @@ class AttackGoal() : Goal{
                     val plannedActions = basicAiDecisions.getNecessaryMoveForTargetingCharacterWithAbility(thisCharacter, tacticalMapState.getCharacterFromId(attackIntent.logicalCharacterUuid), thisCharacter.intent.intentType)!!
                     return plannedActions
                 }
+                // if we get here, couldn't actually execute intended attack
                 thisCharacter.intent = formulateIntent(thisCharacter)
                 return executeOnIntent(thisCharacter)
+            }
+            is Intent.Other -> {
+                Logging.DebugCombatLogic("Character ${thisCharacter.tacMapUnit.templateName} is attempting attack")
+                val possibleMoves = basicAiDecisions.attemptToTargetAnyCharacterWithAnyAbility(thisCharacter);
+                if (possibleMoves != null) {
+                    return possibleMoves
+                }
+                return getActionsToGetToNearestPlayerCharacter(thisCharacter)
             }
         }
 
         Logging.DebugCombatLogic("Couldn't figure out intent!")
         return listOf()
+    }
+
+    private fun getActionsToGetToNearestPlayerCharacter(thisCharacter: LogicalCharacter): List<AiPlannedAction> {
+        Logging.DebugCombatLogic("Character ${thisCharacter.tacMapUnit.templateName} is attempting movement")
+
+        val bestPathToClosestPlayerUnit = basicAiDecisions.pathfindToClosestPlayerUnit(thisCharacter)
+                ?.truncateToCharacterMoveRange(thisCharacter)
+
+        if (bestPathToClosestPlayerUnit == null) {
+            println("Could not find best path to tile ")
+            return listOf()
+        }
+        if (bestPathToClosestPlayerUnit.size == 0) {
+            return listOf()
+        }
+        val nextMove = AiPlannedAction.MoveToTile(bestPathToClosestPlayerUnit.last())
+        val returned = listOf(nextMove)
+
+        return returned
     }
 
     override fun formulateIntent(thisCharacter: LogicalCharacter) : Intent{
