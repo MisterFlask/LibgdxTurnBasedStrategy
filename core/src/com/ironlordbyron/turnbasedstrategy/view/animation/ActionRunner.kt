@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.Action
 import com.badlogic.gdx.scenes.scene2d.actions.Actions
 import com.ironlordbyron.turnbasedstrategy.controller.EventNotifier
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
+import com.ironlordbyron.turnbasedstrategy.tileentity.CityTileEntity.Companion.name
 import com.ironlordbyron.turnbasedstrategy.view.animation.animationgenerators.CameraMovementAnimationGenerator
 import com.ironlordbyron.turnbasedstrategy.view.animation.camera.GameCameraProvider
 import com.ironlordbyron.turnbasedstrategy.view.animation.camera.Rumbler
@@ -37,8 +38,16 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
 
     private var currentlyMovingCamera = false
     var lastAnimationTime = 0f;
+    var startedAnimation = false
 
     public fun continuousPoll(actionQueue: MutableList<ActorActionPair>){
+
+        val currentAap  = currentActorActionPair
+        if (currentAap != null && currentAap.actor.stage == null){
+            println("Actor  ${currentAap.actor.name} is no longer attached to a stage; removing from queue and continuing.")
+            currentActorActionPair = null
+            processing = false
+        }
         if (actionQueue.isEmpty() || processing) return
 
         processing = true
@@ -47,16 +56,21 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
 
         currentlyMovingCamera = true
         val cameraMovementAction = cameraMovementAnimationGenerator.generateCameraMovementActionToLookAt(currentAction.cameraFocusActor ?: currentAction.actor)
-        currentActorActionPair = cameraMovementAction
+        currentActorActionPair = currentAction
 
-        processSingleAction(cameraMovementAction){
-            currentlyMovingCamera = false
-            currentActorActionPair = currentAction
-            processSingleAction(currentAction){
-                processing = false
-                currentActorActionPair = null
-            }
-        }
+        currentAction.actor.addAction(Actions.sequence(
+                CustomAction{
+                    startedAnimation = true
+                },
+                cameraMovementAction.action,
+                CustomAction{
+                    currentlyMovingCamera = false
+                    processSingleAction(currentAction){
+                        processing = false
+                        startedAnimation = false
+                    }
+                }
+        ))
     }
 
     private fun processSingleAction(currentAction: ActorActionPair, afterward: () -> Unit = {}) {
@@ -80,10 +94,14 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
             if (current.name != null) {
                 // println("Actor ${current.name} has finished processing.")
             }
+            println("Actor ${current.name} has finished processing; performing post-action step")
             current.actionOnceAnimationCompletes()
             afterward()
         }
         current.actor.addAction(Actions.sequence(
+                CustomAction{
+                    println("Actor ${current.name} has started processing")
+                },
                 current.action,
                 customAction
                 ))

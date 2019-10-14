@@ -58,8 +58,11 @@ public class CameraMovementAction(val maxSeconds: Float,
     var totalTimeInSeconds = 0f
     override fun act(delta: Float): Boolean {
         if (totalTimeInSeconds == 0f){
+            println("Camera movement action started")
+
             if (camera.frustum.pointInFrustum(actorPosition)){
                 // we're just going to not do this if the clickListeningActor is already in position.
+                println("Camera movement action: finished as no-op")
                 return true
             }
             // first iteration
@@ -74,6 +77,7 @@ public class CameraMovementAction(val maxSeconds: Float,
         camera.zoom = MathUtils.lerp(originalZoom, CameraConfig.zoomTo, progress)
 
         if (totalTimeInSeconds > maxSeconds){
+            println("Camera movement action finished")
             return true
         }
         return false

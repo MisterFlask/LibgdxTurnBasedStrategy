@@ -96,7 +96,7 @@ public class ActionManager @Inject constructor(
         val characterSpawned = LogicalCharacter(group, tileLocation, tacMapUnitTemplate, playerControlled)
         visibleCharacterDataFactory.generateCharacterHpMarker(characterSpawned)
         boardState.addCharacter(characterSpawned)
-        animationActionQueueProvider.addAction(revealActionGenerator.generateRevealActorActionPair(characterSpawned.actor))
+        animationActionQueueProvider.addAction(revealActionGenerator.generateRevealActorActionPair(characterSpawned.actor).copy(name = "RevealActionForCharacterSpawn"))
         if (popup!=null){
             this.risingText(popup, tileLocation)
         }
@@ -253,6 +253,7 @@ public class ActionManager @Inject constructor(
         }
         val actor = logicalAttribute.tacticalMapProtoActor.toActorWrapper(animatedImageParams).actor
         actor.isVisible = false
+        stageProvider.tiledMapStage.addActor(actor)
         animationActionQueueProvider.addAction(ActorActionPair(actor, revealActionGenerator.generateRevealAction(actor)))
         val actorGroup = logicalCharacter.actor
         val boundingBox = tileMapProvider.getBoundingBoxOfTile(logicalCharacter.tileLocation)

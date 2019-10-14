@@ -9,7 +9,7 @@ public class RevealActionGenerator(){
         return RevealAction(actor)
     }
     fun generateRevealActorActionPair(actor: Actor) : ActorActionPair{
-        return ActorActionPair(actor, RevealAction(actor))
+        return ActorActionPair(actor, RevealAction(actor), name = "DefaultRevealActionName")
     }
 }
 
