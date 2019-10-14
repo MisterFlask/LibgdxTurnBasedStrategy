@@ -6,16 +6,18 @@ import com.ironlordbyron.turnbasedstrategy.common.LogicHooks
 import com.ironlordbyron.turnbasedstrategy.guice.LazyInject
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActionRunner
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActorActionPair
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.collections.ArrayList
 
 
 @Singleton
 class AnimationActionQueueProvider @Inject constructor(val actionRunner: ActionRunner) {
-    private var actionQueue = ArrayList<ActorActionPair>()
+    private val actionQueue = Collections.synchronizedList(ArrayList<ActorActionPair>()) as MutableList<ActorActionPair>
     private val logicHooks by LazyInject(LogicHooks::class.java)
     private var running = false
-    public fun runThroughActionQueue(finalAction: () -> Unit = {}){
+    public fun runThroughActionQueue(){
 
     }
 
@@ -30,20 +32,12 @@ class AnimationActionQueueProvider @Inject constructor(val actionRunner: ActionR
     public fun addActions(actorActionPairs: List<ActorActionPair>){
         actionQueue.addAll(actorActionPairs)
     }
+    @Deprecated("")
     public fun clearQueue(){
-        actionQueue = ArrayList()
     }
 
     fun kickOffQueueIfNotRunning() {
         actionRunner.continuousPoll(actionQueue)
-    }
-
-    fun runActionQueueInternal(){
-        running = true
-        actionRunner.runThroughActionQueue(actionQueue){
-            running = false
-        }
-        clearQueue()
     }
 
     public class CustomAction(val action : () -> Unit) : Action() {

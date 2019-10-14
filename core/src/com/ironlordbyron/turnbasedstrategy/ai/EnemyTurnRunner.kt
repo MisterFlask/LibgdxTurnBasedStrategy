@@ -8,6 +8,7 @@ import com.ironlordbyron.turnbasedstrategy.controller.MapHighlighter
 import com.ironlordbyron.turnbasedstrategy.controller.TacticalGuiEvent
 import com.ironlordbyron.turnbasedstrategy.controller.tacMapState
 import com.ironlordbyron.turnbasedstrategy.guice.GameModuleInjector
+import com.ironlordbyron.turnbasedstrategy.tacmapunits.actionManager
 import com.ironlordbyron.turnbasedstrategy.view.CharacterSpriteUtils
 import com.ironlordbyron.turnbasedstrategy.view.animation.ActionRunner
 import com.ironlordbyron.turnbasedstrategy.tiledutils.CharacterImageManager
@@ -87,9 +88,10 @@ public class EnemyTurnRunner @Inject constructor(val tiledMapOperationsHandler: 
             conquerCitiesStep(enemyCharacter)
             enemyCharacter.formulateNewIntent()
         }
-        animationActionQueueProvider.runThroughActionQueue(finalAction = {
-            eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.FinishedEnemyTurn())
-        })
+        animationActionQueueProvider.runThroughActionQueue(//finalAction = {
+           // eventNotifier.notifyListenersOfGuiEvent(TacticalGuiEvent.FinishedEnemyTurn())
+        //}
+        )
     }
 
     public fun conquerCitiesStep(enemyCharacter: LogicalCharacter){

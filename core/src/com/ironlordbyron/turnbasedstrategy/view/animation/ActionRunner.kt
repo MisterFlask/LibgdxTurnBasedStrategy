@@ -34,31 +34,38 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
         }
     }
 
-    public fun continuousPoll(actionQueue: ArrayList<ActorActionPair>){
+
+    private var currentlyMovingCamera = false
+    var lastAnimationTime = 0f;
+
+    public fun continuousPoll(actionQueue: MutableList<ActorActionPair>){
         if (actionQueue.isEmpty() || processing) return
 
         processing = true
         var currentAction = actionQueue.first()
-        currentActorActionPair = currentAction
         actionQueue.removeAt(0)
 
-        val cameraMovementAction = cameraMovementAnimationGenerator.generateCameraMovementActionToLookAt(currentAction.actor)
-        cameraMovementAction.actionOnceAnimationCompletes = {
+        currentlyMovingCamera = true
+        val cameraMovementAction = cameraMovementAnimationGenerator.generateCameraMovementActionToLookAt(currentAction.cameraFocusActor ?: currentAction.actor)
+        currentActorActionPair = cameraMovementAction
+
+        processSingleAction(cameraMovementAction){
+            currentlyMovingCamera = false
+            currentActorActionPair = currentAction
             processSingleAction(currentAction){
                 processing = false
                 currentActorActionPair = null
             }
         }
-        processSingleAction(cameraMovementAction)
     }
 
     private fun processSingleAction(currentAction: ActorActionPair, afterward: () -> Unit = {}) {
-        var current = currentAction
+        val current = currentAction
         if (current.screenShake) {
             rumbler.executeRumble(.5f, 1f)
         }
         current.actor.isVisible = current.startsVisible
-        var customAction = CustomAction {
+        val customAction = CustomAction {
             if (current.name != null) {
                 // println("Actor ${current.name} has started processing.")
             }

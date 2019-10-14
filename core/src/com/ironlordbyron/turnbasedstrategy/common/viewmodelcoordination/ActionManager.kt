@@ -196,7 +196,7 @@ public class ActionManager @Inject constructor(
             animationActionQueueProvider.addAction(SpriteColorActorAction.build(character, SpriteColorActorAction.DIM_COLOR))
         }
         if (!waitOnMoreQueuedActions){
-            animationActionQueueProvider.runThroughActionQueue(finalAction = {})
+            animationActionQueueProvider.runThroughActionQueue()
             animationActionQueueProvider.clearQueue()
         }
 
@@ -380,7 +380,7 @@ public class ActionManager @Inject constructor(
     }
 
     fun runThroughActionQueue(){
-        animationActionQueueProvider.runThroughActionQueue({})
+        animationActionQueueProvider.runThroughActionQueue()
     }
     fun createAwaitedSpeechBubbleForCharacter(text: String, tacMapUnit: TacMapUnitTemplate, afterUserClosesBubble: ()-> Unit = {}){
 

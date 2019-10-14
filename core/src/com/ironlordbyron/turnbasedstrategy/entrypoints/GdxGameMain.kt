@@ -34,8 +34,8 @@ class GdxGameMain : Game(), EventListener {
     }
 
     override fun render() {
-        animationActionQueueProvider.kickOffQueueIfNotRunning()
         super.render()
+        animationActionQueueProvider.kickOffQueueIfNotRunning()
     }
 
     override fun consumeGuiEvent(event: TacticalGuiEvent) {
