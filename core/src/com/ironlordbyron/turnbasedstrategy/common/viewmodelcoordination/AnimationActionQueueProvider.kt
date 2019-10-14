@@ -14,10 +14,9 @@ import javax.inject.Singleton
 class AnimationActionQueueProvider @Inject constructor(val actionRunner: ActionRunner) {
     private var actionQueue = ArrayList<ActorActionPair>()
     private val logicHooks by LazyInject(LogicHooks::class.java)
-
+    private var running = false
     public fun runThroughActionQueue(finalAction: () -> Unit = {}){
-        actionRunner.runThroughActionQueue(actionQueue, finalAction = finalAction)
-        clearQueue()
+
     }
 
     public fun addAction(actorActionPair: ActorActionPair){
@@ -33,6 +32,18 @@ class AnimationActionQueueProvider @Inject constructor(val actionRunner: ActionR
     }
     public fun clearQueue(){
         actionQueue = ArrayList()
+    }
+
+    fun kickOffQueueIfNotRunning() {
+        actionRunner.continuousPoll(actionQueue)
+    }
+
+    fun runActionQueueInternal(){
+        running = true
+        actionRunner.runThroughActionQueue(actionQueue){
+            running = false
+        }
+        clearQueue()
     }
 
     public class CustomAction(val action : () -> Unit) : Action() {

@@ -119,8 +119,8 @@ class BattleStarter @Inject constructor(val boardProvider: TileMapProvider,
             logicHooks.onUnitCreation(char)
         }
 
-        actionManager.createAwaitedSpeechBubbleForCharacter("And now, we begin.",
-                TacMapUnitTemplate.DEFAULT_UNIT)
+        //actionManager.createAwaitedSpeechBubbleForCharacter("And now, we begin.",
+        //        TacMapUnitTemplate.DEFAULT_UNIT)
 
         fogManager.setStartingFogOfWar()
         cadenceEffectsRegistrar.turnStartEffects.forEach{it.handleTurnStartEvent()}

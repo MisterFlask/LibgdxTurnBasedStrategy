@@ -18,6 +18,9 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
                                                val cameraProvider: GameCameraProvider,
                                                val cameraMovementAnimationGenerator: CameraMovementAnimationGenerator){
 
+    var processing: Boolean = false
+    var currentActorActionPair: ActorActionPair? = null
+
     val eventNofifier by LazyInject(EventNotifier::class.java)
     public fun runThroughActionQueue(actionQueue: List<ActorActionPair>,
                                      currentIndex: Int = 0,
@@ -28,6 +31,57 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
             runThroughFinalActionQueue(finalActionQueue, currentIndex, finalAction)
         }else{
             runThroughFinalActionQueue(actionQueue, currentIndex, finalAction)
+        }
+    }
+
+    public fun continuousPoll(actionQueue: ArrayList<ActorActionPair>){
+        if (actionQueue.isEmpty() || processing) return
+
+        processing = true
+        var currentAction = actionQueue.first()
+        currentActorActionPair = currentAction
+        actionQueue.removeAt(0)
+
+        val cameraMovementAction = cameraMovementAnimationGenerator.generateCameraMovementActionToLookAt(currentAction.actor)
+        cameraMovementAction.actionOnceAnimationCompletes = {
+            processSingleAction(currentAction){
+                processing = false
+                currentActorActionPair = null
+            }
+        }
+        processSingleAction(cameraMovementAction)
+    }
+
+    private fun processSingleAction(currentAction: ActorActionPair, afterward: () -> Unit = {}) {
+        var current = currentAction
+        if (current.screenShake) {
+            rumbler.executeRumble(.5f, 1f)
+        }
+        current.actor.isVisible = current.startsVisible
+        var customAction = CustomAction {
+            if (current.name != null) {
+                // println("Actor ${current.name} has started processing.")
+            }
+            if (current.murderActorsOnceCompletedAnimation) {
+                current.actor.remove()
+                for (pair in current.secondaryActions) {
+                    if (pair.murderActorsOnceCompletedAnimation) {
+                        pair.actor.remove()
+                    }
+                }
+            }
+            if (current.name != null) {
+                // println("Actor ${current.name} has finished processing.")
+            }
+            current.actionOnceAnimationCompletes()
+            afterward()
+        }
+        current.actor.addAction(Actions.sequence(
+                current.action,
+                customAction
+                ))
+        for (secondaryPair in current.secondaryActions) {
+            secondaryPair.actor.addAction(secondaryPair.action)
         }
     }
 
@@ -44,16 +98,18 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
         return finalActionQueue
     }
 
-    public fun runThroughFinalActionQueue(actionQueue: List<ActorActionPair>, currentIndex: Int = 0,
+    private fun runThroughFinalActionQueue(actionQueue: List<ActorActionPair>, currentIndex: Int = 0,
                                      finalAction : () -> Unit = {}) {
 
 
 
         if (currentIndex == actionQueue.size) {
             finalAction.invoke()
+            currentActorActionPair = null
             return
         }
         val current = actionQueue[currentIndex]
+        currentActorActionPair = current
         if (current.screenShake){
             rumbler.executeRumble(.5f, 1f)
         }

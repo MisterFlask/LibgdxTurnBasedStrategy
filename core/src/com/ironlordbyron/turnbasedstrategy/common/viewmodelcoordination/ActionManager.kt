@@ -405,7 +405,10 @@ public class ActionManager @Inject constructor(
                 ),
                 murderActorsOnceCompletedAnimation = true,
                 cameraTrigger = false,
-                startsVisible = false)
+                startsVisible = false,
+                actionOnceAnimationCompletes = {
+                    println("Delay action finished!")
+                })
         )
     }
 
