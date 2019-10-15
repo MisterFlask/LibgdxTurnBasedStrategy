@@ -39,8 +39,13 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
     private var currentlyMovingCamera = false
     var lastAnimationTime = 0f;
     var startedAnimation = false
+    var queueModeActive = true
 
     public fun continuousPoll(actionQueue: MutableList<ActorActionPair>){
+        if (!queueModeActive){
+            launchAllActionsFromQueue(actionQueue)
+            return
+        }
 
         val currentAap  = currentActorActionPair
         if (currentAap != null && currentAap.actor.stage == null){
@@ -50,25 +55,38 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
         }
         if (actionQueue.isEmpty() || processing) return
 
+        processNextActionInQueue(actionQueue, true)
+    }
+
+    private fun launchAllActionsFromQueue(actionQueue: MutableList<ActorActionPair>) {
+        while (!actionQueue.isEmpty()){
+            processNextActionInQueue(actionQueue, false)
+        }
+    }
+
+    private fun processNextActionInQueue(actionQueue: MutableList<ActorActionPair>, queueModeActive: Boolean) {
         processing = true
         var currentAction = actionQueue.first()
         actionQueue.removeAt(0)
 
         currentlyMovingCamera = true
-        val cameraMovementAction = cameraMovementAnimationGenerator.generateCameraMovementActionToLookAt(currentAction.cameraFocusActor ?: currentAction.actor)
+        val cameraMovementAction = cameraMovementAnimationGenerator.generateCameraMovementActionToLookAt(currentAction.cameraFocusActor
+                ?: currentAction.actor)
         currentActorActionPair = currentAction
 
         currentAction.actor.addAction(Actions.sequence(
-                CustomAction{
+                CustomAction {
                     startedAnimation = true
                 },
                 cameraMovementAction.action,
-                CustomAction{
+                CustomAction {
                     currentlyMovingCamera = false
-                    processSingleAction(currentAction){
+                    processSingleAction(currentAction) {
                         processing = false
                         startedAnimation = false
-                        continuousPoll(actionQueue)
+                        if (queueModeActive){
+                            continuousPoll(actionQueue)
+                        }
                     }
                 }
         ))

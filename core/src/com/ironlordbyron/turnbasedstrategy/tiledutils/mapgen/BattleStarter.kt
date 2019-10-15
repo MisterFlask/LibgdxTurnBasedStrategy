@@ -16,6 +16,7 @@ import com.ironlordbyron.turnbasedstrategy.missiongen.TileZone
 import com.ironlordbyron.turnbasedstrategy.missiongen.ZoneStyleMissionGenerator
 import com.ironlordbyron.turnbasedstrategy.tiledutils.*
 import com.ironlordbyron.turnbasedstrategy.tilemapinterpretation.TiledMapInterpreter
+import com.ironlordbyron.turnbasedstrategy.view.animation.ActionRunner
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -87,8 +88,10 @@ class BattleStarter @Inject constructor(val boardProvider: TileMapProvider,
 
     val zoneStyleMissionUnitTemplateDecider by LazyInject(ZoneStyleMissionGenerator::class.java)
     val fogManager by LazyInject(FogOfWarManager::class.java)
+    val actionRunner by LazyInject(ActionRunner::class.java)
 
     fun startBattle(){
+        actionRunner.queueModeActive = false
         println("Starting battle")
         for (spawner in unitTemplateRegistrar.unitTemplates){
             val unitId = spawner.id
@@ -130,5 +133,7 @@ class BattleStarter @Inject constructor(val boardProvider: TileMapProvider,
         }
 
         logicHooks.mapReorderRequired()
+        animationActionQueueProvider.kickOffQueueIfNotRunning()
+        actionRunner.queueModeActive = true
     }
 }
