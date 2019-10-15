@@ -43,10 +43,12 @@ public class FogOfWarAlphaAnimationGenerator{
             val charactersToReveal = locationsToBeRevealed
                     .filter{it.getCharacter() != null}
                     .map{it.getCharacter()!!}
+                    .filter{!it.actor.isVisible}
 
             val charactersToHide = locationsToHide.keys
                     .filter{it.getCharacter() != null}
                     .map{it.getCharacter()!!}
+                    .filter{it.actor.isVisible}
             val hideActions = charactersToHide.map{hideActionGenerator.generateHideActorActionPair(it.actor)}
             val revealActions = charactersToReveal.map{revealActionGenerator.generateRevealActorActionPair(it.actor).copy(name = "RevealActionForFogOfWar")}
             characterActions.addAll(hideActions + revealActions)
