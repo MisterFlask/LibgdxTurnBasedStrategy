@@ -68,6 +68,7 @@ public class ActionRunner @Inject constructor (val rumbler: Rumbler,
                     processSingleAction(currentAction){
                         processing = false
                         startedAnimation = false
+                        continuousPoll(actionQueue)
                     }
                 }
         ))
